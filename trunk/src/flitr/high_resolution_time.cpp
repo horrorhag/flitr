@@ -1,0 +1,36 @@
+/* Framework for Live Image Transformation (FLITr) 
+ * Copyright (c) 2010 CSIR
+ * 
+ * This file is part of FLITr.
+ *
+ * FLITr is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * FLITr is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with FLITr. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#include <flitr/high_resolution_time.h>
+
+#if defined(linux) || defined(__linux) || defined(__linux__)
+
+#else
+
+    osg::Timer *gHighResTimer = osg::Timer::instance();
+
+	uint64_t currentTimeNanoSec()
+	{
+		osg::Timer_t timer_t = gHighResTimer->tick();
+        #define NSEC_PER_SEC 1000000000LL
+		return (uint64_t)(timer_t * globalHighResTimer->getSecondsPerTick() * NSEC_PER_SEC);
+	}
+
+#endif
