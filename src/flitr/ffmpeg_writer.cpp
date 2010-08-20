@@ -64,7 +64,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 #endif
 
     // video file
-    OutputFormat_ = guess_format("avi", NULL, NULL);
+    OutputFormat_ = av_guess_format("avi", NULL, NULL);
     
     if (!OutputFormat_) {
 		logMessage(LOG_CRITICAL) << "Cannot set video format.\n";
