@@ -84,6 +84,13 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
     // everything should be ready for decoding video
     
+    if (getLogMessageCategory() & LOG_INFO) { 
+		dump_format(FormatContext_, 0, FileName_.c_str(), 0);
+    }
+    
+    NumImages_ = 0.5 + FormatContext_->duration * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den * 1000000);
+    logMessage(LOG_DEBUG) << "FFmpegReader thinks there are " << NumImages_ << " frames.\n";
+
     // User supplies the desired pixel format
     ImageFormat_ = ImageFormat(CodecContext_->width, CodecContext_->height, out_pix_fmt);
 
@@ -109,7 +116,6 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 		throw FFmpegReaderException();
     }
 
-    NumImages_ = FormatContext_->streams[VideoStreamIndex_]->duration;
     if (NumImages_ == 1) {
         // Mostly when images used as input
         SingleFrameSource_ = true;
@@ -127,7 +133,7 @@ FFmpegReader::~FFmpegReader()
 bool FFmpegReader::getImage(Image &out_image, int im_number)
 {
     // convert frame number to time
-    int64_t seek_time = (im_number * 1000000 * FormatContext_->streams[VideoStreamIndex_]->time_base.num) / (FormatContext_->streams[VideoStreamIndex_]->time_base.den);
+    int64_t seek_time = (im_number * 1000000 * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
     //std::cout << "Seektime = " << seek_time << "\n";
     
     // Do not seek if we have a single frame source
@@ -171,7 +177,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 			return false;
 		}
 		if (pkt.stream_index == VideoStreamIndex_) {
-			int decoded_len = avcodec_decode_video(CodecContext_, frame, &gotframe, pkt.data, pkt.size);
+			int decoded_len = avcodec_decode_video2(CodecContext_, frame, &gotframe, &pkt);
 			if (decoded_len < 0) {
 				logMessage(LOG_DEBUG) << "Error while decoding video\n";
 				av_free(frame);
