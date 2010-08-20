@@ -299,7 +299,7 @@ osg::Matrixd OrthoTextureManipulator::getInverseMatrix() const
 {
     return osg::Matrixd::translate(-_center) * 
         osg::Matrixd::translate(-_zoom_offset) * 
-        osg::Matrixd::scale(_distance, _distance, _distance) * 
+        osg::Matrixd::scale(_distance, _distance, 1.0) * 
         osg::Matrixd::translate(_zoom_offset) * 
         osg::Matrixd::rotate(_rotation.inverse());
 }
