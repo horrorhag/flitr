@@ -120,7 +120,7 @@ class OrthoTextureManipulator : public osgGA::CameraManipulator
         If speed is below a threshold then return false, otherwise return true.*/
     bool isMouseMoving();
 
-    void initOrthoProjection(osgGA::GUIActionAdapter& us);
+    bool initOrthoProjection(osgGA::GUIActionAdapter& us);
     void updateOrthoParams(osgGA::GUIActionAdapter& us);
 
     // Internal event stack comprising last two mouse events.
