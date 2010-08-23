@@ -21,6 +21,8 @@
 #include <flitr/ffmpeg_reader.h>
 #include <flitr/ffmpeg_utils.h>
 
+#include <OpenThreads/Mutex>
+
 #include <sstream>
 
 using namespace flitr;
@@ -34,6 +36,8 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     std::stringstream sws_stats_name;
     sws_stats_name << filename << " swscale";
     SwscaleStats_ = shared_ptr<StatsCollector>(new StatsCollector(sws_stats_name.str()));
+
+    av_lockmgr_register(&lockManager);
 
     av_register_all();
     
@@ -248,4 +252,27 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 
 	CurrentImage_ = im_number;
 	return true;
+}
+
+int FFmpegReader::lockManager(void **mutex, enum AVLockOp op)
+{
+    OpenThreads::Mutex **m = (OpenThreads::Mutex**)mutex;
+    if (op==AV_LOCK_CREATE) {
+        *m = new OpenThreads::Mutex;
+        return !*m;
+    }
+    else if (op==AV_LOCK_DESTROY) {
+        delete *m;
+        return 0;
+    }
+    else if (op==AV_LOCK_OBTAIN) {
+        (*m)->lock();
+        return 0;
+    }
+    else if (op==AV_LOCK_RELEASE) {
+        (*m)->unlock();
+        return 0;
+    } else {
+        return -1;
+    }
 }
