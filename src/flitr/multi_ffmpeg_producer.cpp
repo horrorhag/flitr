@@ -26,11 +26,11 @@ using std::tr1::shared_ptr;
 void MultiFFmpegProducerThread::run()
 {
     // wait for all to init
-    Parent_->ProducerThreadBarrier_.block(Parent_->ImagesPerSlot_+1);
+    Parent_->ProducerThreadBarrier_.block();
 
     while (true) {
         // if we reach this barrier, it means we must seek or exit
-        Parent_->ProducerThreadBarrier_.block(Parent_->ImagesPerSlot_+1);
+        Parent_->ProducerThreadBarrier_.block();
         if (ShouldExit_) {
             return;
         }
@@ -49,14 +49,15 @@ void MultiFFmpegProducerThread::run()
 			}
         }
         // indicate we are done
-        Parent_->ProducerThreadBarrier_.block(Parent_->ImagesPerSlot_+1);
+        Parent_->ProducerThreadBarrier_.block();
         if (ShouldExit_) {
             return;
         }
     }
 }
 
-MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt)
+MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt) :
+    ProducerThreadBarrier_(filenames.size()+1)
 {
 	ImagesPerSlot_ = filenames.size();
 	NumFrames_ = 0;
@@ -79,7 +80,6 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
 	
     ProducerThreads_.resize(ImagesPerSlot_);
     SeekOK_.resize(ImagesPerSlot_);
-    
 }
 
 bool MultiFFmpegProducer::init()
@@ -95,7 +95,7 @@ bool MultiFFmpegProducer::init()
     }
 
     // wait for all threads to init
-    ProducerThreadBarrier_.block(ImagesPerSlot_+1);
+    ProducerThreadBarrier_.block();
         
 	return true;
 }
@@ -106,7 +106,7 @@ MultiFFmpegProducer::~MultiFFmpegProducer()
         ProducerThreads_[i]->setExit();
     }
     // trigger threads
-    ProducerThreadBarrier_.block(ImagesPerSlot_+1);
+    ProducerThreadBarrier_.block();
 
     for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
         ProducerThreads_[i]->join();
@@ -135,10 +135,10 @@ bool MultiFFmpegProducer::seek(uint32_t position)
 	
 	// do a seek on each of our producers
     // trigger threads
-    ProducerThreadBarrier_.block(ImagesPerSlot_+1);
+    ProducerThreadBarrier_.block();
 
     // now wait for all seeks to complete
-    ProducerThreadBarrier_.block(ImagesPerSlot_+1);
+    ProducerThreadBarrier_.block();
 
 	bool all_seek_ok = true;
     for (uint32_t i=0; i < ImagesPerSlot_; ++i) {

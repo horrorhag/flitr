@@ -56,7 +56,7 @@ bool FFmpegProducer::seek(uint32_t position)
 		// no storage available
 		return false;
 	}
-	bool seek_result = Reader_->getImage(*(*(imvec[0])), position);
+	bool seek_result = Reader_->getImage(*(*(imvec[0])), position % NumFrames_);
 	releaseWriteSlot();
 	return seek_result;
 }

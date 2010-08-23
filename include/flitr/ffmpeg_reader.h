@@ -60,6 +60,8 @@ class FFmpegReader {
 	ImageFormat getFormat() { return ImageFormat_; }
 
   private:
+    static int lockManager(void **mutex, enum AVLockOp op);
+
     AVFormatContext *FormatContext_;
     AVFormatParameters FormatParameters_;
     AVCodecContext *CodecContext_;
