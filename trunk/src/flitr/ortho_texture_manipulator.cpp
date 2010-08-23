@@ -21,12 +21,13 @@
 #include <osg/Quat>
 #include <osg/Notify>
 #include <osg/BoundsChecking>
-#include <osgViewer/View>
+#include <osgViewer/Viewer>
 
 #include <osg/io_utils>
 #include <iostream>
 
 #include <flitr/ortho_texture_manipulator.h>
+#include <flitr/log_message.h>
 
 using namespace osg;
 using namespace osgGA;
@@ -52,34 +53,44 @@ OrthoTextureManipulator::~OrthoTextureManipulator()
 {
 }
 
-void OrthoTextureManipulator::initOrthoProjection(GUIActionAdapter& us)
+bool OrthoTextureManipulator::initOrthoProjection(GUIActionAdapter& us)
 {
-    osgViewer::View* view = dynamic_cast<osgViewer::View*>(&us);
-    if (view) {
-        osg::Viewport* vp = view->getCamera()->getViewport();
-        double view_aspect = vp->width()/vp->height();
-        osg::Vec3d top_left(0,0,0);
-        osg::Vec3d bottom_right(_texture_width, _texture_height, 0);
-        osg::Vec3d center = (bottom_right + top_left)*0.5f;
-        osg::Vec3d dx(bottom_right.x()-center.x(), 0.0f, 0.0f);
-        osg::Vec3d dy(0.0f, top_left.y()-center.y(), 0.0f);
-        double ratio = _texture_aspect/view_aspect;
-        if (ratio>1.0f) {
-            // use width as the control on size
-            bottom_right = center + dx - dy * ratio;
-            top_left = center - dx + dy * ratio;
-        } else {
-            // use height as the control on size
-            bottom_right = center + dx / ratio - dy;
-            top_left = center - dx / ratio + dy;
-        }
+    osgViewer::Viewer* view = dynamic_cast<osgViewer::Viewer*>(&us);
+    if (!view) return false;
 
-        
-        view->getCamera()->setProjectionMatrixAsOrtho(top_left.x(), bottom_right.x(), top_left.y(), bottom_right.y(), -1e6, 1e6);
-        view->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
-        view->getCamera()->setCullingActive(false);
-        //std::cerr << "VP " << vp->x() << " " << vp->y() << " " << vp->width() << " " << vp->height() << "\n";
+    osg::Camera* cam = view->getCameraWithFocus();
+    if (!cam) {
+        cam = view->getCamera();
+        if (!cam) return false;
     }
+    osg::Viewport* vp = cam->getViewport();
+    if (!vp) return false;
+
+    logMessage(LOG_DEBUG) << "Ortho manipulator init: Viewport w x h: " 
+                              << vp->width() << " x " << vp->height() << "\n";
+
+    double view_aspect = vp->width()/vp->height();
+    osg::Vec3d top_left(0,0,0);
+    osg::Vec3d bottom_right(_texture_width, _texture_height, 0);
+    osg::Vec3d center = (bottom_right + top_left)*0.5f;
+    osg::Vec3d dx(bottom_right.x()-center.x(), 0.0f, 0.0f);
+    osg::Vec3d dy(0.0f, top_left.y()-center.y(), 0.0f);
+    double ratio = _texture_aspect/view_aspect;
+    if (ratio>1.0f) {
+        // use width as the control on size
+        bottom_right = center + dx - dy * ratio;
+        top_left = center - dx + dy * ratio;
+    } else {
+        // use height as the control on size
+        bottom_right = center + dx / ratio - dy;
+        top_left = center - dx / ratio + dy;
+    }
+        
+    view->getCamera()->setProjectionMatrixAsOrtho(top_left.x(), bottom_right.x(), top_left.y(), bottom_right.y(), -1e6, 1e6);
+    view->getCamera()->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
+    view->getCamera()->setCullingActive(false);
+    
+    return true;
 }
 
 void OrthoTextureManipulator::updateOrthoParams(GUIActionAdapter& us)
@@ -152,10 +163,11 @@ bool OrthoTextureManipulator::handle(const GUIEventAdapter& ea, GUIActionAdapter
       case(GUIEventAdapter::FRAME):
       {
           if (_init_ortho_params) {
-              initOrthoProjection(us);
-              updateOrthoParams(us);
-              home(ea,us);
-              _init_ortho_params = false;
+              if (initOrthoProjection(us)) {
+                  updateOrthoParams(us);
+                  home(ea,us);
+                  _init_ortho_params = false;
+              }
           }
 
           double current_frame_time = ea.getTime();
@@ -381,7 +393,7 @@ bool OrthoTextureManipulator::calcMovement()
             _delta_frame_time / (_ga_t0->getTime() - _ga_t1->getTime()) :
             1.0;
 
-    if (buttonMask==GUIEventAdapter::MIDDLE_MOUSE_BUTTON || buttonMask==GUIEventAdapter::LEFT_MOUSE_BUTTON ||
+    if (buttonMask==GUIEventAdapter::MIDDLE_MOUSE_BUTTON ||
         buttonMask==(GUIEventAdapter::LEFT_MOUSE_BUTTON|GUIEventAdapter::RIGHT_MOUSE_BUTTON))
     {
         // pan
