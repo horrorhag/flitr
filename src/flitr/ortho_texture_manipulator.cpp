@@ -21,7 +21,7 @@
 #include <osg/Quat>
 #include <osg/Notify>
 #include <osg/BoundsChecking>
-#include <osgViewer/Viewer>
+#include <osgViewer/View>
 
 #include <osg/io_utils>
 #include <iostream>
@@ -55,14 +55,12 @@ OrthoTextureManipulator::~OrthoTextureManipulator()
 
 bool OrthoTextureManipulator::initOrthoProjection(GUIActionAdapter& us)
 {
-    osgViewer::Viewer* view = dynamic_cast<osgViewer::Viewer*>(&us);
+    osgViewer::View* view = dynamic_cast<osgViewer::View*>(&us);
     if (!view) return false;
 
-    osg::Camera* cam = view->getCameraWithFocus();
-    if (!cam) {
-        cam = view->getCamera();
-        if (!cam) return false;
-    }
+    osg::Camera* cam = view->getCamera();
+    if (!cam) return false;
+    
     osg::Viewport* vp = cam->getViewport();
     if (!vp) return false;
 
