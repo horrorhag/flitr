@@ -92,8 +92,10 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 		dump_format(FormatContext_, 0, FileName_.c_str(), 0);
     }
     
-    NumImages_ = 0.5 + FormatContext_->duration * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den * 1000000);
-    logMessage(LOG_DEBUG) << "FFmpegReader thinks there are " << NumImages_ << " frames.\n";
+    double duration_seconds = double(FormatContext_->duration) / 1e6;
+    double frame_rate = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
+    NumImages_ = 0.5 + (duration_seconds * frame_rate);
+    logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << frame_rate << " total frames: " << NumImages_ << "\n";
 
     // User supplies the desired pixel format
     ImageFormat_ = ImageFormat(CodecContext_->width, CodecContext_->height, out_pix_fmt);
