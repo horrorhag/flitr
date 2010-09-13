@@ -32,7 +32,11 @@ class ImageMetadata {
   public:
     ImageMetadata() {}
     virtual ~ImageMetadata() {}
-    virtual bool writeToStream(std::ofstream& s) {}
+    virtual bool writeToStream(std::ofstream& s) 
+    {
+        s.write((char *)&CameraTimeStamp_, sizeof(CameraTimeStamp_));
+        s.write((char *)&PCTimeStamp_, sizeof(PCTimeStamp_));
+    }
 
     /// Counter received from the camera if supported.
     uint64_t CameraTimeStamp_;

@@ -28,7 +28,7 @@ void flitr::adjustCameraManipulatorHomeForYUp(osgGA::CameraManipulator* m)
     
     // rotate the center to eye vector
     osg::Quat q(osg::DegreesToRadians(90.0),osg::Vec3d(1,0,0));
-    osg::Vec3d new_eye = home_center + ((home_center-home_eye)*q);
+    osg::Vec3d new_eye = home_center + (q*(home_center-home_eye));
     
     osg::Vec3d new_center(home_center);
     osg::Vec3d new_up(0,1,0);
