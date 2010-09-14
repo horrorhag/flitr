@@ -53,7 +53,9 @@ SET(LIB_SOURCES
   src/flitr/high_resolution_time.cpp
   src/flitr/manipulator_utils.cpp
   src/flitr/ortho_texture_manipulator.cpp
-  
+  src/flitr/geometry_overlay.cpp
+  src/flitr/quad_overlay.cpp
+  src/flitr/crosshair_overlay.cpp
   
   include/flitr/log_message.h
   include/flitr/vs_stdint.h
@@ -75,6 +77,9 @@ SET(LIB_SOURCES
   include/flitr/stats_collector.h
   include/flitr/manipulator_utils.h
   include/flitr/ortho_texture_manipulator.h
+  include/flitr/geometry_overlay.h
+  include/flitr/quad_overlay.h
+  include/flitr/crosshair_overlay.h
 
 )
 
@@ -90,6 +95,7 @@ ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
+ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 
 #install
 INSTALL(
