@@ -144,6 +144,7 @@ int main(int argc, char *argv[])
     double h = imf.getHeight();
     QuadOverlay* qov = new QuadOverlay(w/2,h/2,w/4,h/4);
     qov->setLineWidth(2);
+    //qov->flipVerticalCoordinates(h);
     root_node->addChild(qov);
 
     CrosshairOverlay* ch = new CrosshairOverlay(w/2,h/2,20,30);
