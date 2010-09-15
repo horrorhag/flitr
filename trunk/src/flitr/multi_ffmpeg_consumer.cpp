@@ -118,8 +118,14 @@ bool MultiFFmpegConsumer::closeFiles()
     stopWriting();
     
 	for (unsigned int i=0; i<ImagesPerSlot_; i++) {
-		delete FFmpegWriters_[i];
-		delete MetadataWriters_[i];
+        if (FFmpegWriters_[i] != 0) {
+            delete FFmpegWriters_[i];
+            FFmpegWriters_[i] = 0;
+        }
+        if (MetadataWriters_[i] != 0) {
+            delete MetadataWriters_[i];
+            MetadataWriters_[i] = 0;
+        }
 	}
     return true;
 }
