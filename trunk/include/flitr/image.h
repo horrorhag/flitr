@@ -23,12 +23,15 @@
 
 #include <flitr/image_format.h>
 #include <flitr/image_metadata.h>
+#include <flitr/log_message.h>
 
 extern "C" {
 #include <avformat.h>
 }
 
 #include <boost/tr1/memory.hpp>
+
+#include <cstdlib>
 
 namespace flitr {
 
@@ -39,7 +42,7 @@ class Image {
     {
         Data_ = (uint8_t*)av_malloc(Format_.getBytesPerImage());
         if (!Data_) {
-            // \todo what to do on malloc fail
+            outOfMem();
         }
     };
     ~Image()
@@ -50,6 +53,9 @@ class Image {
     Image(const Image& rh)
     {
         Data_ = (uint8_t*)av_malloc(rh.Format_.getBytesPerImage());
+        if (!Data_) {
+            outOfMem();
+        }
         deepCopy(rh);
     }
     /// Assignment
@@ -58,14 +64,16 @@ class Image {
         if (this == &rh) {
             return *this;
         }
-        
-        av_free(Data_);
-        Data_ = (uint8_t*)av_malloc(rh.Format_.getBytesPerImage());
-        if (!Data_) {
-            // \todo what to do on malloc fail
+       
+        uint8_t* new_data = (uint8_t*)av_malloc(rh.Format_.getBytesPerImage());
+        if (new_data != 0) {
+            av_free(Data_);
+            Data_ = new_data;
+        } else {
+            outOfMem();
         }
+
         deepCopy(rh);
-        
         return *this;
     }
     ImageFormat* format() { return &Format_; }
@@ -77,12 +85,22 @@ class Image {
     void deepCopy(const Image& rh)
     {
         Format_ = rh.Format_;
-        // assume metadata copyable
-        if (Metadata_ && rh.Metadata_) {
-            *Metadata_ = *(rh.Metadata_);
+        if (rh.Metadata_) {
+            // make a copy
+            std::tr1::shared_ptr<ImageMetadata> new_meta(rh.Metadata_->clone());
+            Metadata_.swap(new_meta);
+        } else {
+            // delete ours too
+            std::tr1::shared_ptr<ImageMetadata> new_meta;
+            Metadata_.swap(new_meta);
         }
         // assume allocation was done
         memcpy(Data_, rh.Data_, Format_.getBytesPerImage());
+    }
+    void outOfMem()
+    {
+        logMessage(LOG_CRITICAL) << "Out of memory in Image.\n";
+        abort();
     }
 
     ImageFormat Format_;
