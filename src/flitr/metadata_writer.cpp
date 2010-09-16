@@ -54,7 +54,9 @@ bool MetadataWriter::closeFile()
 bool MetadataWriter::writeFrame(Image& in_frame)
 {
     if (FileStream_.is_open()) {
-        in_frame.metadata()->writeToStream(FileStream_);
+        if (in_frame.metadata()) {
+            in_frame.metadata()->writeToStream(FileStream_);
+        }
         return true;
     }
     return false;

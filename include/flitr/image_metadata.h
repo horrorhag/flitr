@@ -24,7 +24,7 @@
 #include <boost/tr1/functional.hpp>
 #include <boost/tr1/memory.hpp>
 
-#include <fstream>
+#include <ostream>
 
 namespace flitr {
 
@@ -32,16 +32,8 @@ class ImageMetadata {
   public:
     ImageMetadata() {}
     virtual ~ImageMetadata() {}
-    virtual bool writeToStream(std::ofstream& s) 
-    {
-        s.write((char *)&CameraTimeStamp_, sizeof(CameraTimeStamp_));
-        s.write((char *)&PCTimeStamp_, sizeof(PCTimeStamp_));
-    }
-
-    /// Counter received from the camera if supported.
-    uint64_t CameraTimeStamp_;
-    /// Nanoseconds since epoch on the PC when frame was captured.
-    uint64_t PCTimeStamp_;
+    virtual bool writeToStream(std::ostream& s) const = 0;
+    virtual ImageMetadata* clone() const = 0;
 };
     
 typedef std::tr1::function < std::tr1::shared_ptr<ImageMetadata> () > CreateMetadataFunction;
