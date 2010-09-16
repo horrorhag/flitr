@@ -78,7 +78,7 @@ class Image {
     {
         Format_ = rh.Format_;
         // assume metadata copyable
-        if (rh.Metadata_) {
+        if (Metadata_ && rh.Metadata_) {
             *Metadata_ = *(rh.Metadata_);
         }
         // assume allocation was done
