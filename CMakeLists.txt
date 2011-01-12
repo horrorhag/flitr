@@ -56,6 +56,7 @@ SET(LIB_SOURCES
   src/flitr/geometry_overlay.cpp
   src/flitr/quad_overlay.cpp
   src/flitr/crosshair_overlay.cpp
+  src/flitr/points_overlay.cpp
   
   include/flitr/log_message.h
   include/flitr/vs_stdint.h
@@ -80,6 +81,7 @@ SET(LIB_SOURCES
   include/flitr/geometry_overlay.h
   include/flitr/quad_overlay.h
   include/flitr/crosshair_overlay.h
+  include/flitr/points_overlay.h
 
 )
 
@@ -97,6 +99,7 @@ ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/screen_capture)
+ADD_SUBDIRECTORY(examples/points_overlay)
 
 #install
 INSTALL(

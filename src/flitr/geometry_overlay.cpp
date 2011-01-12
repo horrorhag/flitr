@@ -39,9 +39,13 @@ GeometryOverlay::GeometryOverlay()
     _GeometryStateSet = _GeometryGroup->getOrCreateStateSet();
     _GeometryStateSet->setAttributeAndModes(_GeometryMaterial.get(), osg::StateAttribute::ON);
     
-    _GeometryLinewidth = new osg::LineWidth();
-    _GeometryLinewidth->setWidth(1);
-    _GeometryStateSet->setAttributeAndModes(_GeometryLinewidth.get(),osg::StateAttribute::ON);
+    _GeometryLineWidth = new osg::LineWidth();
+    _GeometryLineWidth->setWidth(1.0);
+    _GeometryStateSet->setAttributeAndModes(_GeometryLineWidth.get(), osg::StateAttribute::ON);
+
+    _GeometryPointSize = new osg::Point();
+    _GeometryPointSize->setSize(1.0);
+    _GeometryStateSet->setAttributeAndModes(_GeometryPointSize.get(), osg::StateAttribute::ON);
 
     setColour(osg::Vec4d(1,1,0,0.5));
 
@@ -61,7 +65,12 @@ void GeometryOverlay::setDepth(double z)
 
 void GeometryOverlay::setLineWidth(double w)
 {
-    _GeometryLinewidth->setWidth(w);
+    _GeometryLineWidth->setWidth(w);
+}
+
+void GeometryOverlay::setPointSize(double s)
+{
+    _GeometryPointSize->setSize(s);
 }
 
 void GeometryOverlay::setColour(osg::Vec4d newcol)

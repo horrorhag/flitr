@@ -33,6 +33,7 @@
 #include <osg/Vec4d>
 #include <osg/Material>
 #include <osg/LineWidth>
+#include <osg/Point>
 
 namespace flitr {
 
@@ -75,6 +76,8 @@ class GeometryOverlay : public osg::Switch
     
     virtual void setLineWidth(double w);
 
+    virtual void setPointSize(double s);
+
     /**
      *  \brief Toggle the display of the quad on and off. 
      *  \param show True to turn on.
@@ -89,7 +92,8 @@ class GeometryOverlay : public osg::Switch
     osg::ref_ptr<osg::Group> _GeometryGroup;
     osg::ref_ptr<osg::StateSet> _GeometryStateSet;
     osg::ref_ptr<osg::Material> _GeometryMaterial;
-    osg::ref_ptr<osg::LineWidth> _GeometryLinewidth;
+    osg::ref_ptr<osg::LineWidth> _GeometryLineWidth;
+    osg::ref_ptr<osg::Point> _GeometryPointSize;
     osg::Vec4d _GeometryColour;
 };
 
