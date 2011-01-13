@@ -30,7 +30,7 @@
 
 namespace flitr {
 
-class MetadataWriter {
+class FLITR_EXPORT MetadataWriter {
   public:
     MetadataWriter(std::string filename);
     ~MetadataWriter();

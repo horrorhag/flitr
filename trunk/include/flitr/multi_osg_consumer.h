@@ -55,7 +55,7 @@ class MultiOSGConsumerThread : public OpenThreads::Thread {
  * streams) and creates images and textures for consumption in OSG.
  * 
  */
-class MultiOSGConsumer : public ImageConsumer {
+class FLITR_EXPORT MultiOSGConsumer : public ImageConsumer {
     friend class MultiOSGConsumerThread;
   public:
     /** 

@@ -44,7 +44,7 @@ class MultiFFmpegConsumerThread : public OpenThreads::Thread {
     bool ShouldExit_;
 };
 
-class MultiFFmpegConsumer : public ImageConsumer {
+class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     friend class MultiFFmpegConsumerThread;
   public:
     MultiFFmpegConsumer(ImageProducer& producer, uint32_t images_per_slot);

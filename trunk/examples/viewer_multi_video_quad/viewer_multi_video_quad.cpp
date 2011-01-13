@@ -37,7 +37,7 @@ class BackgroundTriggerThread : public OpenThreads::Thread {
   private:
     ImageProducer* Producer_;
     bool ShouldExit_;
-    const int ReadableTarget_;
+    const uint32_t ReadableTarget_;
 };
 
 //#define USE_BACKGROUND_TRIGGER_THREAD 1

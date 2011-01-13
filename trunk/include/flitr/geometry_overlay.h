@@ -21,6 +21,8 @@
 #ifndef FLITR_GEOMETRY_OVERLAY_H
 #define FLITR_GEOMETRY_OVERLAY_H 1
 
+#include <flitr/flitr_export.h>
+
 #include <osg/ref_ptr>
 #include <osg/Node>
 #include <osg/Group>
@@ -40,7 +42,7 @@ namespace flitr {
 /**
  * Base for geometric overlays to be drawn onto textures. 
  */
-class GeometryOverlay : public osg::Switch
+class FLITR_EXPORT GeometryOverlay : public osg::Switch
 {
   public:
     GeometryOverlay();

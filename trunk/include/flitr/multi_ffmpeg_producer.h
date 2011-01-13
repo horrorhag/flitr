@@ -49,7 +49,7 @@ class MultiFFmpegProducerThread : public OpenThreads::Thread {
     bool ShouldExit_;
 };
 
-class MultiFFmpegProducer : public ImageProducer {
+class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     friend class MultiFFmpegProducerThread;
   public:
     // \todo maybe change this so pix formats can be requested per input file

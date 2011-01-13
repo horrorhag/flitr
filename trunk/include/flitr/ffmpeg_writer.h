@@ -56,7 +56,7 @@ struct FFmpegWriterException {
     FFmpegWriterException() {}
 };
 
-class FFmpegWriter {
+class FLITR_EXPORT FFmpegWriter {
 public:
     FFmpegWriter(std::string filename, const ImageFormat& image_format);
     ~FFmpegWriter();

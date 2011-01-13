@@ -21,11 +21,9 @@
 #ifndef FLITR_STDINT_H
 #define FLITR_STDINT_H 1
 
-#ifndef _MSC_VER
-# define __STDC_CONSTANT_MACROS 1
+// On unix we use system stdint
+// On Windows we rely on the one coming with FFmpeg
+
 # include <stdint.h>
-#else
-# include <flitr/vs_stdint.h>
-#endif
 
 #endif //FLITR_STDINT_H

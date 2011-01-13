@@ -34,7 +34,7 @@ class ImageProducer;
  * construction it connects the consumer with a producer and shared
  * buffer.
  */
-class ImageConsumer {
+class FLITR_EXPORT ImageConsumer {
     friend class SharedImageBuffer;
   public:
     /** 

@@ -18,19 +18,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/high_resolution_time.h>
+#ifndef FLITR_EXPORT_H
+#define FLITR_EXPORT_H 1
 
-#if defined(linux) || defined(__linux) || defined(__linux__)
-
+#ifdef _MSC_VER
+#  if defined( FLITR_STATIC_CPP )
+#    define FLITR_EXPORT
+#  elif defined( FLITR_SHARED_LIBRARY )
+#    define FLITR_EXPORT __declspec(dllexport)
+#  else
+#    define FLITR_EXPORT __declspec(dllimport)
+#  endif
 #else
-
-osg::Timer *gHighResTimer = osg::Timer::instance();
-
-uint64_t currentTimeNanoSec()
-{
-    osg::Timer_t timer_t = gHighResTimer->tick();
-    #define NSEC_PER_SEC 1000000000LL
-    return (uint64_t)(timer_t * gHighResTimer->getSecondsPerTick() * NSEC_PER_SEC);
-}
-
+#  define FLITR_EXPORT
 #endif
+
+#endif // FLITR_EXPORT_H

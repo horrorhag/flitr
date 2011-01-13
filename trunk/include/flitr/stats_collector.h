@@ -19,19 +19,19 @@
  */
 
 #ifndef STATS_COLLECTOR_H
-#define STATS_COLLECTOR_H 1 
-
-namespace flitr {
-
-#ifdef FLITR_PROFILE
-
-#include <string>
+#define STATS_COLLECTOR_H 1
 
 #include <flitr/flitr_stdint.h>
 #include <flitr/high_resolution_time.h>
 #include <flitr/log_message.h>
 
-class StatsCollector {
+#include <string>
+
+namespace flitr {
+
+#ifdef FLITR_PROFILE
+
+class FLITR_EXPORT StatsCollector {
   public:
     StatsCollector(std::string ID) :
         ID_(ID),
@@ -103,7 +103,7 @@ class StatsCollector {
     void tock() {};
 };
 
-#endif
+#endif // FLITR_PROFILE
 
 }
 

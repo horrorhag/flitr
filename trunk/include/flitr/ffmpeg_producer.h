@@ -33,7 +33,7 @@ namespace flitr {
  * still images.
  * 
  */
-class FFmpegProducer : public ImageProducer {
+class FLITR_EXPORT FFmpegProducer : public ImageProducer {
   public:
     /** 
      * Constructs the producer.

@@ -21,6 +21,8 @@
 #ifndef FLITR_IMAGE_METADATA_H
 #define FLITR_IMAGE_METADATA_H 1
 
+#include <flitr/flitr_export.h>
+
 #include <boost/tr1/functional.hpp>
 #include <boost/tr1/memory.hpp>
 
@@ -28,7 +30,7 @@
 
 namespace flitr {
 
-class ImageMetadata {
+class FLITR_EXPORT ImageMetadata {
   public:
     ImageMetadata() {}
     virtual ~ImageMetadata() {}

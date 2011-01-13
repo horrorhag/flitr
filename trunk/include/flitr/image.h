@@ -35,7 +35,7 @@ extern "C" {
 
 namespace flitr {
 
-class Image {
+class FLITR_EXPORT Image {
   public:
     Image(const ImageFormat& image_format) :
         Format_(image_format)

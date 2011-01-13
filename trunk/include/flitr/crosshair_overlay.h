@@ -21,6 +21,8 @@
 #ifndef FLITR_CROSSHAIR_OVERLAY_H
 #define FLITR_CROSSHAIR_OVERLAY_H 1
 
+#include <flitr/geometry_overlay.h>
+
 #include <osg/ref_ptr>
 #include <osg/Node>
 #include <osg/Group>
@@ -34,14 +36,12 @@
 #include <osg/Material>
 #include <osg/LineWidth>
 
-#include <flitr/geometry_overlay.h>
-
 namespace flitr {
 
 /**
  * A crosshair with a given position, width and height.
  */
-class CrosshairOverlay : public GeometryOverlay
+class FLITR_EXPORT CrosshairOverlay : public GeometryOverlay
 {
   public:
     CrosshairOverlay(double center_x, double center_y, double width, double height);

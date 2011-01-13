@@ -58,7 +58,7 @@ class ImageProducer;
  * a consumer to e.g. keep access to a range of images if it's
  * interested in a time range (history) of images.
  */
-class SharedImageBuffer {
+class FLITR_EXPORT SharedImageBuffer {
   public:
     /** 
      * Creates a shared buffer without allocating storage.
