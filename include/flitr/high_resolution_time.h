@@ -23,54 +23,52 @@
 
 /// Sole purpose is to provide currentTimeNanoSec() for a platform
 
+#include <flitr/flitr_stdint.h>
+
 #if defined(linux) || defined(__linux) || defined(__linux__)
-    #include <time.h>
-    
-    #include <flitr/flitr_stdint.h>
 
-    #define NSEC_PER_SEC 1000000000LL
+#include <time.h>
 
-	inline uint64_t timespec_to_ns(const struct timespec *ts)
-	{
-		return ((uint64_t) ts->tv_sec * NSEC_PER_SEC) + ts->tv_nsec;
-	}
+#define NSEC_PER_SEC 1000000000LL
 
-	/// Returns nanoseconds since epoch.
-	inline uint64_t currentTimeNanoSec()
-	{
-		struct timespec timestamp_ts;
-		//clock_gettime(CLOCK_MONOTONIC, &timestamp_ts);
-		clock_gettime(CLOCK_REALTIME, &timestamp_ts);
-		return timespec_to_ns(&timestamp_ts);
-	}
+inline uint64_t timespec_to_ns(const struct timespec *ts)
+{
+    return ((uint64_t) ts->tv_sec * NSEC_PER_SEC) + ts->tv_nsec;
+}
 
-	inline uint64_t clockResNanoSec()
-	{
-		struct timespec timestamp_ts;
-		//clock_getres(CLOCK_MONOTONIC, &timestamp_ts);
-		clock_getres(CLOCK_REALTIME, &timestamp_ts);
-		return timespec_to_ns(&timestamp_ts);
-	}
+/// Returns nanoseconds since epoch.
+inline uint64_t currentTimeNanoSec()
+{
+    struct timespec timestamp_ts;
+    //clock_gettime(CLOCK_MONOTONIC, &timestamp_ts);
+    clock_gettime(CLOCK_REALTIME, &timestamp_ts);
+    return timespec_to_ns(&timestamp_ts);
+}
 
-	#if 0
-	int main(void)
-	{
-		printf("%lld, %lld\n", currentTimeNanoSec(), clockResNanoSec());
-		printf("%lld, %lld\n", currentTimeNanoSec(), clockResNanoSec());
-	}
-	#endif
+inline uint64_t clockResNanoSec()
+{
+    struct timespec timestamp_ts;
+    //clock_getres(CLOCK_MONOTONIC, &timestamp_ts);
+    clock_getres(CLOCK_REALTIME, &timestamp_ts);
+    return timespec_to_ns(&timestamp_ts);
+}
 
-#else 
+#if 0
+int main(void)
+{
+    printf("%lld, %lld\n", currentTimeNanoSec(), clockResNanoSec());
+    printf("%lld, %lld\n", currentTimeNanoSec(), clockResNanoSec());
+}
+#endif
 
-    // fall back on OSG
-    // \todo how do we connect OSG time to real wall clock time?
-    #include <osg/ref_ptr>
-    #include <osg/Timer>
-    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-        #include <flitr/vs_stdint.h>
-    #endif
-	/// Returns nanoseconds since epoch.
-	extern uint64_t currentTimeNanoSec();
+#else // NOT LINUX
+
+// fall back on OSG
+// \todo how do we connect OSG time to real wall clock time?
+#include <osg/ref_ptr>
+#include <osg/Timer>
+/// Returns nanoseconds since epoch.
+extern uint64_t currentTimeNanoSec();
 
 #endif
 

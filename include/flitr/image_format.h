@@ -22,10 +22,11 @@
 #define FLITR_IMAGE_FORMAT_H 1
 
 #include <flitr/flitr_stdint.h>
+#include <flitr/flitr_export.h>
 
 namespace flitr {
 
-class ImageFormat {
+class FLITR_EXPORT ImageFormat {
   public:
     enum PixelFormat {
         FLITR_PIX_FMT_Y_8 = 1, 

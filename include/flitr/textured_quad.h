@@ -21,6 +21,8 @@
 #ifndef FLITR_TEXTURED_QUAD
 #define FLITR_TEXTURED_QUAD 1
 
+#include <flitr/flitr_export.h>
+
 #include <osg/ref_ptr>
 #include <osg/Group>
 #include <osg/Geode>
@@ -31,7 +33,7 @@
 
 namespace flitr {
 
-class TexturedQuad {
+class FLITR_EXPORT TexturedQuad {
   public:
     TexturedQuad(osg::Image *in_image);
     TexturedQuad(osg::TextureRectangle *in_tex);

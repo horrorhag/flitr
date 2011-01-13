@@ -36,7 +36,7 @@ namespace flitr {
  * places images it creates into this buffer.
  *
  */
-class ImageProducer {
+class FLITR_EXPORT ImageProducer {
     friend class SharedImageBuffer;
     friend class ImageConsumer;
   public:
@@ -81,7 +81,7 @@ class ImageProducer {
      */
     virtual uint32_t getLeastNumReadSlotsAvailable()
     {
-        SharedImageBuffer_->getLeastNumReadSlotsAvailable();
+        return SharedImageBuffer_->getLeastNumReadSlotsAvailable();
     }
 
     virtual void setCreateMetadataFunction(CreateMetadataFunction f)

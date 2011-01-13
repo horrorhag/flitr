@@ -21,12 +21,14 @@
 #ifndef ORTHOTEXTUREMANIPULATOR
 #define ORTHOTEXTUREMANIPULATOR 1
 
+#include <flitr/flitr_export.h>
+
 #include <osgGA/CameraManipulator>
 #include <osg/Quat>
 
 namespace flitr {
 
-class OrthoTextureManipulator : public osgGA::CameraManipulator
+class FLITR_EXPORT OrthoTextureManipulator : public osgGA::CameraManipulator
 {
   public:
     OrthoTextureManipulator(const double texture_width, const double texture_height);

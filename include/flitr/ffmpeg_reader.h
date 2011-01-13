@@ -50,7 +50,7 @@ struct FFmpegReaderException {
     FFmpegReaderException() {}
 };
 
-class FFmpegReader {
+class FLITR_EXPORT FFmpegReader {
   public:
     FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt);
     ~FFmpegReader();

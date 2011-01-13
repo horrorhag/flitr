@@ -21,6 +21,8 @@
 #ifndef FLITR_POINTS_OVERLAY_H
 #define FLITR_POINTS_OVERLAY_H 1
 
+#include <flitr/geometry_overlay.h>
+
 #include <osg/ref_ptr>
 #include <osg/Node>
 #include <osg/Group>
@@ -34,14 +36,12 @@
 #include <osg/Material>
 #include <osg/LineWidth>
 
-#include <flitr/geometry_overlay.h>
-
 namespace flitr {
 
 /**
  * Array of points of the same colour drawn as an overlay.
  */
-class PointsOverlay : public GeometryOverlay
+class FLITR_EXPORT PointsOverlay : public GeometryOverlay
 {
   public:
     PointsOverlay();

@@ -18,6 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <flitr/flitr_export.h>
+
 #include <osgGA/CameraManipulator>
 
 namespace flitr {
@@ -30,6 +32,6 @@ namespace flitr {
  * 
  * \param m Pointer to an OSG camera manipulator.
  */
-void adjustCameraManipulatorHomeForYUp(osgGA::CameraManipulator* m);
+FLITR_EXPORT void adjustCameraManipulatorHomeForYUp(osgGA::CameraManipulator* m);
 
 }
