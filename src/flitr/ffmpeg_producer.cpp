@@ -26,8 +26,8 @@ using std::tr1::shared_ptr;
 FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt)
 {
 	Reader_ = shared_ptr<FFmpegReader>(new FFmpegReader(filename, out_pix_fmt));
-	NumFrames_ = Reader_->getNumImages();
-	CurrentFrame_ = 0;
+	NumImages_ = Reader_->getNumImages();
+	CurrentImage_ = -1;
 	ImageFormat_.push_back(Reader_->getFormat());
 }
 
@@ -41,12 +41,8 @@ bool FFmpegProducer::init()
 
 bool FFmpegProducer::trigger()
 {
-	bool seek_ok = seek(CurrentFrame_);
-	if (seek_ok) {
-		CurrentFrame_ = (CurrentFrame_ + 1) % NumFrames_;
-		return true;
-	}
-	return false;
+    uint32_t seek_to = CurrentImage_ + 1;
+	return seek(seek_to);
 }
 
 bool FFmpegProducer::seek(uint32_t position)
@@ -56,7 +52,12 @@ bool FFmpegProducer::seek(uint32_t position)
 		// no storage available
 		return false;
 	}
-	bool seek_result = Reader_->getImage(*(*(imvec[0])), position % NumFrames_);
-	releaseWriteSlot();
-	return seek_result;
+
+    uint32_t seek_to = position % NumImages_;
+	bool seek_result = Reader_->getImage(*(*(imvec[0])), seek_to);
+    CurrentImage_ = Reader_->getCurrentImage();
+	
+    releaseWriteSlot();
+	
+    return seek_result;
 }

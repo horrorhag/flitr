@@ -59,15 +59,22 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     bool trigger();
     bool seek(uint32_t position);
     void releaseReadSlotCallback();
-    uint32_t getNumImages() { return NumFrames_; }
+    uint32_t getNumImages() { return NumImages_; }
+    /** 
+     * Returns the number of the last correctly read image.
+     * 
+     * \return 0 to getNumImages()-1 for valid frames or -1 when not
+     * successfully triggered.
+     */
+    int32_t getCurrentImage() { return CurrentImage_; }
   private:
     std::vector< std::tr1::shared_ptr<FFmpegProducer> > Producers_;
     std::vector< std::tr1::shared_ptr<ImageConsumer> > Consumers_;
     std::vector< MultiFFmpegProducerThread* > ProducerThreads_;
     OpenThreads::Barrier ProducerThreadBarrier_;
 
-    uint32_t NumFrames_;
-    uint32_t CurrentFrame_;
+    uint32_t NumImages_;
+    uint32_t CurrentImage_;
     uint32_t ImagesPerSlot_;
     uint32_t SeekPos_;
     std::vector< bool > SeekOK_;

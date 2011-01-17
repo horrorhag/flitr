@@ -60,7 +60,7 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
     ProducerThreadBarrier_(filenames.size()+1)
 {
 	ImagesPerSlot_ = filenames.size();
-	NumFrames_ = 0;
+	NumImages_ = 0;
 	Producers_.resize(ImagesPerSlot_);
 	Consumers_.resize(ImagesPerSlot_);
 	for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
@@ -72,11 +72,11 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
         ImageFormat_.push_back(Producers_[i]->getFormat());
 
 		uint32_t num_frames = Producers_[i]->getNumImages();
-		if (num_frames > NumFrames_) {
-			NumFrames_ = num_frames;
+		if (num_frames > NumImages_) {
+			NumImages_ = num_frames;
 		}
 	}
-	CurrentFrame_ = 0;
+	CurrentImage_ = -1;
 	
     ProducerThreads_.resize(ImagesPerSlot_);
     SeekOK_.resize(ImagesPerSlot_);
@@ -115,12 +115,8 @@ MultiFFmpegProducer::~MultiFFmpegProducer()
 
 bool MultiFFmpegProducer::trigger()
 {
-	bool seek_ok = seek(CurrentFrame_);
-	if (seek_ok) {
-		CurrentFrame_ = (CurrentFrame_ + 1) % NumFrames_;
-		return true;
-	}
-	return false;
+    uint32_t seek_to = CurrentImage_ + 1;
+	return seek(seek_to);
 }
 
 bool MultiFFmpegProducer::seek(uint32_t position)
@@ -149,6 +145,7 @@ bool MultiFFmpegProducer::seek(uint32_t position)
 
 	if (all_seek_ok) {
 		releaseWriteSlot();
+        CurrentImage_ = SeekPos_;
 	} else {
         // \todo implement discard
         //discardWriteSlot();
