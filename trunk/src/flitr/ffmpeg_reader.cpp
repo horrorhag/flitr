@@ -139,8 +139,12 @@ FFmpegReader::~FFmpegReader()
 bool FFmpegReader::getImage(Image &out_image, int im_number)
 {
     // convert frame number to time
-    int64_t seek_time = (im_number * 1000000 * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
+    int64_t seek_time = ((int64_t)im_number * 1000000 * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
+    
     //std::cout << "Seektime = " << seek_time << "\n";
+    //std::cout << "FrameNum = " << im_number << "\n";
+    //std::cout << "RateNum  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num << "\n";
+    //std::cout << "RateDen  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den << "\n";
     
     // Do not seek if we have a single frame source
     // Assume we are looking for frame 0, XXX assert maybe
@@ -159,12 +163,13 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
             avTimeBaseQ.num=1;
             avTimeBaseQ.den=AV_TIME_BASE;
             int seekret = av_seek_frame(FormatContext_, VideoStreamIndex_, av_rescale_q(seek_time, avTimeBaseQ , (FormatContext_->streams[VideoStreamIndex_])->time_base), AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-            if (seekret < 0 && CurrentImage_ <= 0) {
+            if (seekret < 0) {
+                // start from beginning
                 seekret = av_seek_frame(FormatContext_, -1, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
                 if (seekret < 0) {
                 }
             }
-            
+            avcodec_flush_buffers(CodecContext_);
             //std::cout << "Seekret = " << seekret << "\n";
             //std::cout << "Rescale = " << av_rescale_q(seek_time, AV_TIME_BASE_Q, FormatContext_->streams[VideoStreamIndex_]->time_base) << "\n";
             //std::cout << "Norm    = " << seek_time << "\n";
@@ -200,17 +205,18 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 				int64_t pkt_duration_scaled = av_rescale_q(pkt.duration, FormatContext_->streams[VideoStreamIndex_]->time_base, avTimeBaseQ);
 
 				//if (pkt_pts_scaled > 0 && loopcount == 0) {
+                //  std::cout << "seekt   = " << seek_time << "\n";
 				//	std::cout << "PTS     = " << pkt_pts_scaled << "\n";
 				//	std::cout << "Dur     = " << pkt_duration_scaled << "\n";
-				//}
-				
-				if (pkt_pts_scaled >= seek_time ||
-					pkt_pts_scaled + pkt_duration_scaled > seek_time) {
-					// we are done
+                //}
+                
+                if (pkt_pts_scaled >= seek_time ||
+                    pkt_pts_scaled + pkt_duration_scaled > seek_time) {
+                    // we are done
                     //fprintf(stderr, "LOOP %d\n", loopcount);
-					break;
-				}
-			}
+                    break;
+                }
+            }
 			loopcount++;
 		}
 		av_free_packet(&pkt); // allocated in read_frame
