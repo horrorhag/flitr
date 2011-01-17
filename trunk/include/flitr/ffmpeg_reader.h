@@ -57,6 +57,12 @@ class FLITR_EXPORT FFmpegReader {
 
     bool getImage(Image &out_image, int im_number);
     uint32_t getNumImages() { return NumImages_; }
+    /** 
+     * The last successfully decoded image.
+     * 
+     * \return 0 to getNumImages()-1 for valid frames or -1 when not successfully triggered.  
+     */
+    int32_t getCurrentImage() { return CurrentImage_; }
 	ImageFormat getFormat() { return ImageFormat_; }
 
   private:
@@ -71,7 +77,7 @@ class FLITR_EXPORT FFmpegReader {
 
 	ImageFormat ImageFormat_;
     uint32_t NumImages_;
-	uint32_t CurrentImage_;
+	int32_t CurrentImage_;
     std::string FileName_;
     bool SingleFrameSource_;
     bool SingleFrameDone_;

@@ -72,14 +72,21 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
      * 
      * \return Number of frames.
      */
-    uint32_t getNumImages() { return NumFrames_; }
+    uint32_t getNumImages() { return NumImages_; }
+    /** 
+     * Returns the number of the last correctly read image.
+     * 
+     * \return 0 to getNumImages()-1 for valid frames or -1 when not
+     * successfully triggered.
+     */
+    int32_t getCurrentImage() { return CurrentImage_; }
   private:
     /// The reader to do the actual reading.
     std::tr1::shared_ptr<FFmpegReader> Reader_;
     /// Number of frames in the file.
-    uint32_t NumFrames_;
-    /// Frame that would be read on next trigger.
-    uint32_t CurrentFrame_;
+    uint32_t NumImages_;
+    /// Last correctly read frame.
+    int32_t CurrentImage_;
 };
 
 }

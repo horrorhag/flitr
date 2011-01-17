@@ -127,7 +127,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         SingleFrameSource_ = true;
     }
 
-	CurrentImage_ = 0;
+	CurrentImage_ = -1;
 }
 
 FFmpegReader::~FFmpegReader()
@@ -152,14 +152,14 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
         }
     } else {
         // only seek if we are not playing or restarting
-        if ((CurrentImage_ == 0) || ((im_number - CurrentImage_) != 1)  ) {
+        if ((CurrentImage_ <= 0) || ((im_number - CurrentImage_) != 1)  ) {
             //MS VS does not seem to allow initialisation lists used in the AV_TIME_BASE_Q macro.
             //int seekret = av_seek_frame(FormatContext_, VideoStreamIndex_, av_rescale_q(seek_time, AV_TIME_BASE_Q, FormatContext_->streams[VideoStreamIndex_]->time_base), AVSEEK_FLAG_BACKWARD);
             AVRational avTimeBaseQ;
             avTimeBaseQ.num=1;
             avTimeBaseQ.den=AV_TIME_BASE;
             int seekret = av_seek_frame(FormatContext_, VideoStreamIndex_, av_rescale_q(seek_time, avTimeBaseQ , (FormatContext_->streams[VideoStreamIndex_])->time_base), AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-            if (seekret < 0 && CurrentImage_ == 0) {
+            if (seekret < 0 && CurrentImage_ <= 0) {
                 seekret = av_seek_frame(FormatContext_, -1, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
                 if (seekret < 0) {
                 }
