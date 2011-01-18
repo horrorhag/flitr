@@ -48,14 +48,16 @@ class FLITR_EXPORT StatsCollector {
     {
         logMessage(LOG_INFO) << ID_ << 
             " - tick() count       : " << tick_count_ << "\n";
-        logMessage(LOG_INFO) << ID_ << 
-            " - tick() count at max: " << tick_count_at_max_ << "\n";
-        logMessage(LOG_INFO) << ID_ << 
-            " - min                : " << min_ << "\n";
-        logMessage(LOG_INFO) << ID_ << 
-            " - avg                : " << (uint64_t)(sum_ / tick_count_) << "\n";
-        logMessage(LOG_INFO) << ID_ << 
-            " - max                : " << max_ << "\n";
+        if (tick_count_ != 0) {
+            logMessage(LOG_INFO) << ID_ << 
+                " - tick() count at max: " << tick_count_at_max_ << "\n";
+            logMessage(LOG_INFO) << ID_ << 
+                " - min                : " << min_ << "\n";
+            logMessage(LOG_INFO) << ID_ << 
+                " - avg                : " << (uint64_t)(sum_ / tick_count_) << "\n";
+            logMessage(LOG_INFO) << ID_ << 
+                " - max                : " << max_ << "\n";
+        }
     }
     inline void tick()
     {
