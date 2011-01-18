@@ -19,8 +19,8 @@ IF(WIN32)
 ELSE(WIN32)
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native")
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -Wall")
+  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -Wall")
   SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
 ENDIF(WIN32)
 
