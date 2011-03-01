@@ -12,6 +12,7 @@
 #include <flitr/manipulator_utils.h>
 
 #include "simple_shader_pass.h"
+#include "render_to_video.h"
 
 using std::tr1::shared_ptr;
 using namespace flitr;
@@ -19,7 +20,7 @@ using namespace flitr;
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        std::cout << "Usage: " << argv[0] << " video_file share_file\n";
+        std::cout << "Usage: " << argv[0] << " video_file shader_file\n";
         return 1;
     }
 
@@ -43,6 +44,12 @@ int main(int argc, char *argv[])
 
     shared_ptr<TexturedQuad> quad(new TexturedQuad(ssp->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
+
+    const bool create_output_video = false;
+    if (create_output_video) {
+        shared_ptr<RenderToVideo> rtv(new RenderToVideo(ssp->getOutputTexture(), "glsl_shader_pass.avi"));
+        root_node->addChild(rtv->getRoot().get());
+    }
 
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
