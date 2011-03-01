@@ -45,11 +45,10 @@ int main(int argc, char *argv[])
     shared_ptr<TexturedQuad> quad(new TexturedQuad(ssp->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
 
-    const bool create_output_video = false;
-    if (create_output_video) {
-        shared_ptr<RenderToVideo> rtv(new RenderToVideo(ssp->getOutputTexture(), "glsl_shader_pass.avi"));
-        root_node->addChild(rtv->getRoot().get());
-    }
+    #if 0
+    shared_ptr<RenderToVideo> rtv(new RenderToVideo(ssp->getOutputTexture(), "glsl_shader_pass.avi"));
+    root_node->addChild(rtv->getRoot().get());
+    #endif    
 
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
