@@ -67,6 +67,7 @@ SET(LIB_SOURCES
   src/flitr/quad_overlay.cpp
   src/flitr/screen_capture_producer.cpp
   src/flitr/shared_image_buffer.cpp
+  src/flitr/texture_capture_producer.cpp
   src/flitr/textured_quad.cpp
   
   #find include/ | grep .h | grep -v .svn | sort
@@ -96,6 +97,7 @@ SET(LIB_SOURCES
   include/flitr/screen_capture_producer.h
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
+  include/flitr/texture_capture_producer.h
   include/flitr/textured_quad.h
 )
 
