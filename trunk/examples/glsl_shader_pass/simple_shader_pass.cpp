@@ -58,6 +58,7 @@ osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
 
     StateSet_ = quad_geom->getOrCreateStateSet();
     StateSet_->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+    StateSet_->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
     StateSet_->setTextureAttributeAndModes(0, InTexture_.get(), osg::StateAttribute::ON);
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
@@ -72,11 +73,16 @@ osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
 void SimpleShaderPass::setupCamera()
 {
     // clearing
-    Camera_->setClearColor(osg::Vec4(0.1f,0.1f,0.3f,1.0f));
-    Camera_->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    bool need_clear = false;
+    if (need_clear) {
+        Camera_->setClearColor(osg::Vec4(0.1f,0.1f,0.3f,1.0f));
+        Camera_->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    } else {
+        Camera_->setClearMask(0);
+        Camera_->setImplicitBufferAttachmentMask(0, 0);
+    }
 
     // projection and view
-    //Camera_->setProjectionMatrix(osg::Matrix::ortho2D(0,1,0,1));
     Camera_->setProjectionMatrixAsOrtho(0,1,0,1,-100,100);
     Camera_->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
     Camera_->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
