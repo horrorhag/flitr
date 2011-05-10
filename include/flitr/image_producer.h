@@ -57,7 +57,7 @@ class FLITR_EXPORT ImageProducer {
     virtual ImageFormat getFormat(uint32_t index = 0) { return ImageFormat_[index]; }
 	
     /** 
-     * Typically implemented to tell and asynchronous producer to create an image.
+     * Typically implemented to tell an asynchronous producer to create an image.
      * 
      * \return Whether an image was produced.
      */
@@ -136,10 +136,10 @@ class FLITR_EXPORT ImageProducer {
         SharedImageBuffer_->releaseWriteSlot();
     }
 
-    /// A vector of the formats of the images we produce.
+    /// A vector of the formats of the images is produced per slot.
     std::vector<ImageFormat> ImageFormat_;
     
-    /// The shared buffer used for us and all consumers.
+    /// The shared buffer used for this producer and all consumers.
     std::tr1::shared_ptr<SharedImageBuffer> SharedImageBuffer_;
 
     /// An optional function that gets called as soon as an image is

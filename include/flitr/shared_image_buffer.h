@@ -78,21 +78,27 @@ class FLITR_EXPORT SharedImageBuffer {
     ~SharedImageBuffer();
 
     /** 
-     * Initialise the buffer and allocates storage for the images we
-     * are to contain.
+     * Initialise the buffer and allocates storage for the images it
+     * is to contain.
      * 
      * \return True on successful initialisation.
      */
     bool initWithStorage();
 
     /** 
-     * Initialise the buffer, but do not allocate storage any
+     * Initialise the buffer, but do not allocate storage for any
      * images. This is typically used if our elements just point to
      * elements in another shared buffer.
      * 
      * \return True on successful initialisation. 
      */
     bool initWithoutStorage();
+    
+    
+//=== Start of the Producer Methods ===//
+//=====================================//
+    //One could possibly make use of an abstract interface class to encapsulate 
+    //the producer interface.
     
     /** 
      * Reserve (obtain) a slot for writing new image data. Multiple
@@ -105,6 +111,8 @@ class FLITR_EXPORT SharedImageBuffer {
      */
     virtual std::vector<Image**> reserveWriteSlot();
     //virtual std::vector<Image**> getWritable();
+
+    //ToDo: We could also add a reserveWriteSlots(n) method that reserves n slots!
     
 
     /** 
@@ -115,7 +123,10 @@ class FLITR_EXPORT SharedImageBuffer {
      */
     virtual void releaseWriteSlot();
     //virtual void pushWritable();
+    
+    //ToDo: We could also add a releaseWriteSlots(n) method that releases n slots!
 
+    
     /** 
      * Find the least number of readable image slots available between
      * all consumers.
@@ -124,6 +135,13 @@ class FLITR_EXPORT SharedImageBuffer {
      */
     virtual uint32_t getLeastNumReadSlotsAvailable();
 
+    
+    
+//=== Start of the Consumer Methods ===//
+//=====================================//
+    //One could possibly make use of an abstract interface class to encapsulate 
+    //the consumer interface.
+    
     /** 
      * Obtain the number of image slots that are available for
      * reading.
@@ -162,9 +180,12 @@ class FLITR_EXPORT SharedImageBuffer {
      */
     virtual std::vector<Image**> reserveReadSlot(const ImageConsumer& consumer);
     //virtual std::vector<Image**> getReadable(const ImageConsumer& consumer);
+    
+    //ToDo: We could also add a reserveReadSlots(..., n) method that reserves n slots!
 
+    
     /** 
-     * Indicate that the consumer has finished with a reserved write
+     * Indicate that the consumer has finished with a reserved read
      * slot. Should only be called after a slot has been reserved and
      * once for each slot that was reserved.
      * 
@@ -173,6 +194,9 @@ class FLITR_EXPORT SharedImageBuffer {
      */    
     virtual void releaseReadSlot(const ImageConsumer& consumer);
     //virtual void popReadable(const ImageConsumer& consumer);
+
+    //ToDo: We could also add a releaseReadSlots(..., n) method that releases n slots!
+    
 	
     /** 
      * Add a new consumer to this buffer. The consumer's read position
