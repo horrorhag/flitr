@@ -16,13 +16,15 @@ SET(FLITR_3RDPARTY_ROOT "" CACHE PATH "Root directory where the 3rd party depend
 IF(WIN32)
   # VS automatically defines NDEBUG in Release builds 
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_NO_DEPRECATE /D _WIN32_WINNT=0x0501")
-ELSE(WIN32)
+ELSEIF(APPLE)
+  SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures…" FORCE)
+ELSE()
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -Wall")
   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -Wall")
   SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
-ENDIF(WIN32)
+ENDIF()
 
 SET(CMAKE_PREFIX_PATH ${FLITR_3RDPARTY_ROOT})
 MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
@@ -35,7 +37,7 @@ FIND_PATH(AVFORMAT_PATH avformat.h PATHS /usr/local/include/libavformat /usr/inc
 
 FIND_PATH(SWSCALE_PATH swscale.h PATHS /usr/local/include/libswscale /usr/include/ffmpeg /usr/include/ffmpeg/libswscale /usr/include/libswscale /opt/local/include/libswscale ${FLITR_3RDPARTY_ROOT}/include/libswscale)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include;/usr/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR} /usr/local/lib /opt/local/lib ${FLITR_3RDPARTY_ROOT}/lib ${FLITR_3RDPARTY_ROOT}/bin)
 
@@ -65,9 +67,7 @@ SET(LIB_SOURCES
   src/flitr/ortho_texture_manipulator.cpp
   src/flitr/points_overlay.cpp
   src/flitr/quad_overlay.cpp
-  src/flitr/screen_capture_producer.cpp
   src/flitr/shared_image_buffer.cpp
-  src/flitr/texture_capture_producer.cpp
   src/flitr/textured_quad.cpp
   
   #find include/ | grep .h | grep -v .svn | sort
@@ -94,12 +94,21 @@ SET(LIB_SOURCES
   include/flitr/ortho_texture_manipulator.h
   include/flitr/points_overlay.h
   include/flitr/quad_overlay.h
-  include/flitr/screen_capture_producer.h
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
-  include/flitr/texture_capture_producer.h
   include/flitr/textured_quad.h
 )
+
+#Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
+IF(NOT APPLE)
+  SET(LIB_SOURCES
+    ${LIB_SOURCES}
+    src/flitr/screen_capture_producer.cpp
+    src/flitr/texture_capture_producer.cpp
+    include/flitr/screen_capture_producer.cpp
+    include/flitr/texture_capture_producer.cpp
+  )
+ENDIF()
 
 ADD_LIBRARY(flitr SHARED
   ${LIB_SOURCES}
@@ -107,11 +116,14 @@ ADD_LIBRARY(flitr SHARED
 
 IF(WIN32) 
   TARGET_LINK_LIBRARIES(flitr opengl32 OpenThreads osg osgViewer osgDB osgGA avformat avutil avcodec swscale)
+ELSEIF(APPLE)
+  TARGET_LINK_LIBRARIES(flitr OpenThreads osg osgViewer osgDB osgGA avformat avutil avcodec swscale)
 ELSE()
 TARGET_LINK_LIBRARIES(flitr m rt OpenThreads osg osgViewer osgDB osgGA avformat avutil avcodec swscale)
 ENDIF()
 
 SET_TARGET_PROPERTIES(flitr PROPERTIES COMPILE_FLAGS "-DFLITR_SHARED_LIBRARY")
+
 
 ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
@@ -121,8 +133,14 @@ ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
-ADD_SUBDIRECTORY(examples/screen_capture)
+
+#Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
+IF(NOT APPLE)
+  ADD_SUBDIRECTORY(examples/screen_capture)
+ENDIF()
+
 ADD_SUBDIRECTORY(examples/points_overlay)
+
 
 #install
 INSTALL(
