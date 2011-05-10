@@ -40,7 +40,7 @@ class FLITR_EXPORT ImageConsumer {
     /** 
      * Construct a consumer.
      * 
-     * \param producer The producer we are connecting to. 
+     * \param producer The producer we are connecting to. The producer's method to add a consumer is protected, and can only be called via this consumer contructor.
      */
     ImageConsumer(ImageProducer& producer);
     
