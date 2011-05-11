@@ -73,6 +73,7 @@ class FLITR_EXPORT FFmpegReader {
     AVCodecContext *CodecContext_;
     AVCodec *Codec_;
     int VideoStreamIndex_;
+    AVFrame* DecodedFrame_;
 	AVFrame* ConvertedFrame_;
 
 	ImageFormat ImageFormat_;

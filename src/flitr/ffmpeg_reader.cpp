@@ -116,6 +116,12 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         SWS_BILINEAR, NULL, NULL, NULL);
 #endif
 	
+    DecodedFrame_ = avcodec_alloc_frame();
+    if (!DecodedFrame_) {
+        logMessage(LOG_CRITICAL) << "Cannot allocate memory for decoded frame.\n";
+        throw FFmpegReaderException();
+    }
+
 	ConvertedFrame_ = allocFFmpegFrame(out_ffmpeg_pix_fmt, ImageFormat_.getWidth(), ImageFormat_.getHeight());
 	if (!ConvertedFrame_) {
 		logMessage(LOG_CRITICAL) << "Cannot allocate memory for video storage buffers.\n";
@@ -132,6 +138,9 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
 FFmpegReader::~FFmpegReader()
 {
+    if (DecodedFrame_) {
+        av_free(DecodedFrame_);
+    }
     avcodec_close(CodecContext_);
     av_close_input_file(FormatContext_);
 }
@@ -178,8 +187,8 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 
     // decode
     AVPacket pkt;
-    AVFrame *frame = avcodec_alloc_frame();
     int gotframe;
+    avcodec_get_frame_defaults(DecodedFrame_);
 
 	int loopcount=0;
     while(1) {
@@ -188,10 +197,9 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 			return false;
 		}
 		if (pkt.stream_index == VideoStreamIndex_) {
-			int decoded_len = avcodec_decode_video2(CodecContext_, frame, &gotframe, &pkt);
+			int decoded_len = avcodec_decode_video2(CodecContext_, DecodedFrame_, &gotframe, &pkt);
 			if (decoded_len < 0) {
 				logMessage(LOG_DEBUG) << "Error while decoding video\n";
-				av_free(frame);
 				return false;
 			}
 			if (gotframe) {
@@ -224,7 +232,6 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 
     if (!gotframe) {
 		av_free_packet(&pkt);
-		av_free(frame);
 		return false;
     }
 
@@ -233,13 +240,13 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     ConvertedFrame_->data[0] = out_image.data(); // save a memcpy
     
     int err = sws_scale(ConvertFormatCtx_, 
-                        frame->data, frame->linesize, 0, CodecContext_->height,
+                        DecodedFrame_->data, DecodedFrame_->linesize, 0, CodecContext_->height,
                         ConvertedFrame_->data, ConvertedFrame_->linesize);
     
-    //printf("%d %d\n", frame->linesize, ConvertedFrame_->linesize);
+    //printf("%d %d\n", DecodedFrame_->linesize, ConvertedFrame_->linesize);
 #else
     img_convert((AVPicture *)ConvertedFrame_, PIX_FMT_GRAY8,
-                (AVPicture *)frame, CodecContext_->pix_fmt,
+                (AVPicture *)DecodedFrame_, CodecContext_->pix_fmt,
                 CodecContext_->width, CodecContext_->height);
 #endif
     SwscaleStats_->tock();
@@ -256,7 +263,6 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     }
 
 	av_free_packet(&pkt);
-    av_free(frame);
 
 	CurrentImage_ = im_number;
 	return true;
