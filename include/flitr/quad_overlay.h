@@ -44,11 +44,39 @@ namespace flitr {
 class FLITR_EXPORT QuadOverlay : public GeometryOverlay
 {
   public:
+    /** 
+     * Create a new quad overlay.
+     * 
+     * \param center_x The x position of the quad center.
+     * \param center_y The y position of the quad center.
+     * \param width Width of the quad.
+     * \param height Height of the quad.
+     * \param filled Whether the quad should be filled or not.
+     *
+     */
     QuadOverlay(double center_x, double center_y, double width, double height, bool filled=false);
     ~QuadOverlay() {};
 
+    /** 
+     * Adjusts the position of the quad.
+     * 
+     * \param x The new x position of the quad center.
+     * \param y The new y position of the quad center.
+     */
     void setCenter(double x, double y);
+    
+    /** 
+     * Adjusts the width of the quad.
+     * 
+     * \param width New width.
+     */
     void setWidth(double width);
+
+    /** 
+     * Adjusts the height of the quad.
+     * 
+     * \param height New height.
+     */
     void setHeight(double height);
 
   private:

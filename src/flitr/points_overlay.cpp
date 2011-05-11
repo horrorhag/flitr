@@ -37,7 +37,7 @@ PointsOverlay::PointsOverlay() :
 void PointsOverlay::makeGraph()
 {
     osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+    osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
     
     geom->setVertexArray(_Vertices.get());
     
@@ -45,12 +45,12 @@ void PointsOverlay::makeGraph()
 
     setPointSize(_PointSize);
 
-	geom->addPrimitiveSet(_DrawArray.get());
-	geom->setUseDisplayList(false);
-	geode->addDrawable(geom.get());
+    geom->addPrimitiveSet(_DrawArray.get());
+    geom->setUseDisplayList(false);
+    geode->addDrawable(geom.get());
     geode->setCullingActive(false);
-	
-	_GeometryGroup->addChild(geode.get());
+    
+    _GeometryGroup->addChild(geode.get());
 }
 
 void PointsOverlay::setVertices(osg::Vec3Array& v)

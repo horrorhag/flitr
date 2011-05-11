@@ -40,13 +40,19 @@
 namespace flitr {
 
 /**
- * Base for geometric overlays to be drawn onto textures. 
+ * Base for geometric overlays to be drawn on top of textures. 
  */
 class FLITR_EXPORT GeometryOverlay : public osg::Switch
 {
   public:
     GeometryOverlay();
     virtual ~GeometryOverlay() {};
+
+    /** 
+     * Adjusts the colour of the overlay.
+     * 
+     * \param newcol RGBA vector.
+     */
     virtual void setColour(osg::Vec4d newcol);
 
     /** 
@@ -76,12 +82,22 @@ class FLITR_EXPORT GeometryOverlay : public osg::Switch
      */
     virtual void setDepth(double z);
     
+    /** 
+     * Adjusts the line width used for overlays containing lines.
+     * 
+     * \param w Line width in pixels.
+     */
     virtual void setLineWidth(double w);
 
+    /** 
+     * Adjusts the point size for point overlays.
+     * 
+     * \param s Point size in pixels.
+     */
     virtual void setPointSize(double s);
 
     /**
-     *  \brief Toggle the display of the quad on and off. 
+     *  \brief Toggle the display of the overlay on or off. 
      *  \param show True to turn on.
      */
     void setShow(bool show);
