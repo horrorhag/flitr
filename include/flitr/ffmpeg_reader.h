@@ -50,22 +50,56 @@ struct FFmpegReaderException {
     FFmpegReaderException() {}
 };
 
+/**
+ * Class to encapsulate the reading of images from video files using FFmpeg.
+ */
 class FLITR_EXPORT FFmpegReader {
   public:
+    /** 
+     * Creates a reader for a video file.
+     * 
+     * \param filename Input video file name.
+     * \param out_pix_fmt The format the image data would be converted
+     * to prior to output.
+     *
+     */
     FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt);
     ~FFmpegReader();
 
-    bool getImage(Image &out_image, int im_number);
-    uint32_t getNumImages() { return NumImages_; }
     /** 
-     * The last successfully decoded image.
+     * Reads the specified frame from the video file.
      * 
-     * \return 0 to getNumImages()-1 for valid frames or -1 when not successfully triggered.  
+     * \param out_image Image to receive the read data.
+     * \param im_number Image or frame number in the video (0-based).
+     * 
+     * \return True if an image was successfully read.
+     */
+    bool getImage(Image &out_image, int im_number);
+
+    /** 
+     * Obtain the number of images/frames present in the video file.
+     * 
+     * \return Number of images/frames. 
+     */
+    uint32_t getNumImages() { return NumImages_; }
+
+    /** 
+     * Get the number of the last successfully decoded image.
+     * 
+     * \return 0 to getNumImages()-1 for valid frames or -1 when not
+     * successfully triggered.
      */
     int32_t getCurrentImage() { return CurrentImage_; }
-	ImageFormat getFormat() { return ImageFormat_; }
+
+    /** 
+     * Get the format that would be used for output.
+     * 
+     * \return Image format of the output data.
+     */
+    ImageFormat getFormat() { return ImageFormat_; }
 
   private:
+    /// Used for multi-threading access.
     static int lockManager(void **mutex, enum AVLockOp op);
 
     AVFormatContext *FormatContext_;
@@ -73,13 +107,20 @@ class FLITR_EXPORT FFmpegReader {
     AVCodecContext *CodecContext_;
     AVCodec *Codec_;
     int VideoStreamIndex_;
+    /// Frame to receive the internal format decoded video.
     AVFrame* DecodedFrame_;
-	AVFrame* ConvertedFrame_;
+    /// Frame containing the image data converted to output format.
+    AVFrame* ConvertedFrame_;
 
-	ImageFormat ImageFormat_;
+    /// Output format.
+    ImageFormat ImageFormat_;
+    /// Number of frames/images in the video.
     uint32_t NumImages_;
-	int32_t CurrentImage_;
+    /// -1 if nothing decoded yet, otherwise the number of the last
+    /// -decoded frame.
+    int32_t CurrentImage_;
     std::string FileName_;
+    /// True if e.g. reading from jpg or png files.
     bool SingleFrameSource_;
     bool SingleFrameDone_;
     std::tr1::shared_ptr<Image> SingleImage_;
