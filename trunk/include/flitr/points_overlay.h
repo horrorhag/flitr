@@ -47,8 +47,23 @@ class FLITR_EXPORT PointsOverlay : public GeometryOverlay
     PointsOverlay();
     ~PointsOverlay() {};
 
+    /** 
+     * Draw points at all locations given.
+     * 
+     * \param v Array of 3D points.
+     */
     void setVertices(osg::Vec3Array& v);
+
+    /** 
+     * Add a single point to the existing list.
+     * 
+     * \param v Single 3D location.
+     */
     void addVertex(osg::Vec3d v);
+
+    /** 
+     * Clear the list of points to draw.
+     */
     void clearVertices();
 
   private:

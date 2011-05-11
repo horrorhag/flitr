@@ -39,16 +39,42 @@
 namespace flitr {
 
 /**
- * A crosshair with a given position, width and height.
+ * A crosshair overlay at a given position, with a given width and height.
  */
 class FLITR_EXPORT CrosshairOverlay : public GeometryOverlay
 {
   public:
+    /** 
+     * Create a new crosshair.
+     * 
+     * \param center_x The x position of the crosshair center.
+     * \param center_y The y position of the crosshair center.
+     * \param width The width of the crosshair.
+     * \param height The height of the crosshair.
+     */
     CrosshairOverlay(double center_x, double center_y, double width, double height);
     ~CrosshairOverlay() {};
 
+    /** 
+     * Adjusts the position of the crosshair.
+     * 
+     * \param x The new x position of the crosshair center.
+     * \param y The new y position of the crosshair center.
+     */
     void setCenter(double x, double y);
+    
+    /** 
+     * Adjusts the width of the crosshair.
+     * 
+     * \param width New width.
+     */
     void setWidth(double width);
+
+    /** 
+     * Adjusts the height of the crosshair.
+     * 
+     * \param height New height.
+     */
     void setHeight(double height);
 
   private:
