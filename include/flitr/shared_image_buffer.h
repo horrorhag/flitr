@@ -78,7 +78,7 @@ class FLITR_EXPORT SharedImageBuffer {
     ~SharedImageBuffer();
 
     /** 
-     * Initialise the buffer and allocates storage for the images it
+     * Initialise the buffer and allocate storage for the images it
      * is to contain.
      * 
      * \return True on successful initialisation.
