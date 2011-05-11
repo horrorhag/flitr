@@ -105,8 +105,8 @@ IF(NOT APPLE)
     ${LIB_SOURCES}
     src/flitr/screen_capture_producer.cpp
     src/flitr/texture_capture_producer.cpp
-    include/flitr/screen_capture_producer.cpp
-    include/flitr/texture_capture_producer.cpp
+    include/flitr/screen_capture_producer.h
+    include/flitr/texture_capture_producer.h
   )
 ENDIF()
 
