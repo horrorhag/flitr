@@ -56,40 +56,40 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, NULL);
 
     if (err < 0) {
-		logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << "\n";
-		throw FFmpegReaderException();
-	}
+        logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << "\n";
+        throw FFmpegReaderException();
+    }
     
     av_find_stream_info(FormatContext_);
     
     // look for video streams
     for(uint32_t i=0; i < FormatContext_->nb_streams; i++) {
-		CodecContext_ = FormatContext_->streams[i]->codec;
-		if(CodecContext_->codec_type == CODEC_TYPE_VIDEO) {
-			// look for codec
-			Codec_ = avcodec_find_decoder(CodecContext_->codec_id);
-			if (Codec_) {
-				VideoStreamIndex_ = i;
-				break; // no need to search further
-			}
+        CodecContext_ = FormatContext_->streams[i]->codec;
+        if(CodecContext_->codec_type == CODEC_TYPE_VIDEO) {
+            // look for codec
+            Codec_ = avcodec_find_decoder(CodecContext_->codec_id);
+            if (Codec_) {
+                VideoStreamIndex_ = i;
+                break; // no need to search further
+            }
         }
     }
     
     if (!Codec_) {
-		logMessage(LOG_CRITICAL) << "Cannot find video codec for " << filename.c_str() << "\n";
-		throw FFmpegReaderException();
+        logMessage(LOG_CRITICAL) << "Cannot find video codec for " << filename.c_str() << "\n";
+        throw FFmpegReaderException();
     }
 
     if (avcodec_open(CodecContext_, Codec_) < 0) {
-		logMessage(LOG_CRITICAL) << "Cannot open video codec for " << filename.c_str() << "\n";
-		throw FFmpegReaderException();
+        logMessage(LOG_CRITICAL) << "Cannot open video codec for " << filename.c_str() << "\n";
+        throw FFmpegReaderException();
     }
 
 
     // everything should be ready for decoding video
     
     if (getLogMessageCategory() & LOG_INFO) { 
-		dump_format(FormatContext_, 0, FileName_.c_str(), 0);
+        dump_format(FormatContext_, 0, FileName_.c_str(), 0);
     }
     
     double duration_seconds = double(FormatContext_->duration) / 1e6;
@@ -111,21 +111,21 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 #if defined FLITR_USE_SWSCALE
     ConvertFormatCtx_ = sws_getContext(
         ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt, 
-        //ImageFormat_.getWidth(), ImageFormat_.getHeight(), out_ffmpeg_pix_fmt,					
-        ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,					
+        //ImageFormat_.getWidth(), ImageFormat_.getHeight(), out_ffmpeg_pix_fmt,                    
+        ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,                 
         SWS_BILINEAR, NULL, NULL, NULL);
 #endif
-	
+    
     DecodedFrame_ = avcodec_alloc_frame();
     if (!DecodedFrame_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate memory for decoded frame.\n";
         throw FFmpegReaderException();
     }
 
-	ConvertedFrame_ = allocFFmpegFrame(out_ffmpeg_pix_fmt, ImageFormat_.getWidth(), ImageFormat_.getHeight());
-	if (!ConvertedFrame_) {
-		logMessage(LOG_CRITICAL) << "Cannot allocate memory for video storage buffers.\n";
-		throw FFmpegReaderException();
+    ConvertedFrame_ = allocFFmpegFrame(out_ffmpeg_pix_fmt, ImageFormat_.getWidth(), ImageFormat_.getHeight());
+    if (!ConvertedFrame_) {
+        logMessage(LOG_CRITICAL) << "Cannot allocate memory for video storage buffers.\n";
+        throw FFmpegReaderException();
     }
 
     if (NumImages_ == 1) {
@@ -133,7 +133,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         SingleFrameSource_ = true;
     }
 
-	CurrentImage_ = -1;
+    CurrentImage_ = -1;
 }
 
 FFmpegReader::~FFmpegReader()
@@ -175,8 +175,6 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
             if (seekret < 0) {
                 // start from beginning
                 seekret = av_seek_frame(FormatContext_, -1, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_ANY);
-                if (seekret < 0) {
-                }
             }
             avcodec_flush_buffers(CodecContext_);
             //std::cout << "Seekret = " << seekret << "\n";
@@ -190,32 +188,32 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     int gotframe;
     avcodec_get_frame_defaults(DecodedFrame_);
 
-	int loopcount=0;
+    int loopcount=0;
     while(1) {
-		if (av_read_frame(FormatContext_, &pkt) < 0 ) {
-			//XXX
-			return false;
-		}
-		if (pkt.stream_index == VideoStreamIndex_) {
-			int decoded_len = avcodec_decode_video2(CodecContext_, DecodedFrame_, &gotframe, &pkt);
-			if (decoded_len < 0) {
-				logMessage(LOG_DEBUG) << "Error while decoding video\n";
-				return false;
-			}
-			if (gotframe) {
-				//MS VS does not seem to allow initialisation lists used in the AV_TIME_BASE_Q macro.
-				//int64_t pkt_pts_scaled = av_rescale_q(pkt.pts, FormatContext_->streams[VideoStreamIndex_]->time_base, AV_TIME_BASE_Q);
-				//int64_t pkt_duration_scaled = av_rescale_q(pkt.duration, FormatContext_->streams[VideoStreamIndex_]->time_base, AV_TIME_BASE_Q);
-				AVRational avTimeBaseQ;
-				avTimeBaseQ.num=1;
-				avTimeBaseQ.den=AV_TIME_BASE;
-				int64_t pkt_pts_scaled = av_rescale_q(pkt.pts, FormatContext_->streams[VideoStreamIndex_]->time_base, avTimeBaseQ);
-				int64_t pkt_duration_scaled = av_rescale_q(pkt.duration, FormatContext_->streams[VideoStreamIndex_]->time_base, avTimeBaseQ);
+        if (av_read_frame(FormatContext_, &pkt) < 0 ) {
+            //XXX
+            return false;
+        }
+        if (pkt.stream_index == VideoStreamIndex_) {
+            int decoded_len = avcodec_decode_video2(CodecContext_, DecodedFrame_, &gotframe, &pkt);
+            if (decoded_len < 0) {
+                logMessage(LOG_DEBUG) << "Error while decoding video\n";
+                return false;
+            }
+            if (gotframe) {
+                //MS VS does not seem to allow initialisation lists used in the AV_TIME_BASE_Q macro.
+                //int64_t pkt_pts_scaled = av_rescale_q(pkt.pts, FormatContext_->streams[VideoStreamIndex_]->time_base, AV_TIME_BASE_Q);
+                //int64_t pkt_duration_scaled = av_rescale_q(pkt.duration, FormatContext_->streams[VideoStreamIndex_]->time_base, AV_TIME_BASE_Q);
+                AVRational avTimeBaseQ;
+                avTimeBaseQ.num=1;
+                avTimeBaseQ.den=AV_TIME_BASE;
+                int64_t pkt_pts_scaled = av_rescale_q(pkt.pts, FormatContext_->streams[VideoStreamIndex_]->time_base, avTimeBaseQ);
+                int64_t pkt_duration_scaled = av_rescale_q(pkt.duration, FormatContext_->streams[VideoStreamIndex_]->time_base, avTimeBaseQ);
 
-				//if (pkt_pts_scaled > 0 && loopcount == 0) {
+                //if (pkt_pts_scaled > 0 && loopcount == 0) {
                 //  std::cout << "seekt   = " << seek_time << "\n";
-				//	std::cout << "PTS     = " << pkt_pts_scaled << "\n";
-				//	std::cout << "Dur     = " << pkt_duration_scaled << "\n";
+                //  std::cout << "PTS     = " << pkt_pts_scaled << "\n";
+                //  std::cout << "Dur     = " << pkt_duration_scaled << "\n";
                 //}
                 
                 if (pkt_pts_scaled >= seek_time ||
@@ -225,14 +223,14 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
                     break;
                 }
             }
-			loopcount++;
-		}
-		av_free_packet(&pkt); // allocated in read_frame
+            loopcount++;
+        }
+        av_free_packet(&pkt); // allocated in read_frame
     }
 
     if (!gotframe) {
-		av_free_packet(&pkt);
-		return false;
+        av_free_packet(&pkt);
+        return false;
     }
 
     SwscaleStats_->tick();
@@ -251,21 +249,21 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 #endif
     SwscaleStats_->tock();
 
-	/*
-	// only needed if we cannot directly scale into the target memory
-	memcpy(&(out_image.Data_[0]), ((AVPicture *)ConvertedFrame_)->data[0],
-		   ImageFormat_.getBytesPerImage());
-	*/
+    /*
+    // only needed if we cannot directly scale into the target memory
+    memcpy(&(out_image.Data_[0]), ((AVPicture *)ConvertedFrame_)->data[0],
+           ImageFormat_.getBytesPerImage());
+    */
 
     if (SingleFrameSource_ && !SingleFrameDone_) {
         *SingleImage_ = out_image;
         SingleFrameDone_ = true;
     }
 
-	av_free_packet(&pkt);
+    av_free_packet(&pkt);
 
-	CurrentImage_ = im_number;
-	return true;
+    CurrentImage_ = im_number;
+    return true;
 }
 
 int FFmpegReader::lockManager(void **mutex, enum AVLockOp op)
