@@ -29,8 +29,24 @@ extern "C" {
 
 namespace flitr {
 
+/** 
+ * Converts from FLITr pixel format to FFmpeg format.
+ * 
+ * \param in_fmt FLITr pixel format.
+ * 
+ * \return FFmpeg pixel format.
+ */
 PixelFormat PixelFormatFLITrToFFmpeg(ImageFormat::PixelFormat in_fmt);
 
+/** 
+ * Utility function to allocate and fill an FFmpeg frame.
+ * 
+ * \param pix_fmt FFmpeg pixel format.
+ * \param width Width in pixels.
+ * \param height Height in pixels.
+ * 
+ * \return Pointer to a created AVFrame if successful, otherwise NULL.
+ */
 AVFrame *allocFFmpegFrame(PixelFormat pix_fmt, int width, int height);
 
 }

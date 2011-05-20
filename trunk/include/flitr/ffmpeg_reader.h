@@ -59,7 +59,7 @@ class FLITR_EXPORT FFmpegReader {
      * Creates a reader for a video file.
      * 
      * \param filename Input video file name.
-     * \param out_pix_fmt The format the image data would be converted
+     * \param out_pix_fmt The format the image data would be converted.
      * to prior to output.
      *
      */

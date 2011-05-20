@@ -26,6 +26,10 @@
 
 namespace flitr {
 
+/**
+ * This class contains information about the format (width, height,
+ * pixel type) of an image.
+ */
 class FLITR_EXPORT ImageFormat {
   public:
     enum PixelFormat {
