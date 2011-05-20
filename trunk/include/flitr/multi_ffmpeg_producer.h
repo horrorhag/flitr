@@ -49,17 +49,64 @@ class MultiFFmpegProducerThread : public OpenThreads::Thread {
     bool ShouldExit_;
 };
 
+/**
+ * Producer that reads from multiple input videos and places a frame
+ * from each one into a shared slot.
+ * 
+ */
 class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     friend class MultiFFmpegProducerThread;
   public:
+    /** 
+     * Creates the producer.
+     * 
+     * \param filenames Vector of video filenames.
+     * \param out_pix_fmt The output pixel format to be used for all videos.
+     * 
+     */ 
     // \todo maybe change this so pix formats can be requested per input file
     MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt);
     ~MultiFFmpegProducer();
+    
+    /** 
+     * Perform initialisation that might fail on file opens.
+     * 
+     * \return True on success. 
+     */
     bool init();
+
+    /** 
+     * Reads the next frame from all files and make it available. If
+     * a file reaches the end, reading is resumed from the start.
+     * 
+     * \return True if a frame was successfully read from all files.
+     */
     bool trigger();
+    
+    /** 
+     * Reads a specified frame from the files.
+     *
+     * \param position Frame number to read (0 based).
+     * 
+     * \return True if a frame was successfully read.
+     */
     bool seek(uint32_t position);
+
+    /** 
+     * Callback performed by the shared buffer when all consumers are
+     * done with a read slot. This allows us to release the slots held
+     * by our internal child consumers.
+     * 
+     */
     void releaseReadSlotCallback();
+    
+    /** 
+     * Returns the number of frames in the longest file.
+     * 
+     * \return Number of frames.
+     */
     uint32_t getNumImages() { return NumImages_; }
+     
     /** 
      * Returns the number of the last correctly read image.
      * 
@@ -68,9 +115,13 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
      */
     int32_t getCurrentImage() { return CurrentImage_; }
   private:
+    /// Child producers
     std::vector< std::tr1::shared_ptr<FFmpegProducer> > Producers_;
+    /// Child consumers
     std::vector< std::tr1::shared_ptr<ImageConsumer> > Consumers_;
+    /// Threads for triggering the producers in parallel.
     std::vector< MultiFFmpegProducerThread* > ProducerThreads_;
+    /// Sync creation of the threads.
     OpenThreads::Barrier ProducerThreadBarrier_;
 
     uint32_t NumImages_;
