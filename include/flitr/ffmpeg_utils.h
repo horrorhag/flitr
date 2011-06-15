@@ -27,6 +27,19 @@ extern "C" {
 #include <avformat.h>
 }
 
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
+ #ifndef AVMEDIA_TYPE_VIDEO
+  #define AVMEDIA_TYPE_VIDEO CODEC_TYPE_VIDEO
+ #endif
+ #ifndef AV_PKT_FLAG_KEY
+  #define AV_PKT_FLAG_KEY PKT_FLAG_KEY
+ #endif
+#endif
+
+#if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(52, 39, 9)
+ #define avformat_alloc_context av_alloc_format_context
+#endif
+
 namespace flitr {
 
 /** 

@@ -101,7 +101,7 @@ AVStream *FFmpegWriter::addVideoStream(AVFormatContext *fc, int codec_id)
 
     cc = st->codec;
     cc->codec_id = (CodecID)codec_id;
-    cc->codec_type = CODEC_TYPE_VIDEO;
+    cc->codec_type = AVMEDIA_TYPE_VIDEO;
 	
 	// experiment with coder type
 	//cc->coder_type = FF_CODER_TYPE_AC; // faster for FFV1
@@ -163,7 +163,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 	
 		pkt.pts = av_rescale_q(cc->coded_frame->pts, cc->time_base, VideoStream_->time_base);
 		if(cc->coded_frame->key_frame) {
-			pkt.flags |= PKT_FLAG_KEY;
+			pkt.flags |= AV_PKT_FLAG_KEY;
 		}
 		pkt.stream_index= VideoStream_->index;
 		pkt.data = VideoEncodeBuffer_;
@@ -183,12 +183,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 
 bool FFmpegWriter::openVideoFile()
 {
-    
-#if LIBAVFORMAT_VERSION_INT > ((52<<16) + (38<<8) + 0)
     FormatContext_ = avformat_alloc_context();
-#else
-    FormatContext_ = av_alloc_format_context();
-#endif
 
     if (!FormatContext_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate video format context.\n";
