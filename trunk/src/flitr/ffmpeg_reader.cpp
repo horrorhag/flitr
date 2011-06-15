@@ -28,6 +28,8 @@
 using namespace flitr;
 using std::tr1::shared_ptr;
 
+
+
 FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt) :
     FileName_(filename),
     SingleFrameSource_(false),
@@ -43,11 +45,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     
     FormatContext_ = NULL;
 
-#if LIBAVFORMAT_VERSION_INT > ((52<<16) + (38<<8) + 0)
     FormatContext_ = avformat_alloc_context();
-#else
-    FormatContext_ = av_alloc_format_context();
-#endif
 
     CodecContext_ = NULL;
     Codec_ = NULL;
@@ -65,7 +63,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     // look for video streams
     for(uint32_t i=0; i < FormatContext_->nb_streams; i++) {
         CodecContext_ = FormatContext_->streams[i]->codec;
-        if(CodecContext_->codec_type == CODEC_TYPE_VIDEO) {
+        if(CodecContext_->codec_type == AVMEDIA_TYPE_VIDEO) {
             // look for codec
             Codec_ = avcodec_find_decoder(CodecContext_->codec_id);
             if (Codec_) {
