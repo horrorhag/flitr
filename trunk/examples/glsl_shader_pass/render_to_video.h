@@ -84,6 +84,7 @@ class RenderToVideo {
         geom->setColorBinding(osg::Geometry::BIND_OVERALL);
         osg::ref_ptr<osg::StateSet> geomss = geom->getOrCreateStateSet();
         geomss->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+        geomss->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
         geomss->setTextureAttributeAndModes(0, 
                                             tex,
                                             osg::StateAttribute::ON);
@@ -108,7 +109,8 @@ class RenderToVideo {
         Camera_->setClearColor(osg::Vec4(0.1f,0.1f,0.3f,1.0f));
         Camera_->setClearMask(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Camera_->setProjectionMatrix(osg::Matrix::ortho2D(0,TotalWidth_,0,TotalHeight_));
+        Camera_->setProjectionMatrixAsOrtho(0,TotalWidth_,0,TotalHeight_,-100,100);
+        Camera_->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
         Camera_->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
         Camera_->setViewMatrix(osg::Matrix::identity());
         Camera_->setViewport(0, 0, TotalWidth_, TotalHeight_);
