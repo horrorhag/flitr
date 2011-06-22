@@ -25,42 +25,42 @@ using namespace flitr;
 
 void MultiFFmpegConsumerThread::run() 
 {
-	uint32_t num_writers = Consumer_->ImagesPerSlot_;
-	std::vector<Image**> imv;
-	
-	while (true) {
-		// check if image available
-		imv.clear();
-		imv = Consumer_->reserveReadSlot();
-		if (imv.size() >= num_writers) { // allow selection of some sources
-			OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(Consumer_->WritingMutex_);
-			if (Consumer_->Writing_) {
-				for (unsigned int i=0; i<num_writers; i++) {
-					Image* im = *(imv[i]);
-					Consumer_->FFmpegWriters_[i]->writeVideoFrame(im->data());
-					Consumer_->MetadataWriters_[i]->writeFrame(*im);
-				}
-			} else {
-				// just discard
-			}
-			// indicate we are done with the image/s
-			Consumer_->releaseReadSlot();
-		} else {
-			// wait a while
-			Thread::microSleep(10000);
-		}
-		// check for exit
-		if (ShouldExit_) {
-			break;
-		}
-	}
+    uint32_t num_writers = Consumer_->ImagesPerSlot_;
+    std::vector<Image**> imv;
+    
+    while (true) {
+        // check if image available
+        imv.clear();
+        imv = Consumer_->reserveReadSlot();
+        if (imv.size() >= num_writers) { // allow selection of some sources
+            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(Consumer_->WritingMutex_);
+            if (Consumer_->Writing_) {
+                for (unsigned int i=0; i<num_writers; i++) {
+                    Image* im = *(imv[i]);
+                    Consumer_->FFmpegWriters_[i]->writeVideoFrame(im->data());
+                    Consumer_->MetadataWriters_[i]->writeFrame(*im);
+                }
+            } else {
+                // just discard
+            }
+            // indicate we are done with the image/s
+            Consumer_->releaseReadSlot();
+        } else {
+            // wait a while
+            Thread::microSleep(10000);
+        }
+        // check for exit
+        if (ShouldExit_) {
+            break;
+        }
+    }
 }
 
 MultiFFmpegConsumer::MultiFFmpegConsumer(ImageProducer& producer,
-										 uint32_t images_per_slot) :
-	ImageConsumer(producer),
-	ImagesPerSlot_(images_per_slot),
-	Writing_(false)
+                                         uint32_t images_per_slot) :
+    ImageConsumer(producer),
+    ImagesPerSlot_(images_per_slot),
+    Writing_(false)
 {
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(producer.getFormat(i));
@@ -69,47 +69,49 @@ MultiFFmpegConsumer::MultiFFmpegConsumer(ImageProducer& producer,
 
 MultiFFmpegConsumer::~MultiFFmpegConsumer()
 {
-	Thread_->setExit();
-	Thread_->join();
+    closeFiles();
+
+    Thread_->setExit();
+    Thread_->join();
 }
 
 bool MultiFFmpegConsumer::init()
 {
-	FFmpegWriters_.resize(ImagesPerSlot_);
-	MetadataWriters_.resize(ImagesPerSlot_);
+    FFmpegWriters_.resize(ImagesPerSlot_);
+    MetadataWriters_.resize(ImagesPerSlot_);
 
-	Thread_ = new MultiFFmpegConsumerThread(this);
-	Thread_->startThread();
+    Thread_ = new MultiFFmpegConsumerThread(this);
+    Thread_->startThread();
     
     return true;
 }
 
 bool MultiFFmpegConsumer::openFiles(std::string basename)
 {
-	for (unsigned int i=0; i<ImagesPerSlot_; i++) {
-		char c_count[16];
-		sprintf(c_count, "%02d", i+1);
-		std::string new_base = basename + "_" + c_count;
-		std::string video_filename(new_base + ".avi");
-		std::string metadata_filename(new_base + ".meta");
-		
-		FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i]);
-		MetadataWriters_[i] = new MetadataWriter(metadata_filename);
-	}
+    for (unsigned int i=0; i<ImagesPerSlot_; i++) {
+        char c_count[16];
+        sprintf(c_count, "%02d", i+1);
+        std::string new_base = basename + "_" + c_count;
+        std::string video_filename(new_base + ".avi");
+        std::string metadata_filename(new_base + ".meta");
+        
+        FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i]);
+        MetadataWriters_[i] = new MetadataWriter(metadata_filename);
+    }
     return true;
 }
 
 bool MultiFFmpegConsumer::startWriting()
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
-	Writing_ = true;
+    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
+    Writing_ = true;
     return true;
 }
 
 bool MultiFFmpegConsumer::stopWriting()
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
-	Writing_ = false;
+    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
+    Writing_ = false;
     return true;
 }
 
@@ -117,7 +119,7 @@ bool MultiFFmpegConsumer::closeFiles()
 {
     stopWriting();
     
-	for (unsigned int i=0; i<ImagesPerSlot_; i++) {
+    for (unsigned int i=0; i<ImagesPerSlot_; i++) {
         if (FFmpegWriters_[i] != 0) {
             delete FFmpegWriters_[i];
             FFmpegWriters_[i] = 0;
@@ -126,6 +128,6 @@ bool MultiFFmpegConsumer::closeFiles()
             delete MetadataWriters_[i];
             MetadataWriters_[i] = 0;
         }
-	}
+    }
     return true;
 }
