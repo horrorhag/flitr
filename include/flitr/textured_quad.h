@@ -35,22 +35,31 @@ namespace flitr {
 
 class FLITR_EXPORT TexturedQuad {
   public:
-    TexturedQuad(osg::Image *in_image);
-    TexturedQuad(osg::TextureRectangle *in_tex);
-    TexturedQuad(osg::Texture2D *in_tex);
+    TexturedQuad(osg::Image* in_image);
+    TexturedQuad(osg::TextureRectangle* in_tex);
+    TexturedQuad(osg::Texture2D* in_tex);
     ~TexturedQuad();
+    void setTexture(osg::Image* in_image);
+    void setTexture(osg::TextureRectangle* in_tex);
+    void setTexture(osg::Texture2D* in_tex);
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
 
   private:
-    void buildGraph(bool use_normalised_coordinates);
+    void init();
+    void replaceGeom(bool use_normalised_coordinates);
     osg::ref_ptr<osg::Group> RootGroup_;
     osg::ref_ptr<osg::MatrixTransform> MatrixTransform_;
+    osg::ref_ptr<osg::Geode> Geode_;
 	osg::ref_ptr<osg::Geometry> Geom_;
     osg::ref_ptr<osg::StateSet> GeomStateSet_;
 
 	int Width_;
 	int Height_;
+
+    int OldWidth_;
+    int OldHeight_;
+    bool OldUseNormalised_;
 };
 
 }

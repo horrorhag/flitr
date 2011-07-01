@@ -26,54 +26,88 @@
 
 using namespace flitr;
 
-TexturedQuad::TexturedQuad(osg::Image *in_image)
+TexturedQuad::TexturedQuad(osg::Image* in_image)
 {
-	Width_ = in_image->s();
+    init();
+    setTexture(in_image);
+}
+
+void TexturedQuad::setTexture(osg::Image* in_image)
+{
+    Width_ = in_image->s();
     Height_ = in_image->t();
 
     osg::ref_ptr<osg::TextureRectangle> trect = new osg::TextureRectangle;
     trect->setImage(in_image);
-        
-    buildGraph(false);
 
+    replaceGeom(false);
     GeomStateSet_->setTextureAttributeAndModes(0, 
                                                trect.get(),
                                                osg::StateAttribute::ON);
 }
 
-TexturedQuad::TexturedQuad(osg::TextureRectangle *in_tex)
+TexturedQuad::TexturedQuad(osg::TextureRectangle* in_tex)
+{
+    init();
+    setTexture(in_tex);
+}
+
+void TexturedQuad::setTexture(osg::TextureRectangle* in_tex)
 {
 	Width_  = in_tex->getTextureWidth();
     Height_ = in_tex->getTextureHeight();
 
-    buildGraph(false);
-
+    replaceGeom(false);
     GeomStateSet_->setTextureAttributeAndModes(0, 
                                                in_tex,
                                                osg::StateAttribute::ON);
 }
 
-TexturedQuad::TexturedQuad(osg::Texture2D *in_tex)
+TexturedQuad::TexturedQuad(osg::Texture2D* in_tex)
+{
+    init();
+    setTexture(in_tex);
+}
+
+void TexturedQuad::setTexture(osg::Texture2D* in_tex)
 {
 	Width_  = in_tex->getTextureWidth();
     Height_ = in_tex->getTextureHeight();
 
-    buildGraph(true);
-
+    replaceGeom(true);
     GeomStateSet_->setTextureAttributeAndModes(0, 
                                                in_tex,
                                                osg::StateAttribute::ON);
 }
 
-void TexturedQuad::buildGraph(bool use_normalised_coordinates)
+void TexturedQuad::init()
 {
+    OldWidth_ = -1;
+    OldHeight_ = -1;
+    OldUseNormalised_ = false;
+
     RootGroup_ = new osg::Group;
-
     MatrixTransform_ = new osg::MatrixTransform; // identity
-    RootGroup_->addChild(MatrixTransform_.get());
+    Geode_ = new osg::Geode();
 
-	// create quad to display image on
-    osg::ref_ptr<osg::Geode> geode = new osg::Geode();
+    RootGroup_->addChild(MatrixTransform_.get());
+    MatrixTransform_->addChild(Geode_.get());
+}
+ 
+void TexturedQuad::replaceGeom(bool use_normalised_coordinates)
+{
+    // initial Old* values will cause this to pass on first call at least
+    if (Width_ == OldWidth_ &&
+        Height_ == OldHeight_ &&
+        use_normalised_coordinates == OldUseNormalised_) 
+    {
+        return;
+    }
+    OldWidth_ = Width_;
+    OldHeight_ = Height_;
+    OldUseNormalised_ = use_normalised_coordinates;
+
+    Geode_->removeDrawables(0, Geode_->getNumDrawables());
     
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
     colors->push_back(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
@@ -109,9 +143,7 @@ void TexturedQuad::buildGraph(bool use_normalised_coordinates)
 	GeomStateSet_ = Geom_->getOrCreateStateSet();
     GeomStateSet_->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
 
-    geode->addDrawable(Geom_.get());
-  
-    MatrixTransform_->addChild(geode.get());
+    Geode_->addDrawable(Geom_.get());
 }
 
 TexturedQuad::~TexturedQuad()
