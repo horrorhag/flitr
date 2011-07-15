@@ -102,6 +102,6 @@ void GeometryOverlay::flipVerticalCoordinates(double im_height)
     osg::Matrixd t;
     t.makeTranslate(osg::Vec3d(0,im_height,0));
     r.makeRotate(osg::DegreesToRadians(180.0), osg::Vec3d(1,0,0));
-    // if viewed from a coordinate's perspective, translate up z and then flip around x
+    // if viewed from a coordinate's perspective, translate up y and then flip around x
     setCoordinateTransform(r*t);
 }
