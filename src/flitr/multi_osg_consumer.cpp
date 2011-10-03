@@ -136,7 +136,7 @@ bool TMultiOSGConsumer<T>::init()
                 break;
             }
 
-            OutputTextures_[h].push_back(new osg::TextureRectangle());
+            OutputTextures_[h].push_back(new T());
             OutputTextures_[h][i]->setImage(OSGImages_[h][i].get());
             OutputTextures_[h][i]->setTextureWidth(ImageFormat_[i].getWidth());
             OutputTextures_[h][i]->setTextureHeight(ImageFormat_[i].getHeight());
