@@ -29,33 +29,24 @@
 #include <osg/Image>
 #include <osg/TextureRectangle>
 
+#include <flitr/flitr_config.h>
+#ifdef FLITR_WITH_OSGCUDA
+#include <osgCuda/Texture>
+#endif
+
 #include <flitr/image_consumer.h>
 
 namespace flitr {
 
-class MultiOSGConsumer;
-
-/// Thread to discard images if a client cannot read fast enough. This
-/// prevents overflow in the producer by discarding all images except
-/// the latest one. 
-class MultiOSGConsumerThread : public OpenThreads::Thread {
-  public: 
-    MultiOSGConsumerThread(MultiOSGConsumer *consumer) :
-        Consumer_(consumer),
-        ShouldExit_(false) {}
-    void run();
-    void setExit() { ShouldExit_ = true; }
-  private:
-    MultiOSGConsumer *Consumer_;
-    bool ShouldExit_;
-};
+class MultiOSGConsumerThread;
 
 /**
  * A consumer that takes images from a producer (possibly with many
  * streams) and creates images and textures for consumption in OSG.
  * 
  */
-class FLITR_EXPORT MultiOSGConsumer : public ImageConsumer {
+template<class T>
+class FLITR_EXPORT TMultiOSGConsumer : public ImageConsumer {
     friend class MultiOSGConsumerThread;
   public:
     /** 
@@ -71,11 +62,11 @@ class FLITR_EXPORT MultiOSGConsumer : public ImageConsumer {
      * than the history requested here.
      * 
      */
-    MultiOSGConsumer(ImageProducer& producer, 
-                     uint32_t images_per_slot, 
-                     uint32_t images_in_history = 1);
+    TMultiOSGConsumer(ImageProducer& producer, 
+                      uint32_t images_per_slot, 
+                      uint32_t images_in_history = 1);
 		
-    ~MultiOSGConsumer();
+    ~TMultiOSGConsumer();
     /** 
      * The init method is used after construction to be able to return
      * success or failure of initialisation.
@@ -115,9 +106,9 @@ class FLITR_EXPORT MultiOSGConsumer : public ImageConsumer {
      * \param tex_number The specific source or stream in the selected slot.
      * \param tex_age How far in history to select a slot. 0 is the latest.
      * 
-     * \return Pointer to an osg::TextureRectangle.
+     * \return Pointer to an osg or osgCuda TextureRectangle.
      */
-    osg::TextureRectangle* getOutputTexture(uint32_t tex_number = 0, uint32_t tex_age = 0);
+    T* getOutputTexture(uint32_t tex_number = 0, uint32_t tex_age = 0);
 
     /** 
      * Update all textures if new images are available from the producer. A single update is performed. E.g. a getNext() should follow each update or trigger of the producer.
@@ -141,7 +132,7 @@ class FLITR_EXPORT MultiOSGConsumer : public ImageConsumer {
     /// Buffer of OSG images that just wrap our producer's data.
     std::vector< std::vector< osg::ref_ptr <osg::Image> > > OSGImages_;
     /// Textures that can be used in OSG.
-    std::vector< std::vector< osg::ref_ptr <osg::TextureRectangle> > > OutputTextures_;
+    std::vector< std::vector< osg::ref_ptr <T> > > OutputTextures_;
     /// Images to be used at initialisation for textures.
     std::vector< osg::ref_ptr<osg::Image> > DummyImages_;
 
@@ -151,6 +142,27 @@ class FLITR_EXPORT MultiOSGConsumer : public ImageConsumer {
     /// Background thread to discard images if getNext() cannot be
     /// called fast enough.
     std::tr1::shared_ptr<MultiOSGConsumerThread> Thread_;
+};
+
+#ifdef FLITR_WITH_OSGCUDA
+    typedef TMultiOSGConsumer<osgCuda::TextureRectangle> MultiOSGConsumer;
+#else
+    typedef TMultiOSGConsumer<osg::TextureRectangle> MultiOSGConsumer;
+#endif
+
+/// Thread to discard images if a client cannot read fast enough. This
+/// prevents overflow in the producer by discarding all images except
+/// the latest one. 
+class MultiOSGConsumerThread : public OpenThreads::Thread {
+  public: 
+    MultiOSGConsumerThread(MultiOSGConsumer *consumer) :
+        Consumer_(consumer),
+        ShouldExit_(false) {}
+    void run();
+    void setExit() { ShouldExit_ = true; }
+  private:
+    MultiOSGConsumer *Consumer_;
+    bool ShouldExit_;
 };
 
 }

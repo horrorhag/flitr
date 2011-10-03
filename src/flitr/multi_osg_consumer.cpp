@@ -60,9 +60,10 @@ void MultiOSGConsumerThread::run()
 	}
 }
 
-MultiOSGConsumer::MultiOSGConsumer(ImageProducer& producer,
-								   uint32_t images_per_slot,
-                                   uint32_t images_in_history) :
+template<class T>
+TMultiOSGConsumer<T>::TMultiOSGConsumer(ImageProducer& producer,
+                                        uint32_t images_per_slot,
+                                        uint32_t images_in_history) :
 	ImageConsumer(producer),
 	ImagesPerSlot_(images_per_slot),
     ImagesInHistory_(images_in_history),
@@ -73,7 +74,8 @@ MultiOSGConsumer::MultiOSGConsumer(ImageProducer& producer,
     }
 }
 
-MultiOSGConsumer::~MultiOSGConsumer()
+template<class T>
+TMultiOSGConsumer<T>::~TMultiOSGConsumer()
 {
     if (Thread_->isRunning()) {
         Thread_->setExit();
@@ -81,7 +83,8 @@ MultiOSGConsumer::~MultiOSGConsumer()
     }
 }
 
-bool MultiOSGConsumer::init()
+template<class T>
+bool TMultiOSGConsumer<T>::init()
 {
     OSGImages_.resize(ImagesInHistory_);
     OutputTextures_.resize(ImagesInHistory_);
@@ -149,12 +152,14 @@ bool MultiOSGConsumer::init()
 	return true;
 }
 
-void MultiOSGConsumer::startDiscardThread()
+template<class T>
+void TMultiOSGConsumer<T>::startDiscardThread()
 {
     Thread_->startThread();
 }
 
-osg::Image* MultiOSGConsumer::getOSGImage(uint32_t im_number, uint32_t im_age)
+template<class T>
+osg::Image* TMultiOSGConsumer<T>::getOSGImage(uint32_t im_number, uint32_t im_age)
 {
 	// \todo check input num and input age
 
@@ -165,12 +170,14 @@ osg::Image* MultiOSGConsumer::getOSGImage(uint32_t im_number, uint32_t im_age)
 	return OSGImages_[read_pos][im_number].get();
 }
 
-osg::TextureRectangle* MultiOSGConsumer::getOutputTexture(uint32_t tex_number, uint32_t tex_age)
+template<class T>
+T* TMultiOSGConsumer<T>::getOutputTexture(uint32_t tex_number, uint32_t tex_age)
 {
     return OutputTextures_[tex_age][tex_number].get();
 }
 
-bool MultiOSGConsumer::getNext()
+template<class T>
+bool TMultiOSGConsumer<T>::getNext()
 {
     // if we are busy with all images, release one
     if (getNumReadSlotsReserved() == ImagesInHistory_) {
@@ -219,3 +226,10 @@ bool MultiOSGConsumer::getNext()
 	}
 	return false;
 }
+
+#ifdef FLITR_WITH_OSGCUDA
+    template class FLITR_EXPORT TMultiOSGConsumer<osgCuda::TextureRectangle>; // explicit instantiation
+#else
+    template class FLITR_EXPORT TMultiOSGConsumer<osg::TextureRectangle>; // explicit instantiation
+#endif
+
