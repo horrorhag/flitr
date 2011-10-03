@@ -46,6 +46,9 @@ IF(FLITR_PROFILE)
   ADD_DEFINITIONS(-DFLITR_PROFILE)
 ENDIF(FLITR_PROFILE)
 
+OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda is installed." OFF)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h.in ${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h)
+
 # to get e.g. UINT64_C or UINT64_MAX from stdint.h
 ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
 

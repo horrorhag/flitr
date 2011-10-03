@@ -1,0 +1,30 @@
+/* Framework for Live Image Transformation (FLITr) 
+ * Copyright (c) 2010 CSIR
+ * 
+ * This file is part of FLITr.
+ *
+ * FLITr is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * FLITr is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with FLITr. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+/* This file is generated when CMake executes. The settings
+ * can be adjusted at configure time using the CMake UI.
+ */
+
+#ifndef FLITR_CONFIG_H
+#define FLITR_CONFIG_H 1
+
+#cmakedefine FLITR_WITH_OSGCUDA
+
+#endif // FLITR_CONFIG_H
