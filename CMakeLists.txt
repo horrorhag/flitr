@@ -46,8 +46,12 @@ IF(FLITR_PROFILE)
   ADD_DEFINITIONS(-DFLITR_PROFILE)
 ENDIF(FLITR_PROFILE)
 
-OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda is installed." OFF)
+OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda and CUDA is installed." OFF)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h.in ${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h)
+
+IF(FLITR_WITH_OSGCUDA)
+FIND_PACKAGE(CUDA 4.0 REQUIRED)
+ENDIF()
 
 # to get e.g. UINT64_C or UINT64_MAX from stdint.h
 ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
@@ -140,13 +144,14 @@ ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
-
+ADD_SUBDIRECTORY(examples/points_overlay)
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
   ADD_SUBDIRECTORY(examples/screen_capture)
 ENDIF()
-
-ADD_SUBDIRECTORY(examples/points_overlay)
+IF(FLITR_WITH_OSGCUDA)
+  ADD_SUBDIRECTORY(examples/cuda_histogram_equalisation)
+ENDIF()
 
 # Add postfix if on 64-bit
 IF(UNIX AND NOT WIN32 AND NOT APPLE)
