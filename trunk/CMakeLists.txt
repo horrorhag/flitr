@@ -150,7 +150,7 @@ IF(NOT APPLE)
   ADD_SUBDIRECTORY(examples/screen_capture)
 ENDIF()
 IF(FLITR_WITH_OSGCUDA)
-  ADD_SUBDIRECTORY(examples/cuda_histogram_equalisation)
+  ADD_SUBDIRECTORY(examples/cuda_auto_contrast)
 ENDIF()
 
 # Add postfix if on 64-bit

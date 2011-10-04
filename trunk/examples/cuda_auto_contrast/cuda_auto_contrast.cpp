@@ -1,3 +1,23 @@
+/* Framework for Live Image Transformation (FLITr) 
+ * Copyright (c) 2010 CSIR
+ * 
+ * This file is part of FLITr.
+ *
+ * FLITr is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * FLITr is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with FLITr. If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
 #include <iostream>
 #include <string>
 
@@ -12,15 +32,18 @@
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
 
-#include "cuda_histogram_equalisation_pass.h"
+#include "cuda_auto_contrast_pass.h"
 
 using std::tr1::shared_ptr;
 using namespace flitr;
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
-        std::cout << "Usage: " << argv[0] << " video_file\n";
+    osg::ArgumentParser arguments(&argc, argv);
+
+    if (argc < 2) {
+        std::cout << "Usage: " << argv[0] << " video_file [--stretch]\n";
+        std::cout << "Default is histogram equalisation, use --stretch for contrast stretch.\n";
         return 1;
     }
 
@@ -32,20 +55,33 @@ int main(int argc, char *argv[])
 
     osg::Group* root_node = new osg::Group;
 
-
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ffp,1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
 
-    // Test CUDA histogram equalization
+    bool useStretch = false;
+    while (arguments.read("--stretch")) { useStretch = true; }
+    
+    // Test CUDA auto contrast
     ImageFormat imgFormat = ffp->getFormat();
-    CUDAHistogramEqualisationPass* CUDAHistEq = new CUDAHistogramEqualisationPass(osgc->getOutputTexture(0,0), imgFormat);
-    root_node->addChild(CUDAHistEq->getRoot().get());
+    CUDAAutoContrastPass* CUDAPass;
+    if (useStretch) {
+        CUDAPass = new CUDAAutoContrastPass(
+        osgc->getOutputTexture(0,0), 
+        imgFormat,
+        CUDAAutoContrastPass::CONTRAST_STRETCH);
+    } else {
+        CUDAPass = new CUDAAutoContrastPass(
+        osgc->getOutputTexture(0,0), 
+        imgFormat,
+        CUDAAutoContrastPass::HISTOGRAM_EQUALISATION);
+    }
+    root_node->addChild(CUDAPass->getRoot().get());
     
     //shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
-    shared_ptr<TexturedQuad> quad(new TexturedQuad(CUDAHistEq->getOutputTexture()));
+    shared_ptr<TexturedQuad> quad(new TexturedQuad(CUDAPass->getOutputTexture()));
 
     root_node->addChild(quad->getRoot().get());
 
