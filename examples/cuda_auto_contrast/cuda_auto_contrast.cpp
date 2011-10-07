@@ -33,6 +33,7 @@
 #include <flitr/ortho_texture_manipulator.h>
 
 #include "cuda_auto_contrast_pass.h"
+#include "simple_shader_pass.h"
 
 using std::tr1::shared_ptr;
 using namespace flitr;
@@ -61,6 +62,10 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
+    shared_ptr<SimpleShaderPass> ssp(new SimpleShaderPass(osgc->getOutputTexture()));
+    ssp->setShader("simple.frag");
+    root_node->addChild(ssp->getRoot().get());
+
     bool useStretch = false;
     while (arguments.read("--stretch")) { useStretch = true; }
     
@@ -69,18 +74,20 @@ int main(int argc, char *argv[])
     CUDAAutoContrastPass* CUDAPass;
     if (useStretch) {
         CUDAPass = new CUDAAutoContrastPass(
-        osgc->getOutputTexture(0,0), 
+            ssp->getOutputTexture(),
+            //osgc->getOutputTexture(),
         imgFormat,
         CUDAAutoContrastPass::CONTRAST_STRETCH);
     } else {
         CUDAPass = new CUDAAutoContrastPass(
-        osgc->getOutputTexture(0,0), 
+            ssp->getOutputTexture(), 
+            //osgc->getOutputTexture(),
         imgFormat,
         CUDAAutoContrastPass::HISTOGRAM_EQUALISATION);
     }
     root_node->addChild(CUDAPass->getRoot().get());
     
-    //shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
+    //shared_ptr<TexturedQuad> quad(new TexturedQuad(ssp->getOutputTexture()));
     shared_ptr<TexturedQuad> quad(new TexturedQuad(CUDAPass->getOutputTexture()));
 
     root_node->addChild(quad->getRoot().get());
