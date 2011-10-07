@@ -43,10 +43,17 @@ int main(int argc, char *argv[])
     osg::ArgumentParser arguments(&argc, argv);
 
     if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " video_file [--stretch]\n";
+        std::cout << "Usage: " << argv[0] << " video_file [--stretch] [--shader]\n";
         std::cout << "Default is histogram equalisation, use --stretch for contrast stretch.\n";
+        std::cout << "Add --shader to include a simple shader pass prior to CUDA processing.\n";
         return 1;
     }
+
+    bool useStretch = false;
+    while (arguments.read("--stretch")) { useStretch = true; }
+
+    bool useShader = false;
+    while (arguments.read("--shader")) { useShader = true; }
 
     shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     if (!ffp->init()) {
@@ -62,32 +69,26 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    shared_ptr<SimpleShaderPass> ssp(new SimpleShaderPass(osgc->getOutputTexture()));
-    ssp->setShader("simple.frag");
-    root_node->addChild(ssp->getRoot().get());
-
-    bool useStretch = false;
-    while (arguments.read("--stretch")) { useStretch = true; }
+    osg::ref_ptr<osgCuda::TextureRectangle> cuda_input_texture;
+    
+    if (useShader) {
+        shared_ptr<SimpleShaderPass> ssp(new SimpleShaderPass(osgc->getOutputTexture()));
+        ssp->setShader("simple.frag");
+        root_node->addChild(ssp->getRoot().get());
+        cuda_input_texture = ssp->getOutputTexture();
+    } else {
+        cuda_input_texture = osgc->getOutputTexture();
+    }
     
     // Test CUDA auto contrast
     ImageFormat imgFormat = ffp->getFormat();
-    CUDAAutoContrastPass* CUDAPass;
-    if (useStretch) {
-        CUDAPass = new CUDAAutoContrastPass(
-            ssp->getOutputTexture(),
-            //osgc->getOutputTexture(),
-        imgFormat,
-        CUDAAutoContrastPass::CONTRAST_STRETCH);
-    } else {
-        CUDAPass = new CUDAAutoContrastPass(
-            ssp->getOutputTexture(), 
-            //osgc->getOutputTexture(),
-        imgFormat,
-        CUDAAutoContrastPass::HISTOGRAM_EQUALISATION);
-    }
+    CUDAAutoContrastPass* CUDAPass = new CUDAAutoContrastPass(
+            cuda_input_texture,
+            imgFormat,
+            useStretch ? CUDAAutoContrastPass::CONTRAST_STRETCH : CUDAAutoContrastPass::HISTOGRAM_EQUALISATION);
+    
     root_node->addChild(CUDAPass->getRoot().get());
     
-    //shared_ptr<TexturedQuad> quad(new TexturedQuad(ssp->getOutputTexture()));
     shared_ptr<TexturedQuad> quad(new TexturedQuad(CUDAPass->getOutputTexture()));
 
     root_node->addChild(quad->getRoot().get());
