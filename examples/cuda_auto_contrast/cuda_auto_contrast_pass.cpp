@@ -30,7 +30,8 @@ using namespace flitr;
 
 extern "C"
 void cu_histeq(const dim3& blocks, const dim3& threads, 
-               void* trgBuffer, void* srcBuffer,
+               void* trgBuffer, int trgPitch, 
+               void* srcBuffer, int srcPitch,
                unsigned int imageWidth, unsigned int imageHeight);
 
 extern "C"
@@ -129,12 +130,17 @@ void CModuleAutoContrast::launch()
     if( isClear() )
         return;
 
+    void* trg = m_rpTargetMem->map();
+    int trgPitch = m_rpTargetMem->getPitch();
+    void* src = m_rpSrcMem->map(osgCompute::MAP_DEVICE_SOURCE);
+    int srcPitch = m_rpSrcMem->getPitch();
+
     // Execute kernels
     if (m_pOwner->m_Method == CUDAAutoContrastPass::HISTOGRAM_EQUALISATION) {
         cu_histeq(
             m_vBlocks, m_vThreads,
-            m_rpTargetMem->map(),
-            m_rpSrcMem->map(osgCompute::MAP_DEVICE_SOURCE),
+            trg, trgPitch,
+            src, srcPitch,
             m_rpTargetMem->getDimension(0),
             m_rpTargetMem->getDimension(1)
             );

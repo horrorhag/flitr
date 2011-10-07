@@ -28,10 +28,11 @@
 #include <thrust/binary_search.h>
 
 __global__ 
-void kernel_histeq(uchar4* trg, 
-                   unsigned int imageWidth, unsigned int imageHeight, float scale, 
-                   int* histTbl, 
-                   unsigned char* src)
+void kernel_histeq(uchar4* trg, int trg_pitch,
+                   unsigned char* src, int src_pitch,
+                   unsigned int imageWidth, unsigned int imageHeight, 
+                   float scale, 
+                   int* histTbl)
 {
     // compute thread dimension
     unsigned int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -39,11 +40,13 @@ void kernel_histeq(uchar4* trg,
     
     if ( x < imageWidth && y < imageHeight )
     {
-        unsigned int idx = x + y*imageWidth;
-        unsigned char in_pix = src[idx];
+        unsigned int src_idx = x + (y * (src_pitch / sizeof(unsigned char)));
+        unsigned int trg_idx = x + (y * (trg_pitch / sizeof(uchar4)));
+
+        unsigned char in_pix = src[src_idx];
         unsigned char out_pix = 255 * ((float)(histTbl[in_pix]) / scale);
         
-        trg[idx] = make_uchar4(out_pix, out_pix, out_pix, 1);
+        trg[trg_idx] = make_uchar4(out_pix, out_pix, out_pix, 1);
     }
 }
 
@@ -69,7 +72,8 @@ struct contrast_functor
 ///////////////////////////////////////////////////////////////////////////////////////////
 extern "C"
 void cu_histeq(const dim3& blocks, const dim3& threads, 
-               void* trgBuffer, void* srcBuffer,
+               void* trgBuffer, int trgPitch, 
+               void* srcBuffer, int srcPitch,
                unsigned int imageWidth, unsigned int imageHeight)
 {
     thrust::device_ptr<unsigned char> d_data( reinterpret_cast<unsigned char*>(srcBuffer) );
@@ -93,12 +97,14 @@ void cu_histeq(const dim3& blocks, const dim3& threads,
                         search_begin + num_bins,
                         d_cumulative_histogram.begin());
   
-    int *d_ptr = thrust::raw_pointer_cast(&d_cumulative_histogram[0]);
+    int* histogram_ptr = thrust::raw_pointer_cast(&d_cumulative_histogram[0]);
     kernel_histeq<<< blocks, threads >>>( 
-        reinterpret_cast<uchar4*>(trgBuffer), 
-        imageWidth, imageHeight, imageWidth*imageHeight, 
-        d_ptr, 
-        reinterpret_cast<unsigned char*>(srcBuffer));
+        reinterpret_cast<uchar4*>(trgBuffer), trgPitch,
+        reinterpret_cast<unsigned char*>(srcBuffer), srcPitch,
+        imageWidth, imageHeight, 
+        imageWidth*imageHeight, 
+        histogram_ptr
+        );
 }
 
 extern "C"
