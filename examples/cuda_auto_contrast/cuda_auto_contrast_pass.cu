@@ -21,6 +21,8 @@
 #ifndef CUDA_AUTO_CONTRAST_CU
 #define CUDA_AUTO_CONTRAST_CU 1
 
+#include "pitched_2d_range.h"
+
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
 #include <thrust/sort.h>
@@ -50,6 +52,25 @@ void kernel_histeq(uchar4* trg, int trg_pitch,
     }
 }
 
+/// From count determine if we are in 2d bounds
+struct in_2d_bound
+{
+    const int width;
+    const int padded_width;
+    const bool no_padding;
+
+    in_2d_bound(int w, int pw) :
+        width(w), padded_width(pw), no_padding(width == padded_width) {}
+
+    __host__ __device__
+    bool operator()(const int x)
+    {
+        if (no_padding) return true;
+
+        return (x % padded_width) < width;
+    }
+};
+
 /// Functor to do contrast stretch
 struct contrast_functor
 {
@@ -76,23 +97,30 @@ void cu_histeq(const dim3& blocks, const dim3& threads,
                void* srcBuffer, int srcPitch,
                unsigned int imageWidth, unsigned int imageHeight)
 {
-    thrust::device_ptr<unsigned char> d_data( reinterpret_cast<unsigned char*>(srcBuffer) );
-    int sz = imageWidth*imageHeight;
-    //thrust::sort(d_data, d_data+sz);
- 
+    thrust::device_ptr<unsigned char> src_data( reinterpret_cast<unsigned char*>(srcBuffer) );
+    
+    int src_padded_size = srcPitch/sizeof(unsigned char) * imageHeight;
+    int src_size = imageWidth * imageHeight;
+    
+    //thrust::sort(src_data, src_data+src_padded_size);
     // A copy is needed to in-place sort, because we still need the unsorted later
-    thrust::device_vector<unsigned char> d_dataCpy(sz);
-    thrust::copy(d_data, d_data+sz, d_dataCpy.begin());
-
-    thrust::sort(d_dataCpy.begin(), d_dataCpy.end() );
+    // we must cater for padded 2d input data, but pack it tightly for sort
+    thrust::device_vector<unsigned char> src_data_copy(src_size);
+    in_2d_bound copy_pred(imageWidth, srcPitch/sizeof(unsigned char));
+    thrust::copy_if(src_data, src_data+src_padded_size, 
+                    thrust::counting_iterator<int>(0),
+                    src_data_copy.begin(),
+                    copy_pred);
+    
+    thrust::sort(src_data_copy.begin(), src_data_copy.end());
 
     const int num_bins = 256;
     thrust::device_vector<int> d_cumulative_histogram(num_bins);
     
     // find the end of each bin of values
     thrust::counting_iterator<int> search_begin(0);
-    thrust::upper_bound(d_dataCpy.begin(),
-                        d_dataCpy.end(),
+    thrust::upper_bound(src_data_copy.begin(),
+                        src_data_copy.end(),
                         search_begin,
                         search_begin + num_bins,
                         d_cumulative_histogram.begin());
@@ -109,22 +137,35 @@ void cu_histeq(const dim3& blocks, const dim3& threads,
 
 extern "C"
 void cu_contrast_stretch(const dim3& blocks, const dim3& threads, 
-                         void* trgBuffer, void* srcBuffer,
+                         void* trgBuffer, int trgPitch, 
+                         void* srcBuffer, int srcPitch,
                          unsigned int imageWidth, unsigned int imageHeight)
 {
     thrust::device_ptr<unsigned char> s_data( reinterpret_cast<unsigned char*>(srcBuffer) );
     thrust::device_ptr<uchar4> t_data( reinterpret_cast<uchar4*>(trgBuffer) );
 
-    int sz = imageWidth*imageHeight;
+    int src_padded_size = srcPitch/sizeof(unsigned char) * imageHeight;
+    int trg_padded_size = trgPitch/sizeof(uchar4) * imageHeight;
 
-    thrust::pair<thrust::device_ptr<unsigned char>, thrust::device_ptr<unsigned char> > minmax = thrust::minmax_element(s_data, s_data + sz);
+    // create iterators to skip padded elements
+    typedef thrust::device_vector<unsigned char>::iterator src_it_type;
+    pitched_2d_range<src_it_type> 
+        src_it(s_data, s_data + src_padded_size, 
+               imageWidth, srcPitch/sizeof(unsigned char));
+
+    typedef thrust::device_vector<uchar4>::iterator trg_it_type;
+    pitched_2d_range<trg_it_type> 
+        trg_it(t_data, t_data + trg_padded_size, imageWidth, trgPitch/sizeof(uchar4));
+
+    thrust::pair<pitched_2d_range<src_it_type>::iterator, 
+                 pitched_2d_range<src_it_type>::iterator> minmax = thrust::minmax_element(src_it.begin(), src_it.end());
     unsigned char immin = *minmax.first;
     unsigned char immax = *minmax.second;
     int scale = immax - immin;
     
     contrast_functor f(immin, scale);
 
-    thrust::transform(s_data, s_data+sz, t_data, f);
+    thrust::transform(src_it.begin(), src_it.end(), trg_it.begin(), f);
 }
 
 

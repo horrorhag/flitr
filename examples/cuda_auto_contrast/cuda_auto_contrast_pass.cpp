@@ -36,7 +36,8 @@ void cu_histeq(const dim3& blocks, const dim3& threads,
 
 extern "C"
 void cu_contrast_stretch(const dim3& blocks, const dim3& threads, 
-                         void* trgBuffer, void* srcBuffer,
+                         void* trgBuffer, int trgPitch, 
+                         void* srcBuffer, int srcPitch,
                          unsigned int imageWidth, unsigned int imageHeight);
 
 CUDAAutoContrastPass::CUDAAutoContrastPass(
@@ -147,8 +148,8 @@ void CModuleAutoContrast::launch()
     } else {
         cu_contrast_stretch(
             m_vBlocks, m_vThreads,
-            m_rpTargetMem->map(),
-            m_rpSrcMem->map(osgCompute::MAP_DEVICE_SOURCE),
+            trg, trgPitch,
+            src, srcPitch,
             m_rpTargetMem->getDimension(0),
             m_rpTargetMem->getDimension(1)
             );
