@@ -37,7 +37,7 @@ FIND_PATH(AVFORMAT_PATH avformat.h PATHS /usr/local/include/libavformat /usr/inc
 
 FIND_PATH(SWSCALE_PATH swscale.h PATHS /usr/local/include/libswscale /usr/include/ffmpeg /usr/include/ffmpeg/libswscale /usr/include/libswscale /opt/local/include/libswscale ${FLITR_3RDPARTY_ROOT}/include/libswscale)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR};${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR} /usr/local/lib /opt/local/lib ${FLITR_3RDPARTY_ROOT}/lib ${FLITR_3RDPARTY_ROOT}/bin)
 
@@ -142,6 +142,7 @@ ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
+ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 ADD_SUBDIRECTORY(examples/points_overlay)
