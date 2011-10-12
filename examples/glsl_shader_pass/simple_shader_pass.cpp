@@ -1,14 +1,16 @@
 #include "simple_shader_pass.h"
 
-SimpleShaderPass::SimpleShaderPass(osg::TextureRectangle *in_tex)
+SimpleShaderPass::SimpleShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
 
     RootGroup_ = new osg::Group;
     InTexture_ = in_tex;
+    OutTexture_=0;
+    OutImage_=0;
    
-    createOutputTexture();
+    createOutputTexture(read_back_to_CPU);
 
     Camera_ = new osg::Camera;
     
@@ -96,9 +98,14 @@ void SimpleShaderPass::setupCamera()
 
 	// attach the texture and use it as the color buffer.
 	Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutTexture_.get());
+
+	if (OutImage_!=0)
+        {
+	    Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutImage_.get());
+        }
 }
 
-void SimpleShaderPass::createOutputTexture()
+void SimpleShaderPass::createOutputTexture(bool read_back_to_CPU)
 {
     OutTexture_ = new osg::TextureRectangle;
     
@@ -106,6 +113,13 @@ void SimpleShaderPass::createOutputTexture()
     OutTexture_->setInternalFormat(GL_RGBA);
     OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
     OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
+
+    if (read_back_to_CPU)
+    {
+        OutImage_ = new osg::Image;
+        OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
+                                 GL_RGBA, GL_UNSIGNED_BYTE);
+    }
     
     // hdr
     //OutTexture_->setInternalFormat(GL_RGBA16F_ARB);
