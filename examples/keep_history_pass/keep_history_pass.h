@@ -16,7 +16,7 @@ class KeepHistoryPass {
     KeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size);
     ~KeepHistoryPass();
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
-    osg::ref_ptr<osg::TextureRectangle> getOutputTexture(int age=0) { return OutTextures_[age]; }
+    osg::ref_ptr<osg::TextureRectangle> getOutputTexture(int age=0);
     void setShader(std::string filename);
 	
   private:
@@ -38,6 +38,7 @@ class KeepHistoryPass {
 
     int HistorySize_;
     int OverwriteIndex_;
+    int ValidHistory_;
     bool FirstPass_;
 
     struct CameraCullCallback : public osg::NodeCallback 

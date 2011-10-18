@@ -25,6 +25,7 @@ void KeepHistoryPass::CameraPostDrawCallback::operator()(osg::RenderInfo& ri) co
 KeepHistoryPass::KeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size) :
     HistorySize_(hist_size),
     OverwriteIndex_(0),
+    ValidHistory_(0),
     FirstPass_(true)
 {
     TextureWidth_ = in_tex->getTextureWidth();
@@ -43,7 +44,8 @@ KeepHistoryPass::KeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size) :
 
     RootGroup_->addChild(Camera_.get());
 
-    //setShader("");
+    // make sure other state doesn't bleed into here, attach empty shader
+    setShader("");
 }
 
 KeepHistoryPass::~KeepHistoryPass()
@@ -140,15 +142,32 @@ void KeepHistoryPass::createOutputTextures()
     }
 }
 
+osg::ref_ptr<osg::TextureRectangle> KeepHistoryPass::getOutputTexture(int age) 
+{
+    // get to within valid range
+    age = age % HistorySize_;
+
+    // textures are bound before frame calls or rendering
+    if (age > ValidHistory_) {
+        age = ValidHistory_;
+    }
+
+    // the latest texture would be in OverwriteIndex_
+    int t = (HistorySize_ + OverwriteIndex_ - age) % HistorySize_;
+
+    return OutTextures_[t]; 
+}
+
 void KeepHistoryPass::setShader(std::string filename)
 {
-    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
-    fshader->loadShaderSourceFromFile(filename);
-
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
 
-    FragmentProgram_->addShader(fshader.get());
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT );
+    if (filename != "") {
+        fshader->loadShaderSourceFromFile(filename);
+        FragmentProgram_->addShader(fshader.get());
+    }
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
@@ -157,7 +176,6 @@ void KeepHistoryPass::frameDone()
 {
     FirstPass_ = false;
     OverwriteIndex_++;
-    if (OverwriteIndex_ >= HistorySize_) {
-        OverwriteIndex_ -= HistorySize_;
-    }
+    OverwriteIndex_ = OverwriteIndex_ % HistorySize_;
+    ValidHistory_++;
 }
