@@ -142,8 +142,8 @@ bool TMultiOSGConsumer<T>::init()
             OutputTextures_[h][i]->setTextureHeight(ImageFormat_[i].getHeight());
             //OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
             //OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
-            //OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
-            //OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
+            OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
+            OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
         }	
     }
 	Thread_ = std::tr1::shared_ptr<MultiOSGConsumerThread>(
