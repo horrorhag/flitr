@@ -71,9 +71,9 @@ int main(int argc, char *argv[])
     while(!viewer.done()) {
         ffp->trigger();
         if (osgc->getNext()) {
+            // rewire so the latest texture is on the left
             for (int i=0; i< history_size; i++) {
-                int index = (history_size + frame_count - i) % history_size;
-                quad_vec[i]->setTexture(hp->getOutputTexture(index));
+                quad_vec[i]->setTexture(hp->getOutputTexture(i));
             }
             viewer.frame();
             frame_count++;
