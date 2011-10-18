@@ -44,6 +44,7 @@ class FLITR_EXPORT TexturedQuad {
     void setTexture(osg::Texture2D* in_tex);
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
+    void setShader(std::string filename);
 
   private:
     void init();
@@ -53,6 +54,7 @@ class FLITR_EXPORT TexturedQuad {
     osg::ref_ptr<osg::Geode> Geode_;
 	osg::ref_ptr<osg::Geometry> Geom_;
     osg::ref_ptr<osg::StateSet> GeomStateSet_;
+    osg::ref_ptr<osg::Program> FragmentProgram_;
 
 	int Width_;
 	int Height_;

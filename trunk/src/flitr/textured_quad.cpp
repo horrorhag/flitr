@@ -80,6 +80,20 @@ void TexturedQuad::setTexture(osg::Texture2D* in_tex)
                                                osg::StateAttribute::ON);
 }
 
+void TexturedQuad::setShader(std::string filename)
+{
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
+    fshader->loadShaderSourceFromFile(filename);
+
+    FragmentProgram_ = 0;
+    FragmentProgram_ = new osg::Program;
+
+    FragmentProgram_->addShader(fshader.get());
+
+    GeomStateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
+    GeomStateSet_->addUniform(new osg::Uniform("inputTexture", 0));
+}
+
 void TexturedQuad::init()
 {
     OldWidth_ = -1;
@@ -89,6 +103,7 @@ void TexturedQuad::init()
     RootGroup_ = new osg::Group;
     MatrixTransform_ = new osg::MatrixTransform; // identity
     Geode_ = new osg::Geode();
+    Geode_->setCullingActive(false);
 
     RootGroup_->addChild(MatrixTransform_.get());
     MatrixTransform_->addChild(Geode_.get());
