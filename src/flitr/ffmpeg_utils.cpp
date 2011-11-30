@@ -29,6 +29,9 @@ PixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_f
       case ImageFormat::FLITR_PIX_FMT_RGB_8:
         return PIX_FMT_RGB24;
         break;
+      case ImageFormat::FLITR_PIX_FMT_Y_16:
+        return PIX_FMT_GRAY16LE;
+        break;
       default:
         // \todo maybe return error
         return PIX_FMT_GRAY8;

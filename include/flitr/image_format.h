@@ -34,7 +34,8 @@ class FLITR_EXPORT ImageFormat {
   public:
     enum PixelFormat {
         FLITR_PIX_FMT_Y_8 = 1, 
-        FLITR_PIX_FMT_RGB_8 = 2
+        FLITR_PIX_FMT_RGB_8 = 2,
+        FLITR_PIX_FMT_Y_16 = 3
     };
     
     ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8):
@@ -67,6 +68,9 @@ class FLITR_EXPORT ImageFormat {
             break;
           case FLITR_PIX_FMT_RGB_8:
             BytesPerPixel_ = 3;
+            break;
+          case FLITR_PIX_FMT_Y_16:
+            BytesPerPixel_ = 2;
             break;
           default:
             // \todo maybe return error

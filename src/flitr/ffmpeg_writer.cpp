@@ -64,7 +64,11 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 #endif
 
     // video file
+    if (SaveFrameFormat_ == PIX_FMT_GRAY16LE) {
+        OutputFormat_ = av_guess_format("matroska", NULL, NULL);
+    } else {
     OutputFormat_ = av_guess_format("avi", NULL, NULL);
+    }
     
     if (!OutputFormat_) {
 		logMessage(LOG_CRITICAL) << "Cannot set video format.\n";
@@ -110,11 +114,14 @@ AVStream *FFmpegWriter::addVideoStream(AVFormatContext *fc, int codec_id)
 	//cc->coder_type = FF_CODER_TYPE_RAW;
 	//cc->coder_type = FF_CODER_TYPE_RLE;
 	
+    if(fc->oformat->flags & AVFMT_GLOBALHEADER) {
+        cc->flags |= CODEC_FLAG_GLOBAL_HEADER;
+    }
 
     /* put sample parameters */
     //cc->bit_rate = 4000000;
     //cc->bit_rate = 6000000;
-    cc->bit_rate = 100000000;
+    //cc->bit_rate = 100000000;
     
     /* resolution must be a multiple of two */
     cc->width = ImageFormat_.getWidth();
@@ -243,20 +250,21 @@ bool FFmpegWriter::openVideoFile()
 
 bool FFmpegWriter::closeVideoFile()
 {
-    avcodec_close(VideoStream_->codec);
     av_write_trailer(FormatContext_);
     
-    for(unsigned int i=0; i < FormatContext_->nb_streams; i++) {
-		av_freep(&FormatContext_->streams[i]->codec);
-		av_freep(&FormatContext_->streams[i]);
-    }
-
 // check for lib version > 52.1.0
 #if LIBAVFORMAT_VERSION_INT > ((52<<16) + (1<<8) + 0)    
     url_fclose(FormatContext_->pb);
 #else
     url_fclose(&FormatContext_->pb);
 #endif
+
+    avcodec_close(VideoStream_->codec);
+    
+    for(unsigned int i=0; i < FormatContext_->nb_streams; i++) {
+		av_freep(&FormatContext_->streams[i]->codec);
+		av_freep(&FormatContext_->streams[i]);
+    }
 
     av_free(FormatContext_);
 	

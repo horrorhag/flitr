@@ -109,7 +109,6 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 #if defined FLITR_USE_SWSCALE
     ConvertFormatCtx_ = sws_getContext(
         ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt, 
-        //ImageFormat_.getWidth(), ImageFormat_.getHeight(), out_ffmpeg_pix_fmt,                    
         ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,                 
         SWS_BILINEAR, NULL, NULL, NULL);
 #endif
