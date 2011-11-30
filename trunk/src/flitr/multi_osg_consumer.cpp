@@ -106,6 +106,12 @@ bool TMultiOSGConsumer<T>::init()
                                            1, 
                                            GL_RGB, GL_UNSIGNED_BYTE);
             break;
+          case ImageFormat::FLITR_PIX_FMT_Y_16:
+            DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1, 
+                                           GL_LUMINANCE, GL_UNSIGNED_SHORT);
+            break;
           default:
             // \todo report error
             break;
@@ -120,14 +126,25 @@ bool TMultiOSGConsumer<T>::init()
               case ImageFormat::FLITR_PIX_FMT_Y_8:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
+                                           1, 
+                                           GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
               case ImageFormat::FLITR_PIX_FMT_RGB_8:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                           1, 
+                                           GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                           DummyImages_[i]->data(),
+                                           osg::Image::NO_DELETE);
+                break;
+              case ImageFormat::FLITR_PIX_FMT_Y_16:
+                
+                OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1, 
+                                           GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT, 
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
@@ -194,14 +211,24 @@ bool TMultiOSGConsumer<T>::getNext()
               case ImageFormat::FLITR_PIX_FMT_Y_8:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
-                                                          1, GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
+                                                          1, 
+                                                          GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
               case ImageFormat::FLITR_PIX_FMT_RGB_8:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
-                                                          1, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                                          1, 
+                                                          GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                                          im->data(),
+                                                          osg::Image::NO_DELETE);
+                break;
+              case ImageFormat::FLITR_PIX_FMT_Y_16:
+                OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                                                          ImageFormat_[i].getHeight(),
+                                                          1, 
+                                                          GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT, 
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;

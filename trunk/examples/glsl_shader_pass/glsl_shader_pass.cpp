@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
     shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     if (!ffp->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";

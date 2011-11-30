@@ -24,6 +24,8 @@
 #include <flitr/flitr_stdint.h>
 #include <flitr/high_resolution_time.h>
 #include <flitr/log_message.h>
+#include <flitr/flitr_export.h>
+#include <flitr/flitr_config.h>
 
 #include <string>
 
@@ -38,7 +40,7 @@ class FLITR_EXPORT StatsCollector {
         ttick_(0),
         tick_count_(0),
         ttock_(0),
-        min_(18446744073709551615ULL),
+        min_(18446744073709551615ULL), //UINT64_MAX
         max_(0),
         tick_count_at_max_(0),
         sum_(0)
@@ -97,7 +99,7 @@ class FLITR_EXPORT StatsCollector {
 
 #else
 
-class StatsCollector {
+class FLITR_EXPORT StatsCollector {
   public:
     StatsCollector(std::string ID) {}
     ~StatsCollector() {}

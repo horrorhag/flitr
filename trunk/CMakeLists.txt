@@ -41,12 +41,8 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR};${CMAKE_SOURCE_DIR}/include;/usr/local/i
 
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR} /usr/local/lib /opt/local/lib ${FLITR_3RDPARTY_ROOT}/lib ${FLITR_3RDPARTY_ROOT}/bin)
 
-OPTION(FLITR_PROFILE "Enable profiling code" ON)
-IF(FLITR_PROFILE)
-  ADD_DEFINITIONS(-DFLITR_PROFILE)
-ENDIF(FLITR_PROFILE)
-
-OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda and CUDA is installed." OFF)
+OPTION(FLITR_PROFILE "Enable profiling code." ON)
+OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda and CUDA are installed." OFF)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h.in ${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h)
 
 IF(FLITR_WITH_OSGCUDA)

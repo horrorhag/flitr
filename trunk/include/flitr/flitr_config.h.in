@@ -25,6 +25,7 @@
 #ifndef FLITR_CONFIG_H
 #define FLITR_CONFIG_H 1
 
+#cmakedefine FLITR_PROFILE
 #cmakedefine FLITR_WITH_OSGCUDA
 
 #endif // FLITR_CONFIG_H
