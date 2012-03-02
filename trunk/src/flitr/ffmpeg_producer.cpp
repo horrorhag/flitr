@@ -57,6 +57,11 @@ bool FFmpegProducer::seek(uint32_t position)
 	bool seek_result = Reader_->getImage(*(*(imvec[0])), seek_to);
     CurrentImage_ = Reader_->getCurrentImage();
 	
+    if (CreateMetadataFunction_) 
+    {
+      (*(imvec[0]))->setMetadata(CreateMetadataFunction_());
+    }
+
     releaseWriteSlot();
 	
     return seek_result;
