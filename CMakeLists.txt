@@ -71,6 +71,7 @@ SET(LIB_SOURCES
   src/flitr/ortho_texture_manipulator.cpp
   src/flitr/points_overlay.cpp
   src/flitr/quad_overlay.cpp
+  src/flitr/plot2D_overlay.cpp
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
   
@@ -99,6 +100,7 @@ SET(LIB_SOURCES
   include/flitr/ortho_texture_manipulator.h
   include/flitr/points_overlay.h
   include/flitr/quad_overlay.h
+  include/flitr/plot2D_overlay.h
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
@@ -144,7 +146,7 @@ ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 ADD_SUBDIRECTORY(examples/points_overlay)
-
+#ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/hud_overlay)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
