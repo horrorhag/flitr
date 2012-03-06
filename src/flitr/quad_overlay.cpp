@@ -91,3 +91,13 @@ void QuadOverlay::setHeight(double height)
     _Height = height;
     updateQuad();
 }
+
+double QuadOverlay::getWidth() const
+{
+  return _Width;
+}
+double QuadOverlay::getHeight() const
+{
+  return _Height;
+}
+
