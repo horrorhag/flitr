@@ -53,6 +53,7 @@ ENDIF()
 ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
 
 SET(LIB_SOURCES
+  src/flitr/hud.cpp
   src/flitr/crosshair_overlay.cpp
   src/flitr/ffmpeg_producer.cpp
   src/flitr/ffmpeg_reader.cpp
@@ -74,6 +75,7 @@ SET(LIB_SOURCES
   src/flitr/textured_quad.cpp
   
   #find include/ | grep .h | grep -v .svn | sort
+  include/flitr/hud.h
   include/flitr/crosshair_overlay.h
   include/flitr/ffmpeg_producer.h
   include/flitr/ffmpeg_reader.h
@@ -142,6 +144,9 @@ ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 ADD_SUBDIRECTORY(examples/points_overlay)
+
+ADD_SUBDIRECTORY(examples/hud_overlay)
+
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
   ADD_SUBDIRECTORY(examples/screen_capture)
