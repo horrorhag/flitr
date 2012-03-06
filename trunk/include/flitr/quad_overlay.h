@@ -79,6 +79,9 @@ class FLITR_EXPORT QuadOverlay : public GeometryOverlay
      */
     void setHeight(double height);
 
+    double getWidth() const;
+    double getHeight() const;
+
   private:
     void makeQuad(bool filled);
     void updateQuad();
