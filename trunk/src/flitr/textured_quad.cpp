@@ -101,8 +101,10 @@ void TexturedQuad::init()
     OldUseNormalised_ = false;
 
     RootGroup_ = new osg::Group;
+    RootGroup_->setName("flitr_textured_quad");
     MatrixTransform_ = new osg::MatrixTransform; // identity
     Geode_ = new osg::Geode();
+    Geode_->setName("flitr_textured_quad");
     Geode_->setCullingActive(false);
 
     RootGroup_->addChild(MatrixTransform_.get());
@@ -149,9 +151,11 @@ void TexturedQuad::replaceGeom(bool use_normalised_coordinates)
     vcoords->push_back(osg::Vec3d(0, Height_, 0));
 
     Geom_ = new osg::Geometry;
+    Geom_->setName("flitr_textured_quad");
     Geom_->setVertexArray(vcoords.get());
     Geom_->setTexCoordArray(0,tcoords.get());
     osg::ref_ptr<osg::DrawArrays> da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
+    da->setName("flitr_textured_quad");
     Geom_->addPrimitiveSet(da.get());
     Geom_->setColorArray(colors.get());
     Geom_->setColorBinding(osg::Geometry::BIND_OVERALL);
