@@ -64,7 +64,6 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
                 const double axisU, const double axisV);
     void update();
 
-    osg::ref_ptr<osg::Vec3Array> _axisVertices;
     osg::ref_ptr<osg::Vec3Array> _plotVertices;
 
     std::vector< std::pair<double, double> > plot_;
@@ -76,10 +75,17 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
     double axisU_;    
     double axisV_;    
 
-    osg::ref_ptr<osg::Geode> _AxisGeode;
-    osg::ref_ptr<osg::StateSet> _AxisGeometryStateSet;
-    osg::ref_ptr<osg::Material> _AxisGeometryMaterial;
-    osg::Vec4d _AxisGeometryColour;
+    osg::ref_ptr<osg::Geode> _AxisFrntGeode;
+    osg::ref_ptr<osg::StateSet> _AxisFrntGeometryStateSet;
+    osg::ref_ptr<osg::Material> _AxisFrntGeometryMaterial;
+    osg::Vec4d _AxisFrntGeometryColour;
+    osg::ref_ptr<osg::Vec3Array> _axisFrntVertices;
+
+    osg::ref_ptr<osg::Geode> _AxisBckGeode;
+    osg::ref_ptr<osg::StateSet> _AxisBckGeometryStateSet;
+    osg::ref_ptr<osg::Material> _AxisBckGeometryMaterial;
+    osg::Vec4d _AxisBckGeometryColour;
+    osg::ref_ptr<osg::Vec3Array> _axisBckVertices;
 
     osg::ref_ptr<osg::Geode> _PlotGeode;
 };
