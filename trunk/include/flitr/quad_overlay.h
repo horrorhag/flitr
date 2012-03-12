@@ -64,7 +64,8 @@ class FLITR_EXPORT QuadOverlay : public GeometryOverlay
      * \param y The new y position of the quad center.
      */
     void setCenter(double x, double y);
-    
+    void getCenter(double &x, double &y);
+
     /** 
      * Adjusts the width of the quad.
      * 
