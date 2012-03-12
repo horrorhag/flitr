@@ -32,7 +32,9 @@ Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width,
     axisU_(axisU),
     axisV_(axisV)
 {
-    _axisVertices = new osg::Vec3Array;
+    _axisBckVertices = new osg::Vec3Array;
+    _axisFrntVertices = new osg::Vec3Array;
+
     _plotVertices = new osg::Vec3Array;
 
     create(x_, y_, width_, height_, axisU_, axisV_);
@@ -40,7 +42,7 @@ Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width,
     dirtyBound();
 
     setColour(osg::Vec4d(0.7,1.0,0.7,0.5));
-    setAxisColour(osg::Vec4d(0.3,0.3,0.3,0.75));
+    setAxisColour(osg::Vec4d(0.7,1.0,0.7,0.75));
 }
 
 void Plot2DOverlay::create(const double x, const double y, const double width, const double height, 
@@ -52,38 +54,83 @@ void Plot2DOverlay::create(const double x, const double y, const double width, c
     _GeometryGroup->addChild(_PlotGeode.get());
     _PlotGeode->setCullingActive(false);
 	
-    update();
+    update();//Update also called when plot modified.
     
 	
 //=====================//
 
 //=====================//
 //=== Axis geometry ===//
-    _AxisGeode = new osg::Geode();
-    _GeometryGroup->addChild(_AxisGeode.get());
-    _AxisGeode->setCullingActive(false);
+    _AxisBckGeode = new osg::Geode();
+    _AxisBckGeode->setCullingActive(false);
 
-    osg::ref_ptr<osg::Geometry> axisGeometry = new osg::Geometry();
+    osg::ref_ptr<osg::Geometry> axisBckGeometry = new osg::Geometry();
 
-    _AxisGeometryStateSet = _AxisGeode->getOrCreateStateSet();
-    _AxisGeometryMaterial = new osg::Material();
-    _AxisGeometryColour=osg::Vec4d(0.3, 0.3, 0.3, 0.75);
+    _AxisBckGeometryStateSet = _AxisBckGeode->getOrCreateStateSet();
+    _AxisBckGeometryMaterial = new osg::Material();
+    _AxisBckGeometryStateSet->setAttributeAndModes(_AxisBckGeometryMaterial.get(), osg::StateAttribute::ON);
 
-    //Create axis.
-    _axisVertices->push_back(osg::Vec3d(x - 0.05*width,         y - 0.05*height,          0.0));
-    _axisVertices->push_back(osg::Vec3d(x + 0.05*width + width, y - 0.05*height,          0.0));
-    _axisVertices->push_back(osg::Vec3d(x + 0.05*width + width, y + 0.05*height + height, 0.0));
-    _axisVertices->push_back(osg::Vec3d(x - 0.05*width,         y + 0.05*height + height, 0.0));
+    _axisBckVertices->push_back(osg::Vec3d(x - 0.05*width,         y - 0.05*height,          0.0));
+    _axisBckVertices->push_back(osg::Vec3d(x + 0.05*width + width, y - 0.05*height,          0.0));
+    _axisBckVertices->push_back(osg::Vec3d(x + 0.05*width + width, y + 0.05*height + height, 0.0));
+    _axisBckVertices->push_back(osg::Vec3d(x - 0.05*width,         y + 0.05*height + height, 0.0));
 
-    axisGeometry->setVertexArray(_axisVertices.get());
+    axisBckGeometry->setVertexArray(_axisBckVertices.get());
     
-    osg::ref_ptr<osg::DrawArrays> axisDA=new osg::DrawArrays(osg::PrimitiveSet::QUADS,0, _axisVertices->size());
-    axisGeometry->addPrimitiveSet(axisDA.get());
-    axisGeometry->setUseDisplayList(false);
+    osg::ref_ptr<osg::DrawArrays> axisDABck=new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, _axisBckVertices->size());
+    axisBckGeometry->addPrimitiveSet(axisDABck.get());
 
-    _AxisGeode->addDrawable(axisGeometry.get());
+    axisBckGeometry->setUseDisplayList(false);
+
+    _AxisBckGeode->addDrawable(axisBckGeometry.get());
+    _axisBckVertices->dirty();
+
+
 	
-    _axisVertices->dirty();
+    _AxisFrntGeode = new osg::Geode();
+    _AxisFrntGeode->setCullingActive(false);
+
+    osg::ref_ptr<osg::Geometry> axisFrntGeometry = new osg::Geometry();
+
+    _AxisFrntGeometryStateSet = _AxisFrntGeode->getOrCreateStateSet();
+    _AxisFrntGeometryMaterial = new osg::Material();
+    _AxisFrntGeometryStateSet->setAttributeAndModes(_AxisFrntGeometryMaterial.get(), osg::StateAttribute::ON);
+
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.0*width, y,                   0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.0*width, y + height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.25*width, y,                   0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.25*width, y + height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.5*width, y,                   0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.5*width, y + height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.75*width, y,                   0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 0.75*width, y + height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 1.0*width, y,                   0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + 1.0*width, y + height,          0.0));
+
+    _axisFrntVertices->push_back(osg::Vec3d(x,         y + 0.0*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + width, y + 0.0*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x,         y + 0.25*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + width, y + 0.25*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x,         y + 0.5*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + width, y + 0.5*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x,         y + 0.75*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + width, y + 0.75*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x,         y + 1.0*height,          0.0));
+    _axisFrntVertices->push_back(osg::Vec3d(x + width, y + 1.0*height,          0.0));
+
+    axisFrntGeometry->setVertexArray(_axisFrntVertices.get());
+    
+    osg::ref_ptr<osg::DrawArrays> axisDAFrnt=new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, _axisFrntVertices->size());
+    axisFrntGeometry->addPrimitiveSet(axisDAFrnt.get());
+
+    axisFrntGeometry->setUseDisplayList(false);
+
+    _AxisFrntGeode->addDrawable(axisFrntGeometry.get());
+    _axisFrntVertices->dirty();
+
+    _GeometryGroup->addChild(_AxisFrntGeode.get());
+    _GeometryGroup->addChild(_AxisBckGeode.get());
+
     dirtyBound();
 //=====================//
 }
@@ -116,11 +163,14 @@ void Plot2DOverlay::update()
 
 void Plot2DOverlay::setAxisColour(osg::Vec4d newcol)
 {
-    _AxisGeometryColour = newcol;
-    _AxisGeometryMaterial->setAmbient(osg::Material::FRONT_AND_BACK, _AxisGeometryColour);
-    _AxisGeometryMaterial->setDiffuse(osg::Material::FRONT_AND_BACK, _AxisGeometryColour);
+    _AxisFrntGeometryColour = newcol;
+    _AxisFrntGeometryMaterial->setAmbient(osg::Material::FRONT_AND_BACK, _AxisFrntGeometryColour);
+    _AxisFrntGeometryMaterial->setDiffuse(osg::Material::FRONT_AND_BACK, _AxisFrntGeometryColour);
 
-    _AxisGeometryStateSet->setAttributeAndModes(_AxisGeometryMaterial.get(), osg::StateAttribute::ON);
+    _AxisBckGeometryColour = newcol * 0.5;
+    _AxisBckGeometryColour._v[3]=newcol._v[3];
+    _AxisBckGeometryMaterial->setAmbient(osg::Material::FRONT_AND_BACK, _AxisBckGeometryColour);
+    _AxisBckGeometryMaterial->setDiffuse(osg::Material::FRONT_AND_BACK, _AxisBckGeometryColour);
 }
 
 
