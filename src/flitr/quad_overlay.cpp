@@ -80,6 +80,12 @@ void QuadOverlay::setCenter(double x, double y)
     updateQuad();
 }
 
+void QuadOverlay::getCenter(double &x, double &y)
+{
+    x=_CenterX;
+    y=_CenterY;
+}
+
 void QuadOverlay::setWidth(double width)
 {
     _Width = width;
