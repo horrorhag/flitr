@@ -21,6 +21,12 @@
 #ifndef IMAGE_PRODUCER_H
 #define IMAGE_PRODUCER_H 1
 
+namespace flitr {
+//Prototype of class defined in this file in case of circular includes.		
+  class ImageProducer;
+}
+
+
 #include <boost/tr1/memory.hpp>
 
 #include <flitr/image.h>
