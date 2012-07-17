@@ -21,12 +21,16 @@
 #ifndef IMAGE_CONSUMER_H
 #define IMAGE_CONSUMER_H 1
 
+namespace flitr {
+//Prototype of class defined in this file in case of circular includes.	
+  class ImageConsumer;
+}
+
+
 #include <flitr/shared_image_buffer.h>
 
 namespace flitr {
 	
-class ImageProducer;
-
 /**
  * Base class for image consumers.
  * 
