@@ -1,6 +1,6 @@
 PROJECT(FLITr)
-
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3)
+
 
 # Set a default build type for single-configuration
 # CMake generators if no build type is set.
@@ -10,14 +10,13 @@ IF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
      FORCE)
 ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 
-SET(FLITR_3RDPARTY_ROOT "" CACHE PATH "Root directory where the 3rd party dependencies can be found")
 
 # compiler flags
-IF(WIN32)
+IF(MSVC)
   # VS automatically defines NDEBUG in Release builds 
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_NO_DEPRECATE /D _WIN32_WINNT=0x0501")
 ELSEIF(APPLE)
-  SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures…" FORCE)
+  SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures" FORCE)
 ELSE()
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
@@ -26,31 +25,62 @@ ELSE()
   SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
 ENDIF()
 
+
+# set up FLITR_3RDPARTY_ROOT. Should be used when all dependencies are in one folder. Some Windows users prefer this.
+SET(FLITR_3RDPARTY_ROOT "" CACHE PATH "Additional directory where the 3rd party dependencies can be found.")
 SET(CMAKE_PREFIX_PATH ${FLITR_3RDPARTY_ROOT})
 MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 
+
+# === find Boost ===
+    SET(Boost_USE_STATIC_LIBS ON CACHE BOOL "Link boost in statically")
+    SET(BOOST_ROOT "" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
+    
+    MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
+    #SET(Boost_USE_STATIC_LIBS OFF)
+    SET(Boost_USE_MULTITHREADED ON)
+    SET(Boost_ADDITIONAL_VERSIONS "1.49")
+
+    FIND_PACKAGE(Boost 1.49 REQUIRED COMPONENTS filesystem system)
+
+    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+    LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+
+    IF (NOT Boost_FOUND)
+      MESSAGE(FATAL_ERROR "Cannot find boost include dir, set BOOST_ROOT.")
+    ENDIF(NOT Boost_FOUND)
+# ==================
+
+
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
-FIND_PACKAGE(OpenSceneGraph 2.9.7 REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
+FIND_PACKAGE(OpenSceneGraph 3.0.1 REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
+INCLUDE_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIR})
+LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_DIRS})
+
 
 FIND_PATH(AVFORMAT_PATH avformat.h PATHS /usr/local/include/libavformat /usr/include/ffmpeg /usr/include/ffmpeg/libavformat /usr/include/libavformat /opt/local/include/libavformat ${FLITR_3RDPARTY_ROOT}/include/libavformat)
 #MESSAGE("avformat.h found here: ${AVFORMAT_PATH}")
-
 FIND_PATH(SWSCALE_PATH swscale.h PATHS /usr/local/include/libswscale /usr/include/ffmpeg /usr/include/ffmpeg/libswscale /usr/include/libswscale /opt/local/include/libswscale ${FLITR_3RDPARTY_ROOT}/include/libswscale)
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR};${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
 
+#default include and lib directories.
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR};${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR} /usr/local/lib /opt/local/lib ${FLITR_3RDPARTY_ROOT}/lib ${FLITR_3RDPARTY_ROOT}/bin)
+
 
 OPTION(FLITR_PROFILE "Enable profiling code." ON)
 OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda and CUDA are installed." OFF)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h.in ${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h)
 
+
 IF(FLITR_WITH_OSGCUDA)
 FIND_PACKAGE(CUDA 4.0 REQUIRED)
 ENDIF()
 
+
 # to get e.g. UINT64_C or UINT64_MAX from stdint.h
 ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
+
 
 SET(LIB_SOURCES
   src/flitr/hud.cpp
@@ -106,6 +136,7 @@ SET(LIB_SOURCES
   include/flitr/textured_quad.h
 )
 
+
 #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
 IF(NOT APPLE)
   SET(LIB_SOURCES
@@ -117,26 +148,32 @@ IF(NOT APPLE)
   )
 ENDIF()
 
+
 ADD_LIBRARY(flitr SHARED
   ${LIB_SOURCES}
 )
 
-IF(WIN32) 
-  TARGET_LINK_LIBRARIES(flitr opengl32 OpenThreads osg osgViewer osgDB osgGA avformat avutil avcodec swscale)
+
+IF(MSVC) 
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} avformat avutil avcodec swscale)
 ELSEIF(APPLE)
-  TARGET_LINK_LIBRARIES(flitr OpenThreads osg osgViewer osgDB osgGA avformat avutil avcodec swscale)
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} avformat avutil avcodec swscale)
 ELSE()
-TARGET_LINK_LIBRARIES(flitr m rt OpenThreads osg osgViewer osgDB osgGA avformat avutil avcodec swscale)
+TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} m rt OpenThreads ${OPENSCENEGRAPH_LIBRARIES} avformat avutil avcodec swscale)
 ENDIF()
+
 
 IF(FLITR_WITH_OSGCUDA)
   TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} osgCuda)
 ENDIF()
 
+
 SET_TARGET_PROPERTIES(flitr PROPERTIES COMPILE_FLAGS "-DFLITR_SHARED_LIBRARY")
+
 
 ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
+
 
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
@@ -149,13 +186,17 @@ ADD_SUBDIRECTORY(examples/points_overlay)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/hud_overlay)
 
+
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
   ADD_SUBDIRECTORY(examples/screen_capture)
 ENDIF()
+
+
 IF(FLITR_WITH_OSGCUDA)
   #ADD_SUBDIRECTORY(examples/cuda_auto_contrast)
 ENDIF()
+
 
 # Add postfix if on 64-bit
 IF(UNIX AND NOT WIN32 AND NOT APPLE)
@@ -165,10 +206,12 @@ IF(UNIX AND NOT WIN32 AND NOT APPLE)
   ENDIF()
 ENDIF()
 
+
 #default
 IF(NOT DEFINED LIB_INSTALL_POSTFIX)
     SET(LIB_INSTALL_POSTFIX "")
 ENDIF()
+
 
 #install
 INSTALL(
@@ -177,12 +220,19 @@ INSTALL(
   LIBRARY DESTINATION lib${LIB_INSTALL_POSTFIX}
   ARCHIVE DESTINATION lib${LIB_INSTALL_POSTFIX}/static
 )
+
+
 # for include files install
 ADD_SUBDIRECTORY(include)
 
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
+
+OPTION(FLITR_WITH_DOXYGEN "Generate the doxygen documentation." OFF)
+IF(FLITR_WITH_DOXYGEN)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
 	configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
 	add_custom_target(Doxygen ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Generate Doxygen documentation." VERBATIM)
-endif(DOXYGEN_FOUND)
+  endif(DOXYGEN_FOUND)
+  ENDIF(FLITR_WITH_DOXYGEN)
+
 
