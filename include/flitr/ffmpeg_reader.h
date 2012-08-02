@@ -37,6 +37,8 @@ extern "C" {
 # include <libavcodec/avcodec.h>	
 #else
 # include <avformat.h>
+# include <libavutil/mathematics.h>
+# include <libavcodec/avcodec.h>	
 #endif
 }
 
@@ -105,7 +107,7 @@ class FLITR_EXPORT FFmpegReader {
     static int lockManager(void **mutex, enum AVLockOp op);
 
     AVFormatContext *FormatContext_;
-    AVFormatParameters FormatParameters_;
+    //AVFormatParameters FormatParameters_;
     AVCodecContext *CodecContext_;
     AVCodec *Codec_;
     int VideoStreamIndex_;
