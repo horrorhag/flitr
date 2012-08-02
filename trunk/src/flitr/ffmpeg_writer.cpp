@@ -213,13 +213,19 @@ bool FFmpegWriter::openVideoFile()
 		return false;
     }
 
+#if LIBAVFORMAT_VERSION_INT < ((54<<16) + (21<<8) + 100)
     if (av_set_parameters(FormatContext_, NULL) < 0) {
         logMessage(LOG_CRITICAL) << "Cannot set video parameters.\n";
-		return false;
+        return false;
     }
+#endif
 
     if (getLogMessageCategory() & LOG_INFO) { 
-		dump_format(FormatContext_, 0, SaveFileName_.c_str(), 1);
+#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+        av_dump_format(FormatContext_, 0, SaveFileName_.c_str(), 1);
+#else
+        dump_format(FormatContext_, 0, SaveFileName_.c_str(), 1);
+#endif
     }
     
     // open video codec
@@ -236,13 +242,20 @@ bool FFmpegWriter::openVideoFile()
 		return false;
     }
 
-    if (url_fopen(&FormatContext_->pb, SaveFileName_.c_str(), URL_WRONLY) < 0) {
+#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+    if (avio_open(&FormatContext_->pb, SaveFileName_.c_str(), AVIO_FLAG_WRITE) < 0) {
+#else
+    if (url_fopen(&FormatContext_->pb, SaveFileName_.c_str(), URL_WRONLY) < 0)
+#endif
 		logMessage(LOG_CRITICAL) << "Cannot open video file " << SaveFileName_ << "\n";
 		return false;
     }
     
+#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+    avformat_write_header(FormatContext_,NULL);
+#else
     av_write_header(FormatContext_);
-
+#endif
     WrittenFrameCount_ = 0;
     
     return true;
@@ -253,11 +266,13 @@ bool FFmpegWriter::closeVideoFile()
     av_write_trailer(FormatContext_);
     
 // check for lib version > 52.1.0
-#if LIBAVFORMAT_VERSION_INT > ((52<<16) + (1<<8) + 0)    
-    url_fclose(FormatContext_->pb);
-#else
-    url_fclose(&FormatContext_->pb);
-#endif
+   #if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+       avio_close(FormatContext_->pb);
+   #elif LIBAVFORMAT_VERSION_INT > ((52<<16) + (1<<8) + 0)
+       url_fclose(FormatContext_->pb);
+   #else
+       url_fclose(&FormatContext_->pb);
+   #endif
 
     avcodec_close(VideoStream_->codec);
     

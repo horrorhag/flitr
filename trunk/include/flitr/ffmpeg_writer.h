@@ -41,6 +41,8 @@ extern "C" {
 # include <libavcodec/avcodec.h>	
 #else
 # include <avformat.h>
+# include <libavutil/mathematics.h>
+# include <libavcodec/avcodec.h>
 #endif
 }
 

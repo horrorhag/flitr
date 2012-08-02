@@ -51,7 +51,11 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     Codec_ = NULL;
   
     //int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, &FormatParameters_);
+#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+    int err = avformat_open_input(&FormatContext_, FileName_.c_str(), NULL, NULL);
+#else
     int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, NULL);
+#endif
 
     if (err < 0) {
         logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << "\n";
@@ -87,7 +91,11 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     // everything should be ready for decoding video
     
     if (getLogMessageCategory() & LOG_INFO) { 
+#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+        av_dump_format(FormatContext_, 0, FileName_.c_str(), 0);
+#else
         dump_format(FormatContext_, 0, FileName_.c_str(), 0);
+#endif
     }
     
     double duration_seconds = double(FormatContext_->duration) / 1e6;
