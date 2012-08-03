@@ -42,7 +42,7 @@ MACRO(FFMPEG_FIND varname shortname headername)
 #        /usr/freeware/include
 #        PATH_SUFFIXES ffmpeg
         DOC "Location of FFMPEG Headers"
-        NO_DEFAULT_PATH
+        #NO_DEFAULT_PATH
     )
 
     FIND_PATH(FFMPEG_${varname}_INCLUDE_DIRS ${headername}
@@ -60,7 +60,7 @@ MACRO(FFMPEG_FIND varname shortname headername)
 #        /usr/freeware/include
 #        PATH_SUFFIXES ffmpeg
         DOC "Location of FFMPEG Headers"
-        NO_DEFAULT_PATH
+        #NO_DEFAULT_PATH
     )
 
     FIND_LIBRARY(FFMPEG_${varname}_LIBRARIES
@@ -81,7 +81,7 @@ MACRO(FFMPEG_FIND varname shortname headername)
 #        /opt/lib
 #        /usr/freeware/lib64
         DOC "Location of FFMPEG Libraries"
-        NO_DEFAULT_PATH
+        #NO_DEFAULT_PATH
     )
 
 #    MESSAGE("${FFMPEG_${varname}_INCLUDE_DIRS}")
