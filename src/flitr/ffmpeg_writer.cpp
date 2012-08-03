@@ -245,7 +245,7 @@ bool FFmpegWriter::openVideoFile()
 #if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
     if (avio_open(&FormatContext_->pb, SaveFileName_.c_str(), AVIO_FLAG_WRITE) < 0) {
 #else
-    if (url_fopen(&FormatContext_->pb, SaveFileName_.c_str(), URL_WRONLY) < 0)
+    if (url_fopen(&FormatContext_->pb, SaveFileName_.c_str(), URL_WRONLY) < 0) {
 #endif
 		logMessage(LOG_CRITICAL) << "Cannot open video file " << SaveFileName_ << "\n";
 		return false;
