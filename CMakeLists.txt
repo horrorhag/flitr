@@ -13,6 +13,12 @@ ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 # We have some custom .cmake scripts not in the official distribution.
 SET(CMAKE_MODULE_PATH "${FLITr_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
+
+# append a "d" for debug builds
+# This gets inherited by all the libraries, but not by the executables
+SET(CMAKE_DEBUG_POSTFIX "d")
+
+
 # compiler flags
 IF(MSVC)
   # VS automatically defines NDEBUG in Release builds 
