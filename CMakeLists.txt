@@ -41,9 +41,9 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 
 
 # === find Boost ===
-    SET(Boost_USE_STATIC_LIBS ON CACHE BOOL "Link boost in statically")
+    SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
     SET(Boost_NO_SYSTEM_PATHS OFF CACHE BOOL "Search only BOOST_ROOT.")
-    SET(BOOST_ROOT "${CMAKE_SOURCE_DIR}/../boost_1_49_0" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
+    SET(BOOST_ROOT "" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
     
     MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     #SET(Boost_USE_STATIC_LIBS OFF)
@@ -56,10 +56,9 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
     IF (NOT Boost_FOUND)
-      MESSAGE(FATAL_ERROR "Cannot find boost include dir, set BOOST_ROOT.")
+      MESSAGE(FATAL_ERROR "Cannot find boost, set BOOST_ROOT.")
     ENDIF(NOT Boost_FOUND)
 # ==================
-
 
 
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
@@ -68,14 +67,24 @@ INCLUDE_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIR})
 LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_DIRS})
 
 
-SET(FFMPEG_ROOT "${CMAKE_SOURCE_DIR}/../cms_3rd_party/trunk/FFmpeg" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
-FIND_PACKAGE(FFmpeg)
-#FIND_PATH(AVFORMAT_PATH avformat.h PATHS /usr/local/include/libavformat /usr/include/ffmpeg /usr/include/ffmpeg/libavformat /usr/include/libavformat /opt/local/include/libavformat ${FLITR_3RDPARTY_ROOT}/include/libavformat)
-#MESSAGE("avformat.h found here: ${AVFORMAT_PATH}")
-#FIND_PATH(SWSCALE_PATH swscale.h PATHS /usr/local/include/libswscale /usr/include/ffmpeg /usr/include/ffmpeg/libswscale /usr/include/libswscale /opt/local/include/libswscale ${FLITR_3RDPARTY_ROOT}/include/libswscale)
-INCLUDE_DIRECTORIES(${FFMPEG_INCLUDE_DIRS})
-LINK_DIRECTORIES(${FFMPEG_LIBRARY_DIRS})
-#MESSAGE("${FFMPEG_INCLUDE_DIRS}")
+
+
+# === find FFmpeg ===
+    SET(FFmpeg_ROOT "" CACHE PATH "Path to search for custom FFmpeg library. Empty to use default paths.")
+    SET(FFmpeg_NO_SYSTEM_PATHS OFF CACHE BOOL "Search only FFmpeg_ROOT.")
+
+    FIND_PACKAGE(FFmpeg)
+
+    IF(FFmpeg_FOUND)
+      INCLUDE_DIRECTORIES(${FFmpeg_INCLUDE_DIRS})
+    ENDIF()
+
+    #MESSAGE("  FFmpeg_FOUND ${FFmpeg_FOUND}")
+
+    IF(NOT FFmpeg_FOUND)
+      MESSAGE(FATAL_ERROR "Cannot find FFmpeg, set FFmpeg_ROOT.")
+    ENDIF(NOT FFmpeg_FOUND)
+# ===================
 
 
 #default include and lib directories.
@@ -170,12 +179,12 @@ ADD_LIBRARY(flitr SHARED
 
 
 IF(MSVC) 
-  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFMPEG_LIBRARIES})
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSEIF(APPLE)
-  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFMPEG_LIBRARIES})
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSE()
 TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} m rt)
-TARGET_LINK_LIBRARIES(flitr ${FFMPEG_LIBRARIES})
+TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
 #TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
