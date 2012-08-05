@@ -1,106 +1,156 @@
 # Locate ffmpeg
 # This module defines
-# FFMPEG_LIBRARIES
-# FFMPEG_FOUND, if false, do not try to link to ffmpeg
-# FFMPEG_INCLUDE_DIR, where to find the headers
+# FFmpeg_LIBRARIES
+# FFmpeg_FOUND, if false, do not try to link to ffmpeg
+# FFmpeg_INCLUDE_DIR, where to find the headers
 #
 # $FFMPEG_DIR is an environment variable that would
 # correspond to the ./configure --prefix=$FFMPEG_DIR
 #
-# Created by Robert Osfield.
-# Adapted for CSIR,OSS by Bernardt Duvenhage
+# (Created by Robert Osfield for OpenSceneGraph.)
+# Adapted by Bernardt Duvenhage for FLITr.
 
 #In ffmpeg code, old version use "#include <header.h>" and newer use "#include <libname/header.h>"
-#In OSG ffmpeg plugin, we use "#include <header.h>" for compatibility with old version of ffmpeg
+#In FLItr, we use "#include <header.h>" for compatibility with old version of ffmpeg
 
 #We have to search the path which contain the header.h (usefull for old version)
 #and search the path which contain the libname/header.h (usefull for new version)
 
-#Then we need to include ${FFMPEG_libname_INCLUDE_DIRS} (in old version case, use by ffmpeg header and osg plugin code)
+#Then we need to include ${FFmpeg_libname_INCLUDE_DIRS} (in old version case, use by ffmpeg header)
 #                                                       (in new version case, use by ffmpeg header) 
-#and ${FFMPEG_libname_INCLUDE_DIRS/libname}             (in new version case, use by osg plugin code)
+#and ${FFmpeg_libname_INCLUDE_DIRS/libname}             (in new version case, potential use by FLITr code.)
 
+
+IF("${FFmpeg_ROOT}" STREQUAL "")
+    SET(FFmpeg_ROOT "$ENV{FFMPEG_DIR}")# CACHE PATH "Path to search for custom FFmpeg library.")
+ENDIF()
 
 # Macro to find header and lib directories
-# example: FFMPEG_FIND(AVFORMAT avformat avformat.h)
-MACRO(FFMPEG_FIND varname shortname headername)
+# example: FFmpeg_FIND(AVFORMAT avformat avformat.h)
+MACRO(FFmpeg_FIND varname shortname headername)
     # old version of ffmpeg put header in $prefix/include/[ffmpeg]
     # so try to find header in include directory
 
-    FIND_PATH(FFMPEG_${varname}_INCLUDE_DIRS lib${shortname}/${headername}
-        PATHS
-        ${FFMPEG_ROOT}/include
-#        $ENV{FFMPEG_DIR}/include
-#        ~/Library/Frameworks
-#        /Library/Frameworks
-#        /usr/local/include
-#        /usr/include
-#        /sw/include # Fink
-#        /opt/local/include # DarwinPorts
-#        /opt/csw/include # Blastwave
-#        /opt/include
-#        /usr/freeware/include
-#        PATH_SUFFIXES ffmpeg
-        DOC "Location of FFMPEG Headers"
-        #NO_DEFAULT_PATH
-    )
+SET(FFmpeg_${varname}_INCLUDE_DIRS FFmpeg_${varname}_INCLUDE_DIRS-NOTFOUND)
+SET(FFmpeg_${varname}_LIBRARIES FFmpeg_${varname}_LIBRARIES-NOTFOUND)
+SET(FFmpeg_${varname}_FOUND FALSE)
 
-    FIND_PATH(FFMPEG_${varname}_INCLUDE_DIRS ${headername}
-        PATHS
-        ${FFMPEG_ROOT}/include
-#        $ENV{FFMPEG_DIR}/include
-#        ~/Library/Frameworks
-#        /Library/Frameworks
-#        /usr/local/include
-#        /usr/include
-#        /sw/include # Fink
-#        /opt/local/include # DarwinPorts
-#        /opt/csw/include # Blastwave
-#        /opt/include
-#        /usr/freeware/include
-#        PATH_SUFFIXES ffmpeg
-        DOC "Location of FFMPEG Headers"
-        #NO_DEFAULT_PATH
-    )
+#Hide the FFmpeg components from standard view. FFmpeg_LIBAVFORMAT_LIBRARIES will be un-hidden later.
+MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_INCLUDE_DIRS)
+MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_LIBRARIES)
+MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
 
-    FIND_LIBRARY(FFMPEG_${varname}_LIBRARIES
-        NAMES ${shortname}
-        PATHS
-        ${FFMPEG_ROOT}/lib
-        ${FFMPEG_ROOT}/lib_lin32
-#        $ENV{FFMPEG_DIR}/lib
-#        ~/Library/Frameworks
-#        /Library/Frameworks
-#        /usr/local/lib
-#        /usr/local/lib64
-#        /usr/lib
-#        /usr/lib64
-#        /sw/lib
-#        /opt/local/lib
-#        /opt/csw/lib
-#        /opt/lib
-#        /usr/freeware/lib64
-        DOC "Location of FFMPEG Libraries"
-        #NO_DEFAULT_PATH
-    )
+    IF(FFmpeg_NO_SYSTEM_PATHS)
+        FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS lib${shortname}/${headername}
+            PATHS
+            ${FFmpeg_ROOT}/include
+            PATH_SUFFIXES ffmpeg
+            DOC "Location of FFmpeg Headers"
+            NO_DEFAULT_PATH
+        )
+    ELSE()
+        FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS lib${shortname}/${headername}
+            PATHS
+            ${FFmpeg_ROOT}/include
+            $ENV{FFMPEG_DIR}/includecc
+            ~/Library/Frameworks
+            /Library/Frameworks
+            /usr/local/include
+            /usr/include
+            /sw/include # Fink
+            /opt/local/include # DarwinPorts
+            /opt/csw/include # Blastwave
+            /opt/include
+            /usr/freeware/include
+            PATH_SUFFIXES ffmpeg
+            DOC "Location of FFmpeg Headers"
+        )
+    ENDIF()
 
-#    MESSAGE("${FFMPEG_${varname}_INCLUDE_DIRS}")
-#    MESSAGE("${FFMPEG_${varname}_LIBRARIES}")
+    IF(FFmpeg_NO_SYSTEM_PATHS)
+        FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS ${headername}
+            PATHS
+            ${FFmpeg_ROOT}/include
+            DOC "Location of FFmpeg Headers"
+            PATH_SUFFIXES ffmpeg
+            NO_DEFAULT_PATH
+        )
+    ELSE()
+        FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS ${headername}
+            PATHS
+            ${FFmpeg_ROOT}/include
+            $ENV{FFMPEG_DIR}/include
+            ~/Library/Frameworks
+            /Library/Frameworks
+            /usr/local/include
+            /usr/include
+            /sw/include # Fink
+            /opt/local/include # DarwinPorts
+            /opt/csw/include # Blastwave
+            /opt/include
+            /usr/freeware/include
+            PATH_SUFFIXES ffmpeg
+            DOC "Location of FFmpeg Headers"
+        )
+    ENDIF()
 
-    IF (FFMPEG_${varname}_LIBRARIES AND FFMPEG_${varname}_INCLUDE_DIRS)
-        SET(FFMPEG_${varname}_FOUND 1)
-    ENDIF(FFMPEG_${varname}_LIBRARIES AND FFMPEG_${varname}_INCLUDE_DIRS)
 
-ENDMACRO(FFMPEG_FIND)
+    IF(FFmpeg_NO_SYSTEM_PATHS)
+        FIND_LIBRARY(FFmpeg_${varname}_LIBRARIES
+            NAMES ${shortname}
+            PATHS
+            ${FFmpeg_ROOT}/lib
+            ${FFmpeg_ROOT}/lib_lin32
+            ${FFmpeg_ROOT}/lib_win32
+            DOC "Location of FFmpeg Libraries"
+            NO_DEFAULT_PATH
+        )
+    ELSE()
+        FIND_LIBRARY(FFmpeg_${varname}_LIBRARIES
+            NAMES ${shortname}
+            PATHS
+            ${FFmpeg_ROOT}/lib
+            ${FFmpeg_ROOT}/lib_lin32
+            ${FFmpeg_ROOT}/lib_win32
+            $ENV{FFMPEG_DIR}/lib
+            $ENV{FFMPEG_DIR}/lib_lin32
+            $ENV{FFMPEG_DIR}/lib_win32
+            ~/Library/Frameworks
+            /Library/Frameworks
+            /usr/local/lib
+            /usr/local/lib64
+            /usr/lib
+            /usr/lib64
+            /usr/lib/i386-linux-gnu
+            /sw/lib
+            /opt/local/lib
+            /opt/csw/lib
+            /opt/lib
+            /usr/freeware/lib64
+            DOC "Location of FFmpeg Libraries"
+        )
+    ENDIF()
 
-#SET(FFMPEG_ROOT "$ENV{FFMPEG_DIR}" CACHE PATH "Location of FFMPEG")
+    IF (FFmpeg_${varname}_LIBRARIES AND FFmpeg_${varname}_INCLUDE_DIRS)
+        SET(FFmpeg_${varname}_FOUND TRUE)
+    ELSE()
+        SET(FFmpeg_${varname}_FOUND FALSE)
+    ENDIF()
+
+    #MESSAGE("${FFmpeg_${varname}_INCLUDE_DIRS}")
+    #MESSAGE("${FFmpeg_${varname}_LIBRARIES}")
+    #MESSAGE("  FOUND ${FFmpeg_${varname}_FOUND}")
+
+ENDMACRO(FFmpeg_FIND)
+
+
 
 # find stdint.h
 IF(WIN32)
 
-    FIND_PATH(FFMPEG_STDINT_INCLUDE_DIR stdint.h
+    FIND_PATH(FFmpeg_STDINT_INCLUDE_DIR stdint.h
         PATHS
-        ${FFMPEG_ROOT}/include
+        ${FFmpeg_ROOT}/include
         $ENV{FFMPEG_DIR}/include
         ~/Library/Frameworks
         /Library/Frameworks
@@ -112,10 +162,10 @@ IF(WIN32)
         /opt/include
         /usr/freeware/include
         PATH_SUFFIXES ffmpeg
-        DOC "Location of FFMPEG stdint.h Header"
+        DOC "Location of FFmpeg stdint.h Header"
     )
 
-    IF (FFMPEG_STDINT_INCLUDE_DIR)
+    IF(FFmpeg_STDINT_INCLUDE_DIR)
         SET(STDINT_OK TRUE)
     ENDIF()
 
@@ -125,51 +175,62 @@ ELSE()
 
 ENDIF()
 
-FFMPEG_FIND(LIBAVFORMAT avformat avformat.h)
-FFMPEG_FIND(LIBAVDEVICE avdevice avdevice.h)
-FFMPEG_FIND(LIBAVCODEC  avcodec  avcodec.h)
-FFMPEG_FIND(LIBAVUTIL   avutil   avutil.h)
-FFMPEG_FIND(LIBSWSCALE  swscale  swscale.h)
 
-SET(FFMPEG_FOUND "NO")
+SET(FFmpeg_INCLUDE_DIRS FFmpeg_INCLUDE_DIRS-NOTFOUND)# CACHE STRING "docstring")
+SET(FFmpeg_LIBRARIES FFmpeg_LIBRARIES-NOTFOUND)# CACHE STRING "docstring")
+SET(FFmpeg_FOUND FALSE)
 
-IF   (FFMPEG_LIBAVFORMAT_FOUND AND FFMPEG_LIBAVDEVICE_FOUND AND FFMPEG_LIBAVCODEC_FOUND AND FFMPEG_LIBAVUTIL_FOUND AND FFMPEG_LIBSWSCALE_FOUND AND STDINT_OK)
 
-    SET(FFMPEG_FOUND "YES")
+FFmpeg_FIND(LIBAVFORMAT avformat avformat.h)
+FFmpeg_FIND(LIBAVDEVICE avdevice avdevice.h)
+FFmpeg_FIND(LIBAVCODEC  avcodec  avcodec.h)
+FFmpeg_FIND(LIBAVUTIL   avutil   avutil.h)
+FFmpeg_FIND(LIBSWSCALE  swscale  swscale.h)
 
-    SET(FFMPEG_INCLUDE_DIRS
-        ${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS} ${FFMPEG_LIBAVFORMAT_INCLUDE_DIRS}/libavformat
-        ${FFMPEG_LIBAVDEVICE_INCLUDE_DIRS} ${FFMPEG_LIBAVDEVICE_INCLUDE_DIRS}/libavdevice
-        ${FFMPEG_LIBAVCODEC_INCLUDE_DIRS} ${FFMPEG_LIBAVCODEC_INCLUDE_DIRS}/libavcodec
-        ${FFMPEG_LIBAVUTIL_INCLUDE_DIRS} ${FFMPEG_LIBAVUTIL_INCLUDE_DIRS}/libavutil
-        ${FFMPEG_LIBSWSCALE_INCLUDE_DIRS} ${FFMPEG_LIBSWSCALE_INCLUDE_DIRS}/libswscale
+
+MARK_AS_ADVANCED(CLEAR FFmpeg_LIBAVFORMAT_LIBRARIES) #Mark one lib as non-advanced to show where FFmpeg was found.
+
+
+IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_FOUND AND FFmpeg_LIBAVUTIL_FOUND AND FFmpeg_LIBSWSCALE_FOUND AND STDINT_OK)
+    SET(FFmpeg_FOUND TRUE)
+
+    SET(FFmpeg_INCLUDE_DIRS
+        ${FFmpeg_LIBAVFORMAT_INCLUDE_DIRS} ${FFmpeg_LIBAVFORMAT_INCLUDE_DIRS}/libavformat
+        ${FFmpeg_LIBAVDEVICE_INCLUDE_DIRS} ${FFmpeg_LIBAVDEVICE_INCLUDE_DIRS}/libavdevice
+        ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS} ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS}/libavcodec
+        ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS} ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS}/libavutil
+        ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS} ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS}/libswscale
+        #CACHE STRING  "docstring"
     )
 
-    IF (FFMPEG_STDINT_INCLUDE_DIR)
-        SET(FFMPEG_INCLUDE_DIRS
-            ${FFMPEG_INCLUDE_DIRS}
-            ${FFMPEG_STDINT_INCLUDE_DIR}
-            ${FFMPEG_STDINT_INCLUDE_DIR}/libavformat
-            ${FFMPEG_STDINT_INCLUDE_DIR}/libavdevice
-            ${FFMPEG_STDINT_INCLUDE_DIR}/libavcodec
-            ${FFMPEG_STDINT_INCLUDE_DIR}/libavutil
+    IF (FFmpeg_STDINT_INCLUDE_DIR)
+        SET(FFmpeg_INCLUDE_DIRS
+            ${FFmpeg_INCLUDE_DIRS}
+            ${FFmpeg_STDINT_INCLUDE_DIR}
+            ${FFmpeg_STDINT_INCLUDE_DIR}/libavformat
+            ${FFmpeg_STDINT_INCLUDE_DIR}/libavdevice
+            ${FFmpeg_STDINT_INCLUDE_DIR}/libavcodec
+            ${FFmpeg_STDINT_INCLUDE_DIR}/libavutil
+            ${FFmpeg_STDINT_INCLUDE_DIR}/libswscale
+            #CACHE  STRING  "docstring"
         )
     ENDIF()
 
+    SET(FFmpeg_LIBRARIES
+        ${FFmpeg_LIBAVFORMAT_LIBRARIES}
+        ${FFmpeg_LIBAVDEVICE_LIBRARIES}
+        ${FFmpeg_LIBAVCODEC_LIBRARIES}
+        ${FFmpeg_LIBAVUTIL_LIBRARIES}
+        ${FFmpeg_LIBSWSCALE_LIBRARIES}
+        #CACHE  STRING  "docstring"
+    )
 
-    SET(FFMPEG_LIBRARY_DIRS ${FFMPEG_LIBAVFORMAT_LIBRARY_DIRS})
+    #MESSAGE("  ${FFmpeg_INCLUDE_DIRS}")
+    #MESSAGE("  ${FFmpeg_LIBRARIES}")
 
-    SET(FFMPEG_LIBRARIES
-        ${FFMPEG_LIBAVFORMAT_LIBRARIES}
-        ${FFMPEG_LIBAVDEVICE_LIBRARIES}
-        ${FFMPEG_LIBAVCODEC_LIBRARIES}
-        ${FFMPEG_LIBAVUTIL_LIBRARIES}
-        ${FFMPEG_LIBSWSCALE_LIBRARIES})
-
-ELSE ()
-
-    SET(FFMPEG_FOUND "NO")
-
-    MESSAGE(STATUS "Could not find FFMPEG")
-
+ELSE()
+    MESSAGE("Could not find FFmpeg")
+    SET(FFmpeg_INCLUDE_DIRS FFmpeg_INCLUDE_DIRS-NOTFOUND)# CACHE  STRING  "docstring")
+    SET(FFmpeg_LIBRARIES FFmpeg_LIBRARIES-NOTFOUND)# CACHE  STRING  "docstring")
+    SET(FFmpeg_FOUND FALSE)
 ENDIF()
