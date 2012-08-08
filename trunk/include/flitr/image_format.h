@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -33,9 +33,11 @@ namespace flitr {
 class FLITR_EXPORT ImageFormat {
   public:
     enum PixelFormat {
-        FLITR_PIX_FMT_Y_8 = 1, 
+        FLITR_PIX_FMT_ANY = 0,
+        FLITR_PIX_FMT_Y_8 = 1,
         FLITR_PIX_FMT_RGB_8 = 2,
-        FLITR_PIX_FMT_Y_16 = 3
+        FLITR_PIX_FMT_Y_16 = 3,
+        FLITR_PIX_FMT_UNDF
     };
     
     ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8):

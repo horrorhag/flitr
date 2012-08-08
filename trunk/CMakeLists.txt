@@ -110,6 +110,7 @@ SET(LIB_SOURCES
   src/flitr/hud.cpp
   src/flitr/crosshair_overlay.cpp
   src/flitr/ffmpeg_producer.cpp
+  src/flitr/smulti_ffmpeg_producer.cpp
   src/flitr/ffmpeg_reader.cpp
   src/flitr/ffmpeg_utils.cpp
   src/flitr/ffmpeg_writer.cpp
@@ -133,6 +134,7 @@ SET(LIB_SOURCES
   include/flitr/hud.h
   include/flitr/crosshair_overlay.h
   include/flitr/ffmpeg_producer.h
+  include/flitr/smulti_ffmpeg_producer.h
   include/flitr/ffmpeg_reader.h
   include/flitr/ffmpeg_utils.h
   include/flitr/ffmpeg_writer.h
