@@ -50,7 +50,10 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     MultiFFmpegConsumer(ImageProducer& producer, uint32_t images_per_slot);
     ~MultiFFmpegConsumer();
     bool init();
+
     bool openFiles(std::string basename);
+    bool openFiles(std::string basename, std::vector<std::string> basename_postfixes);
+
     bool startWriting();
     bool stopWriting();
     bool closeFiles();
