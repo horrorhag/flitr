@@ -48,6 +48,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         // for some strange reason ffmpeg defaults to upside down BGR24 whenever it finds raw colour video, so we also flip (colour and geom)
         SaveFrameFormat_ = PIX_FMT_BGR24;
     }
+
     //SaveFrameFormat_ = PIX_FMT_YUV422;
     
     SaveFrame_ = allocFFmpegFrame(SaveFrameFormat_, ImageFormat_.getWidth(), ImageFormat_.getHeight());

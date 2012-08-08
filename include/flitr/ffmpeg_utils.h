@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -51,7 +51,9 @@ namespace flitr {
  */
 PixelFormat PixelFormatFLITrToFFmpeg(ImageFormat::PixelFormat in_fmt);
 
-/** 
+ImageFormat::PixelFormat PixelFormatFFmpegToFLITr(PixelFormat in_fmt);
+
+/**
  * Utility function to allocate and fill an FFmpeg frame.
  * 
  * \param pix_fmt FFmpeg pixel format.

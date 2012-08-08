@@ -20,6 +20,8 @@
 
 #include <flitr/ffmpeg_utils.h>
 
+#include <iostream>
+
 PixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_fmt)
 {
     switch (in_fmt) {
@@ -35,6 +37,25 @@ PixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_f
       default:
         // \todo maybe return error
         return PIX_FMT_GRAY8;
+    }
+}
+
+flitr::ImageFormat::PixelFormat flitr::PixelFormatFFmpegToFLITr(PixelFormat in_fmt)
+{
+    std::cout << "*********" << in_fmt <<"\n";
+
+    switch (in_fmt) {
+      case PIX_FMT_GRAY8:
+        return ImageFormat::FLITR_PIX_FMT_Y_8;
+        break;
+      case PIX_FMT_RGB24:
+        return ImageFormat::FLITR_PIX_FMT_RGB_8;
+        break;
+      case PIX_FMT_GRAY16LE:
+        return ImageFormat::FLITR_PIX_FMT_Y_16;
+        break;
+      default:
+        return ImageFormat::FLITR_PIX_FMT_UNDF;
     }
 }
 

@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -49,7 +49,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
     CodecContext_ = NULL;
     Codec_ = NULL;
-  
+
     //int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, &FormatParameters_);
 #if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
     int err = avformat_open_input(&FormatContext_, FileName_.c_str(), NULL, NULL);
@@ -90,7 +90,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
     // everything should be ready for decoding video
     
-    if (getLogMessageCategory() & LOG_INFO) { 
+    if (getLogMessageCategory() & LOG_INFO) {
 #if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
         av_dump_format(FormatContext_, 0, FileName_.c_str(), 0);
 #else
@@ -103,22 +103,40 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     NumImages_ = 0.5 + (duration_seconds * frame_rate);
     logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << frame_rate << " total frames: " << NumImages_ << "\n";
 
-    // User supplies the desired pixel format
+
+    //=== convert or reset IP format to ffmpeg format ===//
+    PixelFormat out_ffmpeg_pix_fmt;
+
+    if (out_pix_fmt!=ImageFormat::FLITR_PIX_FMT_ANY)
+    {
+        out_ffmpeg_pix_fmt=PixelFormatFLITrToFFmpeg(out_pix_fmt);
+    } else
+    {
+        out_ffmpeg_pix_fmt=CodecContext_->pix_fmt;
+        out_pix_fmt=PixelFormatFFmpegToFLITr(out_ffmpeg_pix_fmt);
+
+        if (out_pix_fmt==ImageFormat::FLITR_PIX_FMT_UNDF)
+        {//FLITr doesn't understand the ffmpeg pixel format and the user selected ImageFormat::FLITR_PIX_FMT_ANY.
+         //Therefore, make a output pixelformat selection for the user.
+            out_pix_fmt=ImageFormat::FLITR_PIX_FMT_RGB_8;
+            out_ffmpeg_pix_fmt=PixelFormatFLITrToFFmpeg(out_pix_fmt);
+        }
+    }
+
     ImageFormat_ = ImageFormat(CodecContext_->width, CodecContext_->height, out_pix_fmt);
+    //=== ===//
 
     // Allocate the image for the single frame sources
     // it will be reused
     SingleImage_ = shared_ptr<Image>(new Image(ImageFormat_));
 
-    // convert IP format to ffmpeg format
-    PixelFormat out_ffmpeg_pix_fmt = PixelFormatFLITrToFFmpeg(out_pix_fmt);
 
-    // create scaler to convert from video format to user required format
+        // create scaler to convert from video format to user required format
 #if defined FLITR_USE_SWSCALE
-    ConvertFormatCtx_ = sws_getContext(
-        ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt, 
-        ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,                 
-        SWS_BILINEAR, NULL, NULL, NULL);
+        ConvertFormatCtx_ = sws_getContext(
+                    ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt,
+                    ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,
+                    SWS_BILINEAR, NULL, NULL, NULL);
 #endif
     
     DecodedFrame_ = avcodec_alloc_frame();
@@ -222,7 +240,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
                 //}
                 
                 if (pkt_pts_scaled >= seek_time ||
-                    pkt_pts_scaled + pkt_duration_scaled > seek_time) {
+                        pkt_pts_scaled + pkt_duration_scaled > seek_time) {
                     // we are done
                     //fprintf(stderr, "LOOP %d\n", loopcount);
                     break;
@@ -242,7 +260,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 #if defined FLITR_USE_SWSCALE
     ConvertedFrame_->data[0] = out_image.data(); // save a memcpy
     
-    int err = sws_scale(ConvertFormatCtx_, 
+    int err = sws_scale(ConvertFormatCtx_,
                         DecodedFrame_->data, DecodedFrame_->linesize, 0, CodecContext_->height,
                         ConvertedFrame_->data, ConvertedFrame_->linesize);
     

@@ -7,6 +7,7 @@
 #include <osg/io_utils>
 
 #include <flitr/multi_ffmpeg_producer.h>
+#include <flitr/smulti_ffmpeg_producer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 
     int num_videos = argc-1;
 
-    shared_ptr<MultiFFmpegProducer> mffp(new MultiFFmpegProducer(fnames, ImageFormat::FLITR_PIX_FMT_Y_8));
+    shared_ptr<SMultiFFmpegProducer> mffp(new SMultiFFmpegProducer(fnames, ImageFormat::FLITR_PIX_FMT_ANY));
     if (!mffp->init()) {
         std::cerr << "Could not load input files\n";
         exit(-1);
