@@ -102,30 +102,41 @@ bool MultiFFmpegConsumer::openFiles(std::string basename)
 
 bool MultiFFmpegConsumer::openFiles(std::string basename, std::vector<std::string> basename_postfixes)
 {
-    for (unsigned int i=0; i<ImagesPerSlot_; i++)
+    if (basename_postfixes.size()==ImagesPerSlot_)
     {
-        std::string postfix;
+        std::vector<std::string> filenames;
 
-        //Use the postfix if there is one for the image stream.
-        if (i<basename_postfixes.size())
+        for (unsigned int i=0; i<ImagesPerSlot_; i++)
         {
-          postfix=basename_postfixes[i];
-        } else
-        {
-            char c_count[16];
-            sprintf(c_count, "%02d", i+1);
-            postfix=std::string(c_count);
+            filenames.push_back(basename + "_" + basename_postfixes[i]);
         }
 
-        std::string new_base = basename + "_" + postfix;
-        std::string video_filename(new_base + ".avi");
-        std::string metadata_filename(new_base + ".meta");
-
-        FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i]);
-        MetadataWriters_[i] = new MetadataWriter(metadata_filename);
+        return openFiles(filenames);
+    } else
+    {
+        return false;
     }
-    return true;
 }
+
+bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames)
+{
+    if (filenames.size()==ImagesPerSlot_)
+    {
+        for (unsigned int i=0; i<ImagesPerSlot_; i++)
+        {
+            std::string video_filename(filenames[i] + ".avi");
+            std::string metadata_filename(filenames[i] + ".meta");
+
+            FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i]);
+            MetadataWriters_[i] = new MetadataWriter(metadata_filename);
+        }
+        return true;
+    } else
+    {
+        return false;
+    }
+}
+
 
 bool MultiFFmpegConsumer::startWriting()
 {
