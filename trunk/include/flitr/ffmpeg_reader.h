@@ -102,6 +102,13 @@ class FLITR_EXPORT FFmpegReader {
      */
     ImageFormat getFormat() { return ImageFormat_; }
 
+    /**
+     * Get the frame rate of the video.
+     *
+     * \return Frame rate.
+     */
+    uint32_t getFrameRate() const { return FrameRate_; }
+
   private:
     /// Used for multi-threading access.
     static int lockManager(void **mutex, enum AVLockOp op);
@@ -116,6 +123,7 @@ class FLITR_EXPORT FFmpegReader {
     /// Frame containing the image data converted to output format.
     AVFrame* ConvertedFrame_;
 
+    uint32_t FrameRate_;
     /// Output format.
     ImageFormat ImageFormat_;
     /// Number of frames/images in the video.

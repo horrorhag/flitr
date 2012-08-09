@@ -40,6 +40,8 @@ extern "C" {
  #define avformat_alloc_context av_alloc_format_context
 #endif
 
+#define FLITR_DEFAULT_VIDEO_FRAME_RATE 20
+
 namespace flitr {
 
 /** 

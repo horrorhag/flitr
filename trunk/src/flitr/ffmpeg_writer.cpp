@@ -23,9 +23,11 @@
 
 using namespace flitr;
 
-FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format) :
+
+FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate) :
     ImageFormat_(image_format),
     SaveFileName_(filename),
+    FrameRate_(frame_rate),
     WrittenFrameCount_(0)
 {
     av_register_all();
@@ -98,7 +100,7 @@ AVStream *FFmpegWriter::addVideoStream(AVFormatContext *fc, int codec_id)
     AVCodecContext *cc;
     AVStream *st;
 
-    st = av_new_stream(fc, 0); // stream 0 is the video
+    st = av_new_stream(fc, 0); // stream 0 is the videoqU4kH5PJ7Yr7
     if (!st) {
 		logMessage(LOG_CRITICAL) << "Cannot allocate video stream.\n";
         return NULL;
@@ -127,8 +129,9 @@ AVStream *FFmpegWriter::addVideoStream(AVFormatContext *fc, int codec_id)
     /* resolution must be a multiple of two */
     cc->width = ImageFormat_.getWidth();
     cc->height = ImageFormat_.getHeight();
-    // \todo get frame rate from somewhere
-    cc->time_base.den = FLITR_VIDEO_FRAME_RATE;
+
+    cc->time_base.den = FrameRate_;
+
     cc->time_base.num = 1;
     cc->gop_size = 1;
     cc->pix_fmt = SaveFrameFormat_;

@@ -29,11 +29,11 @@ using namespace flitr;
 using std::tr1::shared_ptr;
 
 
-
 FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt) :
     FileName_(filename),
     SingleFrameSource_(false),
-    SingleFrameDone_(false)
+    SingleFrameDone_(false),
+    FrameRate_(FLITR_DEFAULT_VIDEO_FRAME_RATE)
 {
     std::stringstream sws_stats_name;
     sws_stats_name << filename << " swscale";
@@ -99,9 +99,9 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     }
     
     double duration_seconds = double(FormatContext_->duration) / 1e6;
-    double frame_rate = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
-    NumImages_ = 0.5 + (duration_seconds * frame_rate);
-    logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << frame_rate << " total frames: " << NumImages_ << "\n";
+    FrameRate_ = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
+    NumImages_ = 0.5 + (duration_seconds * FrameRate_);
+    logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << FrameRate_ << " total frames: " << NumImages_ << "\n";
 
 
     //=== convert or reset IP format to ffmpeg format ===//
