@@ -53,6 +53,7 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
 
     bool openFiles(std::string basename);
     bool openFiles(std::string basename, std::vector<std::string> basename_postfixes);
+    bool openFiles(std::vector<std::string> filenames);
 
     bool startWriting();
     bool stopWriting();
