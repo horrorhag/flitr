@@ -114,6 +114,14 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
      * successfully triggered.
      */
     int32_t getCurrentImage() { return CurrentImage_; }
+
+    /**
+     * Get the frame rate of the video at position imageNum in the slot.
+     *
+     * \return Frame rate.
+     */
+    uint32_t getFrameRate(const int imageNum) const {return Producers_[imageNum]->getFrameRate();}
+
   private:
     /// Child producers
     std::vector< std::tr1::shared_ptr<FFmpegProducer> > Producers_;

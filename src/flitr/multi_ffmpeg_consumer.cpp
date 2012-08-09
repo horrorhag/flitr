@@ -86,7 +86,7 @@ bool MultiFFmpegConsumer::init()
     return true;
 }
 
-bool MultiFFmpegConsumer::openFiles(std::string basename)
+bool MultiFFmpegConsumer::openFiles(std::string basename, const uint32_t frame_rate)
 {
     std::vector<std::string> postfixes;
 
@@ -97,10 +97,10 @@ bool MultiFFmpegConsumer::openFiles(std::string basename)
         postfixes.push_back(std::string(c_count));
     }
 
-    return openFiles(basename, postfixes);
+    return openFiles(basename,postfixes,frame_rate);
 }
 
-bool MultiFFmpegConsumer::openFiles(std::string basename, std::vector<std::string> basename_postfixes)
+bool MultiFFmpegConsumer::openFiles(std::string basename, std::vector<std::string> basename_postfixes, const uint32_t frame_rate)
 {
     if (basename_postfixes.size()==ImagesPerSlot_)
     {
@@ -111,14 +111,14 @@ bool MultiFFmpegConsumer::openFiles(std::string basename, std::vector<std::strin
             filenames.push_back(basename + "_" + basename_postfixes[i]);
         }
 
-        return openFiles(filenames);
+        return openFiles(filenames,frame_rate);
     } else
     {
         return false;
     }
 }
 
-bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames)
+bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const uint32_t frame_rate)
 {
     if (filenames.size()==ImagesPerSlot_)
     {
@@ -127,7 +127,7 @@ bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames)
             std::string video_filename(filenames[i] + ".avi");
             std::string metadata_filename(filenames[i] + ".meta");
 
-            FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i]);
+            FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate);
             MetadataWriters_[i] = new MetadataWriter(metadata_filename);
         }
         return true;

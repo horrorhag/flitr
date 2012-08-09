@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -80,6 +80,14 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
      * successfully triggered.
      */
     int32_t getCurrentImage() { return CurrentImage_; }
+
+    /**
+     * Get the frame rate of the video.
+     *
+     * \return Frame rate.
+     */
+    uint32_t getFrameRate() const {return Reader_->getFrameRate();}
+
   private:
     /// The reader to do the actual reading.
     std::tr1::shared_ptr<FFmpegReader> Reader_;

@@ -21,6 +21,7 @@
 #ifndef MULTI_FFMPEG_CONSUMER_H
 #define MULTI_FFMPEG_CONSUMER_H 1
 
+#include <flitr/ffmpeg_utils.h>
 #include <flitr/image_consumer.h>
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/metadata_writer.h>
@@ -51,9 +52,9 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     ~MultiFFmpegConsumer();
     bool init();
 
-    bool openFiles(std::string basename);
-    bool openFiles(std::string basename, std::vector<std::string> basename_postfixes);
-    bool openFiles(std::vector<std::string> filenames);
+    bool openFiles(std::string basename, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
+    bool openFiles(std::string basename, std::vector<std::string> basename_postfixes, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
+    bool openFiles(std::vector<std::string> filenames, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
 
     bool startWriting();
     bool stopWriting();
@@ -62,6 +63,7 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
   private:
     std::vector<ImageFormat> ImageFormat_;
     uint32_t ImagesPerSlot_;
+
 		
     MultiFFmpegConsumerThread *Thread_;
 		

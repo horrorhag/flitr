@@ -25,6 +25,7 @@
 #define FLITR_USE_SWSCALE 1
 #endif
 
+#include <flitr/ffmpeg_utils.h>
 #include <flitr/image.h>
 #include <flitr/log_message.h>
 #include <flitr/stats_collector.h>
@@ -51,8 +52,6 @@ extern "C" {
 #include <iostream>
 #include <sstream>
 
-#define FLITR_VIDEO_FRAME_RATE 20
-
 namespace flitr {
 
 /// Class thrown when video errors occur.
@@ -62,7 +61,7 @@ struct FFmpegWriterException {
 
 class FLITR_EXPORT FFmpegWriter {
 public:
-    FFmpegWriter(std::string filename, const ImageFormat& image_format);
+    FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
     ~FFmpegWriter();
 
     bool writeVideoFrame(uint8_t *in_buf);
@@ -96,6 +95,7 @@ private:
 
 	ImageFormat ImageFormat_;
     std::string SaveFileName_;
+    uint32_t FrameRate_;
     /// Holds the number of frames written to disk.
     uint32_t WrittenFrameCount_;
 
