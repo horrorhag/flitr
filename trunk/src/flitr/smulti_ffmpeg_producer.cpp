@@ -50,7 +50,7 @@ bool SMultiFFmpegProducer::init()
     CurrentImage_ = -1;
 
     // Allocate storage
-    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, 10, Readers_.size()));
+    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, 32, Readers_.size()));
     SharedImageBuffer_->initWithStorage();
 
     return true;
