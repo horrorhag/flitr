@@ -120,6 +120,8 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
          //Therefore, make a output pixelformat selection for the user.
             out_pix_fmt=ImageFormat::FLITR_PIX_FMT_RGB_8;
             out_ffmpeg_pix_fmt=PixelFormatFLITrToFFmpeg(out_pix_fmt);
+
+            std::cout << "FFmpeg pixel format " << CodecContext_->pix_fmt << " is FLITR_PIX_FMT_UNDF. Defaulting to FLITR_PIX_FMT_RGB_8.\n";
         }
     }
 
@@ -177,7 +179,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     //std::cout << "FrameNum = " << im_number << "\n";
     //std::cout << "RateNum  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num << "\n";
     //std::cout << "RateDen  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den << "\n";
-    
+
     // Do not seek if we have a single frame source
     // Assume we are looking for frame 0, XXX assert maybe
     if (SingleFrameSource_) {
@@ -238,7 +240,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
                 //  std::cout << "PTS     = " << pkt_pts_scaled << "\n";
                 //  std::cout << "Dur     = " << pkt_duration_scaled << "\n";
                 //}
-                
+
                 if (pkt_pts_scaled >= seek_time ||
                         pkt_pts_scaled + pkt_duration_scaled > seek_time) {
                     // we are done
