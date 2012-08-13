@@ -35,6 +35,7 @@
 namespace flitr {
 
 class TextureCaptureProducer : public ImageProducer {
+
     struct TextureCaptureDrawCallback : public osg::Camera::DrawCallback
     {
         TextureCaptureDrawCallback(TextureCaptureProducer* producer) :
@@ -70,6 +71,7 @@ class TextureCaptureProducer : public ImageProducer {
         }
         TextureCaptureProducer* producer_;
     };
+
   public:
     TextureCaptureProducer(
         osg::TextureRectangle* input_texture,

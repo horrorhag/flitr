@@ -42,7 +42,7 @@ TextureCaptureProducer::TextureCaptureProducer(
 
 bool TextureCaptureProducer::init()
 {
-    ImageFormat_.push_back(OutputFormat_);
+    ImageFormat_.push_back(OutputFormat_);//Only one image per slot.
 
     SharedImageBuffer_ = std::tr1::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, BufferSize_, 1));
     SharedImageBuffer_->initWithStorage();
