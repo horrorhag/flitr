@@ -38,7 +38,7 @@
 
 namespace flitr {
 
-class MultiOSGConsumerThread;
+class MultiOSGConsumerDiscardThread;
 
 /**
  * A consumer that takes images from a producer (possibly with many
@@ -47,7 +47,7 @@ class MultiOSGConsumerThread;
  */
 template<class T>
 class FLITR_EXPORT TMultiOSGConsumer : public ImageConsumer {
-    friend class MultiOSGConsumerThread;
+    friend class MultiOSGConsumerDiscardThread;
   public:
     /** 
      * Creates an image consumer that passes data to OSG. Format
@@ -136,12 +136,13 @@ class FLITR_EXPORT TMultiOSGConsumer : public ImageConsumer {
     /// Images to be used at initialisation for textures.
     std::vector< osg::ref_ptr<osg::Image> > DummyImages_;
 
+
     /// Synchronise access the shared buffer when we have a background
-    /// thread.
+    /// thread (see next variable).
     OpenThreads::Mutex BufferMutex_;
     /// Background thread to discard images if getNext() cannot be
     /// called fast enough.
-    std::tr1::shared_ptr<MultiOSGConsumerThread> Thread_;
+    std::tr1::shared_ptr<MultiOSGConsumerDiscardThread> DiscardThread_;
 };
 
 #ifdef FLITR_WITH_OSGCUDA
@@ -150,12 +151,12 @@ class FLITR_EXPORT TMultiOSGConsumer : public ImageConsumer {
     typedef TMultiOSGConsumer<osg::TextureRectangle> MultiOSGConsumer;
 #endif
 
-/// Thread to discard images if a client cannot read fast enough. This
+/// Thread to discard images if a client cannot read (call getNext) fast enough. This
 /// prevents overflow in the producer by discarding all images except
 /// the latest one. 
-class MultiOSGConsumerThread : public OpenThreads::Thread {
+class MultiOSGConsumerDiscardThread : public OpenThreads::Thread {
   public: 
-    MultiOSGConsumerThread(MultiOSGConsumer *consumer) :
+    MultiOSGConsumerDiscardThread(MultiOSGConsumer *consumer) :
         Consumer_(consumer),
         ShouldExit_(false) {}
     void run();

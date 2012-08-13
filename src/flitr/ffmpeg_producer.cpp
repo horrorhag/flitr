@@ -34,7 +34,7 @@ FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat ou
 bool FFmpegProducer::init()
 {
 	// Allocate storage
-	SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, 32, 1));
+    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS, 1));
 	SharedImageBuffer_->initWithStorage();
 	return true;
 }

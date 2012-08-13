@@ -87,7 +87,7 @@ class FLITR_EXPORT ImageConsumer {
     }
 
     /** 
-     * Indicate that the consumer has finished with a reserved write
+     * Indicate that the consumer has finished with a reserved read
      * slot. Should only be called after a slot has been reserved and
      * once for each slot that was reserved.
      */  
