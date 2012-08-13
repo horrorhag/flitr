@@ -16,7 +16,7 @@ using std::tr1::shared_ptr;
 using namespace flitr;
 
 class BackgroundTriggerThread : public OpenThreads::Thread {
-  public: 
+public:
     BackgroundTriggerThread(ImageProducer* p) :
         Producer_(p),
         ShouldExit_(false),
@@ -35,7 +35,7 @@ class BackgroundTriggerThread : public OpenThreads::Thread {
         }
     }
     void setExit() { ShouldExit_ = true; }
-  private:
+private:
     ImageProducer* Producer_;
     bool ShouldExit_;
     const uint32_t ReadableTarget_;
@@ -97,13 +97,27 @@ int main(int argc, char *argv[])
     viewer.setCameraManipulator(tb);
     adjustCameraManipulatorHomeForYUp(tb);
     
+    uint32_t frameRate=mffp->getFrameRate(0);
+    double framePeriodNS=1.0e9 / frameRate;
+    double nextFrameTimeNS=currentTimeNanoSec()+framePeriodNS;
+
     while(!viewer.done()) {
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
-        mffp->trigger();
+        //Read from the video, but don't get more than 10 frames ahead.
+        if (mffp->getLeastNumReadSlotsAvailable()<10)
+        {
+            mffp->trigger();
+        }
 #endif
-        if (osgc->getNext()) {
-            viewer.frame();
-        } else {
+        if (currentTimeNanoSec()>=nextFrameTimeNS)
+        {
+            if (osgc->getNext()) {
+                viewer.frame();
+                nextFrameTimeNS+=framePeriodNS;
+            }
+        }
+        else
+        {
             OpenThreads::Thread::microSleep(5000);
         }
     }
