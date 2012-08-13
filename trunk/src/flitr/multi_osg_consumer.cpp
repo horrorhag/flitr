@@ -29,7 +29,7 @@
 
 using namespace flitr;
 
-void MultiOSGConsumerThread::run() 
+void MultiOSGConsumerDiscardThread::run()
 {
 	uint32_t ims_per_slot = Consumer_->ImagesPerSlot_;
 	
@@ -38,10 +38,12 @@ void MultiOSGConsumerThread::run()
 	while (true) {
 		// check if image available
 		// reading and popping must be synced for the consumer
-		{
+
+        {//Note: This scope bracket is for the scoped lock.
 			OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(Consumer_->BufferMutex_);
 			uint32_t num_avail = Consumer_->getNumReadSlotsAvailable();
-			// discard all but one
+
+            // discard all slots but one
 			if (num_avail > 1) {
 				for (uint32_t i=0; i<num_avail-1; i++) {
 					imv = Consumer_->reserveReadSlot();
@@ -51,8 +53,10 @@ void MultiOSGConsumerThread::run()
 				}
 			}
 		}
+
 		// wait a while
 		Thread::microSleep(10000);
+
 		// check for exit
 		if (ShouldExit_) {
 			break;
@@ -77,9 +81,9 @@ TMultiOSGConsumer<T>::TMultiOSGConsumer(ImageProducer& producer,
 template<class T>
 TMultiOSGConsumer<T>::~TMultiOSGConsumer()
 {
-    if (Thread_->isRunning()) {
-        Thread_->setExit();
-        Thread_->join();
+    if (DiscardThread_->isRunning()) {
+        DiscardThread_->setExit();
+        DiscardThread_->join();
     }
 }
 
@@ -163,8 +167,8 @@ bool TMultiOSGConsumer<T>::init()
             OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
         }	
     }
-	Thread_ = std::tr1::shared_ptr<MultiOSGConsumerThread>(
-        new MultiOSGConsumerThread(this));
+    DiscardThread_ = std::tr1::shared_ptr<MultiOSGConsumerDiscardThread>(
+        new MultiOSGConsumerDiscardThread(this));
 
 	return true;
 }
@@ -172,7 +176,7 @@ bool TMultiOSGConsumer<T>::init()
 template<class T>
 void TMultiOSGConsumer<T>::startDiscardThread()
 {
-    Thread_->startThread();
+    DiscardThread_->startThread();
 }
 
 template<class T>
@@ -202,7 +206,9 @@ bool TMultiOSGConsumer<T>::getNext()
     }
 
 	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
-	std::vector<Image**> imv = reserveReadSlot();
+
+    std::vector<Image**> imv = reserveReadSlot();
+
 	if (imv.size() >= ImagesPerSlot_) {
         // connect osg images to buffered data
         for (uint32_t i=0; i<ImagesPerSlot_; i++) {
@@ -238,6 +244,7 @@ bool TMultiOSGConsumer<T>::getNext()
             }
 			OSGImages_[HistoryWritePos_][i]->dirty();
 		}
+
         // rewire the output textures
         for (uint32_t h=0; h<ImagesInHistory_; h++) {
             for (uint32_t i=0; i<ImagesPerSlot_; i++) {

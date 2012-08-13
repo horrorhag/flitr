@@ -36,6 +36,8 @@ namespace flitr {
 class ImageConsumer;
 class ImageProducer;
 
+#define FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS 32
+
 /**
  * \brief Class for passing images between producers and consumers. 
  * 
