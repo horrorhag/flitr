@@ -33,6 +33,12 @@ FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat ou
 
 bool FFmpegProducer::init()
 {
+    if (NumImages_==0)
+    {
+        logMessage(LOG_CRITICAL) << "Something is wrong. This video has zero frames.\n";
+        return false;
+    }
+
 	// Allocate storage
     SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS, 1));
 	SharedImageBuffer_->initWithStorage();

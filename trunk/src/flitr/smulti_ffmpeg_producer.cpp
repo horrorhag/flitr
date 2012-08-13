@@ -41,6 +41,12 @@ bool SMultiFFmpegProducer::init()
     {
         Readers_.push_back(shared_ptr<FFmpegReader>(new FFmpegReader(Filenames_[i], out_pix_fmt_)));
         ImageFormat_.push_back(Readers_[i]->getFormat());
+
+        if (Readers_[i]->getNumImages()==0)
+        {
+                    logMessage(LOG_CRITICAL) << "Something is wrong.  Video " << i << " has zero frames.\n";
+                    return false;
+        }
     }
 
     //check that all videos have the same format and number of frames.
