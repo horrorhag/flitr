@@ -79,11 +79,19 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
 	CurrentImage_ = -1;
 	
     ProducerThreads_.resize(ImagesPerSlot_);
-    SeekOK_.resize(ImagesPerSlot_);
+    SeekOK_.resize(ImagesPerSlot_);    
 }
 
 bool MultiFFmpegProducer::init()
 {
+    for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
+        if (!Producers_[i]->getNumImages()==0)
+        {
+                logMessage(LOG_CRITICAL) << "Something is wrong.  Video " << i << " has zero frames.\n";
+                return false;
+        }
+    }
+
 	// Allocate storage
 	SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(
         new SharedImageBuffer(*this, 32, ImagesPerSlot_));
@@ -102,14 +110,23 @@ bool MultiFFmpegProducer::init()
 
 MultiFFmpegProducer::~MultiFFmpegProducer()
 {
-    for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
-        ProducerThreads_[i]->setExit();
-    }
-    // trigger threads
-    ProducerThreadBarrier_.block();
+    int barrier_num_threads=ImagesPerSlot_+1;
 
     for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
-        ProducerThreads_[i]->join();
+        if (ProducerThreads_[i])
+        {
+            ProducerThreads_[i]->setExit();
+        }
+        else
+        {//The thread was never initialised so fake the sync/block.
+            barrier_num_threads--;
+        }
+    }
+    // trigger threads
+    ProducerThreadBarrier_.block(barrier_num_threads);
+
+    for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
+        if (ProducerThreads_[i]) ProducerThreads_[i]->join();
     }
 }
 
