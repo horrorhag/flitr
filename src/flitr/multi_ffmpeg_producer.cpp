@@ -85,7 +85,7 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
 bool MultiFFmpegProducer::init()
 {
     for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
-        if (!Producers_[i]->getNumImages()==0)
+        if (Producers_[i]->getNumImages()==0)
         {
                 logMessage(LOG_CRITICAL) << "Something is wrong.  Video " << i << " has zero frames.\n";
                 return false;
