@@ -121,7 +121,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
             out_pix_fmt=ImageFormat::FLITR_PIX_FMT_RGB_8;
             out_ffmpeg_pix_fmt=PixelFormatFLITrToFFmpeg(out_pix_fmt);
 
-            std::cout << "FFmpeg pixel format " << CodecContext_->pix_fmt << " is FLITR_PIX_FMT_UNDF. Defaulting to FLITR_PIX_FMT_RGB_8.\n";
+            logMessage(LOG_INFO) << "FFmpeg pixel format " << CodecContext_->pix_fmt << " is FLITR_PIX_FMT_UNDF. Defaulting to FLITR_PIX_FMT_RGB_8.\n";
         }
     }
 
