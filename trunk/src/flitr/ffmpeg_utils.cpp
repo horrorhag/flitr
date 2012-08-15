@@ -42,8 +42,6 @@ PixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_f
 
 flitr::ImageFormat::PixelFormat flitr::PixelFormatFFmpegToFLITr(PixelFormat in_fmt)
 {
-    std::cout << "*********" << in_fmt <<"\n";
-
     switch (in_fmt) {
       case PIX_FMT_GRAY8:
         return ImageFormat::FLITR_PIX_FMT_Y_8;
