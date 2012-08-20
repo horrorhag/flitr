@@ -47,10 +47,13 @@ class TextureCaptureProducer : public ImageProducer {
             std::vector<Image**> imv = producer_->reserveWriteSlot();
             if (imv.size() != 1) {
                 logMessage(LOG_CRITICAL) << "Dropping frames - no space in texture capture buffer\n";
+                logMessage(LOG_CRITICAL).flush();
                 return;
             }
+
             Image* im = *(imv[0]);
             osg::TextureRectangle* trect_ = producer_->OutputTexture_.get();
+
             renderInfo.getState()->applyTextureAttribute(0, //unit 
                                                          trect_);
 
@@ -67,6 +70,7 @@ class TextureCaptureProducer : public ImageProducer {
                               GL_UNSIGNED_BYTE,
                               im->data());
             }
+
             producer_->releaseWriteSlot();
         }
         TextureCaptureProducer* producer_;
