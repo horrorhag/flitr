@@ -61,7 +61,17 @@ class FLITR_EXPORT ImageProducer {
      * \return Format of the image.
      */
     virtual ImageFormat getFormat(uint32_t index = 0) { return ImageFormat_[index]; }
-	
+
+    /**
+     * Obtain the number of write slots that can be reserved.
+     *
+     * \return The number of available write slots.
+     */
+    virtual uint32_t getNumWriteSlotsAvailable() const
+    {
+        return SharedImageBuffer_->getNumWriteSlotsAvailable();
+    }
+
     /** 
      * Typically implemented to tell an asynchronous producer to create an image.
      * 

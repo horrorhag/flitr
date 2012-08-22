@@ -73,17 +73,25 @@ bool SharedImageBuffer::initWithoutStorage()
 	return true;
 }
 
-bool SharedImageBuffer::isFull()
+bool SharedImageBuffer::isFull() const
 {
-	typedef std::map< const ImageConsumer*, uint32_t >::iterator map_it;
-	uint32_t max_fill=0;
-	for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i) {
-		uint32_t read_tail = i->second;
-		uint32_t fill = (WriteHead_ + NumSlots_ - read_tail) % NumSlots_;
-		if (fill > max_fill) {
-			max_fill = fill;
-		}
-	}
+    // only allow up to -1, to diff between full and empty cases
+    // assert fill > (NumSlots_-1)
+    return (getFill() == (NumSlots_-1));
+}
+
+uint32_t SharedImageBuffer::getFill() const
+{
+    typedef std::map< const ImageConsumer*, uint32_t >::const_iterator map_it;
+    uint32_t max_fill=0;
+
+    for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i) {
+        uint32_t read_tail = i->second;
+        uint32_t fill = (WriteHead_ + NumSlots_ - read_tail) % NumSlots_;
+        if (fill > max_fill) {
+            max_fill = fill;
+        }
+    }
     // also check writer
     uint32_t fill = (WriteHead_ + NumSlots_ - WriteTail_) % NumSlots_;
     if (fill > max_fill) {
@@ -91,8 +99,7 @@ bool SharedImageBuffer::isFull()
     }
 
     // assert max_fill > (NumSlots_-1)
-	// only allow up to -1, to diff between full and empty cases
-	return (max_fill == (NumSlots_-1)); 
+    return max_fill;
 }
 
 bool SharedImageBuffer::tailPopped(const ImageConsumer& consumer)
@@ -132,6 +139,13 @@ bool SharedImageBuffer::addConsumer(ImageConsumer& consumer)
 	consumer.setSharedImageBuffer(*this);
 
 	return true;
+}
+
+uint32_t SharedImageBuffer::getNumWriteSlotsAvailable() const
+{
+    //OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    // only allow up to -1, to diff between full and empty cases
+   return std::max<int32_t>( ( ((int32_t)NumSlots_) - 1 ) - getFill(), 0);
 }
 
 std::vector<Image**> SharedImageBuffer::reserveWriteSlot()
