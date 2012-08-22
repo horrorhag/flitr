@@ -56,15 +56,16 @@ void MultiFFmpegProducerThread::run()
     }
 }
 
-MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt) :
-    ProducerThreadBarrier_(filenames.size()+1)
+MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
+    ProducerThreadBarrier_(filenames.size()+1),
+  buffer_size_(buffer_size)
 {
 	ImagesPerSlot_ = filenames.size();
 	NumImages_ = 0;
 	Producers_.resize(ImagesPerSlot_);
 	Consumers_.resize(ImagesPerSlot_);
 	for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
-		Producers_[i] = shared_ptr<FFmpegProducer>(new FFmpegProducer(filenames[i], out_pix_fmt));
+        Producers_[i] = shared_ptr<FFmpegProducer>(new FFmpegProducer(filenames[i], out_pix_fmt, buffer_size_));
 		Producers_[i]->init();
 		Consumers_[i] = shared_ptr<ImageConsumer>(new ImageConsumer(*Producers_[i]));
 		Consumers_[i]->init();
@@ -94,7 +95,7 @@ bool MultiFFmpegProducer::init()
 
 	// Allocate storage
 	SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(
-        new SharedImageBuffer(*this, 32, ImagesPerSlot_));
+        new SharedImageBuffer(*this, buffer_size_, ImagesPerSlot_));
 	SharedImageBuffer_->initWithoutStorage();
 	
     for (uint32_t i=0; i < ImagesPerSlot_; ++i) {

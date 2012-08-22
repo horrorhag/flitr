@@ -148,11 +148,11 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
     cc = VideoStream_->codec;
 
 #if defined FLITR_USE_SWSCALE
-    if (SaveFrameFormat_ == PIX_FMT_BGR24) {
-        // flip upside down
-        InputFrame_->data[0] += InputFrame_->linesize[0] * (cc->height-1);
-        InputFrame_->linesize[0] *= -1;
-    }
+    //if (SaveFrameFormat_ == PIX_FMT_BGR24) {
+    //    // flip upside down
+    //    InputFrame_->data[0] += InputFrame_->linesize[0] * (cc->height-1);
+    //    InputFrame_->linesize[0] *= -1;
+    //}
     
     //int *test = InputFrame_->linesize;
     //printf("%d %d %d %d\n", test[0], test[1], test[2], test[3]);

@@ -44,7 +44,7 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
      * format.
      * 
      */
-    FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt);
+    FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
     /** 
      * The init method is used after construction to be able to return
      * success or failure of opening the file.
@@ -95,6 +95,8 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
     uint32_t NumImages_;
     /// Last correctly read frame.
     int32_t CurrentImage_;
+
+    uint32_t buffer_size_;
 };
 
 }
