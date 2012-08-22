@@ -43,9 +43,10 @@ void MultiOSGConsumerDiscardThread::run()
 			OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(Consumer_->BufferMutex_);
 			uint32_t num_avail = Consumer_->getNumReadSlotsAvailable();
 
-            // discard all slots but one
+            // discard slots until only one left.
 			if (num_avail > 1) {
-				for (uint32_t i=0; i<num_avail-1; i++) {
+                //for (uint32_t i=0; i<num_avail-1; i++) This for would ensure that ALL extra slots are IMMEDIATELY discarded.
+                {
 					imv = Consumer_->reserveReadSlot();
 					if (imv.size() >= ims_per_slot) {
 						Consumer_->releaseReadSlot();
@@ -55,7 +56,7 @@ void MultiOSGConsumerDiscardThread::run()
 		}
 
 		// wait a while
-		Thread::microSleep(10000);
+        Thread::microSleep(1000);
 
 		// check for exit
 		if (ShouldExit_) {

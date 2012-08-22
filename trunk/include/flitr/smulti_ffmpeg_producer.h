@@ -44,7 +44,7 @@ class FLITR_EXPORT SMultiFFmpegProducer : public ImageProducer {
      * format.
      * 
      */
-    SMultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt);
+    SMultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
     /** 
      * The init method is used after construction to be able to return
      * success or failure of opening the file.
@@ -100,6 +100,8 @@ class FLITR_EXPORT SMultiFFmpegProducer : public ImageProducer {
     uint32_t NumImages_;
     /// Last correctly read frame.
     int32_t CurrentImage_;
+
+    uint32_t buffer_size_;
 };
 
 }

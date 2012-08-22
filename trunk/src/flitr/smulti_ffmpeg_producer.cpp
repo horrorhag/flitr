@@ -23,7 +23,8 @@
 using namespace flitr;
 using std::tr1::shared_ptr;
 
-SMultiFFmpegProducer::SMultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt)
+SMultiFFmpegProducer::SMultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
+    buffer_size_(buffer_size)
 {
     Filenames_=filenames;
     out_pix_fmt_=out_pix_fmt;
@@ -56,7 +57,7 @@ bool SMultiFFmpegProducer::init()
     CurrentImage_ = -1;
 
     // Allocate storage
-    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS, Readers_.size()));
+    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, Readers_.size()));
     SharedImageBuffer_->initWithStorage();
 
     return true;

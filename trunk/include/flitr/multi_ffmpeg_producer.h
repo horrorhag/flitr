@@ -65,7 +65,7 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
      * 
      */ 
     // \todo maybe change this so pix formats can be requested per input file
-    MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt);
+    MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
     ~MultiFFmpegProducer();
     
     /** 
@@ -138,6 +138,9 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     uint32_t SeekPos_;
     std::vector< bool > SeekOK_;
     std::vector<Image**> OutputImageVector_;
+
+
+    uint32_t buffer_size_;
 };
 
 }
