@@ -102,6 +102,13 @@ class FLITR_EXPORT SharedImageBuffer {
     //One could possibly make use of an abstract interface class to encapsulate 
     //the producer interface.
     
+    /**
+     * Obtain the number of write slots that can be reserved.
+     *
+     * \return The number of available write slots.
+     */
+    virtual uint32_t getNumWriteSlotsAvailable() const;
+
     /** 
      * Reserve (obtain) a slot for writing new image data. Multiple
      * slots can be reserved before any are released.
@@ -212,8 +219,11 @@ class FLITR_EXPORT SharedImageBuffer {
 
   private:
     /// Returns true if there is no more space in the buffer for writing.
-    bool isFull();
-    
+    bool isFull() const;
+
+    /// Returns the space 'filled' in the buffer.
+    uint32_t getFill() const;
+
     /** 
      * See if, after the consumer that just released a slot, all
      * consumers are done with the oldest slot. If we depend on
