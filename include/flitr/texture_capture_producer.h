@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -44,54 +44,59 @@ class TextureCaptureProducer : public ImageProducer {
         
         virtual void operator () (osg::RenderInfo& renderInfo) const
         {
-            std::vector<Image**> imv = producer_->reserveWriteSlot();
-            if (imv.size() != 1) {
-                logMessage(LOG_CRITICAL) << "Dropping frames - no space in texture capture buffer\n";
-                logMessage(LOG_CRITICAL).flush();
-                return;
+            if (producer_->enabled_)
+            {
+                std::vector<Image**> imv = producer_->reserveWriteSlot();
+                if (imv.size() != 1) {
+                    logMessage(LOG_CRITICAL) << "Dropping frames - no space in texture capture buffer\n";
+                    logMessage(LOG_CRITICAL).flush();
+                    return;
+                }
+
+                Image* im = *(imv[0]);
+                osg::TextureRectangle* trect_ = producer_->OutputTexture_.get();
+
+                renderInfo.getState()->applyTextureAttribute(0, //unit
+                                                             trect_);
+
+                if (producer_->OutputFormat_.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_Y_8) {
+                    glGetTexImage(trect_->getTextureTarget(),
+                                  0, //level
+                                  GL_LUMINANCE,
+                                  GL_UNSIGNED_BYTE,
+                                  im->data());
+                } else {
+                    glGetTexImage(trect_->getTextureTarget(),
+                                  0, //level
+                                  GL_RGB,
+                                  GL_UNSIGNED_BYTE,
+                                  im->data());
+                }
+
+                producer_->releaseWriteSlot();
             }
-
-            Image* im = *(imv[0]);
-            osg::TextureRectangle* trect_ = producer_->OutputTexture_.get();
-
-            renderInfo.getState()->applyTextureAttribute(0, //unit 
-                                                         trect_);
-
-            if (producer_->OutputFormat_.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_Y_8) {
-                glGetTexImage(trect_->getTextureTarget(), 
-                              0, //level 
-                              GL_LUMINANCE,
-                              GL_UNSIGNED_BYTE,
-                              im->data());
-            } else {
-                glGetTexImage(trect_->getTextureTarget(), 
-                              0, //level 
-                              GL_RGB,
-                              GL_UNSIGNED_BYTE,
-                              im->data());
-            }
-
-            producer_->releaseWriteSlot();
         }
         TextureCaptureProducer* producer_;
     };
 
-  public:
+public:
     TextureCaptureProducer(
-        osg::TextureRectangle* input_texture,
-        ImageFormat::PixelFormat output_pixel_format,
-        uint32_t new_width,
-        uint32_t new_height,
-        bool keep_aspect,
-        uint32_t buffer_size);
+            osg::TextureRectangle* input_texture,
+            ImageFormat::PixelFormat output_pixel_format,
+            uint32_t new_width,
+            uint32_t new_height,
+            bool keep_aspect,
+            uint32_t buffer_size);
 
     bool init();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<osg::TextureRectangle> getOutputTexture() { return OutputTexture_; }
-		
+
+    void setEnable(bool value) {enabled_=value;}
+
     void setShader(std::string filename);
-  private:
+private:
     osg::ref_ptr<osg::Group> createTexturedQuad();
     void setupCamera();
     void createTextures();
@@ -111,6 +116,8 @@ class TextureCaptureProducer : public ImageProducer {
     uint32_t OutputTextureHeight_;
 
     bool KeepAspect_;
+    bool enabled_;
+
     uint32_t BufferSize_;
 };
 
