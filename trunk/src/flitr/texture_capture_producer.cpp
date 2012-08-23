@@ -34,7 +34,8 @@ TextureCaptureProducer::TextureCaptureProducer(
     OutputTextureWidth_(new_width),
     OutputTextureHeight_(new_height),
     KeepAspect_(keep_aspect),
-    BufferSize_(buffer_size)
+    BufferSize_(buffer_size),
+    enabled_(true)
 {
     InputTextureWidth_ = InputTexture_->getTextureWidth();
 	InputTextureHeight_ = InputTexture_->getTextureHeight();
