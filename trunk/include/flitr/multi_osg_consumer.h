@@ -83,7 +83,9 @@ class FLITR_EXPORT TMultiOSGConsumer : public ImageConsumer {
      */
     void startDiscardThread();
     
-    /** 
+    ImageMetadata* getImageMetadata(uint32_t im_number = 0, uint32_t im_age = 0);
+
+    /**
      * Gets access to an osg::Image in the buffer.
      * 
      * \note Images are reused to avoid uploading too much data, so
@@ -131,6 +133,9 @@ class FLITR_EXPORT TMultiOSGConsumer : public ImageConsumer {
     
     /// Buffer of OSG images that just wrap our producer's data.
     std::vector< std::vector< osg::ref_ptr <osg::Image> > > OSGImages_;
+
+    std::vector< std::vector< std::tr1::shared_ptr <flitr::ImageMetadata> > > Metadata_;
+
     /// Textures that can be used in OSG.
     std::vector< std::vector< osg::ref_ptr <T> > > OutputTextures_;
     /// Images to be used at initialisation for textures.

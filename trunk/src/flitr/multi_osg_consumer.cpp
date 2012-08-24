@@ -92,6 +92,8 @@ template<class T>
 bool TMultiOSGConsumer<T>::init()
 {
     OSGImages_.resize(ImagesInHistory_);
+    Metadata_.resize(ImagesInHistory_);
+
     OutputTextures_.resize(ImagesInHistory_);
 
     // create dummy images so the textures have an initial valid image
@@ -127,6 +129,9 @@ bool TMultiOSGConsumer<T>::init()
         for (uint32_t i=0; i<ImagesPerSlot_; i++) {
             OSGImages_[h].push_back(new osg::Image());
             OSGImages_[h][i]->setPixelBufferObject(new osg::PixelBufferObject(OSGImages_[h][i].get()));
+
+            Metadata_[h].push_back(std::tr1::shared_ptr <flitr::ImageMetadata>((flitr::ImageMetadata *)0));
+
             switch (ImageFormat_[i].getPixelFormat()) {
               case ImageFormat::FLITR_PIX_FMT_Y_8:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
@@ -181,6 +186,18 @@ void TMultiOSGConsumer<T>::startDiscardThread()
 }
 
 template<class T>
+ImageMetadata* TMultiOSGConsumer<T>::getImageMetadata(uint32_t im_number, uint32_t im_age)
+{
+    // \todo check input num and input age
+
+    int32_t read_pos = (HistoryWritePos_ - 1) - im_age;
+    if (read_pos < 0) {
+        read_pos += ImagesInHistory_;
+    }
+    return Metadata_[read_pos][im_number].get();
+}
+
+template<class T>
 osg::Image* TMultiOSGConsumer<T>::getOSGImage(uint32_t im_number, uint32_t im_age)
 {
 	// \todo check input num and input age
@@ -214,6 +231,9 @@ bool TMultiOSGConsumer<T>::getNext()
         // connect osg images to buffered data
         for (uint32_t i=0; i<ImagesPerSlot_; i++) {
 			Image *im = *(imv[i]);
+
+            Metadata_[HistoryWritePos_][i]=im->metadata();
+
             switch (ImageFormat_[i].getPixelFormat()) {
               case ImageFormat::FLITR_PIX_FMT_Y_8:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
