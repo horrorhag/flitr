@@ -43,6 +43,8 @@ int main(int argc, char *argv[])
     ssp->setShader(argv[2]);
     root_node->addChild(ssp->getRoot().get());
 
+    ssp->setVariable1(2.0f);
+
     shared_ptr<TexturedQuad> quad(new TexturedQuad(ssp->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
 

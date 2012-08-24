@@ -22,6 +22,8 @@ class SimpleShaderPass {
     osg::ref_ptr<osg::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
     void setShader(std::string filename);
+
+    void setVariable1(float value);
 	
   private:
     osg::ref_ptr<osg::Group> createTexturedQuad();
@@ -39,6 +41,8 @@ class SimpleShaderPass {
 
 	osg::ref_ptr<osg::Program> FragmentProgram_;
     osg::ref_ptr<osg::StateSet> StateSet_;
+
+    osg::ref_ptr<osg::Uniform> uniformVariable1;
 };
 
 #endif //SIMPLE_SHADER_PASS_H

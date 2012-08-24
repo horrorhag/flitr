@@ -16,6 +16,8 @@ SimpleShaderPass::SimpleShaderPass(osg::TextureRectangle *in_tex, bool read_back
     
     setupCamera();
 
+    uniformVariable1=osg::ref_ptr<osg::Uniform>(new osg::Uniform("variable1", (float)0.0f));
+
     Camera_->addChild(createTexturedQuad().get());
 
     RootGroup_->addChild(Camera_.get());
@@ -64,6 +66,7 @@ osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
     StateSet_->setTextureAttributeAndModes(0, InTexture_.get(), osg::StateAttribute::ON);
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
+    StateSet_->addUniform(uniformVariable1);
 
     quad_geode->addDrawable(quad_geom.get());
     
@@ -127,6 +130,7 @@ void SimpleShaderPass::createOutputTexture(bool read_back_to_CPU)
     //OutTexture_->setSourceType(GL_FLOAT);
 }
 
+
 void SimpleShaderPass::setShader(std::string filename)
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
@@ -139,3 +143,9 @@ void SimpleShaderPass::setShader(std::string filename)
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
+
+void SimpleShaderPass::setVariable1(float value)
+{
+    uniformVariable1->set(value);
+}
+
