@@ -66,6 +66,7 @@ osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
     StateSet_->setTextureAttributeAndModes(0, InTexture_.get(), osg::StateAttribute::ON);
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
+
     StateSet_->addUniform(uniformVariable1);
 
     quad_geode->addDrawable(quad_geom.get());
