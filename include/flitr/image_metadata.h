@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -35,7 +35,11 @@ class FLITR_EXPORT ImageMetadata {
     ImageMetadata() {}
     virtual ~ImageMetadata() {}
     virtual bool writeToStream(std::ostream& s) const = 0;
+    virtual bool readFromStream(std::istream& s) const = 0;
+
     virtual ImageMetadata* clone() const = 0;
+
+    virtual uint32_t getSizeInBytes() const = 0; // size when packed in stream.
 };
     
 typedef std::tr1::function < std::tr1::shared_ptr<ImageMetadata> () > CreateMetadataFunction;
