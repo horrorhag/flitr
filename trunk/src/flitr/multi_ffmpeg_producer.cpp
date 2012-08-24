@@ -64,7 +64,8 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
 	NumImages_ = 0;
 	Producers_.resize(ImagesPerSlot_);
 	Consumers_.resize(ImagesPerSlot_);
-	for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
+    for (uint32_t i=0; i < ImagesPerSlot_; ++i)
+    {
         Producers_[i] = shared_ptr<FFmpegProducer>(new FFmpegProducer(filenames[i], out_pix_fmt, buffer_size_));
 		Producers_[i]->init();
 		Consumers_[i] = shared_ptr<ImageConsumer>(new ImageConsumer(*Producers_[i]));
@@ -81,6 +82,18 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
 	
     ProducerThreads_.resize(ImagesPerSlot_);
     SeekOK_.resize(ImagesPerSlot_);    
+}
+
+bool MultiFFmpegProducer::setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata)
+{
+    bool success=true;
+
+    for (uint32_t i=0; i < ImagesPerSlot_; ++i)
+    {
+        success=success & Producers_[i]->setAutoLoadMetaData(defaultMetadata);
+    }
+
+    return success;
 }
 
 bool MultiFFmpegProducer::init()

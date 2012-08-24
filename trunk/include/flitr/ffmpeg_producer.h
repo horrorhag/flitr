@@ -24,6 +24,7 @@
 #include <boost/tr1/memory.hpp>
 
 #include <flitr/ffmpeg_reader.h>
+#include <flitr/metadata_reader.h>
 #include <flitr/image_producer.h>
 
 namespace flitr {
@@ -45,6 +46,9 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
      * 
      */
     FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+
+    bool setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata);
+
     /** 
      * The init method is used after construction to be able to return
      * success or failure of opening the file.
@@ -89,8 +93,14 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
     uint32_t getFrameRate() const {return Reader_->getFrameRate();}
 
   private:
+    std::string filename_;
+
     /// The reader to do the actual reading.
     std::tr1::shared_ptr<FFmpegReader> Reader_;
+
+    std::tr1::shared_ptr<MetadataReader> MetadataReader_;
+    std::tr1::shared_ptr<ImageMetadata> DefaultMetadata_;
+
     /// Number of frames in the file.
     uint32_t NumImages_;
     /// Last correctly read frame.

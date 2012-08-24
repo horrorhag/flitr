@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -67,7 +67,9 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     // \todo maybe change this so pix formats can be requested per input file
     MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
     ~MultiFFmpegProducer();
-    
+
+    bool setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata);
+
     /** 
      * Perform initialisation that might fail on file opens.
      * 
