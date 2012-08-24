@@ -120,6 +120,7 @@ SET(LIB_SOURCES
   src/flitr/log_message.cpp
   src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
+  src/flitr/metadata_reader.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
   src/flitr/multi_ffmpeg_producer.cpp
   src/flitr/multi_osg_consumer.cpp
@@ -150,6 +151,7 @@ SET(LIB_SOURCES
   include/flitr/log_message.h
   include/flitr/manipulator_utils.h
   include/flitr/metadata_writer.h
+  include/flitr/metadata_reader.h
   include/flitr/multi_ffmpeg_consumer.h
   include/flitr/multi_ffmpeg_producer.h
   include/flitr/multi_osg_consumer.h
