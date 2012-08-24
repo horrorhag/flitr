@@ -116,9 +116,10 @@ private:
     uint32_t OutputTextureHeight_;
 
     bool KeepAspect_;
-    bool enabled_;
 
     uint32_t BufferSize_;
+
+    bool enabled_;
 };
 
 }
