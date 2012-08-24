@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -25,12 +25,33 @@ using std::tr1::shared_ptr;
 
 
 FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
-    buffer_size_(buffer_size)
+    buffer_size_(buffer_size),
+    filename_(filename)
 {
-	Reader_ = shared_ptr<FFmpegReader>(new FFmpegReader(filename, out_pix_fmt));
-	NumImages_ = Reader_->getNumImages();
-	CurrentImage_ = -1;
-	ImageFormat_.push_back(Reader_->getFormat());
+    Reader_ = shared_ptr<FFmpegReader>(new FFmpegReader(filename_, out_pix_fmt));
+    NumImages_ = Reader_->getNumImages();
+    CurrentImage_ = -1;
+    ImageFormat_.push_back(Reader_->getFormat());
+}
+
+bool FFmpegProducer::setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata)
+{
+    DefaultMetadata_=defaultMetadata;
+
+    size_t posOfDot=filename_.find_last_of('.');
+    if (posOfDot!=std::string::npos)
+    {
+        std::string metadataFilename=".meta";
+        metadataFilename.insert(0,filename_,0,posOfDot);
+
+        MetadataReader_=std::tr1::shared_ptr<MetadataReader>(new MetadataReader(metadataFilename));
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 bool FFmpegProducer::init()
@@ -41,36 +62,46 @@ bool FFmpegProducer::init()
         return false;
     }
 
-	// Allocate storage
+    // Allocate storage
     SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, 1));
-	SharedImageBuffer_->initWithStorage();
-	return true;
+    SharedImageBuffer_->initWithStorage();
+    return true;
 }
 
 bool FFmpegProducer::trigger()
 {
     uint32_t seek_to = CurrentImage_ + 1;
-	return seek(seek_to);
+    return seek(seek_to);
 }
 
 bool FFmpegProducer::seek(uint32_t position)
 {
-	std::vector<Image**> imvec = reserveWriteSlot(); 
-	if (imvec.size() == 0) {
-		// no storage available
-		return false;
-	}
-
-    uint32_t seek_to = position % NumImages_;
-	bool seek_result = Reader_->getImage(*(*(imvec[0])), seek_to);
-    CurrentImage_ = Reader_->getCurrentImage();
-	
-    if (CreateMetadataFunction_) 
-    {
-      (*(imvec[0]))->setMetadata(CreateMetadataFunction_());
+    std::vector<Image**> imvec = reserveWriteSlot();
+    if (imvec.size() == 0) {
+        // no storage available
+        return false;
     }
 
+    uint32_t seek_to = position % NumImages_;
+    bool seek_result = Reader_->getImage(*(*(imvec[0])), seek_to);
+    CurrentImage_ = Reader_->getCurrentImage();
+
+    // If there is a create meta data function, then use it to stay backwards compatible with uses before the setAutoLoadMetaData method was added.
+    // Otherwise use the MetaDataReader_ as set up by setAutoLoadMetaData(...)
+    if (CreateMetadataFunction_)
+    {
+        (*(imvec[0]))->setMetadata(CreateMetadataFunction_());
+    } else
+        if ((MetadataReader_)&&(DefaultMetadata_))
+        {
+            // set default meta data which also gives access to the desired metadata class readFromStream method.
+            (*(imvec[0]))->setMetadata(DefaultMetadata_);
+
+            // update with the meta data's virtual readFromStream() method via the meta data reader.
+            MetadataReader_->readFrame(*(*(imvec[0])), seek_to);
+        }
+
     releaseWriteSlot();
-	
+
     return seek_result;
 }

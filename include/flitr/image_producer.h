@@ -100,6 +100,7 @@ class FLITR_EXPORT ImageProducer {
         return SharedImageBuffer_->getLeastNumReadSlotsAvailable();
     }
 
+    //Example: producer->setCreateMetadataFunction(std::tr1::bind(&CustomMetadataClass::create, customMetadataObject))
     virtual void setCreateMetadataFunction(CreateMetadataFunction f)
     {
         CreateMetadataFunction_ = f;
