@@ -187,6 +187,9 @@ bool MultiFFmpegProducer::seek(uint32_t position)
 
 void MultiFFmpegProducer::releaseReadSlotCallback()
 {
+//    std::cout << "releaseReadSlotCallback\n";
+//    std::cout.flush();
+
 	// all external consumers are done with the oldest slot
 	for (uint32_t i=0; i < ImagesPerSlot_; ++i) {
 		Consumers_[i]->releaseReadSlot();

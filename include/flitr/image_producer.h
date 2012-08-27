@@ -100,7 +100,10 @@ class FLITR_EXPORT ImageProducer {
         return SharedImageBuffer_->getLeastNumReadSlotsAvailable();
     }
 
-    //Example: producer->setCreateMetadataFunction(std::tr1::bind(&CustomMetadataClass::create, customMetadataObject))
+    //Examples:
+    // 1) producer->setCreateMetadataFunction(std::tr1::bind(&CustomMetadataClass::create, customMetadataObject))
+    // 2) multiPlaybackFusionTextureCaptureProducer_->setCreateMetadataFunction(std::tr1::bind(&MultiOSGConsumerMetadataCreator::getCurrentMetadata, MultiOSGConsumerMetadataCreator(multiPlaybackOSGConsumer_.get(), 0, 0)));
+    // 3) multiPlaybackFusionTextureCaptureProducer_->setCreateMetadataFunction(std::tr1::bind(&MultiOSGConsumer::getImageMetadata, multiPlaybackOSGConsumer_, (uint32_t)0, (uint32_t)0));
     virtual void setCreateMetadataFunction(CreateMetadataFunction f)
     {
         CreateMetadataFunction_ = f;
