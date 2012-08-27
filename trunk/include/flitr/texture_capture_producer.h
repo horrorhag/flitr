@@ -23,6 +23,8 @@
 
 #include <flitr/image_producer.h>
 #include <flitr/image_format.h>
+#include <flitr/high_resolution_time.h>
+#include <flitr/image_metadata.h>
 
 #include <osg/Geode>
 #include <osg/Geometry>
@@ -33,6 +35,48 @@
 #include <osgDB/FileUtils>
 
 namespace flitr {
+
+
+class DefaultTextureCaptureMetadata : public flitr::ImageMetadata {
+public:
+    DefaultTextureCaptureMetadata() : ImageMetadata() {}
+
+    virtual ~DefaultTextureCaptureMetadata() {}
+
+    virtual bool writeToStream(std::ostream& s) const
+    {
+        s.write((char *)&PCTimeStamp_, sizeof(PCTimeStamp_));
+        return true;
+    }
+
+    virtual bool readFromStream(std::istream& s) const
+    {
+        s.read((char *)&PCTimeStamp_, sizeof(PCTimeStamp_));
+        return true;
+    }
+
+    virtual DefaultTextureCaptureMetadata* clone() const
+    {
+        return new DefaultTextureCaptureMetadata(*this);
+    }
+
+    virtual uint32_t getSizeInBytes() const
+    {// size when packed in stream.
+        return sizeof(PCTimeStamp_);
+    }
+
+    virtual std::string getString() const
+    {
+       std::stringstream rValueStream;
+       rValueStream << PCTimeStamp_ << "\n";
+       rValueStream.flush();
+       return rValueStream.str();
+    }
+
+    /// Nanoseconds since epoch on the PC when frame was captured.
+    uint64_t PCTimeStamp_;
+};
+
 
 class TextureCaptureProducer : public ImageProducer {
 
@@ -72,6 +116,25 @@ class TextureCaptureProducer : public ImageProducer {
                                   GL_UNSIGNED_BYTE,
                                   im->data());
                 }
+
+
+                // fill other vars
+                if (producer_->CreateMetadataFunction_)
+                {
+                    im->setMetadata(producer_->CreateMetadataFunction_());
+
+                    if (im->metadata())
+                    {
+                        std::cout << " TextureCaptureProducer frame: " << im->metadata()->getString();
+                        std::cout.flush();
+                    }
+                } else
+                {
+                    std::tr1::shared_ptr<DefaultTextureCaptureMetadata> meta(new DefaultTextureCaptureMetadata());
+                    meta->PCTimeStamp_ = currentTimeNanoSec();
+                    im->setMetadata(meta);
+                }
+
 
                 producer_->releaseWriteSlot();
             }

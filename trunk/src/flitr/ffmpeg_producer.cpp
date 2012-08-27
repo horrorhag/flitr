@@ -25,8 +25,8 @@ using std::tr1::shared_ptr;
 
 
 FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
-    buffer_size_(buffer_size),
-    filename_(filename)
+    filename_(filename),
+    buffer_size_(buffer_size)
 {
     Reader_ = shared_ptr<FFmpegReader>(new FFmpegReader(filename_, out_pix_fmt));
     NumImages_ = Reader_->getNumImages();
@@ -36,7 +36,7 @@ FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat ou
 
 bool FFmpegProducer::setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata)
 {
-    DefaultMetadata_=defaultMetadata;
+    DefaultMetadata_=std::tr1::shared_ptr<ImageMetadata>(defaultMetadata->clone());
 
     size_t posOfDot=filename_.find_last_of('.');
     if (posOfDot!=std::string::npos)
@@ -76,29 +76,34 @@ bool FFmpegProducer::trigger()
 
 bool FFmpegProducer::seek(uint32_t position)
 {
-    std::vector<Image**> imvec = reserveWriteSlot();
-    if (imvec.size() == 0) {
+    std::vector<Image**> imv = reserveWriteSlot();
+    if (imv.size() != 1) {
         // no storage available
         return false;
     }
 
+    Image *image=*(imv[0]);
+
     uint32_t seek_to = position % NumImages_;
-    bool seek_result = Reader_->getImage(*(*(imvec[0])), seek_to);
+    bool seek_result = Reader_->getImage(*image, seek_to);
     CurrentImage_ = Reader_->getCurrentImage();
 
     // If there is a create meta data function, then use it to stay backwards compatible with uses before the setAutoLoadMetaData method was added.
     // Otherwise use the MetaDataReader_ as set up by setAutoLoadMetaData(...)
     if (CreateMetadataFunction_)
     {
-        (*(imvec[0]))->setMetadata(CreateMetadataFunction_());
+        image->setMetadata(CreateMetadataFunction_());
     } else
         if ((MetadataReader_)&&(DefaultMetadata_))
         {
-            // set default meta data which also gives access to the desired metadata class readFromStream method.
-            (*(imvec[0]))->setMetadata(DefaultMetadata_);
+            // set default meta data which also gives access to the desired metadata class' readFromStream method.
+            image->setMetadata(std::tr1::shared_ptr<ImageMetadata>(DefaultMetadata_->clone()));
 
             // update with the meta data's virtual readFromStream() method via the meta data reader.
-            MetadataReader_->readFrame(*(*(imvec[0])), seek_to);
+            MetadataReader_->readFrame(*image, seek_to);
+
+ //           std::cout << "FFmpegProducer: " << image->metadata()->getString();
+ //           std::cout.flush();
         }
 
     releaseWriteSlot();

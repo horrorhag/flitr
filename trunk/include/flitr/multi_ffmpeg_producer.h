@@ -139,6 +139,7 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     uint32_t ImagesPerSlot_;
     uint32_t SeekPos_;
     std::vector< bool > SeekOK_;
+
     std::vector<Image**> OutputImageVector_;
 
 

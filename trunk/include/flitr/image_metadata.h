@@ -40,6 +40,8 @@ class FLITR_EXPORT ImageMetadata {
     virtual ImageMetadata* clone() const = 0;
 
     virtual uint32_t getSizeInBytes() const = 0; // size when packed in stream.
+
+    virtual std::string getString() const = 0; // used for printing when debugging, etc.
 };
     
 typedef std::tr1::function < std::tr1::shared_ptr<ImageMetadata> () > CreateMetadataFunction;
