@@ -125,8 +125,8 @@ class TextureCaptureProducer : public ImageProducer {
 
                     if (im->metadata())
                     {
-                        std::cout << " TextureCaptureProducer frame: " << im->metadata()->getString();
-                        std::cout.flush();
+                        //std::cout << " TextureCaptureProducer frame: " << im->metadata()->getString();
+                        //std::cout.flush();
                     }
                 } else
                 {
