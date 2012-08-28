@@ -28,21 +28,52 @@
 #if defined(linux) || defined(__linux) || defined(__linux__)
 
 #include <time.h>
+#include <boost/date_time.hpp>
 
 #define NSEC_PER_SEC 1000000000LL
+#define NSEC_PER_MSEC 1000000LL
 
 inline uint64_t timespec_to_ns(const struct timespec *ts)
 {
     return ((uint64_t) ts->tv_sec * NSEC_PER_SEC) + ts->tv_nsec;
 }
 
-/// Returns nanoseconds since epoch.
+inline struct timespec ns_to_timespec(const uint64_t ns)
+{
+    struct timespec timestamp_ts;
+    timestamp_ts.tv_sec=ns / NSEC_PER_SEC;
+    timestamp_ts.tv_nsec=ns % NSEC_PER_SEC;
+
+    return timestamp_ts;
+}
+
+/// Returns nanoseconds since epoch.  UTC time_t epoch 1970-01-01 00:00:00.
 inline uint64_t currentTimeNanoSec()
 {
     struct timespec timestamp_ts;
     //clock_gettime(CLOCK_MONOTONIC, &timestamp_ts);
     clock_gettime(CLOCK_REALTIME, &timestamp_ts);
     return timespec_to_ns(&timestamp_ts);
+}
+
+/**
+   \brief Get the date and time of the nanosec since epoch as a string.
+   \return String representing current PC time of the form "2007-02-26_17h35m20.001s".
+*/
+inline std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
+{
+    struct timespec timestamp_ts=ns_to_timespec(timeNanoSec);
+
+    time_t timestamp_t=timestamp_ts.tv_sec;
+    struct tm *timestamp_tm=localtime(&timestamp_t);
+
+    char timestr[512];
+    sprintf(timestr, "%d-%02d-%02d_%02dh%02dm%02d.%03ds",
+        timestamp_tm->tm_year+1900, timestamp_tm->tm_mon+1, timestamp_tm->tm_mday,
+        timestamp_tm->tm_hour, timestamp_tm->tm_min, timestamp_tm->tm_sec, timestamp_ts.tv_nsec/NSEC_PER_MSEC);
+
+    std::string s(timestr);
+    return s;
 }
 
 inline uint64_t clockResNanoSec()
