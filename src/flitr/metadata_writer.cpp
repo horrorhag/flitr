@@ -56,8 +56,8 @@ bool MetadataWriter::writeFrame(Image& in_frame)
     if (FileStream_.is_open()) {
         if (in_frame.metadata()) {
             in_frame.metadata()->writeToStream(FileStream_);
-            std::cout << "MetadataWriter: " << in_frame.metadata()->getString();
-            std::cout.flush();
+//            std::cout << "MetadataWriter: " << in_frame.metadata()->getString();
+//            std::cout.flush();
         }
 
         return true;

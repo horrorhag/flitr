@@ -37,7 +37,10 @@ void MultiOSGConsumerDiscardThread::run()
 	
 	while (true) {
 		// check if image available
-		// reading and popping must be synced for the consumer
+
+        // Note: Reading and popping must be synced for the consumer.
+        //       Currently the discard thread seems to be broken, because the reserved and release of images are not synced!
+        //       In other words: The read slot reserved here when the osg consumer has already reserved one (which is always when keeping history) is not the same slot as is released here.
 
         {//Note: This scope bracket is for the scoped lock.
 			OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(Consumer_->BufferMutex_);
