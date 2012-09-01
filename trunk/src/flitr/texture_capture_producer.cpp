@@ -35,7 +35,8 @@ TextureCaptureProducer::TextureCaptureProducer(
     OutputTextureHeight_(new_height),
     KeepAspect_(keep_aspect),
     BufferSize_(buffer_size),
-    enabled_(true)
+    enabled_(true),
+    SaveNextImage_("")
 {
     InputTextureWidth_ = InputTexture_->getTextureWidth();
 	InputTextureHeight_ = InputTexture_->getTextureHeight();
@@ -58,6 +59,7 @@ bool TextureCaptureProducer::init()
     RootGroup_->addChild(Camera_.get());
 
 	//setShader("");
+
 
     return true;
 }

@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  *
  * This file is part of FLITr.
@@ -33,6 +33,10 @@
 #include <osg/Switch>
 #include <osg/AlphaFunc>
 #include <osgDB/FileUtils>
+#include <osgDB/Registry>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
+
 
 namespace flitr {
 
@@ -103,31 +107,41 @@ class TextureCaptureProducer : public ImageProducer {
                 renderInfo.getState()->applyTextureAttribute(0, //unit
                                                              trect_);
 
-                if (producer_->OutputFormat_.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_Y_8) {
-                    glGetTexImage(trect_->getTextureTarget(),
-                                  0, //level
-                                  GL_LUMINANCE,
-                                  GL_UNSIGNED_BYTE,
-                                  im->data());
-                } else {
-                    glGetTexImage(trect_->getTextureTarget(),
-                                  0, //level
-                                  GL_RGB,
-                                  GL_UNSIGNED_BYTE,
-                                  im->data());
+                GLenum pixelFormat=GL_RGB;
+                GLenum pixelType=GL_UNSIGNED_BYTE;
+
+                switch (producer_->OutputFormat_.getPixelFormat())
+                {
+                case ImageFormat::FLITR_PIX_FMT_Y_8:
+                    pixelFormat=GL_LUMINANCE;
+                    pixelType=GL_UNSIGNED_BYTE;
+                    break;
+                case ImageFormat::FLITR_PIX_FMT_RGB_8:
+                    pixelFormat=GL_RGB;
+                    pixelType=GL_UNSIGNED_BYTE;
+                    break;
+                case ImageFormat::FLITR_PIX_FMT_Y_16:
+                    pixelFormat=GL_LUMINANCE;
+                    pixelType=GL_UNSIGNED_SHORT;
+                    break;
+                default:
+                    pixelFormat=GL_RGB;
+                    pixelType=GL_UNSIGNED_SHORT;
                 }
 
+                glGetTexImage(trect_->getTextureTarget(), 0, //level
+                              pixelFormat, pixelType, im->data());
 
                 // fill other vars
                 if (producer_->CreateMetadataFunction_)
                 {
                     im->setMetadata(producer_->CreateMetadataFunction_());
 
-                    if (im->metadata())
-                    {
+                    //if (im->metadata())
+                    //{
                         //std::cout << " TextureCaptureProducer frame: " << im->metadata()->getString();
                         //std::cout.flush();
-                    }
+                    //}
                 } else
                 {
                     std::tr1::shared_ptr<DefaultTextureCaptureMetadata> meta(new DefaultTextureCaptureMetadata());
@@ -135,6 +149,18 @@ class TextureCaptureProducer : public ImageProducer {
                     im->setMetadata(meta);
                 }
 
+                if (producer_->SaveNextImage_!="")
+                {
+                    osg::ref_ptr<osg::Image> image=osg::ref_ptr<osg::Image>(new osg::Image());
+                    image->setImage(im->format()->getWidth(), im->format()->getHeight(), 1,
+                                    pixelFormat, pixelFormat, pixelType, im->data(), osg::Image::NO_DELETE);
+
+                    osg::ref_ptr<osg::Image> imageFlipped=osg::ref_ptr<osg::Image>(new osg::Image(*image,osg::CopyOp::DEEP_COPY_ALL));
+                    imageFlipped->flipVertical();
+
+                    osgDB::writeImageFile(*imageFlipped, producer_->SaveNextImage_);
+                    producer_->SaveNextImage_="";
+                }
 
                 producer_->releaseWriteSlot();
             }
@@ -159,6 +185,9 @@ public:
     void setEnable(bool value) {enabled_=value;}
 
     void setShader(std::string filename);
+
+    void saveNextImage(std::string filename) {SaveNextImage_=filename;}
+
 private:
     osg::ref_ptr<osg::Group> createTexturedQuad();
     void setupCamera();
@@ -183,6 +212,7 @@ private:
     uint32_t BufferSize_;
 
     bool enabled_;
+    std::string SaveNextImage_;
 };
 
 }
