@@ -60,13 +60,14 @@ struct FFmpegWriterException {
 };
 
 enum VideoContainer {
-    FLITR_AVI_CONTAINER = 0,
-    FLITR_MKV_CONTAINER = 1
+    FLITR_ANY_CONTAINER = 0,
+    FLITR_AVI_CONTAINER,
+    FLITR_MKV_CONTAINER
 };
 
 enum VideoCodec {
-    FLITR_RAWVIDEO_CODEC = 0,
-    FLITR_FFV1_CODEC = 1
+    FLITR_RAWVIDEO_CODEC = CODEC_ID_RAWVIDEO,
+    FLITR_FFV1_CODEC = CODEC_ID_FFV1
 };
 
 class FLITR_EXPORT FFmpegWriter {
@@ -81,9 +82,15 @@ public:
     bool writeVideoFrame(uint8_t *in_buf);
 
 private:
-    /// Create a video stream
-    AVStream *addVideoStream(AVFormatContext *fc, int codec_id);
-	
+
+    VideoContainer Container_;
+    VideoCodec Codec_;
+
+    AVFormatContext *FormatContext_;
+    AVStream *VideoStream_;
+    AVCodec *AVCodec_;
+    AVCodecContext *AVCodecContext_;
+
 	/// Open video file and prepare codec.
     bool openVideoFile();
 
@@ -100,8 +107,6 @@ private:
 
     /// Format of the output video
     AVOutputFormat *OutputFormat_;
-    AVFormatContext *FormatContext_;
-    AVStream *VideoStream_;
 
 #if defined FLITR_USE_SWSCALE
     struct SwsContext *ConvertToSaveCtx_;
@@ -112,6 +117,7 @@ private:
     uint32_t FrameRate_;
     /// Holds the number of frames written to disk.
     uint32_t WrittenFrameCount_;
+
 
     uint8_t* VideoEncodeBuffer_;
     uint32_t VideoEncodeBufferSize_;
