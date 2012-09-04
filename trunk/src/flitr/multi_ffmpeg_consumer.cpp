@@ -79,6 +79,17 @@ MultiFFmpegConsumer::~MultiFFmpegConsumer()
     Thread_->join();
 }
 
+bool MultiFFmpegConsumer::setCodec(VideoCodec codec)
+{
+    Codec_=codec;
+}
+
+bool MultiFFmpegConsumer::setContainer(VideoContainer container)
+{
+    Container_=container;
+}
+
+
 bool MultiFFmpegConsumer::init()
 {
     FFmpegWriters_.resize(ImagesPerSlot_);
@@ -133,7 +144,7 @@ bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const ui
                 std::string video_filename(filenames[i] + ".avi");
                 std::string metadata_filename(filenames[i] + ".meta");
 
-                FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate);
+                FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate, Container_, Codec_);
                 MetadataWriters_[i] = new MetadataWriter(metadata_filename);
             } else
             {//If the filename is "" then the recording is disbaled.

@@ -24,7 +24,7 @@
 using namespace flitr;
 
 
-FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate) :
+FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate, VideoContainer container, VideoCodec codec) :
     ImageFormat_(image_format),
     SaveFileName_(filename),
     FrameRate_(frame_rate),

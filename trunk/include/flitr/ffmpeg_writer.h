@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -59,9 +59,23 @@ struct FFmpegWriterException {
     FFmpegWriterException() {}
 };
 
+enum VideoContainer {
+    FLITR_AVI_CONTAINER = 0,
+    FLITR_MKV_CONTAINER = 1
+};
+
+enum VideoCodec {
+    FLITR_RAWVIDEO_CODEC = 0,
+    FLITR_FFV1_CODEC = 1
+};
+
 class FLITR_EXPORT FFmpegWriter {
 public:
-    FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
+    FFmpegWriter(std::string filename, const ImageFormat& image_format,
+                 const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE,
+                 VideoContainer container=FLITR_AVI_CONTAINER,
+                 VideoCodec codec=FLITR_RAWVIDEO_CODEC);
+
     ~FFmpegWriter();
 
     bool writeVideoFrame(uint8_t *in_buf);
