@@ -62,12 +62,20 @@ struct FFmpegWriterException {
 enum VideoContainer {
     FLITR_ANY_CONTAINER = 0,
     FLITR_AVI_CONTAINER,
-    FLITR_MKV_CONTAINER
+    FLITR_MKV_CONTAINER  //Will cause the ffmpeg consumers to use .mkv extension.
 };
 
-enum VideoCodec {
+enum VideoCodec {//NB: Still need to test all the codecs and only include the ones that work.
+    FLITR_NONE_CODEC = CODEC_ID_NONE,
     FLITR_RAWVIDEO_CODEC = CODEC_ID_RAWVIDEO,
-    FLITR_FFV1_CODEC = CODEC_ID_FFV1
+    FLITR_MPEG1VIDEO_CODEC = CODEC_ID_MPEG1VIDEO,
+    FLITR_MPEG2VIDEO_CODEC = CODEC_ID_MPEG2VIDEO,
+    FLITR_MSMPEG4V3_CODEC = CODEC_ID_MSMPEG4V3,
+    FLITR_MJPEG_CODEC = CODEC_ID_MJPEG,
+    FLITR_MJPEGB_CODEC = CODEC_ID_MJPEGB,
+    FLITR_LJPEG_CODEC = CODEC_ID_LJPEG,
+    FLITR_JPEGLS_CODEC = CODEC_ID_JPEGLS,
+    FLITR_FFV1_CODEC = CODEC_ID_FFV1,
 };
 
 class FLITR_EXPORT FFmpegWriter {
@@ -75,7 +83,8 @@ public:
     FFmpegWriter(std::string filename, const ImageFormat& image_format,
                  const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE,
                  VideoContainer container=FLITR_AVI_CONTAINER,
-                 VideoCodec codec=FLITR_RAWVIDEO_CODEC);
+                 VideoCodec codec=FLITR_RAWVIDEO_CODEC,
+                 int32_t bit_rate=-1);
 
     ~FFmpegWriter();
 
@@ -114,7 +123,7 @@ private:
 
 	ImageFormat ImageFormat_;
     std::string SaveFileName_;
-    uint32_t FrameRate_;
+    AVRational FrameRate_;
     /// Holds the number of frames written to disk.
     uint32_t WrittenFrameCount_;
 

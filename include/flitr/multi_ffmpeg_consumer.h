@@ -51,7 +51,7 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     MultiFFmpegConsumer(ImageProducer& producer, uint32_t images_per_slot);
     ~MultiFFmpegConsumer();
 
-    bool setCodec(VideoCodec codec);
+    bool setCodec(VideoCodec codec, int32_t bit_rate);
     bool setContainer(VideoContainer container);
 
     bool init();
@@ -69,6 +69,7 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     uint32_t ImagesPerSlot_;
 
     VideoCodec Codec_;
+    int32_t BitRate_;
     VideoContainer Container_;
 		
     MultiFFmpegConsumerThread *Thread_;

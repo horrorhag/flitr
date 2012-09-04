@@ -47,8 +47,10 @@ int main(int argc, char *argv[])
     scp->startCapture();
 
     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*scp, 1));
+    mffc->setCodec(flitr::FLITR_MJPEG_CODEC, 4000000);
+    mffc->setContainer(flitr::FLITR_AVI_CONTAINER);
     mffc->init();
-    mffc->openFiles("screen_cap");
+    mffc->openFiles("screen_cap",20);
     mffc->startWriting();
 
     viewer.run();
