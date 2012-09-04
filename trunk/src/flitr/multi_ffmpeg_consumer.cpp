@@ -64,6 +64,9 @@ MultiFFmpegConsumer::MultiFFmpegConsumer(ImageProducer& producer,
                                          uint32_t images_per_slot) :
     ImageConsumer(producer),
     ImagesPerSlot_(images_per_slot),
+    Codec_(FLITR_RAWVIDEO_CODEC),
+    BitRate_(-1),
+    Container_(FLITR_AVI_CONTAINER),
     Writing_(false)
 {
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -79,9 +82,10 @@ MultiFFmpegConsumer::~MultiFFmpegConsumer()
     Thread_->join();
 }
 
-bool MultiFFmpegConsumer::setCodec(VideoCodec codec)
+bool MultiFFmpegConsumer::setCodec(VideoCodec codec, int32_t bit_rate)
 {
     Codec_=codec;
+    BitRate_=bit_rate;
 }
 
 bool MultiFFmpegConsumer::setContainer(VideoContainer container)
@@ -142,9 +146,15 @@ bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const ui
             if (filenames[i]!="")
             {
                 std::string video_filename(filenames[i] + ".avi");
+
+                if (Container_==FLITR_MKV_CONTAINER)
+                {
+                    video_filename=std::string(filenames[i] + ".mkv");
+                }
+
                 std::string metadata_filename(filenames[i] + ".meta");
 
-                FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate, Container_, Codec_);
+                FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate, Container_, Codec_, BitRate_);
                 MetadataWriters_[i] = new MetadataWriter(metadata_filename);
             } else
             {//If the filename is "" then the recording is disbaled.
