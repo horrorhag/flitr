@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -50,6 +50,10 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
   public:
     MultiFFmpegConsumer(ImageProducer& producer, uint32_t images_per_slot);
     ~MultiFFmpegConsumer();
+
+    bool setCodec(VideoCodec codec);
+    bool setContainer(VideoContainer container);
+
     bool init();
 
     bool openFiles(std::string basename, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
@@ -64,6 +68,8 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     std::vector<ImageFormat> ImageFormat_;
     uint32_t ImagesPerSlot_;
 
+    VideoCodec Codec_;
+    VideoContainer Container_;
 		
     MultiFFmpegConsumerThread *Thread_;
 		
