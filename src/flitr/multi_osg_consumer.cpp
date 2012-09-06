@@ -168,14 +168,17 @@ bool TMultiOSGConsumer<T>::init()
             }
 
             OutputTextures_[h].push_back(new T());
-            OutputTextures_[h][i]->setImage(OSGImages_[h][i].get());
+            OutputTextures_[h][i]->setInternalFormat(OSGImages_[h][i]->getPixelFormat());
+            OutputTextures_[h][i]->setSourceFormat(OSGImages_[h][i]->getPixelFormat());
+            OutputTextures_[h][i]->setSourceType(OSGImages_[h][i]->getDataType());
             OutputTextures_[h][i]->setTextureWidth(ImageFormat_[i].getWidth());
             OutputTextures_[h][i]->setTextureHeight(ImageFormat_[i].getHeight());
             //OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
             //OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
             OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
             OutputTextures_[h][i]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
-        }	
+            OutputTextures_[h][i]->setImage(OSGImages_[h][i].get());
+        }
     }
     DiscardThread_ = std::tr1::shared_ptr<MultiOSGConsumerDiscardThread>(
         new MultiOSGConsumerDiscardThread(this));
