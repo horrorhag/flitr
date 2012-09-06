@@ -333,11 +333,11 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 
 
     /* encode the image */
-#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
-    int encode_ret = avcodec_encode_video2(AVCodecContext_, &pkt, SaveFrame_, &got_output);
-#else
+//#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+//    int encode_ret = avcodec_encode_video2(AVCodecContext_, &pkt, SaveFrame_, &got_output);
+//#else
     int encode_ret = avcodec_encode_video(AVCodecContext_, VideoEncodeBuffer_, VideoEncodeBufferSize_, SaveFrame_);
-#endif
+//#endif
 
     if (encode_ret<=0)
     {
