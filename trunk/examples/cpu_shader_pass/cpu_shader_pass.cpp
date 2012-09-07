@@ -11,8 +11,8 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 
-#include "simple_cpu_shader_pass.h"
-#include <examples/glsl_shader_pass/simple_shader_pass.h>
+#include <flitr/simple_cpu_shader_pass.h>
+#include <flitr/simple_shader_pass.h>
 
 using std::tr1::shared_ptr;
 using namespace flitr;
@@ -45,7 +45,7 @@ public:
         }
 
         // Generate histogram.
-        const uint32_t stride=5;
+        const uint32_t stride=1;
         for (uint32_t i=0; i<(numPixels*numComponents); i+=stride)
         {
             if ((i%numComponents)==0) Histogram_[data[i]]+=stride;
@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
     osg::Group *root_node = new osg::Group;
 
     //===
-    shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShaderPass(osgc->getOutputTexture(), true));
+    shared_ptr<flitr::SimpleCPUShaderPass> gfp(new flitr::SimpleCPUShaderPass(osgc->getOutputTexture(), true));
     //OR
     //shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShaderPass(osgc->getOSGImage(), true));
     //===

@@ -1,4 +1,6 @@
-#include "simple_shader_pass.h"
+#include <flitr/simple_shader_pass.h>
+
+using namespace flitr;
 
 SimpleShaderPass::SimpleShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
 {

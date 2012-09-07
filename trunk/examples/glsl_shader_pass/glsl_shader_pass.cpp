@@ -11,7 +11,7 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 
-#include "simple_shader_pass.h"
+#include <flitr/simple_shader_pass.h>
 #include "render_to_video.h"
 
 using std::tr1::shared_ptr;
