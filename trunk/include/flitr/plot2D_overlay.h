@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -49,24 +49,25 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
      * 
      *
      */
-    Plot2DOverlay(const double x, const double y, const double width, const double height, 
-                  const double axisU, const double axisV);
+    Plot2DOverlay(const double x, const double y, const double width, const double height,
+                  const double axisU, const double axisV, const uint32_t numPlots=1);
 
     virtual ~Plot2DOverlay() {};
 
     virtual void setAxisColour(osg::Vec4d newcol);
 
-    virtual void addPoint(const double u, const double v);
-    virtual void clearPoints();
+    virtual void addPoint(const double u, const double v, bool autoUpdate=true, uint32_t plotNum=0);
+    virtual void clearPoints(bool autoUpdate=true, uint32_t plotNum=0);
+    void update();
 
   private:
     void create(const double x, const double y, const double width, const double height, 
                 const double axisU, const double axisV);
-    void update();
 
-    osg::ref_ptr<osg::Vec3Array> _plotVertices;
 
-    std::vector< std::pair<double, double> > plot_;
+    std::vector< osg::ref_ptr<osg::Vec3Array> > _plotVertices;
+
+    std::vector< std::vector< std::pair<double, double> > > plots_;
 
     double x_;    
     double y_;    
@@ -87,7 +88,7 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
     osg::Vec4d _AxisBckGeometryColour;
     osg::ref_ptr<osg::Vec3Array> _axisBckVertices;
 
-    osg::ref_ptr<osg::Geode> _PlotGeode;
+    std::vector< osg::ref_ptr<osg::Geode> > _PlotGeodes;
 };
 
 }
