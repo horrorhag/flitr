@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -22,8 +22,8 @@
 
 using namespace flitr;
 
-Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width, const double height, 
-                const double axisU, const double axisV) :
+Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width, const double height,
+                             const double axisU, const double axisV, const uint32_t numPlots) :
     GeometryOverlay(),
     x_(x),
     y_(y),
@@ -35,7 +35,15 @@ Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width,
     _axisBckVertices = new osg::Vec3Array;
     _axisFrntVertices = new osg::Vec3Array;
 
-    _plotVertices = new osg::Vec3Array;
+    for (uint32_t i=0; i<numPlots; i++)
+    {
+        _plotVertices.push_back(new osg::Vec3Array);
+        plots_.push_back(std::vector< std::pair<double, double> >(0));
+
+        _PlotGeodes.push_back(new osg::Geode());
+        _PlotGeodes[i]->setCullingActive(false);
+        _GeometryGroup->addChild(_PlotGeodes[i]);
+    }
 
     create(x_, y_, width_, height_, axisU_, axisV_);
 
@@ -46,21 +54,13 @@ Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width,
 }
 
 void Plot2DOverlay::create(const double x, const double y, const double width, const double height, 
-                const double axisU, const double axisV)
+                           const double axisU, const double axisV)
 {
-//=====================//
-//=== Plot geometry ===//
-    _PlotGeode = new osg::Geode();
-    _GeometryGroup->addChild(_PlotGeode.get());
-    _PlotGeode->setCullingActive(false);
-	
-    update();//Update also called when plot modified.
-    
-	
-//=====================//
 
-//=====================//
-//=== Axis geometry ===//
+    update();//Update also called when plot modified.
+
+    //=====================//
+    //=== Axis geometry ===//
     _AxisBckGeode = new osg::Geode();
     _AxisBckGeode->setCullingActive(false);
 
@@ -86,7 +86,7 @@ void Plot2DOverlay::create(const double x, const double y, const double width, c
     _axisBckVertices->dirty();
 
 
-	
+
     _AxisFrntGeode = new osg::Geode();
     _AxisFrntGeode->setCullingActive(false);
 
@@ -132,32 +132,39 @@ void Plot2DOverlay::create(const double x, const double y, const double width, c
     _GeometryGroup->addChild(_AxisBckGeode.get());
 
     dirtyBound();
-//=====================//
+    //=====================//
 }
 
 void Plot2DOverlay::update()
 {
-    _PlotGeode->removeDrawables(0,1);
-    _plotVertices->clear();
+    uint32_t numPlots=plots_.size();
+
+    for (uint32_t plotNum=0; plotNum<numPlots; plotNum++)
+    {
+
+    _PlotGeodes[plotNum]->removeDrawables(0,1);
+
+    _plotVertices[plotNum]->clear();
 
     osg::ref_ptr<osg::Geometry> plotGeometry=new osg::Geometry();
 
     //Create the plot.
-    std::vector< std::pair<double, double> >::const_iterator plotIterator=plot_.begin();
-    for (; plotIterator!=plot_.end(); plotIterator++)
+    std::vector< std::pair<double, double> >::const_iterator plotIterator=plots_[plotNum].begin();
+    for (; plotIterator!=plots_[plotNum].end(); plotIterator++)
     {
-      _plotVertices->push_back(osg::Vec3d(plotIterator->first*width_/axisU_+x_, plotIterator->second*height_/axisV_+y_, 0));
+        _plotVertices[plotNum]->push_back(osg::Vec3d(plotIterator->first*width_/axisU_+x_, plotIterator->second*height_/axisV_+y_, 0));
     }
 
-    plotGeometry->setVertexArray(_plotVertices.get());
+    plotGeometry->setVertexArray(_plotVertices[plotNum].get());
 
-    osg::ref_ptr<osg::DrawArrays> plotDA=new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP,0,_plotVertices->size());
+    osg::ref_ptr<osg::DrawArrays> plotDA=new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP,0,_plotVertices[plotNum]->size());
     plotGeometry->addPrimitiveSet(plotDA.get());
     plotGeometry->setUseDisplayList(false);
 
-    _PlotGeode->addDrawable(plotGeometry.get());
+    _PlotGeodes[plotNum]->addDrawable(plotGeometry.get());
     
-    _plotVertices->dirty();
+    _plotVertices[plotNum]->dirty();
+    }
     dirtyBound();
 }
 
@@ -174,16 +181,16 @@ void Plot2DOverlay::setAxisColour(osg::Vec4d newcol)
 }
 
 
-void Plot2DOverlay::addPoint(const double u, const double v) 
+void Plot2DOverlay::addPoint(const double u, const double v, bool autoUpdate, uint32_t plotNum)
 {
-  plot_.push_back(std::pair<double, double>(u, v));
-  update();
+    plots_[plotNum].push_back(std::pair<double, double>(u, v));
+    if (autoUpdate) update();
 }
 
 
-void Plot2DOverlay::clearPoints() 
+void Plot2DOverlay::clearPoints(bool autoUpdate, uint32_t plotNum)
 {
-  plot_.clear();
-  update();
+    plots_[plotNum].clear();
+    if (autoUpdate) update();
 }
 
