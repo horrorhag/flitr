@@ -36,7 +36,7 @@ TextureCaptureProducer::TextureCaptureProducer(
     KeepAspect_(keep_aspect),
     BufferSize_(buffer_size),
     enabled_(true),
-    SaveNextImage_("")
+    SaveNextImageTo_("")
 {
     InputTextureWidth_ = InputTexture_->getTextureWidth();
 	InputTextureHeight_ = InputTexture_->getTextureHeight();
