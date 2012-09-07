@@ -46,10 +46,13 @@ class FLITR_EXPORT ImageFormat {
         PixelFormat_(pix_fmt)
     {
         setBytesPerPixel();
+        setComponentsPerPixel();
     }
     inline uint32_t getWidth() const { return Width_; }
     inline uint32_t getHeight() const { return Height_; }
     inline PixelFormat getPixelFormat() const { return PixelFormat_; }
+
+    inline uint32_t getComponentsPerPixel() const { return ComponentsPerPixel_; }
     inline uint32_t getBytesPerPixel() const { return BytesPerPixel_; }
     inline uint32_t getBytesPerImage() const { return Width_ * Height_ * BytesPerPixel_; }
 
@@ -59,6 +62,7 @@ class FLITR_EXPORT ImageFormat {
     { 
         PixelFormat_ = pix_fmt;
         setBytesPerPixel();
+        setComponentsPerPixel();
     }
     
   private:
@@ -79,10 +83,30 @@ class FLITR_EXPORT ImageFormat {
             BytesPerPixel_ = 1;
         }
     }
+
+    inline void setComponentsPerPixel()
+    {
+        switch (PixelFormat_) {
+          case FLITR_PIX_FMT_Y_8:
+            ComponentsPerPixel_ = 1;
+            break;
+          case FLITR_PIX_FMT_RGB_8:
+            ComponentsPerPixel_ = 3;
+            break;
+          case FLITR_PIX_FMT_Y_16:
+            ComponentsPerPixel_ = 1;
+            break;
+          default:
+            // \todo maybe return error
+            ComponentsPerPixel_ = 1;
+        }
+    }
+
     uint32_t Width_;
     uint32_t Height_;
     PixelFormat PixelFormat_;
     uint32_t BytesPerPixel_;
+    uint32_t ComponentsPerPixel_;
 };
 
 }
