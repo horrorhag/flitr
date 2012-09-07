@@ -121,6 +121,7 @@ SET(LIB_SOURCES
   src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
   src/flitr/metadata_reader.cpp
+  src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
   src/flitr/multi_ffmpeg_producer.cpp
   src/flitr/multi_osg_consumer.cpp
@@ -130,7 +131,9 @@ SET(LIB_SOURCES
   src/flitr/plot2D_overlay.cpp
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
-  
+  src/flitr/simple_shader_pass.cpp
+  src/flitr/simple_cpu_shader_pass.cpp
+
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
   include/flitr/crosshair_overlay.h
@@ -152,6 +155,7 @@ SET(LIB_SOURCES
   include/flitr/manipulator_utils.h
   include/flitr/metadata_writer.h
   include/flitr/metadata_reader.h
+  include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
   include/flitr/multi_ffmpeg_producer.h
   include/flitr/multi_osg_consumer.h
@@ -162,6 +166,8 @@ SET(LIB_SOURCES
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
+  include/flitr/simple_shader_pass.h
+  include/flitr/simple_cpu_shader_pass.h
 )
 
 
@@ -253,6 +259,7 @@ INSTALL(
   LIBRARY DESTINATION lib${LIB_INSTALL_POSTFIX}
   ARCHIVE DESTINATION lib${LIB_INSTALL_POSTFIX}/static
 )
+#INSTALL(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/share" DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 
 # for include files install

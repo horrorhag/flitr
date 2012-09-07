@@ -1,7 +1,6 @@
 PROJECT(flitr_glsl_shader_pass)
 
 SET(SOURCES
-  simple_shader_pass.cpp
   glsl_shader_pass.cpp
 )
 
