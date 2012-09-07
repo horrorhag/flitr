@@ -149,7 +149,9 @@ class TextureCaptureProducer : public ImageProducer {
                     im->setMetadata(meta);
                 }
 
-                if (producer_->SaveNextImage_!="")
+
+
+                if (producer_->SaveNextImageTo_!="")
                 {
                     osg::ref_ptr<osg::Image> image=osg::ref_ptr<osg::Image>(new osg::Image());
                     image->setImage(im->format()->getWidth(), im->format()->getHeight(), 1,
@@ -158,8 +160,8 @@ class TextureCaptureProducer : public ImageProducer {
                     osg::ref_ptr<osg::Image> imageFlipped=osg::ref_ptr<osg::Image>(new osg::Image(*image,osg::CopyOp::DEEP_COPY_ALL));
                     imageFlipped->flipVertical();
 
-                    osgDB::writeImageFile(*imageFlipped, producer_->SaveNextImage_);
-                    producer_->SaveNextImage_="";
+                    osgDB::writeImageFile(*imageFlipped, producer_->SaveNextImageTo_);
+                    producer_->SaveNextImageTo_="";
                 }
 
                 producer_->releaseWriteSlot();
@@ -186,7 +188,7 @@ public:
 
     void setShader(std::string filename);
 
-    void saveNextImage(std::string filename) {SaveNextImage_=filename;}
+    void saveNextImage(std::string filename) {SaveNextImageTo_=filename;}
 
 private:
     osg::ref_ptr<osg::Group> createTexturedQuad();
@@ -212,7 +214,7 @@ private:
     uint32_t BufferSize_;
 
     bool enabled_;
-    std::string SaveNextImage_;
+    std::string SaveNextImageTo_;
 };
 
 }
