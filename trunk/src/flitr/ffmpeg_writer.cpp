@@ -314,7 +314,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
     avpicture_fill((AVPicture *)InputFrame_, in_buf, InputFrameFormat_, ImageFormat_.getWidth(), ImageFormat_.getHeight());
 
 #if defined FLITR_USE_SWSCALE
-    //if (SaveFrameFormat_==PIX_FMT_BGR24)||(SaveFrameFormat_==PIX_FMT_RGB 24)
+    if ((InputFrameFormat_!=PIX_FMT_GRAY8)&&(InputFrameFormat_!=PIX_FMT_GRAY16LE))
     {//Sometime the image has to be flipped.
         InputFrame_->data[0] += InputFrame_->linesize[0] * (AVCodecContext_->height-1);
         InputFrame_->linesize[0]*=-1;
