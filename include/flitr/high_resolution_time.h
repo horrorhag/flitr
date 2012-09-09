@@ -70,7 +70,7 @@ inline std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
     char timestr[512];
     sprintf(timestr, "%d-%02d-%02d_%02dh%02dm%02d.%03ds",
         timestamp_tm->tm_year+1900, timestamp_tm->tm_mon+1, timestamp_tm->tm_mday,
-        timestamp_tm->tm_hour, timestamp_tm->tm_min, timestamp_tm->tm_sec, timestamp_ts.tv_nsec/NSEC_PER_MSEC);
+        timestamp_tm->tm_hour, timestamp_tm->tm_min, timestamp_tm->tm_sec, (int)(timestamp_ts.tv_nsec/NSEC_PER_MSEC));
 
     std::string s(timestr);
     return s;
