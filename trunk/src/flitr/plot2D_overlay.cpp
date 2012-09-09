@@ -41,6 +41,8 @@ Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width,
         plots_.push_back(std::vector< std::pair<double, double> >(0));
 
         _PlotGeodes.push_back(new osg::Geode());
+        _PlotGeometryMaterials.push_back(new osg::Material());
+
         _PlotGeodes[i]->setCullingActive(false);
         _GeometryGroup->addChild(_PlotGeodes[i]);
     }
@@ -147,6 +149,8 @@ void Plot2DOverlay::update()
     _plotVertices[plotNum]->clear();
 
     osg::ref_ptr<osg::Geometry> plotGeometry=new osg::Geometry();
+    osg::StateSet *stateset = plotGeometry->getOrCreateStateSet();
+    stateset->setAttributeAndModes(_PlotGeometryMaterials[plotNum].get(), osg::StateAttribute::ON);
 
     //Create the plot.
     std::vector< std::pair<double, double> >::const_iterator plotIterator=plots_[plotNum].begin();
@@ -166,6 +170,12 @@ void Plot2DOverlay::update()
     _plotVertices[plotNum]->dirty();
     }
     dirtyBound();
+}
+
+void Plot2DOverlay::setPlotColour(osg::Vec4d newcol, uint32_t plotNum)
+{
+    _PlotGeometryMaterials[plotNum]->setAmbient(osg::Material::FRONT_AND_BACK, newcol);
+    _PlotGeometryMaterials[plotNum]->setDiffuse(osg::Material::FRONT_AND_BACK, newcol);
 }
 
 void Plot2DOverlay::setAxisColour(osg::Vec4d newcol)

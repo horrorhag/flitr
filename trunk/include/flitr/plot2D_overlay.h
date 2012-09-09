@@ -56,6 +56,9 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
 
     virtual void setAxisColour(osg::Vec4d newcol);
 
+    //Note: One may use the inherited setColour(...) method if all plots should have the smae colour.
+    virtual void setPlotColour(osg::Vec4d newcol, uint32_t plotNum=0);
+
     virtual void addPoint(const double u, const double v, bool autoUpdate=true, uint32_t plotNum=0);
     virtual void clearPoints(bool autoUpdate=true, uint32_t plotNum=0);
     void update();
@@ -89,6 +92,7 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
     osg::ref_ptr<osg::Vec3Array> _axisBckVertices;
 
     std::vector< osg::ref_ptr<osg::Geode> > _PlotGeodes;
+    std::vector< osg::ref_ptr<osg::Material> > _PlotGeometryMaterials;
 };
 
 }
