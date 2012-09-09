@@ -25,8 +25,9 @@ using namespace flitr;
 
 void MultiCPUHistogramConsumerThread::run()
 {
-    uint32_t num_writers = Consumer_->ImagesPerSlot_;
     std::vector<Image**> imv;
+    uint32_t imageStride=Consumer_->ImageStride_;
+    uint32_t imageCount=0;
     
     while (true) {
         // check if image available
@@ -36,41 +37,44 @@ void MultiCPUHistogramConsumerThread::run()
         if (imv.size() == Consumer_->ImagesPerSlot_)
         {
 
-            for (int imNum=0; imNum<Consumer_->ImagesPerSlot_; imNum++)
-            {// Calculate the histogram.
-                Image* im = *(imv[imNum]);
+            if ((imageCount % imageStride)==0)
+            {
+                for (uint32_t imNum=0; imNum<Consumer_->ImagesPerSlot_; imNum++)
+                {// Calculate the histogram.
+                    Image* im = *(imv[imNum]);
 
-                OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(Consumer_->CalcMutexes_[imNum]));
+                    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(Consumer_->CalcMutexes_[imNum]));
 
-                std::vector<int32_t>* histogram=Consumer_->Histograms_[imNum].get();
+                    std::vector<int32_t>* histogram=Consumer_->Histograms_[imNum].get();
 
-                const uint32_t width=im->format()->getWidth();
-                const uint32_t height=im->format()->getHeight();
-                const uint32_t numPixels=width*height;
-                const uint32_t numComponents=im->format()->getComponentsPerPixel();
+                    const uint32_t width=im->format()->getWidth();
+                    const uint32_t height=im->format()->getHeight();
+                    const uint32_t numPixels=width*height;
+                    const uint32_t numComponents=im->format()->getComponentsPerPixel();
 
-                unsigned char * const data=(unsigned char *)im->data();
-                const uint32_t numBins=256;
-                const uint32_t pixelStride=Consumer_->PixelStride_;
+                    unsigned char const * const data=(unsigned char const * const)im->data();
+                    const uint32_t numBins=256;
+                    const uint32_t pixelStride=Consumer_->PixelStride_;
 
-                // Zero the histogram.
-                for (uint32_t binNum=0; binNum<=numBins; binNum++)
-                {
-                    (*histogram)[binNum]=0;
-                }
-
-                // Generate histogram.
-                for (uint32_t i=0; i<(numPixels*numComponents); i+=(pixelStride*numComponents))
-                {
-                    //if ((i%numComponents)==0)//Only considers the first component at the moment.
+                    // Zero the histogram.
+                    for (uint32_t binNum=0; binNum<=numBins; binNum++)
                     {
-                        (*histogram)[data[i]]+=pixelStride;
+                        (*histogram)[binNum]=0;
+                    }
+
+                    // Generate histogram.
+                    for (uint32_t i=0; i<(numPixels*numComponents); i+=(pixelStride*numComponents))
+                    {
+                        //if ((i%numComponents)==0)//Only considers the first component at the moment.
+                        {
+                            (*histogram)[data[i]]+=pixelStride;
+                        }
                     }
                 }
             }
-
             // indicate we are done with the image/s
             Consumer_->releaseReadSlot();
+            imageCount++;
         } else
         {
             // wait a while for producers.
@@ -151,10 +155,12 @@ const std::vector<uint8_t> MultiCPUHistogramConsumer::calcHistogramMatchMap(cons
 
 MultiCPUHistogramConsumer::MultiCPUHistogramConsumer(ImageProducer& producer,
                                                      uint32_t images_per_slot,
-                                                     uint32_t pixel_stride) :
+                                                     uint32_t pixel_stride,
+                                                     uint32_t image_stride) :
     ImageConsumer(producer),
     ImagesPerSlot_(images_per_slot),
-    PixelStride_(pixel_stride)
+    PixelStride_(pixel_stride),
+    ImageStride_(image_stride)
 {
     for (uint32_t i=0; i<images_per_slot; i++)
     {

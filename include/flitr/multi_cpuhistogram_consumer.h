@@ -48,7 +48,9 @@ class MultiCPUHistogramConsumerThread : public OpenThreads::Thread {
 class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     friend class MultiCPUHistogramConsumerThread;
   public:
-    MultiCPUHistogramConsumer(ImageProducer& producer, uint32_t images_per_slot, uint32_t pixel_stride=1);
+
+    MultiCPUHistogramConsumer(ImageProducer& producer, uint32_t images_per_slot, uint32_t pixel_stride=1, uint32_t image_stride=1);
+
     ~MultiCPUHistogramConsumer();
 
     bool init();
@@ -72,6 +74,8 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     std::vector<ImageFormat> ImageFormat_;
     const uint32_t ImagesPerSlot_;
     const uint32_t PixelStride_;
+
+    const uint32_t ImageStride_;
 
     MultiCPUHistogramConsumerThread *Thread_;
     std::vector< std::tr1::shared_ptr<OpenThreads::Mutex> > CalcMutexes_;
