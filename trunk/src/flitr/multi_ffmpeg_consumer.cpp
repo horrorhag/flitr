@@ -86,11 +86,15 @@ bool MultiFFmpegConsumer::setCodec(VideoCodec codec, int32_t bit_rate)
 {
     Codec_=codec;
     BitRate_=bit_rate;
+
+    return true;
 }
 
 bool MultiFFmpegConsumer::setContainer(VideoContainer container)
 {
     Container_=container;
+
+    return true;
 }
 
 
