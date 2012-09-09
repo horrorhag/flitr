@@ -50,8 +50,8 @@ void MultiCPUHistogramConsumerThread::run()
                 const uint32_t numComponents=im->format()->getComponentsPerPixel();
 
                 unsigned char * const data=(unsigned char *)im->data();
-                const uint32_t numBins=histogram->size();
-                const uint32_t pixelStride=1;
+                const uint32_t numBins=256;
+                const uint32_t pixelStride=Consumer_->PixelStride_;
 
                 // Zero the histogram.
                 for (uint32_t binNum=0; binNum<=numBins; binNum++)
@@ -62,7 +62,7 @@ void MultiCPUHistogramConsumerThread::run()
                 // Generate histogram.
                 for (uint32_t i=0; i<(numPixels*numComponents); i+=(pixelStride*numComponents))
                 {
-                    if ((i%numComponents)==0)//Only considers the first component at the moment.
+                    //if ((i%numComponents)==0)//Only considers the first component at the moment.
                     {
                         (*histogram)[data[i]]+=pixelStride;
                     }
@@ -74,7 +74,7 @@ void MultiCPUHistogramConsumerThread::run()
         } else
         {
             // wait a while for producers.
-            Thread::microSleep(10000);
+            Thread::microSleep(1000);
         }
         // check for exit
         if (ShouldExit_) {
@@ -122,27 +122,26 @@ const std::vector<uint8_t> MultiCPUHistogramConsumer::calcHistogramMatchMap(cons
     std::vector<uint8_t> histoMatchMap;
     histoMatchMap.resize(256);
 
-    float cuma=0.0f;
-    float reqCuma=0.0f;
-    uint32_t cumaBin=0;
+    float binTotal=0.0f;
+    float refBinTotal=0.0f;
 
-    uint32_t binNum;
-    for (binNum=0; binNum<256; binNum++)
+    uint32_t binNum=0;
+    uint32_t refBinNum=0;
+
+    for (; refBinNum<256; refBinNum++)
     {
-        reqCuma+=refHisto[binNum];
+        refBinTotal+=refHisto[refBinNum];
 
-        while ((cuma<reqCuma)&&(cumaBin<256))
+        while ((binTotal<refBinTotal)&&(binNum<256))
         {
-            cuma+=inHisto[cumaBin];
-//                        std::cout << cumaBin << " => " << binNum << " " << cuma << "/" << reqCuma << "\n";
-//                        std::cout.flush();
-            histoMatchMap[cumaBin]=binNum;
-            cumaBin++;
+            binTotal+=inHisto[binNum];
+            histoMatchMap[binNum]=refBinNum;
+            binNum++;
         }
     }
-    for (; cumaBin<256; cumaBin++)
+    for (; binNum<256; binNum++)
     {
-        histoMatchMap[cumaBin]=255;
+        histoMatchMap[binNum]=255;
     }
 
     return histoMatchMap;
@@ -151,9 +150,11 @@ const std::vector<uint8_t> MultiCPUHistogramConsumer::calcHistogramMatchMap(cons
 
 
 MultiCPUHistogramConsumer::MultiCPUHistogramConsumer(ImageProducer& producer,
-                                                     uint32_t images_per_slot) :
+                                                     uint32_t images_per_slot,
+                                                     uint32_t pixel_stride) :
     ImageConsumer(producer),
-    ImagesPerSlot_(images_per_slot)
+    ImagesPerSlot_(images_per_slot),
+    PixelStride_(pixel_stride)
 {
     for (uint32_t i=0; i<images_per_slot; i++)
     {

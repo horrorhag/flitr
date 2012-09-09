@@ -48,7 +48,7 @@ class MultiCPUHistogramConsumerThread : public OpenThreads::Thread {
 class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     friend class MultiCPUHistogramConsumerThread;
   public:
-    MultiCPUHistogramConsumer(ImageProducer& producer, uint32_t images_per_slot);
+    MultiCPUHistogramConsumer(ImageProducer& producer, uint32_t images_per_slot, uint32_t pixel_stride=1);
     ~MultiCPUHistogramConsumer();
 
     bool init();
@@ -64,14 +64,14 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
         return *(Histograms_[im_number]);
     }
 
-
     static const std::vector<uint8_t> calcHistogramIdentityMap();
     static const std::vector<int32_t> calcRefHistogramForEqualisation(uint32_t histoSum);
     static const std::vector<uint8_t> calcHistogramMatchMap(const std::vector<int32_t> &inHisto, const std::vector<int32_t> &refHisto);
 
   private:
     std::vector<ImageFormat> ImageFormat_;
-    uint32_t ImagesPerSlot_;
+    const uint32_t ImagesPerSlot_;
+    const uint32_t PixelStride_;
 
     MultiCPUHistogramConsumerThread *Thread_;
     std::vector< std::tr1::shared_ptr<OpenThreads::Mutex> > CalcMutexes_;
