@@ -51,7 +51,7 @@ void MultiFFmpegConsumerThread::run()
             Consumer_->releaseReadSlot();
         } else {
             // wait a while for producers.
-            Thread::microSleep(10000);
+            Thread::microSleep(1000);
         }
         // check for exit
         if (ShouldExit_) {
