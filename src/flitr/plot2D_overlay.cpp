@@ -156,7 +156,7 @@ void Plot2DOverlay::update()
     std::vector< std::pair<double, double> >::const_iterator plotIterator=plots_[plotNum].begin();
     for (; plotIterator!=plots_[plotNum].end(); plotIterator++)
     {
-        _plotVertices[plotNum]->push_back(osg::Vec3d(plotIterator->first*width_/axisU_+x_, plotIterator->second*height_/axisV_+y_, 0));
+        _plotVertices[plotNum]->push_back(osg::Vec3d(plotIterator->first*width_/axisU_+x_, plotIterator->second*height_/axisV_+y_, +(plotNum+1)/((double)(numPlots+1)) ));
     }
 
     plotGeometry->setVertexArray(_plotVertices[plotNum].get());
