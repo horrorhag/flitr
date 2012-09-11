@@ -57,7 +57,7 @@ void MultiCPUHistogramConsumerThread::run()
                     const uint32_t pixelStride=Consumer_->PixelStride_;
 
                     // Zero the histogram.
-                    for (uint32_t binNum=0; binNum<=numBins; binNum++)
+                    for (uint32_t binNum=0; binNum<numBins; binNum++)
                     {
                         (*histogram)[binNum]=0;
                     }
@@ -151,7 +151,58 @@ const std::vector<uint8_t> MultiCPUHistogramConsumer::calcHistogramMatchMap(cons
     return histoMatchMap;
 }
 
+const std::vector<uint8_t> MultiCPUHistogramConsumer::calcHistogramStretchMap(const std::vector<int32_t> &inHisto, const uint32_t histoSum,
+                                                                              const double ignoreBelow, const double ignoreAbove)
+{
+    std::vector<uint8_t> histoStretchMap;
+    histoStretchMap.resize(256);
 
+    uint32_t binTotal=0;
+    uint32_t startBin=0;
+    uint32_t endBin=255;
+
+    for (uint32_t binNum=0; binNum<256; binNum++)
+    {
+        if ( (binTotal/((double)histoSum))<ignoreBelow )
+        {
+            startBin=binNum;
+            //std::cout << " startBin ";
+        }
+
+        if ( (binTotal/((double)histoSum))<ignoreAbove )
+        {
+            endBin=binNum;
+            //std::cout << " endBin " << (binTotal/((double)histoSum)) << " ";
+        }
+
+        binTotal+=inHisto[binNum];
+
+        //std::cout << " stretch: " << binNum << ": " << binTotal << " " << histoSum << "\n";
+       //std::cout.flush();
+    }
+
+    for (uint32_t binNum=0; binNum<startBin; binNum++)
+    {//leading 0 entries.
+        //std::cout << " leading: " << binNum << "\n";
+        //std::cout.flush();
+        histoStretchMap[binNum]=0;
+    }
+    for (uint32_t binNum=startBin; binNum<=endBin; binNum++)
+    {
+
+        //std::cout << " map: " << binNum << "\n";
+        //std::cout.flush();
+        histoStretchMap[binNum]=(endBin-startBin)==0 ? histoSum : (binNum-startBin)/((double)(endBin-startBin))*255;
+    }
+    for (uint32_t binNum=(endBin+1); binNum<=255; binNum++)
+    {//trailing 255 entries.
+        //std::cout << " trailing: " << binNum << "\n";
+        //std::cout.flush();
+        histoStretchMap[binNum]=255;
+    }
+
+    return histoStretchMap;
+}
 
 MultiCPUHistogramConsumer::MultiCPUHistogramConsumer(ImageProducer& producer,
                                                      uint32_t images_per_slot,

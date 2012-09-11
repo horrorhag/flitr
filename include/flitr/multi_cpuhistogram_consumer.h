@@ -69,6 +69,8 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     static const std::vector<uint8_t> calcHistogramIdentityMap();
     static const std::vector<int32_t> calcRefHistogramForEqualisation(uint32_t histoSum);
     static const std::vector<uint8_t> calcHistogramMatchMap(const std::vector<int32_t> &inHisto, const std::vector<int32_t> &refHisto);
+    static const std::vector<uint8_t> calcHistogramStretchMap(const std::vector<int32_t> &inHisto, const uint32_t histoSum,
+                                                              const double ignoreBelow=0.0, const double ignoreAbove=1.0);
 
   private:
     std::vector<ImageFormat> ImageFormat_;
