@@ -131,6 +131,7 @@ SET(LIB_SOURCES
   src/flitr/plot2D_overlay.cpp
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
+  src/flitr/homography_shader_pass.cpp
   src/flitr/simple_shader_pass.cpp
   src/flitr/simple_cpu_shader_pass.cpp
 
@@ -166,6 +167,7 @@ SET(LIB_SOURCES
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
+  include/flitr/homography_shader_pass.h
   include/flitr/simple_shader_pass.h
   include/flitr/simple_cpu_shader_pass.h
 )
