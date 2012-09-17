@@ -40,11 +40,11 @@ namespace flitr {
 class FLITR_EXPORT SimpleCPUShaderPass {
 public:
 
-    class CPUShaderPass : public osg::Camera::DrawCallback
+    class CPUShader : public osg::Camera::DrawCallback
     {
     };
 
-    class CPUExample_ShaderPass : public CPUShaderPass
+    class CPUExample_ShaderPass : public CPUShader
     {
     public:
         CPUExample_ShaderPass(osg::Image* image) :
@@ -89,9 +89,9 @@ public:
     osg::ref_ptr<osg::Image> getInImage() { return InImage_; }
     osg::ref_ptr<osg::Image> getOutImage() { return OutImage_; }
 
-    void setPreDrawCPUShader(CPUShaderPass *cpuShaderPass);
+    void setPreDrawCPUShader(CPUShader *cpuShader);
 
-    void setPostDrawCPUShader(CPUShaderPass *cpuShaderPass);
+    void setPostDrawCPUShader(CPUShader *cpuShader);
 
     void setGPUShader(std::string filename);
 

@@ -167,14 +167,14 @@ void SimpleCPUShaderPass::setupCamera()
         }
 }
 
-void SimpleCPUShaderPass::setPreDrawCPUShader(CPUShaderPass *cpuShaderPass)
+void SimpleCPUShaderPass::setPreDrawCPUShader(CPUShader *cpuShader)
 {
-    Camera_->setPreDrawCallback(cpuShaderPass);
+    Camera_->setPreDrawCallback(cpuShader);
 }
 
-void SimpleCPUShaderPass::setPostDrawCPUShader(CPUShaderPass *cpuShaderPass)
+void SimpleCPUShaderPass::setPostDrawCPUShader(CPUShader *cpuShader)
 {
-    Camera_->setPostDrawCallback(cpuShaderPass);
+    Camera_->setPostDrawCallback(cpuShader);
 }
 
 void SimpleCPUShaderPass::setGPUShader(std::string filename)
