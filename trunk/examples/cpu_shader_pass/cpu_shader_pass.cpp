@@ -19,10 +19,10 @@ using namespace flitr;
 
 
 
-class CPUHistogram_ShaderPass : public SimpleCPUShaderPass::CPUShaderPass
+class CPUHistogram_Shader : public SimpleCPUShaderPass::CPUShader
 {
 public:
-    CPUHistogram_ShaderPass(osg::Image* image) :
+    CPUHistogram_Shader(osg::Image* image) :
         Image_(image)
     {
         Histogram_=new uint32_t[256];
@@ -102,10 +102,10 @@ public:
     uint32_t *HistogramMap_;
 };
 
-class CPUSUM_ShaderPass : public SimpleCPUShaderPass::CPUShaderPass
+class CPUSUM_Shader : public SimpleCPUShaderPass::CPUShader
 {
 public:
-    CPUSUM_ShaderPass(osg::Image* image) :
+    CPUSUM_Shader(osg::Image* image) :
         Image_(image)
     {
     }
@@ -144,10 +144,10 @@ public:
     osg::Image* Image_;
 };
 
-class CPUGAUSFILT_ShaderPass : public SimpleCPUShaderPass::CPUShaderPass
+class CPUGAUSFILT_Shader : public SimpleCPUShaderPass::CPUShader
 {
 public:
-    CPUGAUSFILT_ShaderPass(osg::Image* image) :
+    CPUGAUSFILT_Shader(osg::Image* image) :
         Image_(image)
     {
     }
@@ -240,20 +240,20 @@ int main(int argc, char *argv[])
     //===
     shared_ptr<flitr::SimpleCPUShaderPass> gfp(new flitr::SimpleCPUShaderPass(osgc->getOutputTexture(), true));
     //OR
-    //shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShaderPass(osgc->getOSGImage(), true));
+    //shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShader(osgc->getOSGImage(), true));
     //===
 
     gfp->setGPUShader(argv[2]);
 
     if (gfp->getInImage())
     {
-        //gfp->setPreDrawCPUShader(new CPUGAUSFILT_ShaderPass(gfp->getInImage()));
-        gfp->setPreDrawCPUShader(new CPUHistogram_ShaderPass(gfp->getInImage()));
+        //gfp->setPreDrawCPUShader(new CPUGAUSFILT_Shader(gfp->getInImage()));
+        gfp->setPreDrawCPUShader(new CPUHistogram_Shader(gfp->getInImage()));
     }
 
     if (gfp->getOutImage())
     {
-        //gfp->setPostDrawCPUShader(new CPUGAUSFILT_ShaderPass(gfp->getOutImage()));
+        //gfp->setPostDrawCPUShader(new CPUGAUSFILT_Shader(gfp->getOutImage()));
     }
 
     root_node->addChild(gfp->getRoot().get());
