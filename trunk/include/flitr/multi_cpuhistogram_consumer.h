@@ -59,11 +59,20 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     {
         return ImageFormat_[im_number].getWidth() * ImageFormat_[im_number].getHeight();
     }
-    std::vector<int32_t> getHistogram(uint32_t im_number) const
+
+    std::vector<int32_t> getHistogram(uint32_t im_number)
     {
         OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(CalcMutexes_[im_number]));
 
+        HistogramUpdatedVect_[im_number]=false;
         return *(Histograms_[im_number]);
+    }
+
+    bool isHistogramUpdated(uint32_t im_number) const
+    {
+        OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(CalcMutexes_[im_number]));
+
+        return HistogramUpdatedVect_[im_number];
     }
 
     static const std::vector<uint8_t> calcHistogramIdentityMap();
@@ -83,6 +92,8 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     std::vector< std::tr1::shared_ptr<OpenThreads::Mutex> > CalcMutexes_;
 
     std::vector< std::tr1::shared_ptr< std::vector<int32_t> > > Histograms_;
+    std::vector<bool> HistogramUpdatedVect_;
+
 };
 
 }

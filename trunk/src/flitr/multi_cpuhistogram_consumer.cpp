@@ -70,6 +70,8 @@ void MultiCPUHistogramConsumerThread::run()
                             (*histogram)[data[i]]+=pixelStride;
                         }
                     }
+
+                    Consumer_->HistogramUpdatedVect_[imNum]=true;
                 }
             }
             // indicate we are done with the image/s
@@ -221,6 +223,8 @@ MultiCPUHistogramConsumer::MultiCPUHistogramConsumer(ImageProducer& producer,
 
         Histograms_.push_back(std::tr1::shared_ptr< std::vector<int32_t> >(new std::vector<int32_t>));
         Histograms_[i]->resize(256);
+
+        HistogramUpdatedVect_.push_back(false);
     }
 }
 
