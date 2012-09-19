@@ -66,7 +66,7 @@ MultiFFmpegConsumer::MultiFFmpegConsumer(ImageProducer& producer,
     ImagesPerSlot_(images_per_slot),
     Codec_(FLITR_RAWVIDEO_CODEC),
     BitRate_(-1),
-    Container_(FLITR_AVI_CONTAINER),
+    Container_(FLITR_ANY_CONTAINER),
     Writing_(false)
 {
     for (uint32_t i=0; i<images_per_slot; i++) {
