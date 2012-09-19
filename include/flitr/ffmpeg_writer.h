@@ -82,7 +82,7 @@ class FLITR_EXPORT FFmpegWriter {
 public:
     FFmpegWriter(std::string filename, const ImageFormat& image_format,
                  const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE,
-                 VideoContainer container=FLITR_AVI_CONTAINER,
+                 VideoContainer container=FLITR_ANY_CONTAINER,
                  VideoCodec codec=FLITR_RAWVIDEO_CODEC,
                  int32_t bit_rate=-1);
 
