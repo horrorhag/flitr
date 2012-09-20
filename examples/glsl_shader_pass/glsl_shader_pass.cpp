@@ -7,6 +7,7 @@
 #include <osg/io_utils>
 
 #include <flitr/ffmpeg_producer.h>
+#include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
@@ -24,8 +25,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
-    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
+    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));
     if (!ffp->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -51,8 +53,15 @@ int main(int argc, char *argv[])
     #if 0
     shared_ptr<RenderToVideo> rtv(new RenderToVideo(ssp->getOutputTexture(), "glsl_shader_pass.avi"));
     root_node->addChild(rtv->getRoot().get());
-    #endif    
-
+    #endif
+/*
+    shared_ptr<flitr::MultiFFmpegConsumer> mfc(new flitr::MultiFFmpegConsumer(*ffp, 1));
+    mfc->init();
+    std::vector<std::string> filenames;
+    filenames.push_back("output");
+    mfc->openFiles(filenames);
+    mfc->startWriting();
+*/
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
@@ -66,10 +75,14 @@ int main(int argc, char *argv[])
     
     while(!viewer.done()) {
         ffp->trigger();
+
         if (osgc->getNext()) {
             viewer.frame();
         }
     }
+
+    //mfc->stopWriting();
+    //mfc->closeFiles();
 
     return 0;
 }
