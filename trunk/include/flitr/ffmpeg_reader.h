@@ -34,11 +34,13 @@ extern "C" {
 # include <avformat.h>
 # include <swscale.h>
 # include <libavutil/mathematics.h>
-# include <libavcodec/avcodec.h>	
+# include <libavutil/error.h>
+# include <libavcodec/avcodec.h>
 #else
 # include <avformat.h>
 # include <libavutil/mathematics.h>
-# include <libavcodec/avcodec.h>	
+# include <libavutil/error.h>
+# include <libavcodec/avcodec.h>
 #endif
 }
 

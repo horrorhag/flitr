@@ -41,18 +41,24 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
     av_lockmgr_register(&lockManager);
 
-    av_register_all();
-    
-    FormatContext_ = NULL;
 
-    FormatContext_ = avformat_alloc_context();
+    avcodec_register_all();
+    av_register_all();
+
+    FormatContext_ = NULL;
+    //FormatContext_ = avformat_alloc_context();
 
     CodecContext_ = NULL;
     Codec_ = NULL;
 
+    AVDictionary *options = NULL;
+    //av_dict_set(&options, "video_size", "1380x1038", 0);
+    //av_dict_set(&options, "pixel_format", "GRAY16LE", 0);
+
+
     //int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, &FormatParameters_);
-#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
-    int err = avformat_open_input(&FormatContext_, FileName_.c_str(), NULL, NULL);
+#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+    int err = avformat_open_input(&FormatContext_, FileName_.c_str(), NULL, &options);
 #else
     int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, NULL);
 #endif
@@ -61,9 +67,15 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << "\n";
         throw FFmpegReaderException();
     }
-    
-    av_find_stream_info(FormatContext_);
-    
+
+    av_dict_free(&options);
+
+    err=avformat_find_stream_info(FormatContext_, NULL);
+    if (err < 0) {
+        logMessage(LOG_CRITICAL) << "avformat_find_stream_info failed on " << filename.c_str() << " with code " << err << "\n";
+        throw FFmpegReaderException();
+    }
+
     // look for video streams
     for(uint32_t i=0; i < FormatContext_->nb_streams; i++) {
         CodecContext_ = FormatContext_->streams[i]->codec;
@@ -76,13 +88,17 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
             }
         }
     }
-    
+
+
+    CodecContext_->workaround_bugs = 1;
+    //CodecContext_ = avcodec_alloc_context3(Codec_);
+
     if (!Codec_) {
         logMessage(LOG_CRITICAL) << "Cannot find video codec for " << filename.c_str() << "\n";
         throw FFmpegReaderException();
     }
 
-    if (avcodec_open(CodecContext_, Codec_) < 0) {
+    if (avcodec_open2(CodecContext_, Codec_, NULL) < 0) {
         logMessage(LOG_CRITICAL) << "Cannot open video codec for " << filename.c_str() << "\n";
         throw FFmpegReaderException();
     }
@@ -91,14 +107,14 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     // everything should be ready for decoding video
     
     if (getLogMessageCategory() & LOG_INFO) {
-#if LIBAVFORMAT_VERSION_INT >= ((54<<16) + (21<<8) + 100)
+#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
         av_dump_format(FormatContext_, 0, FileName_.c_str(), 0);
 #else
         dump_format(FormatContext_, 0, FileName_.c_str(), 0);
 #endif
     }
     
-    double duration_seconds = double(FormatContext_->duration) / 1e6;
+    double duration_seconds = double(FormatContext_->duration) / AV_TIME_BASE;
     FrameRate_ = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
     NumImages_ = 0.5 + (duration_seconds * FrameRate_);
     logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << FrameRate_ << " total frames: " << NumImages_ << "\n";
@@ -173,7 +189,7 @@ FFmpegReader::~FFmpegReader()
 bool FFmpegReader::getImage(Image &out_image, int im_number)
 {
     // convert frame number to time
-    int64_t seek_time = ((int64_t)im_number * 1000000 * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
+    int64_t seek_time = ((int64_t)im_number * AV_TIME_BASE * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
     
     //std::cout << "Seektime = " << seek_time << "\n";
     //std::cout << "FrameNum = " << im_number << "\n";
@@ -210,19 +226,24 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 
     // decode
     AVPacket pkt;
+    av_init_packet(&pkt);
+    pkt.data=NULL;
+    pkt.size=0;
     int gotframe;
     avcodec_get_frame_defaults(DecodedFrame_);
 
     int loopcount=0;
     while(1) {
+
         if (av_read_frame(FormatContext_, &pkt) < 0 ) {
             //XXX
+            logMessage(LOG_DEBUG) << "Error while reading frame.\n";
             return false;
         }
         if (pkt.stream_index == VideoStreamIndex_) {
             int decoded_len = avcodec_decode_video2(CodecContext_, DecodedFrame_, &gotframe, &pkt);
             if (decoded_len < 0) {
-                logMessage(LOG_DEBUG) << "Error while decoding video\n";
+                logMessage(LOG_DEBUG) << "Error " << decoded_len << " while decoding video\n";
                 return false;
             }
             if (gotframe) {

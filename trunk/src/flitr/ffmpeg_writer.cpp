@@ -39,6 +39,9 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     FrameRate_.num=frame_rate;
     FrameRate_.den=1.0;
 
+
+    /* register all codecs, demux and protocols */
+    avcodec_register_all();
     av_register_all();
 
     //=== VideoEncodeBuffer_ for use with older avcodec_encode_video(...) ===
