@@ -177,9 +177,9 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         std::cout << "\n";
         std::cout.flush();
     } else
-    {//Valid pixel formats are unknown. Just choose the input format.
+    {//Valid pixel formats are unspecified. Just choose the input format.
         SaveFrameFormat_ = InputFrameFormat_;
-        std::cout << "Valid pixel formats are UNKNOWN.\n";
+        std::cout << "Valid pixel formats are unspecified. Will choose the input pixel format.\n";
     }
 
     if ( (((CodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==PIX_FMT_RGB24) )
