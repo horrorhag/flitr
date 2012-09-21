@@ -50,8 +50,8 @@ void HomographyShaderPass::setHomography(const osg::Matrix in_homog)
 
     QuadCoords_->dirty();
 
-    std::cout << "dirty " << homogCoord0 << " " << Homography_;
-    std::cout.flush();
+    //std::cout << "dirty " << homogCoord0 << " " << Homography_;
+    //std::cout.flush();
 }
 
 osg::ref_ptr<osg::Group> HomographyShaderPass::createTexturedQuad()
