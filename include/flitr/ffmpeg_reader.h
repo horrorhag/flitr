@@ -36,11 +36,13 @@ extern "C" {
 # include <libavutil/mathematics.h>
 # include <libavutil/error.h>
 # include <libavcodec/avcodec.h>
+#include <libavutil/pixdesc.h>
 #else
 # include <avformat.h>
 # include <libavutil/mathematics.h>
 # include <libavutil/error.h>
 # include <libavcodec/avcodec.h>
+#include <libavutil/pixdesc.h>
 #endif
 }
 
