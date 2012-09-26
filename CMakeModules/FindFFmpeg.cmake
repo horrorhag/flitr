@@ -43,6 +43,7 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
     IF(FFmpeg_NO_SYSTEM_PATHS)
         FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS lib${shortname}/${headername}
             PATHS
+            ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
             PATH_SUFFIXES ffmpeg
             DOC "Location of FFmpeg Headers"
@@ -51,6 +52,7 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
     ELSE()
         FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS lib${shortname}/${headername}
             PATHS
+            ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
             $ENV{FFMPEG_DIR}/includecc
             ~/Library/Frameworks
@@ -70,6 +72,7 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
     IF(FFmpeg_NO_SYSTEM_PATHS)
         FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS ${headername}
             PATHS
+            ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
             DOC "Location of FFmpeg Headers"
             PATH_SUFFIXES ffmpeg
@@ -78,6 +81,7 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
     ELSE()
         FIND_PATH(FFmpeg_${varname}_INCLUDE_DIRS ${headername}
             PATHS
+            ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
             $ENV{FFMPEG_DIR}/include
             ~/Library/Frameworks
@@ -99,6 +103,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
         FIND_LIBRARY(FFmpeg_${varname}_LIBRARIES
             NAMES ${shortname}
             PATHS
+            ${FFmpeg_ROOT}
+            ${FFmpeg_ROOT}/lib${shortname}
             ${FFmpeg_ROOT}/lib
             ${FFmpeg_ROOT}/lib_lin32
             ${FFmpeg_ROOT}/lib_win32
@@ -109,6 +115,7 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
         FIND_LIBRARY(FFmpeg_${varname}_LIBRARIES
             NAMES ${shortname}
             PATHS
+            ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/lib
             ${FFmpeg_ROOT}/lib_lin32
             ${FFmpeg_ROOT}/lib_win32

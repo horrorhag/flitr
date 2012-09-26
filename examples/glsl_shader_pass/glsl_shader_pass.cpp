@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
-    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
+    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));
     if (!ffp->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -54,14 +54,19 @@ int main(int argc, char *argv[])
     shared_ptr<RenderToVideo> rtv(new RenderToVideo(ssp->getOutputTexture(), "glsl_shader_pass.avi"));
     root_node->addChild(rtv->getRoot().get());
     #endif
-/*
+
     shared_ptr<flitr::MultiFFmpegConsumer> mfc(new flitr::MultiFFmpegConsumer(*ffp, 1));
     mfc->init();
     std::vector<std::string> filenames;
     filenames.push_back("output");
+    mfc->setContainer(flitr::FLITR_MKV_CONTAINER);
+    //mfc->setContainer(flitr::FLITR_AVI_CONTAINER);
+    //mfc->setCodec(flitr::FLITR_RAWVIDEO_CODEC, -1);
+    mfc->setCodec(flitr::FLITR_FFV1_CODEC, -1);
+    //mfc->setCodec(flitr::FLITR_MSMPEG4V3_CODEC, -1);
     mfc->openFiles(filenames);
     mfc->startWriting();
-*/
+
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
@@ -81,8 +86,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    //mfc->stopWriting();
-    //mfc->closeFiles();
+    mfc->stopWriting();
+    mfc->closeFiles();
 
     return 0;
 }

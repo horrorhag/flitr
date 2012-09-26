@@ -40,10 +40,12 @@ extern "C" {
 # include <swscale.h>
 # include <libavutil/mathematics.h>
 # include <libavcodec/avcodec.h>	
+#include <libavutil/pixdesc.h>
 #else
 # include <avformat.h>
 # include <libavutil/mathematics.h>
 # include <libavcodec/avcodec.h>
+#include <libavutil/pixdesc.h>
 #endif
 }
 
@@ -125,7 +127,7 @@ private:
     std::string SaveFileName_;
     AVRational FrameRate_;
     /// Holds the number of frames written to disk.
-    uint32_t WrittenFrameCount_;
+    uint64_t WrittenFrameCount_;
 
 
     uint8_t* VideoEncodeBuffer_;
