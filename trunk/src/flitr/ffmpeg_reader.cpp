@@ -30,17 +30,16 @@ using std::tr1::shared_ptr;
 
 
 FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt) :
+    FrameRate_(FLITR_DEFAULT_VIDEO_FRAME_RATE),
     FileName_(filename),
     SingleFrameSource_(false),
-    SingleFrameDone_(false),
-    FrameRate_(FLITR_DEFAULT_VIDEO_FRAME_RATE)
+    SingleFrameDone_(false)
 {
     std::stringstream sws_stats_name;
     sws_stats_name << filename << " swscale";
     SwscaleStats_ = shared_ptr<StatsCollector>(new StatsCollector(sws_stats_name.str()));
 
     av_lockmgr_register(&lockManager);
-
 
     avcodec_register_all();
     av_register_all();
@@ -81,6 +80,12 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         throw FFmpegReaderException();
     }
 
+
+    //=== Find video stream ===//
+    VideoStreamIndex_=av_find_best_stream(FormatContext_, AVMEDIA_TYPE_VIDEO, -1, -1, &Codec_, 0);
+    CodecContext_ = FormatContext_->streams[VideoStreamIndex_]->codec;
+    //Codec_ = avcodec_find_decoder(CodecContext_->codec_id);
+/*
     // look for video streams
     for(uint32_t i=0; i < FormatContext_->nb_streams; i++) {
         CodecContext_ = FormatContext_->streams[i]->codec;
@@ -93,9 +98,11 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
             }
         }
     }
+*/
+    //=== ===//
 
 
-    CodecContext_->workaround_bugs = 1;
+    //CodecContext_->workaround_bugs = 1;
     //CodecContext_ = avcodec_alloc_context3(Codec_);
 
     if (!Codec_) {
@@ -121,7 +128,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     
     double duration_seconds = double(FormatContext_->duration) / AV_TIME_BASE;
     FrameRate_ = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
-    NumImages_ = 0.5 + (duration_seconds * FrameRate_);
+    NumImages_ =100 + 0.5 + (duration_seconds * FrameRate_);
     logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << FrameRate_ << " total frames: " << NumImages_ << "\n";
 
 
@@ -129,20 +136,24 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     PixelFormat out_ffmpeg_pix_fmt;
 
     if (out_pix_fmt!=ImageFormat::FLITR_PIX_FMT_ANY)
-    {
+    {//The user specified an image format so use it.
         out_ffmpeg_pix_fmt=PixelFormatFLITrToFFmpeg(out_pix_fmt);
     } else
-    {
+    {//Select the image format automatically.
         out_ffmpeg_pix_fmt=CodecContext_->pix_fmt;
         out_pix_fmt=PixelFormatFFmpegToFLITr(out_ffmpeg_pix_fmt);
 
         if (out_pix_fmt==ImageFormat::FLITR_PIX_FMT_UNDF)
-        {//FLITr doesn't understand the ffmpeg pixel format and the user selected ImageFormat::FLITR_PIX_FMT_ANY.
-         //Therefore, make a output pixelformat selection for the user.
+        {//FLITr doesn't understand the ffmpeg pixel format specified by the codec.
+            //Therefore, make an output pixelformat selection for the user.
+
+            //ToDo: Choose the FLITr format smartly.
             out_pix_fmt=ImageFormat::FLITR_PIX_FMT_RGB_8;
+
+
             out_ffmpeg_pix_fmt=PixelFormatFLITrToFFmpeg(out_pix_fmt);
 
-            logMessage(LOG_INFO) << "FFmpeg pixel format " << CodecContext_->pix_fmt << " is FLITR_PIX_FMT_UNDF. Defaulting to FLITR_PIX_FMT_RGB_8.\n";
+            logMessage(LOG_INFO) << "FFmpeg codec pixel format " << av_get_pix_fmt_name(CodecContext_->pix_fmt) << " is not known to FLITr (FLITR_PIX_FMT_UNDF). Defaulting to " << av_get_pix_fmt_name(out_ffmpeg_pix_fmt) << ".\n";
         }
     }
 
@@ -154,12 +165,12 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     SingleImage_ = shared_ptr<Image>(new Image(ImageFormat_));
 
 
-        // create scaler to convert from video format to user required format
+    // create scaler to convert from video format to user required format
 #if defined FLITR_USE_SWSCALE
-        ConvertFormatCtx_ = sws_getContext(
-                    ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt,
-                    ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,
-                    SWS_BILINEAR, NULL, NULL, NULL);
+    ConvertFormatCtx_ = sws_getContext(
+                ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt,
+                ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,
+                SWS_BILINEAR, NULL, NULL, NULL);
 #endif
     
     DecodedFrame_ = avcodec_alloc_frame();
@@ -188,14 +199,19 @@ FFmpegReader::~FFmpegReader()
         av_free(DecodedFrame_);
     }
     avcodec_close(CodecContext_);
+
+#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+    avformat_close_input(&FormatContext_);
+#else
     av_close_input_file(FormatContext_);
+#endif
 }
 
 bool FFmpegReader::getImage(Image &out_image, int im_number)
 {
     // convert frame number to time
     int64_t seek_time = ((int64_t)im_number * AV_TIME_BASE * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
-    
+
     //std::cout << "Seektime = " << seek_time << "\n";
     //std::cout << "FrameNum = " << im_number << "\n";
     //std::cout << "RateNum  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num << "\n";
@@ -288,9 +304,9 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 #if defined FLITR_USE_SWSCALE
     ConvertedFrame_->data[0] = out_image.data(); // save a memcpy
     
-    int err = sws_scale(ConvertFormatCtx_,
-                        DecodedFrame_->data, DecodedFrame_->linesize, 0, CodecContext_->height,
-                        ConvertedFrame_->data, ConvertedFrame_->linesize);
+    sws_scale(ConvertFormatCtx_,
+              DecodedFrame_->data, DecodedFrame_->linesize, 0, CodecContext_->height,
+              ConvertedFrame_->data, ConvertedFrame_->linesize);
     
     //printf("%d %d\n", DecodedFrame_->linesize, ConvertedFrame_->linesize);
 #else
