@@ -27,15 +27,19 @@ void MultiFFmpegConsumerThread::run()
 {
     uint32_t num_writers = Consumer_->ImagesPerSlot_;
     std::vector<Image**> imv;
-    
+
     while (true) {
         // check if image available
         imv.clear();
         imv = Consumer_->reserveReadSlot();
-        if (imv.size() >= num_writers) { // allow selection of some sources
+        if (imv.size() >= num_writers) { // allow selection of some sources                       
             OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(Consumer_->WritingMutex_);
             if (Consumer_->Writing_) {
-                for (unsigned int i=0; i<num_writers; i++) {
+                Consumer_->MultiWriteStats_->tick();
+
+                unsigned int i=0;
+                #pragma omp parallel for
+                for (i=0; i<num_writers; i++) {
                     if (Consumer_->FFmpegWriters_[i])
                     {
                         Image* im = *(imv[i]);
@@ -44,6 +48,8 @@ void MultiFFmpegConsumerThread::run()
                         Consumer_->MetadataWriters_[i]->writeFrame(*im);
                     }
                 }
+
+                Consumer_->MultiWriteStats_->tock();
             } else {
                 // just discard
             }
@@ -69,6 +75,10 @@ MultiFFmpegConsumer::MultiFFmpegConsumer(ImageProducer& producer,
     Container_(FLITR_ANY_CONTAINER),
     Writing_(false)
 {
+    std::stringstream write_stats_name;
+    write_stats_name << " MultiFFmpegConsumer::write";
+    MultiWriteStats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector(write_stats_name.str()));
+
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(producer.getFormat(i));
     }

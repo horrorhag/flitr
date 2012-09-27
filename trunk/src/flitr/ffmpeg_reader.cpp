@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  *
  * This file is part of FLITr.
@@ -36,10 +36,14 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     SingleFrameDone_(false)
 {
     std::stringstream sws_stats_name;
-    sws_stats_name << filename << " swscale";
+    sws_stats_name << filename << " FFmpegReader::getImage,swscale";
     SwscaleStats_ = shared_ptr<StatsCollector>(new StatsCollector(sws_stats_name.str()));
 
-    av_lockmgr_register(&lockManager);
+    std::stringstream getimage_stats_name;
+    getimage_stats_name << filename << " FFmpegReader::getImage";
+    GetImageStats_ = shared_ptr<StatsCollector>(new StatsCollector(getimage_stats_name.str()));
+
+        av_lockmgr_register(&lockManager);
 
     avcodec_register_all();
     av_register_all();
@@ -209,6 +213,8 @@ FFmpegReader::~FFmpegReader()
 
 bool FFmpegReader::getImage(Image &out_image, int im_number)
 {
+    GetImageStats_->tick();
+
     // convert frame number to time
     int64_t seek_time = ((int64_t)im_number * AV_TIME_BASE * FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den) / (FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num);
 
@@ -223,6 +229,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
         // if we already have a frame, just copy it, do not read again
         if (SingleFrameDone_) {
             out_image = *SingleImage_;
+            GetImageStats_->tock();
             return true;
         }
     } else {
@@ -259,12 +266,14 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
         if (av_read_frame(FormatContext_, &pkt) < 0 ) {
             //XXX
             logMessage(LOG_DEBUG) << "Error while reading frame.\n";
+            //GetImageStats_->tock(); We'll only keep stats of the good frames.
             return false;
         }
         if (pkt.stream_index == VideoStreamIndex_) {
             int decoded_len = avcodec_decode_video2(CodecContext_, DecodedFrame_, &gotframe, &pkt);
             if (decoded_len < 0) {
                 logMessage(LOG_DEBUG) << "Error " << decoded_len << " while decoding video\n";
+                //GetImageStats_->tock(); We'll only keep stats of the good frames.
                 return false;
             }
             if (gotframe) {
@@ -297,6 +306,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 
     if (!gotframe) {
         av_free_packet(&pkt);
+        //GetImageStats_->tock(); We'll only keep stats of the good frames.
         return false;
     }
 
@@ -330,6 +340,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     av_free_packet(&pkt);
 
     CurrentImage_ = im_number;
+    GetImageStats_->tock();
     return true;
 }
 

@@ -38,43 +38,44 @@ class FLITR_EXPORT StatsCollector {
     StatsCollector(std::string ID) :
         ID_(ID),
         ttick_(0),
-        tick_count_(0),
+        tock_count_(0),
         ttock_(0),
         min_(18446744073709551615ULL), //UINT64_MAX
         max_(0),
-        tick_count_at_max_(0),
+        tock_count_at_max_(0),
         sum_(0)
     {
     }
     ~StatsCollector() 
     {
         logMessage(LOG_INFO) << ID_ << 
-            " - tick() count       : " << tick_count_ << "\n";
-        if (tick_count_ != 0) {
+            " - tick() count       : " << tock_count_ << "\n";
+        if (tock_count_ != 0) {
             logMessage(LOG_INFO) << ID_ << 
-                " - tick() count at max: " << tick_count_at_max_ << "\n";
+                " - tick() count at max: " << tock_count_at_max_ << "\n";
             logMessage(LOG_INFO) << ID_ << 
                 " - min                : " << min_ << "\n";
             logMessage(LOG_INFO) << ID_ << 
-                " - avg                : " << (uint64_t)(sum_ / tick_count_) << "\n";
+                " - avg                : " << (uint64_t)(sum_ / tock_count_) << "\n";
             logMessage(LOG_INFO) << ID_ << 
                 " - max                : " << max_ << "\n";
         }
     }
     inline void tick()
     {
-        tick_count_++;
         ttick_ = currentTimeNanoSec();
     }
     inline void tock()
     {
         ttock_ = currentTimeNanoSec();
+        tock_count_++;
+
         uint64_t tdiff = ttock_ - ttick_;
         sum_ += tdiff;
         if (tdiff < min_) min_ = tdiff;
         if (tdiff > max_) {
             max_ = tdiff;
-            tick_count_at_max_ = tick_count_;
+            tock_count_at_max_ = tock_count_;
         }
     }
 
@@ -84,7 +85,7 @@ class FLITR_EXPORT StatsCollector {
     /// Time at tick
     uint64_t ttick_;
     /// Times tick called
-    uint64_t tick_count_;
+    uint64_t tock_count_;
     /// Time at tock;
     uint64_t ttock_;
     /// Min tock-tick
@@ -92,7 +93,7 @@ class FLITR_EXPORT StatsCollector {
     /// Max tock-tick
     uint64_t max_;
     /// Tick that triggered max
-    uint64_t tick_count_at_max_; 
+    uint64_t tock_count_at_max_;
     /// Sum tock-tick
     uint64_t sum_;
 };

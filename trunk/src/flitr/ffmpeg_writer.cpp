@@ -22,6 +22,7 @@
 #include <flitr/ffmpeg_utils.h>
 
 using namespace flitr;
+using std::tr1::shared_ptr;
 
 
 //"The output format is automatically guessed according to the file extension and bit depth.\n"
@@ -38,6 +39,10 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 {
     FrameRate_.num=frame_rate;
     FrameRate_.den=1.0;
+
+    std::stringstream writeframe_stats_name;
+    writeframe_stats_name << filename << " FFmpegWriter::writeFrame";
+    WriteFrameStats_ = shared_ptr<StatsCollector>(new StatsCollector(writeframe_stats_name.str()));
 
 
     /* register all codecs, demux and protocols */
@@ -124,7 +129,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         int closestFramerateIndex=0;
         int framerateIndex=0;
 
-        std::cout << "FFmpegWriter: Requested framerate of " << (FrameRate_.num / ((float)FrameRate_.den)) << ", but valid pixel framerates are: ";
+        std::cout << "FFmpegWriter: Requested framerate of " << (FrameRate_.num / ((float)FrameRate_.den)) << " and valid pixel framerates are: ";
 
         float requestedFramerate=FrameRate_.num / ((float)FrameRate_.den);
 
@@ -160,24 +165,35 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (AVCodec_->pix_fmts!=0)
     {//Choose the input frame format if the codec support it. Otherwise choose an alternative supported format.
         PixelFormat const * codecPixelFormats=AVCodec_->pix_fmts;
+
         PixelFormat bestMatchPixelFormat=(*codecPixelFormats);
+        AVPixFmtDescriptor bestMatchPixdesc=av_pix_fmt_descriptors[bestMatchPixelFormat];
 
         std::cout << "   Valid codec pixel formats are: ";
         while ((*codecPixelFormats)!=PIX_FMT_NONE)
         {
-            AVPixFmtDescriptor pixdesc=av_pix_fmt_descriptors[(*codecPixelFormats)];
+            AVPixFmtDescriptor codecPixdesc=av_pix_fmt_descriptors[(*codecPixelFormats)];
 
-            if (pixdesc.nb_components>=inputPixdesc.nb_components)
+            if (codecPixdesc.nb_components>=inputPixdesc.nb_components)
             {
-                if ( (av_get_bits_per_pixel(&pixdesc)/((float)pixdesc.nb_components)) >=
-                     (av_get_bits_per_pixel(&inputPixdesc)/((float)inputPixdesc.nb_components)) )
+                if ( ( (av_get_bits_per_pixel(&codecPixdesc)/((float)codecPixdesc.nb_components)) >=
+                       (av_get_bits_per_pixel(&inputPixdesc)/((float)inputPixdesc.nb_components)) )
+                   &&
+                     (
+                         ( (av_get_bits_per_pixel(&inputPixdesc)/((float)inputPixdesc.nb_components)) >
+                                            (av_get_bits_per_pixel(&bestMatchPixdesc)/((float)bestMatchPixdesc.nb_components)) ) ||
+                         ( (av_get_bits_per_pixel(&codecPixdesc)/((float)codecPixdesc.nb_components)) <
+                                            (av_get_bits_per_pixel(&bestMatchPixdesc)/((float)bestMatchPixdesc.nb_components)) )
+                      )
+                    )
                 {
                     bestMatchPixelFormat=(*codecPixelFormats);
+                    bestMatchPixdesc=av_pix_fmt_descriptors[bestMatchPixelFormat];
                 }
             }
 
             std::cout << av_get_pix_fmt_name(*codecPixelFormats) << " ";
-            std::cout << "(" << av_get_bits_per_pixel(&pixdesc)/((float)pixdesc.nb_components) << "bpc, " << ((int32_t)pixdesc.nb_components) << " channels) ";
+            std::cout << "(" << av_get_bits_per_pixel(&codecPixdesc)/((float)codecPixdesc.nb_components) << "bpc, " << ((int32_t)codecPixdesc.nb_components) << " channels) ";
 
             if ((*codecPixelFormats)==InputFrameFormat_)
             {
@@ -193,7 +209,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
             //ToDo: Smartly choose format based on bit depth.
             SaveFrameFormat_ = bestMatchPixelFormat;
-            //SaveFrameFormat_ = AVCodec_->pix_fmts[13];
+            //SaveFrameFormat_ = AVCodec_->pix_fmts[5];
         }
 
 
@@ -336,6 +352,8 @@ FFmpegWriter::~FFmpegWriter()
 
 bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 {
+    WriteFrameStats_->tick();
+
     AVPacket pkt;
     av_init_packet(&pkt);
     pkt.data = NULL;    // packet data will be allocated by the encoder
@@ -381,13 +399,14 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
         {
             logMessage(LOG_CRITICAL) << "Failed to write video frame. \n";
             logMessage(LOG_CRITICAL).flush();
+            //WriteFrameStats_.tock(); We'll only keep stats of the good frames.
             return false;
         }
     } else
     {
         /* encode the image */
 
-#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+#if LIBAVFORMAT_VERSION_INT > ((53<<16) + (35<<8) + 0)
         int got_output;
         int encode_ret = avcodec_encode_video2(AVCodecContext_, &pkt, SaveFrame_, &got_output);
 #else
@@ -398,13 +417,16 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
         {
             logMessage(LOG_CRITICAL) << "Failed to encode video frame. \n";
             logMessage(LOG_CRITICAL).flush();
+           // WriteFrameStats_.tock(); We'll only keep stats of the good frames.
             return false;
         }
 
         /* Note: If returned size is zero, it means the image was buffered. */
 
-#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+#if LIBAVFORMAT_VERSION_INT > ((53<<16) + (35<<8) + 0)
         if (got_output)
+#else
+        if (encode_ret>0)
 #endif
         {
             if (AVCodecContext_->coded_frame->pts != AV_NOPTS_VALUE)
@@ -427,12 +449,14 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
             {
                 logMessage(LOG_CRITICAL) << "Failed to write video frame. \n";
                 logMessage(LOG_CRITICAL).flush();
+                //WriteFrameStats_.tock(); We'll only keep stats of the good frames.
                 return false;
             }
         }
     }
 
     WrittenFrameCount_++;
+    WriteFrameStats_->tock();
     return true;
 }
 

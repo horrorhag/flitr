@@ -31,14 +31,14 @@
 
 extern "C" {
 #if defined FLITR_USE_SWSCALE
-# include <avformat.h>
-# include <swscale.h>
+# include <libavformat/avformat.h>
+# include <libswscale/swscale.h>
 # include <libavutil/mathematics.h>
 # include <libavutil/error.h>
 # include <libavcodec/avcodec.h>
 #include <libavutil/pixdesc.h>
 #else
-# include <avformat.h>
+# include <libavformat/avformat.h>
 # include <libavutil/mathematics.h>
 # include <libavutil/error.h>
 # include <libavcodec/avcodec.h>
@@ -142,6 +142,8 @@ class FLITR_EXPORT FFmpegReader {
     std::tr1::shared_ptr<Image> SingleImage_;
 
     std::tr1::shared_ptr<StatsCollector> SwscaleStats_;
+    std::tr1::shared_ptr<StatsCollector> GetImageStats_;
+
 
 #if defined FLITR_USE_SWSCALE
     struct SwsContext *ConvertFormatCtx_;

@@ -30,6 +30,7 @@
 #include <flitr/image_producer.h>
 #include <flitr/image_consumer.h>
 #include <flitr/ffmpeg_producer.h>
+#include <flitr/stats_collector.h>
 
 namespace flitr {
 
@@ -141,7 +142,6 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     std::vector< bool > SeekOK_;
 
     std::vector<Image**> OutputImageVector_;
-
 
     uint32_t buffer_size_;
 };
