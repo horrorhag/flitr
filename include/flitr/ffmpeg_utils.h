@@ -24,7 +24,7 @@
 #include <flitr/image_format.h>
 
 extern "C" {
-#include <avformat.h>
+#include <libavformat/avformat.h>
 }
 
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)

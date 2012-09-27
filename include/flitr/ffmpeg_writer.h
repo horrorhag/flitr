@@ -36,13 +36,13 @@
 
 extern "C" {
 #if defined FLITR_USE_SWSCALE
-# include <avformat.h>
-# include <swscale.h>
+# include <libavformat/avformat.h>
+# include <libswscale/swscale.h>
 # include <libavutil/mathematics.h>
 # include <libavcodec/avcodec.h>	
 #include <libavutil/pixdesc.h>
 #else
-# include <avformat.h>
+# include <libavformat/avformat.h>
 # include <libavutil/mathematics.h>
 # include <libavcodec/avcodec.h>
 #include <libavutil/pixdesc.h>
@@ -78,6 +78,8 @@ enum VideoCodec {//NB: Still need to test all the codecs and only include the on
     FLITR_LJPEG_CODEC = CODEC_ID_LJPEG,
     FLITR_JPEGLS_CODEC = CODEC_ID_JPEGLS,
     FLITR_FFV1_CODEC = CODEC_ID_FFV1,
+    FLITR_MPEG4_CODEC = CODEC_ID_MPEG4,
+    FLITR_HUFFYUV_CODEC = CODEC_ID_HUFFYUV
 };
 
 class FLITR_EXPORT FFmpegWriter {
@@ -129,6 +131,7 @@ private:
     /// Holds the number of frames written to disk.
     uint64_t WrittenFrameCount_;
 
+    std::tr1::shared_ptr<StatsCollector> WriteFrameStats_;
 
     uint8_t* VideoEncodeBuffer_;
     uint32_t VideoEncodeBufferSize_;
