@@ -132,7 +132,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     
     double duration_seconds = double(FormatContext_->duration) / AV_TIME_BASE;
     FrameRate_ = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
-    NumImages_ =100 + 0.5 + (duration_seconds * FrameRate_);
+    NumImages_ = 0.5 + (duration_seconds * FrameRate_);
     logMessage(LOG_DEBUG) << "FFmpegReader gets duration: " << duration_seconds << " frame rate: " << FrameRate_ << " total frames: " << NumImages_ << "\n";
 
 
@@ -263,11 +263,20 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     int loopcount=0;
     while(1) {
 
-        if (av_read_frame(FormatContext_, &pkt) < 0 ) {
+        int read_err=0;
+        if ( (read_err=av_read_frame(FormatContext_, &pkt)) < 0 ) {
             //XXX
-            logMessage(LOG_DEBUG) << "Error while reading frame.\n";
-            //GetImageStats_->tock(); We'll only keep stats of the good frames.
-            return false;
+            if (read_err==AVERROR_EOF)
+            {
+                logMessage(LOG_DEBUG) << "EOF while reading frame " << im_number << "/" << NumImages_ <<  "\n";
+                //GetImageStats_->tock(); We'll only keep stats of the good frames.
+                return false;
+            } else
+            {
+                logMessage(LOG_DEBUG) << "Error while reading frame " << im_number << "/" << NumImages_ <<  "\n";
+              //GetImageStats_->tock(); We'll only keep stats of the good frames.
+              return false;
+            }
         }
         if (pkt.stream_index == VideoStreamIndex_) {
             int decoded_len = avcodec_decode_video2(CodecContext_, DecodedFrame_, &gotframe, &pkt);
