@@ -257,7 +257,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     AVCodecContext_->height = ImageFormat_.getHeight();
     AVCodecContext_->time_base.den= FrameRate_.num;
     AVCodecContext_->time_base.num= FrameRate_.den;
-    AVCodecContext_->gop_size = 1;
+    AVCodecContext_->gop_size = 0;
     AVCodecContext_->pix_fmt = SaveFrameFormat_;
 
     AVCodecContext_->codec_type = AVMEDIA_TYPE_VIDEO;
