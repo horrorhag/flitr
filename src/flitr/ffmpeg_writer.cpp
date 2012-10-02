@@ -44,7 +44,6 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     writeframe_stats_name << filename << " FFmpegWriter::writeFrame";
     WriteFrameStats_ = shared_ptr<StatsCollector>(new StatsCollector(writeframe_stats_name.str()));
 
-
     /* register all codecs, demux and protocols */
     avcodec_register_all();
     av_register_all();
@@ -233,6 +232,8 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     //=== ===
 
 
+
+
     //=== VideoStream_ ===
     VideoStream_ = avformat_new_stream(FormatContext_, AVCodec_);
     //VideoStream_ = avformat_new_stream(FormatContext_, AVCodec_);
@@ -263,7 +264,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     AVCodecContext_->codec_type = AVMEDIA_TYPE_VIDEO;
 
     // experiment with coder type
-    AVCodecContext_->coder_type = FF_CODER_TYPE_AC; // faster for FFV1
+    //AVCodecContext_->coder_type = FF_CODER_TYPE_AC; // faster for FFV1
     //AVCodecContext_->coder_type = FF_CODER_TYPE_VLC;
     //AVCodecContext_->coder_type = FF_CODER_TYPE_DEFLATE;
     //AVCodecContext_->coder_type = FF_CODER_TYPE_RAW;
@@ -329,7 +330,6 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         throw FFmpegWriterException();
     }
 
-
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
     avformat_write_header(FormatContext_,NULL);
 #else
@@ -394,7 +394,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
         pkt.data          = SaveFrame_->data[0];
         pkt.size          = sizeof(AVPicture);
 
-        int write_ret = av_interleaved_write_frame(FormatContext_, &pkt);
+        int write_ret = av_write_frame(FormatContext_, &pkt);
         if (write_ret<0)
         {
             logMessage(LOG_CRITICAL) << "Failed to write video frame. \n";
@@ -440,10 +440,14 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
             }
 
             pkt.stream_index= VideoStream_->index;
-            //pkt.data = VideoEncodeBuffer_;
-            //pkt.size = encode_ret;
+#if LIBAVFORMAT_VERSION_INT > ((53<<16) + (35<<8) + 0)
+#else
 
-            int write_ret = av_interleaved_write_frame(FormatContext_, &pkt);
+            pkt.data = VideoEncodeBuffer_;
+            pkt.size = encode_ret;
+#endif
+
+            int write_ret = av_write_frame(FormatContext_, &pkt);
 
             if (write_ret!=0)
             {
