@@ -273,7 +273,10 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
                 return false;
             } else
             {
-                logMessage(LOG_DEBUG) << "Error while reading frame " << im_number << "/" << NumImages_ <<  "\n";
+                char errbuf[256];
+                if (!av_strerror(read_err, errbuf, 256)) sprintf(errbuf,"undf");
+
+                logMessage(LOG_DEBUG) << "Error ("<< errbuf <<") while reading frame " << im_number << "/" << NumImages_ <<  "\n";
               //GetImageStats_->tock(); We'll only keep stats of the good frames.
               return false;
             }

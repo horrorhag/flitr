@@ -59,11 +59,14 @@ int main(int argc, char *argv[])
     mfc->init();
     std::vector<std::string> filenames;
     filenames.push_back("output");
+
     mfc->setContainer(flitr::FLITR_MKV_CONTAINER);
     //mfc->setContainer(flitr::FLITR_AVI_CONTAINER);
+
     //mfc->setCodec(flitr::FLITR_RAWVIDEO_CODEC, -1);
-    mfc->setCodec(flitr::FLITR_FFV1_CODEC, -1);
-    //mfc->setCodec(flitr::FLITR_MSMPEG4V3_CODEC, -1);
+    //mfc->setCodec(flitr::FLITR_HUFFYUV_CODEC, -1);
+    mfc->setCodec(flitr::FLITR_MPEG4_CODEC, 2000000);
+
     mfc->openFiles(filenames);
     mfc->startWriting();
 
