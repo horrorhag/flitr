@@ -85,7 +85,11 @@ bool FFmpegProducer::seek(uint32_t position)
     Image *image=*(imv[0]);
 
     uint32_t seek_to = position % NumImages_;
+
     bool seek_result = Reader_->getImage(*image, seek_to);
+    //The seek result should be true because were only seeking within the video.
+    //ToDo: Add an assert to flag if seek_result is not true.
+
     CurrentImage_ = Reader_->getCurrentImage();
 
     // If there is a create meta data function, then use it to stay backwards compatible with uses before the setAutoLoadMetaData method was added.
@@ -108,5 +112,5 @@ bool FFmpegProducer::seek(uint32_t position)
 
     releaseWriteSlot();
 
-    return seek_result;
+    return true;//Return true because we've reserved and released a write slot.
 }
