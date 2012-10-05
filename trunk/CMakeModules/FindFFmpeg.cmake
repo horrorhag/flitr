@@ -202,11 +202,11 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
     SET(FFmpeg_FOUND TRUE)
 
     SET(FFmpeg_INCLUDE_DIRS
-        ${FFmpeg_LIBAVFORMAT_INCLUDE_DIRS} ${FFmpeg_LIBAVFORMAT_INCLUDE_DIRS}/libavformat
-        ${FFmpeg_LIBAVDEVICE_INCLUDE_DIRS} ${FFmpeg_LIBAVDEVICE_INCLUDE_DIRS}/libavdevice
-        ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS} ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS}/libavcodec
-        ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS} ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS}/libavutil
-        ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS} ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS}/libswscale
+        ${FFmpeg_LIBAVFORMAT_INCLUDE_DIRS} #${FFmpeg_LIBAVFORMAT_INCLUDE_DIRS}/libavformat
+        ${FFmpeg_LIBAVDEVICE_INCLUDE_DIRS} #${FFmpeg_LIBAVDEVICE_INCLUDE_DIRS}/libavdevice
+        ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS} #${FFmpeg_LIBAVCODEC_INCLUDE_DIRS}/libavcodec
+        ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS} #${FFmpeg_LIBAVUTIL_INCLUDE_DIRS}/libavutil
+        ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS} #${FFmpeg_LIBSWSCALE_INCLUDE_DIRS}/libswscale
         #CACHE STRING  "docstring"
     )
 
@@ -214,11 +214,11 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
         SET(FFmpeg_INCLUDE_DIRS
             ${FFmpeg_INCLUDE_DIRS}
             ${FFmpeg_STDINT_INCLUDE_DIR}
-            ${FFmpeg_STDINT_INCLUDE_DIR}/libavformat
-            ${FFmpeg_STDINT_INCLUDE_DIR}/libavdevice
-            ${FFmpeg_STDINT_INCLUDE_DIR}/libavcodec
-            ${FFmpeg_STDINT_INCLUDE_DIR}/libavutil
-            ${FFmpeg_STDINT_INCLUDE_DIR}/libswscale
+            #${FFmpeg_STDINT_INCLUDE_DIR}/libavformat
+            #${FFmpeg_STDINT_INCLUDE_DIR}/libavdevice
+            #${FFmpeg_STDINT_INCLUDE_DIR}/libavcodec
+            #${FFmpeg_STDINT_INCLUDE_DIR}/libavutil
+            #${FFmpeg_STDINT_INCLUDE_DIR}/libswscale
             #CACHE  STRING  "docstring"
         )
     ENDIF()
