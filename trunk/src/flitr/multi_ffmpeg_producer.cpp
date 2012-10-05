@@ -37,7 +37,8 @@ void MultiFFmpegProducerThread::run()
 
         // seek on our producer
         Parent_->SeekOK_[Index_] = Parent_->Producers_[Index_]->seek(Parent_->SeekPos_);
-        if (Parent_->SeekOK_[Index_]) {
+        if (Parent_->SeekOK_[Index_])
+        {
             std::vector<Image**> in_imvec = Parent_->Consumers_[Index_]->reserveReadSlot();
 			if (in_imvec.size()!=1) {
 				// the producer failed

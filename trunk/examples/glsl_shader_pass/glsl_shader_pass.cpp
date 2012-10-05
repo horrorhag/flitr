@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
-    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
+    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));
     if (!ffp->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
     mfc->setContainer(flitr::FLITR_MKV_CONTAINER);
     //mfc->setContainer(flitr::FLITR_AVI_CONTAINER);
 
-    //mfc->setCodec(flitr::FLITR_RAWVIDEO_CODEC, -1);
+    mfc->setCodec(flitr::FLITR_RAWVIDEO_CODEC, -1);
     //mfc->setCodec(flitr::FLITR_HUFFYUV_CODEC, -1);
-    mfc->setCodec(flitr::FLITR_MPEG4_CODEC, 2000000);
+    //mfc->setCodec(flitr::FLITR_MPEG4_CODEC, 2000000);
 
     mfc->openFiles(filenames);
     mfc->startWriting();

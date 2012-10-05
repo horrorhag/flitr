@@ -223,10 +223,10 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if ( (((CodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==PIX_FMT_RGB24) )
     {//It seems that ffmpeg swaps the rgb components when using the raw codec.
         SaveFrameFormat_=PIX_FMT_BGR24;
-        std::cout << "    Using pixel format " << av_get_pix_fmt_name(SaveFrameFormat_) << " instead of " << av_get_pix_fmt_name(PIX_FMT_RGB24) <<" because it seems that FFmpeg swaps the rgb when using raw codec.\n";
+        std::cout << "   Using pixel format " << av_get_pix_fmt_name(SaveFrameFormat_) << " instead of " << av_get_pix_fmt_name(PIX_FMT_RGB24) <<" because it seems that FFmpeg swaps the rgb when using raw codec.\n";
     } else
     {
-        std::cout << "    Using pixel format: " << av_get_pix_fmt_name(SaveFrameFormat_) <<"\n";
+        std::cout << "   Using pixel format: " << av_get_pix_fmt_name(SaveFrameFormat_) <<"\n";
         std::cout.flush();
     }
     //=== ===
@@ -394,7 +394,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
         pkt.data          = SaveFrame_->data[0];
         pkt.size          = sizeof(AVPicture);
 
-        int write_ret = av_write_frame(FormatContext_, &pkt);
+        int write_ret = av_interleaved_write_frame(FormatContext_, &pkt);
         if (write_ret<0)
         {
             logMessage(LOG_CRITICAL) << "Failed to write video frame. \n";
@@ -447,7 +447,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
             pkt.size = encode_ret;
 #endif
 
-            int write_ret = av_write_frame(FormatContext_, &pkt);
+            int write_ret = av_interleaved_write_frame(FormatContext_, &pkt);
 
             if (write_ret!=0)
             {
