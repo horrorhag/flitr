@@ -25,6 +25,8 @@
 
 using std::tr1::shared_ptr;
 using namespace flitr;
+int32_t startup_viewport_width=0;
+int32_t startup_viewport_height=0;
 
 // Adapted from osgpick example
 class PickHandler : public osgGA::GUIEventHandler {
@@ -72,34 +74,42 @@ void PickHandler::pick(osgViewer::View* view, const osgGA::GUIEventAdapter& ea)
     float x = ea.getX();
     float y = ea.getY();
 
+    if ((startup_viewport_width!=0)&&(startup_viewport_height!=0))
+    {
+        osg::Viewport *viewport=view->getCamera()->getViewport();
+        x*=startup_viewport_width/viewport->width();
+        y*=startup_viewport_height/viewport->height();
+    }
+
     if (view->computeIntersections(x,y,intersections))
     {
         for(osgUtil::LineSegmentIntersector::Intersections::iterator hitr = intersections.begin();
             hitr != intersections.end();
             ++hitr)
         {
-            std::ostringstream os;
+            //std::stringstream os;
+
             if (!hitr->nodePath.empty() && !(hitr->nodePath.back()->getName().empty()))
             {
                 // the geodes are identified by name.
-                os<<"Object \""<<hitr->nodePath.back()->getName()<<"\""<<std::endl;
+                std::cout<<"Object \""<<hitr->nodePath.back()->getName()<<"\""<<std::endl;
             }
             else if (hitr->drawable.valid())
             {
-                os<<"Object \""<<hitr->drawable->className()<<"\""<<std::endl;
+                std::cout<<"Object \""<<hitr->drawable->className()<<"\""<<std::endl;
             }
 
             _pick_location = hitr->getWorldIntersectPoint();
             _pick_available = true;
-            os<<"        local coords vertex("<< hitr->getLocalIntersectPoint()<<")"<<"  normal("<<hitr->getLocalIntersectNormal()<<")"<<std::endl;
-            os<<"        world coords vertex("<< hitr->getWorldIntersectPoint()<<")"<<"  normal("<<hitr->getWorldIntersectNormal()<<")"<<std::endl;
+            std::cout<<"        local coords vertex("<< hitr->getLocalIntersectPoint()<<")"<<"  normal("<<hitr->getLocalIntersectNormal()<<")"<<std::endl;
+            std::cout<<"        world coords vertex("<< hitr->getWorldIntersectPoint()<<")"<<"  normal("<<hitr->getWorldIntersectNormal()<<")"<<std::endl;
             const osgUtil::LineSegmentIntersector::Intersection::IndexList& vil = hitr->indexList;
             for(unsigned int i=0;i<vil.size();++i)
             {
-                os<<"        vertex indices ["<<i<<"] = "<<vil[i]<<std::endl;
+                std::cout<<"        vertex indices ["<<i<<"] = "<<vil[i]<<std::endl;
             }
 
-            std::cout << os.str();
+            //std::cout << os.str();
         }
     }
 }
@@ -134,7 +144,19 @@ int main(int argc, char *argv[])
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.addEventHandler(new osgViewer::WindowSizeHandler);
-    
+
+    //viewer.setUpViewInWindow(0,0, 640, 480);
+
+    osg::Viewport *viewport=viewer.getCamera()->getViewport();
+    if (viewport)
+    {
+      startup_viewport_width=viewport->width();
+      startup_viewport_height=viewport->height();
+      std::cout << "Viewport: " << startup_viewport_width << " " << startup_viewport_height << "\n";
+      std::cout.flush();
+    }
+
+
     // add pick handler
     PickHandler* ph = new PickHandler; 
     viewer.addEventHandler(ph);
@@ -142,9 +164,10 @@ int main(int argc, char *argv[])
     ImageFormat imf = ffp->getFormat();
     double w = imf.getWidth();
     double h = imf.getHeight();
-    QuadOverlay* qov = new QuadOverlay(w/2,h/2,w/4,h/4);
+    QuadOverlay* qov = new QuadOverlay(w/2,h/2,w/4,h/4, true);
     qov->setLineWidth(2);
     //qov->flipVerticalCoordinates(h);
+    qov->setName("qov");
     root_node->addChild(qov);
 
     CrosshairOverlay* ch = new CrosshairOverlay(w/2,h/2,20,30);
@@ -167,7 +190,8 @@ int main(int argc, char *argv[])
             osg::Vec3d pickpoint;
             if (ph->getPick(pickpoint)) {
                 //ortho_manip->setCenter(pickpoint);
-                qov->setCenter(pickpoint.x(), pickpoint.y());
+                //qov->setCenter(pickpoint.x(), pickpoint.y());
+                ch->setCenter(pickpoint.x(), pickpoint.y());
             }
         } else {
             OpenThreads::Thread::microSleep(5000);
