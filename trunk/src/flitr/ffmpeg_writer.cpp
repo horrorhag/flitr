@@ -163,9 +163,9 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
     if (AVCodec_->pix_fmts!=0)
     {//Choose the input frame format if the codec support it. Otherwise choose an alternative supported format.
-        PixelFormat const * codecPixelFormats=AVCodec_->pix_fmts;
+        AVPixelFormat const * codecPixelFormats=AVCodec_->pix_fmts;
 
-        PixelFormat bestMatchPixelFormat=(*codecPixelFormats);
+        AVPixelFormat bestMatchPixelFormat=(*codecPixelFormats);
         AVPixFmtDescriptor bestMatchPixdesc=av_pix_fmt_descriptors[bestMatchPixelFormat];
 
         std::cout << "   Valid codec pixel formats are: ";

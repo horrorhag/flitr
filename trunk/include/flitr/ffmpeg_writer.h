@@ -49,6 +49,8 @@ extern "C" {
 #endif
 }
 
+#undef PixelFormat
+
 #include <boost/tr1/memory.hpp>
 
 #include <iostream>
@@ -114,11 +116,11 @@ private:
 
 	/// Holds the input frame.
     AVFrame *InputFrame_;
-    PixelFormat InputFrameFormat_;
+    AVPixelFormat InputFrameFormat_;
 
     /// Holds the frame converted to the format required by the codec.
     AVFrame* SaveFrame_;
-    PixelFormat SaveFrameFormat_;
+    AVPixelFormat SaveFrameFormat_;
 
     /// Format of the output video
     AVOutputFormat *OutputFormat_;

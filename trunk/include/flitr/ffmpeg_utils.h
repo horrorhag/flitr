@@ -27,6 +27,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#undef PixelFormat
+
 #if LIBAVCODEC_VERSION_INT < AV_VERSION_INT(52, 64, 0)
  #ifndef AVMEDIA_TYPE_VIDEO
   #define AVMEDIA_TYPE_VIDEO CODEC_TYPE_VIDEO
@@ -51,9 +53,9 @@ namespace flitr {
  * 
  * \return FFmpeg pixel format.
  */
-PixelFormat PixelFormatFLITrToFFmpeg(ImageFormat::PixelFormat in_fmt);
+AVPixelFormat PixelFormatFLITrToFFmpeg(ImageFormat::PixelFormat in_fmt);
 
-ImageFormat::PixelFormat PixelFormatFFmpegToFLITr(PixelFormat in_fmt);
+ImageFormat::PixelFormat PixelFormatFFmpegToFLITr(AVPixelFormat in_fmt);
 
 /**
  * Utility function to allocate and fill an FFmpeg frame.
@@ -64,7 +66,7 @@ ImageFormat::PixelFormat PixelFormatFFmpegToFLITr(PixelFormat in_fmt);
  * 
  * \return Pointer to a created AVFrame if successful, otherwise NULL.
  */
-AVFrame *allocFFmpegFrame(PixelFormat pix_fmt, int width, int height);
+AVFrame *allocFFmpegFrame(AVPixelFormat pix_fmt, int width, int height);
 
 }
 

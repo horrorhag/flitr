@@ -29,6 +29,8 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#undef PixelFormat
+
 #include <boost/tr1/memory.hpp>
 
 #include <cstdlib>

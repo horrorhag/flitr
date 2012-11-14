@@ -137,7 +137,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
 
     //=== convert or reset IP format to ffmpeg format ===//
-    PixelFormat out_ffmpeg_pix_fmt;
+    AVPixelFormat out_ffmpeg_pix_fmt;
 
     if (out_pix_fmt!=ImageFormat::FLITR_PIX_FMT_ANY)
     {//The user specified an image format so use it.
@@ -173,7 +173,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 #if defined FLITR_USE_SWSCALE
     ConvertFormatCtx_ = sws_getContext(
                 ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt,
-                ImageFormat_.getWidth(), ImageFormat_.getHeight(), (PixelFormat)out_ffmpeg_pix_fmt,
+                ImageFormat_.getWidth(), ImageFormat_.getHeight(), (AVPixelFormat)out_ffmpeg_pix_fmt,
                 SWS_BILINEAR, NULL, NULL, NULL);
 #endif
     
