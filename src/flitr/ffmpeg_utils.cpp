@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-PixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_fmt)
+AVPixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_fmt)
 {
     switch (in_fmt) {
       case ImageFormat::FLITR_PIX_FMT_Y_8:
@@ -40,7 +40,7 @@ PixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in_f
     }
 }
 
-flitr::ImageFormat::PixelFormat flitr::PixelFormatFFmpegToFLITr(PixelFormat in_fmt)
+flitr::ImageFormat::PixelFormat flitr::PixelFormatFFmpegToFLITr(AVPixelFormat in_fmt)
 {
     switch (in_fmt) {
       case PIX_FMT_GRAY8:
@@ -57,7 +57,7 @@ flitr::ImageFormat::PixelFormat flitr::PixelFormatFFmpegToFLITr(PixelFormat in_f
     }
 }
 
-AVFrame* flitr::allocFFmpegFrame(PixelFormat pix_fmt, int width, int height)
+AVFrame* flitr::allocFFmpegFrame(AVPixelFormat pix_fmt, int width, int height)
 {
     AVFrame *picture;
     uint8_t *picture_buf;

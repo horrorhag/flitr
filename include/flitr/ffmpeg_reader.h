@@ -31,20 +31,24 @@
 
 extern "C" {
 #if defined FLITR_USE_SWSCALE
-# include <libavformat/avformat.h>
-# include <libswscale/swscale.h>
-# include <libavutil/mathematics.h>
-# include <libavutil/error.h>
-# include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+#include <libavutil/mathematics.h>
+#include <libavutil/error.h>
+#include <libavcodec/avcodec.h>
 #include <libavutil/pixdesc.h>
+#include <libavutil/pixfmt.h>
 #else
-# include <libavformat/avformat.h>
-# include <libavutil/mathematics.h>
-# include <libavutil/error.h>
-# include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/mathematics.h>
+#include <libavutil/error.h>
+#include <libavcodec/avcodec.h>
 #include <libavutil/pixdesc.h>
+#include <libavutil/pixfmt.h>
 #endif
 }
+
+#undef PixelFormat
 
 #include <boost/tr1/memory.hpp>
 
