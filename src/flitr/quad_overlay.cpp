@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -40,25 +40,24 @@ QuadOverlay::QuadOverlay(double center_x, double center_y, double width, double 
 
 void QuadOverlay::makeQuad(bool filled)
 {
-    osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-	
+    _Geode = new osg::Geode();
+    _Geom = new osg::Geometry();
+
     updateQuad();
     
-    geom->setVertexArray(_Vertices.get());
+    _Geom->setVertexArray(_Vertices.get());
     
-    osg::ref_ptr<osg::DrawArrays> da;
     if (!filled) {
-        da= new osg::DrawArrays(osg::PrimitiveSet::LINE_LOOP,0,4);
+        _DrawArray= new osg::DrawArrays(osg::PrimitiveSet::LINE_LOOP,0,4);
     } else {
-        da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
+        _DrawArray = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
     }
-	geom->addPrimitiveSet(da.get());
-	geom->setUseDisplayList(false);
-	geode->addDrawable(geom.get());
-    geode->setCullingActive(false);
-	
-	_GeometryGroup->addChild(geode.get());
+    _Geom->addPrimitiveSet(_DrawArray.get());
+    _Geom->setUseDisplayList(false);
+    _Geode->addDrawable(_Geom.get());
+    _Geode->setCullingActive(false);
+
+    _GeometryGroup->addChild(_Geode.get());
 }
 
 void QuadOverlay::updateQuad()
@@ -100,10 +99,26 @@ void QuadOverlay::setHeight(double height)
 
 double QuadOverlay::getWidth() const
 {
-  return _Width;
+    return _Width;
 }
 double QuadOverlay::getHeight() const
 {
-  return _Height;
+    return _Height;
+}
+
+void QuadOverlay::setName(const std::string &name)
+{
+    /* Set the name on the base class */
+    GeometryOverlay::setName(name);
+
+    /* Set the name of the other osg::Nodes */
+    if (_Geom)//calls ref_ptr::valid()
+        _Geom->setName(name);
+
+    if (_Geode)//calls ref_ptr::valid()
+        _Geode->setName(name);
+
+    if (_DrawArray)//calls ref_ptr::valid()
+        _DrawArray->setName(name);
 }
 

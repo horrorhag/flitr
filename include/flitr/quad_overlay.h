@@ -83,10 +83,21 @@ class FLITR_EXPORT QuadOverlay : public GeometryOverlay
     double getWidth() const;
     double getHeight() const;
 
+    /**
+     * Set the name of the overlay along with the nodes that make up
+     * the overlay
+     *
+     * \param name New name of the overlay
+     */
+    virtual void setName(const std::string& name);
+
   private:
     void makeQuad(bool filled);
     void updateQuad();
     osg::ref_ptr<osg::Vec3Array> _Vertices;
+    osg::ref_ptr<osg::Geode> _Geode;
+    osg::ref_ptr<osg::Geometry> _Geom;
+    osg::ref_ptr<osg::DrawArrays> _DrawArray;
 
     double _CenterX;
     double _CenterY;
