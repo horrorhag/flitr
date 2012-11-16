@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  * 
  * This file is part of FLITr.
@@ -101,6 +101,14 @@ class FLITR_EXPORT GeometryOverlay : public osg::Switch
      *  \param show True to turn on.
      */
     void setShow(bool show);
+
+    /**
+     * \brief Set the name of the overlay along with the nodes that make up
+     * the overlay
+     *
+     * \param name New name of the overlay
+     */
+    virtual void setName(const std::string& name);
 
   protected:
     /// Matrix to make sure our coordinate system matches the geometry being draw on.
