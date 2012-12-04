@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not instantiate the test pattern producer.\n";
         exit(-1);
     }
-#elif
+#else
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
