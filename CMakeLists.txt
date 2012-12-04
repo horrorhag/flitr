@@ -125,6 +125,7 @@ SET(LIB_SOURCES
   src/flitr/hud.cpp
   src/flitr/crosshair_overlay.cpp
   src/flitr/ffmpeg_producer.cpp
+  src/flitr/test_pattern_producer.cpp
   src/flitr/smulti_ffmpeg_producer.cpp
   src/flitr/ffmpeg_reader.cpp
   src/flitr/ffmpeg_utils.cpp
@@ -149,11 +150,14 @@ SET(LIB_SOURCES
   src/flitr/homography_shader_pass.cpp
   src/flitr/simple_shader_pass.cpp
   src/flitr/simple_cpu_shader_pass.cpp
+#  src/flitr/modules/lucas_kanade/imageBiPyramid.cpp
+#  src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
   include/flitr/crosshair_overlay.h
   include/flitr/ffmpeg_producer.h
+  include/flitr/test_pattern_producer.h
   include/flitr/smulti_ffmpeg_producer.h
   include/flitr/ffmpeg_reader.h
   include/flitr/ffmpeg_utils.h
@@ -185,6 +189,8 @@ SET(LIB_SOURCES
   include/flitr/homography_shader_pass.h
   include/flitr/simple_shader_pass.h
   include/flitr/simple_cpu_shader_pass.h
+#  include/flitr/modules/lucas_kanade/imageBiPyramid.h
+#  include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 )
 
 
@@ -231,6 +237,7 @@ ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 
+ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
