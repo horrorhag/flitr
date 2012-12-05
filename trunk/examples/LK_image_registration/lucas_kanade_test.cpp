@@ -13,7 +13,7 @@
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
 
-//#include <flitr/modules/lucas_kanade/ImageStabiliserBiLK.h>
+#include <flitr/modules/lucas_kanade/ImageStabiliserBiLK.h>
 
 using std::tr1::shared_ptr;
 using namespace flitr;
@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
 
-/*
+
     unsigned long roi_dim=256;
 
     ImageStabiliserBiLK *iStab=new ImageStabiliserBiLK(osgc->getOutputTexture(0, 0),
                                   25, ip->getFormat().getHeight()/2-roi_dim/2,
                                   ip->getFormat().getWidth()-25-roi_dim, ip->getFormat().getHeight()/2-roi_dim/2,
                                   roi_dim, roi_dim,
-                                  false,//Indicate ROI?
+                                  true,//Indicate ROI?
                                   true,//Do GPU Pyramid construction.
                                   true,//Do GPU LK iteration.
                                   2,//Number of GPU h-vector reduction levels.
@@ -69,9 +69,9 @@ int main(int argc, char *argv[])
     iStab->init(root_node);
 
     iStab->setAutoSwapCurrentPrevious(true); //Do not compare successive frames with each other. E.g. compare all frames with specific reference frame.
-*/
 
-    shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
+
+    shared_ptr<TexturedQuad> quad(new TexturedQuad(iStab->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
 
     //=== ===//
@@ -129,6 +129,11 @@ int main(int argc, char *argv[])
         }
 
         if (osgc->getNext()) {
+            if (numFramesDone>=2)
+            {
+                iStab->triggerInput();
+            }
+
             viewer.frame();
 
             numFramesDone++;

@@ -46,18 +46,18 @@ void flitr::ImageStabiliserBiLK::PostBiPyramidRebuiltCallback::callback()
 
 
 flitr::ImageStabiliserBiLK::ImageStabiliserBiLK(const osg::TextureRectangle *i_pInputTexture,
-                                              unsigned long i_ulROIX_left, unsigned long i_ulROIY_left,
-                                              unsigned long i_ulROIX_right, unsigned long i_ulROIY_right,
-                                              unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
-                                              bool i_bIndicateROI,
-                                              bool i_bDoGPUPyramids,
-                                              bool i_bDoGPULKIterations,
-                                              unsigned long i_ulNumGPUHVectorReductionLevels,
-                                              bool i_bReadOutputBackToCPU,
-                                              bool i_bBiLinearOutputFilter,
-                                              int i_iOutputScaleFactor,
-                                              float filterHistory,
-                                              int numFilterPairs) :
+                                                unsigned long i_ulROIX_left, unsigned long i_ulROIY_left,
+                                                unsigned long i_ulROIX_right, unsigned long i_ulROIY_right,
+                                                unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
+                                                bool i_bIndicateROI,
+                                                bool i_bDoGPUPyramids,
+                                                bool i_bDoGPULKIterations,
+                                                unsigned long i_ulNumGPUHVectorReductionLevels,
+                                                bool i_bReadOutputBackToCPU,
+                                                bool i_bBiLinearOutputFilter,
+                                                int i_iOutputScaleFactor,
+                                                float filterHistory,
+                                                int numFilterPairs) :
 
     m_pInputTexture(i_pInputTexture),
     m_ulROIX_left(i_ulROIX_left), m_ulROIY_left(i_ulROIY_left),
@@ -603,8 +603,8 @@ osg::Node* flitr::ImageStabiliserBiLK::createBiLKIteration(ImageBiPyramid *i_pCu
 
 
 osg::Node* flitr::ImageStabiliserBiLK::createHVectorReductionLevel(unsigned long i_ulLevel, unsigned long i_ulWidth,
-                                                                 unsigned long i_ulHeight, unsigned long i_ulReductionLevel,
-                                                                 bool i_bDoPostLKIterationCallback)
+                                                                   unsigned long i_ulHeight, unsigned long i_ulReductionLevel,
+                                                                   bool i_bDoPostLKIterationCallback)
 {
     osg::ref_ptr<osg::Geode> geode = 0;
     osg::ref_ptr<osg::StateSet> geomss = 0;
@@ -702,7 +702,7 @@ osg::Matrixd flitr::ImageStabiliserBiLK::getDeltaTransformationMatrix() const
     osg::Vec2d lNorm;
     osg::Vec2d mNorm;
 
-    if (0)//(getROI_rightCentre()!=getROI_leftCentre())
+    if (getROI_rightCentre()!=getROI_leftCentre())
     {
         lNorm=(m_h_right+getROI_rightCentre())-(m_h_left+getROI_leftCentre());
         mNorm=osg::Vec2d(-lNorm.y(), lNorm.x());
@@ -731,8 +731,8 @@ osg::Matrixd flitr::ImageStabiliserBiLK::getDeltaTransformationMatrix() const
 }
 
 void flitr::ImageStabiliserBiLK::getHomographyMatrix(double &a00, double &a01, double &a02,
-                                                   double &a10, double &a11, double &a12,
-                                                   double &a20, double &a21, double &a22) const
+                                                     double &a10, double &a11, double &a12,
+                                                     double &a20, double &a21, double &a22) const
 {			
     osg::Vec2d lNorm=(m_h_right+getROI_rightCentre())-(m_h_left+getROI_leftCentre());
     osg::Vec2d mNorm=osg::Vec2d(-lNorm.y(), lNorm.x());
