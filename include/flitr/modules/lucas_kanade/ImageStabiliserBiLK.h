@@ -1,7 +1,7 @@
 #ifndef IMAGE_STABALISER_BILK
 #define IMAGE_STABALISER_BILK
 
-#define NEWTON_RAPHSON_ITERATIONS 4
+#define NEWTON_RAPHSON_ITERATIONS 7
 
 #include <iostream>
 #include <boost/tr1/memory.hpp>
