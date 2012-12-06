@@ -296,7 +296,10 @@ IF(FLITR_WITH_DOXYGEN)
   if(DOXYGEN_FOUND)
 	configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
 	add_custom_target(Doxygen ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Generate Doxygen documentation." VERBATIM)
+  else(DOXYGEN_FOUND)
+        MESSAGE(WARNING "Doxygen not found!")
   endif(DOXYGEN_FOUND)
+
   ENDIF(FLITR_WITH_DOXYGEN)
 
 
