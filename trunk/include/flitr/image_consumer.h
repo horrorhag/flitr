@@ -58,7 +58,7 @@ class FLITR_EXPORT ImageConsumer {
      */	
     virtual uint32_t getNumReadSlotsAvailable()
     {
-        return SharedImageBuffer_->getNumReadSlotsAvailable(*this);
+        return ProducerImageBuffer_->getNumReadSlotsAvailable(*this);
     }
 
     /** 
@@ -69,7 +69,7 @@ class FLITR_EXPORT ImageConsumer {
      */
     virtual uint32_t getNumReadSlotsReserved()
     {
-        return SharedImageBuffer_->getNumReadSlotsReserved(*this);
+        return ProducerImageBuffer_->getNumReadSlotsReserved(*this);
     }
 
     /** 
@@ -83,7 +83,7 @@ class FLITR_EXPORT ImageConsumer {
      */
     virtual std::vector<Image**> reserveReadSlot()
     {
-        return SharedImageBuffer_->reserveReadSlot(*this);
+        return ProducerImageBuffer_->reserveReadSlot(*this);
     }
 
     /** 
@@ -93,21 +93,21 @@ class FLITR_EXPORT ImageConsumer {
      */  
     virtual void releaseReadSlot()
     {
-        SharedImageBuffer_->releaseReadSlot(*this);
+        ProducerImageBuffer_->releaseReadSlot(*this);
     }
 		
     virtual bool init() { return true; }
 
   protected:
     /// Called once we get added as a consumer.
-    void setSharedImageBuffer(SharedImageBuffer& b) { SharedImageBuffer_ = &b; }
+    void setSharedImageBuffer(SharedImageBuffer& b) { ProducerImageBuffer_ = &b; }
 
   private:
     // \todo good place for observer pointers
-    /// Pointer to the shared buffer. The buffer resides in the producer.
-    SharedImageBuffer *SharedImageBuffer_;
     /// Pointer to the producer we are connected to.
     ImageProducer *ImageProducer_;
+    /// Pointer to the shared buffer. The buffer resides in the producer.
+    SharedImageBuffer *ProducerImageBuffer_;
 };
 
 }

@@ -6,6 +6,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
 
+#include <flitr/image_processor.h>
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
@@ -61,7 +62,13 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
 
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ffp,1));
+    shared_ptr<ImageProcessor> imageProcessor(new ImageProcessor(*ffp, 1));
+    if (!imageProcessor->init()) {
+        std::cerr << "Could not initialise the image processor.\n";
+        exit(-1);
+    }
+
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*imageProcessor,1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
