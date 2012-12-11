@@ -81,7 +81,9 @@ class FLITR_EXPORT Image {
     ImageFormat* format() { return &Format_; }
     const std::tr1::shared_ptr<ImageMetadata> metadata() { return Metadata_; }
     void setMetadata(std::tr1::shared_ptr<ImageMetadata> md) { Metadata_ = md; } 
-    uint8_t* data() { return &(Data_[0]); }
+
+    uint8_t * const data() { return &(Data_[0]); }
+    uint8_t const * const data() const { return &(Data_[0]); }
 
   private:
     void deepCopy(const Image& rh)

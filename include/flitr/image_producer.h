@@ -60,7 +60,7 @@ class FLITR_EXPORT ImageProducer {
      * 
      * \return Format of the image.
      */
-    virtual ImageFormat getFormat(uint32_t index = 0) { return ImageFormat_[index]; }
+    virtual ImageFormat getFormat(uint32_t index = 0) const { return ImageFormat_[index]; }
 
     /**
      * Obtain the number of write slots that can be reserved.

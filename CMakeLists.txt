@@ -133,6 +133,7 @@ SET(LIB_SOURCES
   src/flitr/geometry_overlay.cpp
   src/flitr/high_resolution_time.cpp
   src/flitr/image_consumer.cpp
+  src/flitr/image_processor.cpp
   src/flitr/log_message.cpp
   src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
@@ -167,6 +168,7 @@ SET(LIB_SOURCES
   include/flitr/geometry_overlay.h
   include/flitr/high_resolution_time.h
   include/flitr/image_consumer.h
+  include/flitr/image_processor.h
   include/flitr/image_format.h
   include/flitr/image.h
   include/flitr/image_metadata.h
