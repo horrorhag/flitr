@@ -33,7 +33,8 @@ namespace flitr {
 class ImageProcessor;
 
 /*! Helper/Service thread class for ImageProcessor that consumes and produces images as they become available from the upstream producer.*/
-class ImageProcessorThread : public OpenThreads::Thread {
+class ImageProcessorThread : public OpenThreads::Thread
+{
 public:
 
     /*! Constructor given a pointer to the ImageProcessor object.*/
@@ -57,7 +58,8 @@ private:
 };
 
 /*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.*/
-class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer {
+class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer
+{
     friend class ImageProcessorThread;
 public:
 

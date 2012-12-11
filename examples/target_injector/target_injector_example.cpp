@@ -6,6 +6,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
 
+#include <flitr/modules/target_injector/target_injector.h>
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
@@ -64,7 +65,27 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
 
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ffp,1));
+    shared_ptr<TargetInjector> targetInjector(new TargetInjector(*ffp, 1));
+    if (!targetInjector->init()) {
+        std::cerr << "Could not initialise the target injector.\n";
+        exit(-1);
+    }
+
+
+    targetInjector->setTargetBrightness(50.0f);
+
+    targetInjector->addTarget(TargetInjector::SyntheticTarget(0.5f,0.5f,
+                                                              1.0f, 1.0f, 0.1f,
+                                                              2.5f, 0.5f));
+
+    targetInjector->addTarget(TargetInjector::SyntheticTarget(0.5f,targetInjector->getFormat(0).getHeight()-0.5f,
+                                                              1.0f, -1.0f, 0.1f,
+                                                              1.0f, 1.0f));
+
+    targetInjector->startTriggerThread();
+
+
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*targetInjector,1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
@@ -107,6 +128,11 @@ int main(int argc, char *argv[])
             ffp->trigger();
         }
 #endif
+
+        if (!(targetInjector->isTriggerThreadStarted()))
+        {
+           targetInjector->trigger();
+        }
 
         if (currentTimeNanoSec()>=nextFrameTimeNS)
         {
