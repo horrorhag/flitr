@@ -35,10 +35,12 @@ public:
     public:
         SyntheticTarget(float px, float py,
                         float dx, float dy, float v,
-                        float sa, float sb) :
+                        float sa, float sb,
+                        float dsa=0.0f, float dsb=0.0f) :
             px_(px), py_(py),
             dx_(dx), dy_(dy), v_(v),
-            sa_(sa), sb_(sb)
+            sa_(sa), sb_(sb),
+            dsa_(dsa), dsb_(dsb)
         {
             //Normalise the direction vector.
             dx_/=sqrt(dx_*dx_+dy_*dy_);
@@ -53,25 +55,49 @@ public:
         {
             px_+=dx_ * v_;
             py_+=dy_ * v_;
+
+            sa_+=dsa_;
+            sb_+=dsb_;
         }
 
         inline float UNGaussian1D(const float d, const float s) const
         {
-            if (fabsf(d)<(4.0f*s))
-            {
-                return expf(-0.5f * powf(d/s,2.0f));
-            } else
-            {
-                return 0.0f;
-            }
+            return expf(-0.5f * powf(d/s,2.0f));
         }
 
         float getSupportDensity(const float x, const float y) const
         {
-            float a=(x-px_)*dx_ + (y-py_)*dy_;
-            float b=(x-px_)*dy_ - (y-py_)*dx_;
+            float supportDensity=0.0f;
+            unsigned long numSubpixelSamples=0;
 
-            return UNGaussian1D(a,sa_)*UNGaussian1D(b,sb_);
+            const float subPixelSize=0.1f;//0.1f, 0.2f, 0.4f
+
+            const float rx=x-px_;
+            const float ry=y-py_;
+
+            if ((fabsf(rx)<sa_*4.0f)&&(fabsf(ry)<sa_*4.0f)) //Assumes that sa_>sb_
+            {
+
+                for (float subPixelY=-(0.5f-subPixelSize*0.5f); subPixelY<0.5f; subPixelY+=subPixelSize)
+                {
+                    const float aY=(ry+subPixelY)*dy_;
+                    const float bY=-(ry+subPixelY)*dx_;
+
+                    for (float subPixelX=-(0.5f-subPixelSize*0.5f); subPixelX<0.5f; subPixelX+=subPixelSize)
+                    {
+                        float a=(rx+subPixelX)*dx_ + aY;
+                        float b=(rx+subPixelX)*dy_ + bY;
+
+                        supportDensity+=UNGaussian1D(a,sa_)*UNGaussian1D(b,sb_);
+                        numSubpixelSamples++;
+                    }
+                }
+
+
+                return supportDensity/numSubpixelSamples;
+            }
+
+            return 0.0f;
         }
 
     private:
@@ -79,6 +105,7 @@ public:
         float dx_, dy_, v_;
 
         float sa_, sb_;
+        float dsa_, dsb_;
     };
 
 

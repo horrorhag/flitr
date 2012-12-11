@@ -59,7 +59,6 @@ bool TargetInjector::trigger()
         }
 
         unsigned int i=0;
-        //#pragma omp parallel for
         for (i=0; i<ImagesPerSlot_; i++)
         {
             Image const * const imRead = *(imvRead[i]);
@@ -80,6 +79,7 @@ bool TargetInjector::trigger()
             memcpy(dataWrite, dataRead, imFormat.getBytesPerImage());
 
             //Do image processing here...
+            #pragma omp parallel for
             for (uint32_t y=0; y<height; y++)
             {
                 for (uint32_t x=0; x<width; x++)
