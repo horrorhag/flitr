@@ -8,6 +8,7 @@
 
 #include <flitr/modules/target_injector/target_injector.h>
 #include <flitr/ffmpeg_producer.h>
+#include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
@@ -72,16 +73,17 @@ int main(int argc, char *argv[])
     }
 
 
-    targetInjector->setTargetBrightness(50.0f);
+    targetInjector->setTargetBrightness(75.0f);
 
-    targetInjector->addTarget(TargetInjector::SyntheticTarget(0.5f,0.5f,
+    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getFormat(0).getWidth()*0.5f-targetInjector->getFormat(0).getHeight()*0.5f, 0.5f,
                                                               1.0f, 1.0f, 0.1f,
-                                                              2.5f, 0.5f));
+                                                              0.8f, 0.4f,
+                                                              0.0f, 0.0f));
 
-    targetInjector->addTarget(TargetInjector::SyntheticTarget(0.5f,targetInjector->getFormat(0).getHeight()-0.5f,
-                                                              1.0f, -1.0f, 0.1f,
-                                                              1.0f, 1.0f));
-
+    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getFormat(0).getWidth()*0.5f-targetInjector->getFormat(0).getHeight()*0.5f, targetInjector->getFormat(0).getHeight()*0.45f,
+                                                              1.0f, 0.0f, 0.1f,
+                                                              0.8f, 0.4f,
+                                                              0.0f, 0.0f));
     targetInjector->startTriggerThread();
 
 
@@ -90,6 +92,16 @@ int main(int argc, char *argv[])
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
+
+    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*targetInjector,1));
+    if (!mffc->init()) {
+        std::cerr << "Could not init FFmpeg consumer\n";
+        exit(-1);
+    }
+    std::stringstream filenameStringStream;
+    filenameStringStream << argv[1] << "_ti";
+    mffc->openFiles(filenameStringStream.str());
+    mffc->startWriting();
 
     osg::Group *root_node = new osg::Group;
     
@@ -116,11 +128,7 @@ int main(int argc, char *argv[])
         viewer.setCameraManipulator(om);
     }
 
-    uint32_t frameRate=ffp->getFrameRate();
-    double framePeriodNS=1.0e9 / frameRate;
-    double nextFrameTimeNS=currentTimeNanoSec()+framePeriodNS;
-
-    while(!viewer.done()) {
+    while((!viewer.done())&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))) {
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
         //Read from the video, but don't get more than 10 frames ahead.
         if (ffp->getLeastNumReadSlotsAvailable()<10)
@@ -131,21 +139,16 @@ int main(int argc, char *argv[])
 
         if (!(targetInjector->isTriggerThreadStarted()))
         {
-           targetInjector->trigger();
+            targetInjector->trigger();
         }
 
-        if (currentTimeNanoSec()>=nextFrameTimeNS)
-        {
-            if (osgc->getNext()) {
-                viewer.frame();
-                nextFrameTimeNS+=framePeriodNS;
-            }
-        }
-        else
-        {
-            OpenThreads::Thread::microSleep(5000);
+        if (osgc->getNext()) {
+            viewer.frame();
         }
     }
+
+    mffc->stopWriting();
+    mffc->closeFiles();
 
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     btt->setExit();
