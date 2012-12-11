@@ -241,6 +241,7 @@ ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 
+ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)

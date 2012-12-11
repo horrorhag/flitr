@@ -25,7 +25,8 @@ using std::tr1::shared_ptr;
 
 TargetInjector::TargetInjector(ImageProducer& producer,
                                uint32_t images_per_slot, uint32_t buffer_size) :
-    ImageProcessor(producer, images_per_slot, buffer_size)
+    ImageProcessor(producer, images_per_slot, buffer_size),
+    targetBrightness_(255.0f)
 {
 }
 
@@ -50,6 +51,13 @@ bool TargetInjector::trigger()
         //Start stats measurement event.
         ProcessorStats_->tick();
 
+        //Update the synthetic targets.
+        std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();
+        for (; iter!=targetVector_.end(); iter++)
+        {
+            iter->update();
+        }
+
         unsigned int i=0;
         //#pragma omp parallel for
         for (i=0; i<ImagesPerSlot_; i++)
@@ -68,7 +76,7 @@ bool TargetInjector::trigger()
             uint32_t offset=0;
 
             //Copy the read/upstream image to the write/downstream image.
-            // The images have the same format.
+            // The read and write images have the same format.
             memcpy(dataWrite, dataRead, imFormat.getBytesPerImage());
 
             //Do image processing here...
@@ -76,26 +84,31 @@ bool TargetInjector::trigger()
             {
                 for (uint32_t x=0; x<width; x++)
                 {
-                    if ((x==width/2ul)&&(y==height/2ul))
-                    {
+                    float targetSupportDensity=0.0;
 
-                        switch (pixelFormat)
-                        {
-                        case ImageFormat::FLITR_PIX_FMT_Y_8 :
-                            dataWrite[offset]=dataRead[offset]/3;
-                            break;
-                        case ImageFormat::FLITR_PIX_FMT_RGB_8 :
-                            dataWrite[offset]=dataRead[offset]/3;
-                            dataWrite[offset+1]=dataRead[offset+1]/3;
-                            dataWrite[offset+2]=dataRead[offset+2]/3;
-                            break;
-                        case ImageFormat::FLITR_PIX_FMT_Y_16 :
-                            dataWrite[offset]=dataRead[offset]/3;
-                            dataWrite[offset+1]=dataRead[offset+1]/3;
-                            break;
-                            //default:
-                        }
+                    std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();
+                    for (; iter!=targetVector_.end(); iter++)
+                    {
+                        targetSupportDensity=1.0f - (1.0f-targetSupportDensity)*(1.0f-iter->getSupportDensity(x+0.5f, y+0.5f));
                     }
+
+                    switch (pixelFormat)
+                    {
+                    case ImageFormat::FLITR_PIX_FMT_Y_8 :
+                        dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                        break;
+                    case ImageFormat::FLITR_PIX_FMT_RGB_8 :
+                        dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                        dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                        dataWrite[offset+2]=(uint8_t)(dataRead[offset+2]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                        break;
+                    case ImageFormat::FLITR_PIX_FMT_Y_16 :
+                        dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                        dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                        break;
+                        //default:
+                    }
+
                     offset+=bytesPerPixel;
                 }
             }
