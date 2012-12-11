@@ -153,6 +153,7 @@ SET(LIB_SOURCES
   src/flitr/simple_cpu_shader_pass.cpp
   src/flitr/modules/lucas_kanade/imageBiPyramid.cpp
   src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
+  src/flitr/modules/target_injector/target_injector.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
@@ -193,6 +194,7 @@ SET(LIB_SOURCES
   include/flitr/simple_cpu_shader_pass.h
   include/flitr/modules/lucas_kanade/imageBiPyramid.h
   include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
+  include/flitr/modules/target_injector/target_injector.h
 )
 
 

@@ -72,17 +72,28 @@ public:
 
     /*! Method to initialise the object.
      *@return Boolean result flag. True indicates successful initialisation.*/
-    bool init();
+    virtual bool init();
 
-private:
-    uint32_t ImagesPerSlot_;
-    uint32_t buffer_size_;
+    /*!Method to start the asynchronous trigger thread. trigger() has to be called synchronously/manually if thread not started.
+     *@sa ImageProcessor::trigger*/
+    virtual bool startTriggerThread();
+    virtual bool isTriggerThreadStarted() const {return Thread_!=0;}
 
-    ImageProcessorThread *Thread_;
+    /*!Synchronous trigger method. Called automatically by the trigger thread if started.
+     *@sa ImageProcessor::startTriggerThread*/
+    virtual bool trigger() = 0;
+
+protected:
+    const uint32_t ImagesPerSlot_;
+    const uint32_t buffer_size_;
 
     /*! StatsCollector member to measure the time taken by the processor.*/
     std::tr1::shared_ptr<StatsCollector> ProcessorStats_;
+
+private:
+    ImageProcessorThread *Thread_;
 };
+
 
 }
 
