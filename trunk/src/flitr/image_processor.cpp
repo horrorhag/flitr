@@ -25,81 +25,10 @@ using std::tr1::shared_ptr;
 
 void ImageProcessorThread::run()
 {
-    const uint32_t num_images = IP_->ImagesPerSlot_;
-    std::vector<Image**> imvRead;
-    std::vector<Image**> imvWrite;
-
     while (true)
     {
-
-        if ((IP_->getNumReadSlotsAvailable())&&(IP_->getNumWriteSlotsAvailable()))
+        if (!IP_->trigger())
         {
-            imvRead.clear();
-            imvWrite.clear();
-
-            imvRead = IP_->reserveReadSlot();
-            imvWrite = IP_->reserveWriteSlot();
-
-
-            IP_->ProcessorStats_->tick();
-
-            unsigned int i=0;
-            //#pragma omp parallel for
-            for (i=0; i<num_images; i++)
-            {
-                Image const * const imRead = *(imvRead[i]);
-                Image * const imWrite = *(imvWrite[i]);
-                const ImageFormat imFormat=IP_->getFormat(i);
-
-
-                //===
-
-                ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
-
-                const uint32_t width=imFormat.getWidth();
-                const uint32_t height=imFormat.getHeight();
-                const uint32_t bytesPerPixel=imFormat.getBytesPerPixel();
-                uint8_t const * const dataRead=imRead->data();
-                uint8_t * const dataWrite=imWrite->data();
-
-                uint32_t offset=0;
-
-                //Do image copy and processing here...
-                for (uint32_t y=0; y<height; y++)
-                {
-                    for (uint32_t x=0; x<width; x++)
-                    {
-                        switch (pixelFormat)
-                        {
-                        case ImageFormat::FLITR_PIX_FMT_Y_8 :
-                            dataWrite[offset]=dataRead[offset]/3;
-                            break;
-                        case ImageFormat::FLITR_PIX_FMT_RGB_8 :
-                            dataWrite[offset]=dataRead[offset];
-                            dataWrite[offset+1]=dataRead[offset+1];
-                            dataWrite[offset+2]=dataRead[offset+2];
-                            break;
-                        case ImageFormat::FLITR_PIX_FMT_Y_16 :
-                            dataWrite[offset]=dataRead[offset];
-                            dataWrite[offset+1]=dataRead[offset+1];
-                            break;
-                        //default:
-                        }
-                        offset+=bytesPerPixel;
-                    }
-                }
-
-                //===
-
-            }
-
-            IP_->ProcessorStats_->tock();
-
-
-            IP_->releaseWriteSlot();
-            IP_->releaseReadSlot();
-
-        } else {
             // wait a while for producers and consumers.
             Thread::microSleep(1000);
         }
@@ -115,7 +44,8 @@ ImageProcessor::ImageProcessor(ImageProducer& producer,
                                uint32_t images_per_slot, uint32_t buffer_size) :
     ImageConsumer(producer),
     ImagesPerSlot_(images_per_slot),
-    buffer_size_(buffer_size)
+    buffer_size_(buffer_size),
+    Thread_(0)
 {
     std::stringstream stats_name;
     stats_name << " ImageProcessor::process";
@@ -128,20 +58,33 @@ ImageProcessor::ImageProcessor(ImageProducer& producer,
 
 ImageProcessor::~ImageProcessor()
 {
-    Thread_->setExit();
-    Thread_->join();
+    if (Thread_)
+    {
+        Thread_->setExit();
+        Thread_->join();
+    }
 }
 
 bool ImageProcessor::init()
 {
-    Thread_ = new ImageProcessorThread(this);
-    Thread_->startThread();
-
     // Allocate storage
     SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(
-        new SharedImageBuffer(*this, buffer_size_, ImagesPerSlot_));
+                new SharedImageBuffer(*this, buffer_size_, ImagesPerSlot_));
     SharedImageBuffer_->initWithStorage();
 
     return true;
+}
+
+bool ImageProcessor::startTriggerThread()
+{
+    if (Thread_==0)
+    {//If thread not already started.
+        Thread_ = new ImageProcessorThread(this);
+        Thread_->startThread();
+
+        return true;
+    }
+
+    return false;
 }
 
