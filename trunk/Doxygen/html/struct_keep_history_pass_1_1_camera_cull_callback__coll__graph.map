@@ -1,0 +1,3 @@
+<map id="KeepHistoryPass::CameraCullCallback" name="KeepHistoryPass::CameraCullCallback">
+<area shape="rect" id="node2" href="$class_keep_history_pass.html" title="{KeepHistoryPass\n|&#45; RootGroup_\l&#45; Camera_\l&#45; InTexture_\l&#45; OutTextures_\l&#45; TextureWidth_\l&#45; TextureHeight_\l&#45; FragmentProgram_\l&#45; StateSet_\l&#45; HistorySize_\l&#45; OverwriteIndex_\l&#45; ValidHistory_\l&#45; FirstPass_\l|+ KeepHistoryPass()\l+ ~KeepHistoryPass()\l+ getRoot()\l+ getOutputTexture()\l+ setShader()\l&#45; createTexturedQuad()\l&#45; createOutputTextures()\l&#45; setupCamera()\l&#45; frameDone()\l}" alt="" coords="24,6,187,421"/>
+</map>

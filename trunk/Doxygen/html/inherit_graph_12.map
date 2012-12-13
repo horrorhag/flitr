@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classflitr_1_1_image_consumer.html" title="flitr::ImageConsumer" alt="" coords="5,101,149,131"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html" title="flitr::MultiCPUHistogram\lConsumer" alt="" coords="217,5,383,51"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_multi_f_fmpeg_consumer.html" title="flitr::MultiFFmpegConsumer" alt="" coords="208,75,392,104"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_t_multi_o_s_g_consumer.html" title="flitr::TMultiOSGConsumer\&lt; T \&gt;" alt="" coords="197,128,403,157"/>
+<area shape="rect" id="node9" href="$class_test_consumer.html" title="TestConsumer" alt="" coords="247,181,353,211"/>
+</map>

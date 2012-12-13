@@ -1,0 +1,10 @@
+<map id="include/flitr/ffmpeg_writer.h" name="include/flitr/ffmpeg_writer.h">
+<area shape="rect" id="node3" href="$render__to__video_8h.html" title="examples/glsl_shader\l_pass/render_to_video.h" alt="" coords="220,102,383,149"/>
+<area shape="rect" id="node7" href="$multi__cpuhistogram__consumer_8h.html" title="include/flitr/multi\l_cpuhistogram_consumer.h" alt="" coords="9,102,191,149"/>
+<area shape="rect" id="node11" href="$multi__ffmpeg__consumer_8h.html" title="include/flitr/multi\l_ffmpeg_consumer.h" alt="" coords="407,102,551,149"/>
+<area shape="rect" id="node18" href="$ffmpeg__writer_8cpp.html" title="src/flitr/ffmpeg_writer.cpp" alt="" coords="575,111,745,140"/>
+<area shape="rect" id="node5" href="$glsl__shader__pass_8cpp.html" title="examples/glsl_shader\l_pass/glsl_shader_pass.cpp" alt="" coords="208,198,395,245"/>
+<area shape="rect" id="node9" href="$multi__cpuhistogram__consumer_8cpp.html" title="src/flitr/multi_cpuhistogram\l_consumer.cpp" alt="" coords="5,198,184,245"/>
+<area shape="rect" id="node14" href="$screen__capture_8cpp.html" title="examples/screen_capture\l/screen_capture.cpp" alt="" coords="419,198,589,245"/>
+<area shape="rect" id="node16" href="$multi__ffmpeg__consumer_8cpp.html" title="src/flitr/multi_ffmpeg\l_consumer.cpp" alt="" coords="613,198,755,245"/>
+</map>

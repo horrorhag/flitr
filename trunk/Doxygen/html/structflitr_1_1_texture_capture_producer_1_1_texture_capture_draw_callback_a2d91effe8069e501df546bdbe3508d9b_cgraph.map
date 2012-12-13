@@ -1,0 +1,15 @@
+<map id="flitr::TextureCaptureProducer::TextureCaptureDrawCallback::operator()" name="flitr::TextureCaptureProducer::TextureCaptureDrawCallback::operator()">
+<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="271,5,407,51"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log." alt="" coords="280,75,397,104"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="276,127,401,174"/>
+<area shape="rect" id="node16" href="$classflitr_1_1_image.html#a2bcec747b309a766a3d087f9351cba16" title="flitr::Image::data" alt="" coords="280,197,397,227"/>
+<area shape="rect" id="node18" href="$classflitr_1_1_image.html#a964075cb13a8133d9f1842d318d1f65c" title="flitr::Image::setMetadata" alt="" coords="257,251,420,280"/>
+<area shape="rect" id="node20" href="$high__resolution__time_8h.html#af08a3eb67336f2748e169a5da39d2846" title="Sole purpose is to provide currentTimeNanoSec() for a platform." alt="" coords="267,304,411,333"/>
+<area shape="rect" id="node22" href="$classflitr_1_1_image.html#a587eeefcf176ac796cfdbbe0a8f23aaf" title="flitr::Image::format" alt="" coords="275,357,403,387"/>
+<area shape="rect" id="node24" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="276,410,401,457"/>
+<area shape="rect" id="node26" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="276,479,401,526"/>
+<area shape="rect" id="node28" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="271,549,407,595"/>
+<area shape="rect" id="node7" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags." alt="" coords="469,75,608,104"/>
+<area shape="rect" id="node9" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="693,21,816,51"/>
+<area shape="rect" id="node11" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags." alt="" coords="657,75,852,104"/>
+</map>

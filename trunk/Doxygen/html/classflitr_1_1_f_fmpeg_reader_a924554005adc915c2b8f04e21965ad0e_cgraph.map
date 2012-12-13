@@ -1,0 +1,13 @@
+<map id="flitr::FFmpegReader::FFmpegReader" name="flitr::FFmpegReader::FFmpegReader">
+<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_reader.html#af0a61b8b9fa6ea7256d7d8e9b484c94b" title="Used for multi&#45;threading access." alt="" coords="220,5,359,51"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log." alt="" coords="231,75,348,104"/>
+<area shape="rect" id="node14" href="$namespaceflitr.html#ab8c99780fb062a99dcf4c62748ef5c88" title="Get the current flags." alt="" coords="193,128,385,157"/>
+<area shape="rect" id="node17" href="$namespaceflitr.html#a4e419afa3da6c4d4913f54515dafdf7a" title="flitr::PixelFormatFLITrTo\lFFmpeg" alt="" coords="208,181,371,227"/>
+<area shape="rect" id="node19" href="$namespaceflitr.html#ae6283c4d682c4f53f574219ff2307527" title="flitr::PixelFormatFFmpeg\lToFLITr" alt="" coords="207,250,372,297"/>
+<area shape="rect" id="node21" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="227,319,352,366"/>
+<area shape="rect" id="node23" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="227,389,352,435"/>
+<area shape="rect" id="node25" href="$namespaceflitr.html#a041bb1e4e5d19f66fe6e008b83750a95" title="flitr::allocFFmpegFrame" alt="" coords="209,459,369,488"/>
+<area shape="rect" id="node7" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags." alt="" coords="435,101,573,131"/>
+<area shape="rect" id="node9" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="659,48,781,77"/>
+<area shape="rect" id="node11" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags." alt="" coords="623,101,817,131"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="flitr::ImageConsumer" name="flitr::ImageConsumer">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# ImageFormat_\l# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="40,5,275,333"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_shared_image_buffer.html" title="Class for passing images between producers and consumers." alt="" coords="211,400,445,936"/>
+</map>

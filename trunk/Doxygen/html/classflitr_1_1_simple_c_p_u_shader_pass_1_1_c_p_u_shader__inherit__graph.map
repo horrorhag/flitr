@@ -1,0 +1,6 @@
+<map id="flitr::SimpleCPUShaderPass::CPUShader" name="flitr::SimpleCPUShaderPass::CPUShader">
+<area shape="rect" id="node3" href="$class_c_p_u_g_a_u_s_f_i_l_t___shader.html" title="{CPUGAUSFILT_Shader\n|+ Image_\l|+ CPUGAUSFILT_Shader()\l+ operator()()\l}" alt="" coords="5,175,189,278"/>
+<area shape="rect" id="node5" href="$class_c_p_u_histogram___shader.html" title="{CPUHistogram_Shader\n|+ Image_\l+ Histogram_\l+ HistogramMap_\l|+ CPUHistogram_Shader()\l+ operator()()\l}" alt="" coords="213,158,392,295"/>
+<area shape="rect" id="node7" href="$class_c_p_u_s_u_m___shader.html" title="{CPUSUM_Shader\n|+ Image_\l|+ CPUSUM_Shader()\l+ operator()()\l}" alt="" coords="416,175,565,278"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_simple_c_p_u_shader_pass_1_1_c_p_u_example___shader_pass.html" title="{flitr::SimpleCPUShaderPass\l::CPUExample_ShaderPass\n|+ Image_\l|+ CPUExample_ShaderPass()\l+ operator()()\l}" alt="" coords="589,167,789,287"/>
+</map>

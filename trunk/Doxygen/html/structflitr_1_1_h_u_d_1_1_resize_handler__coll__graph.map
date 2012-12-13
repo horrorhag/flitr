@@ -1,0 +1,3 @@
+<map id="flitr::HUD::ResizeHandler" name="flitr::HUD::ResizeHandler">
+<area shape="rect" id="node2" href="$classflitr_1_1_h_u_d.html" title="{flitr::HUD\n|&#45; resize_handler_\l&#45; min_x_\l&#45; max_x_\l&#45; width_\l&#45; min_y_\l&#45; max_y_\l&#45; height_\l&#45; aspect_\l&#45; anchor_mode_\l&#45; aspect_mode_\l|+ HUD()\l+ ~HUD()\l+ getResizeHandler()\l+ setAnchorMode()\l+ setAspectMode()\l+ setMinMax()\l}" alt="" coords="17,5,164,333"/>
+</map>

@@ -1,0 +1,18 @@
+<map id="examples/points_overlay/points_overlay.cpp" name="examples/points_overlay/points_overlay.cpp">
+<area shape="rect" id="node3" href="$ffmpeg__producer_8h.html" title="flitr/ffmpeg_producer.h" alt="" coords="485,111,637,140"/>
+<area shape="rect" id="node42" href="$multi__osg__consumer_8h.html" title="flitr/multi_osg_consumer.h" alt="" coords="920,275,1093,304"/>
+<area shape="rect" id="node56" href="$textured__quad_8h.html" title="flitr/textured_quad.h" alt="" coords="1811,275,1947,304"/>
+<area shape="rect" id="node72" href="$manipulator__utils_8h.html" title="flitr/manipulator_utils.h" alt="" coords="1136,111,1288,140"/>
+<area shape="rect" id="node77" href="$ortho__texture__manipulator_8h.html" title="flitr/ortho_texture\l_manipulator.h" alt="" coords="1312,102,1432,149"/>
+<area shape="rect" id="node83" href="$points__overlay_8h.html" title="flitr/points_overlay.h" alt="" coords="2459,197,2597,227"/>
+<area shape="rect" id="node7" href="$ffmpeg__reader_8h.html" title="flitr/ffmpeg_reader.h" alt="" coords="325,197,464,227"/>
+<area shape="rect" id="node32" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="99,197,251,227"/>
+<area shape="rect" id="node38" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="488,197,635,227"/>
+<area shape="rect" id="node9" href="$image_8h.html" title="flitr/image.h" alt="" coords="339,275,429,304"/>
+<area shape="rect" id="node11" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="303,352,433,381"/>
+<area shape="rect" id="node19" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="709,275,848,304"/>
+<area shape="rect" id="node22" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="1559,352,1673,381"/>
+<area shape="rect" id="node24" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="631,352,745,381"/>
+<area shape="rect" id="node54" href="$image__consumer_8h.html" title="flitr/image_consumer.h" alt="" coords="1207,352,1361,381"/>
+<area shape="rect" id="node85" href="$geometry__overlay_8h.html" title="flitr/geometry_overlay.h" alt="" coords="2392,275,2549,304"/>
+</map>

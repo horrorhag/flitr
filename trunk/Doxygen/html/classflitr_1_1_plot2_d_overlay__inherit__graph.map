@@ -1,0 +1,3 @@
+<map id="flitr::Plot2DOverlay" name="flitr::Plot2DOverlay">
+<area shape="rect" id="node2" href="$classflitr_1_1_geometry_overlay.html" title="{flitr::GeometryOverlay\n|# _CoordinateTransform\l# _DepthTransform\l# _GeometryGroup\l# _GeometryStateSet\l# _GeometryMaterial\l# _GeometryLineWidth\l# _GeometryPointSize\l# _GeometryColour\l|+ GeometryOverlay()\l+ ~GeometryOverlay()\l+ setColour()\l+ setCoordinateTransform()\l+ flipVerticalCoordinates()\l+ setDepth()\l+ setLineWidth()\l+ setPointSize()\l+ setShow()\l+ setName()\l}" alt="" coords="12,5,193,368"/>
+</map>

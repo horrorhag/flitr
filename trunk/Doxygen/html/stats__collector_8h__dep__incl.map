@@ -1,0 +1,29 @@
+<map id="include/flitr/stats_collector.h" name="include/flitr/stats_collector.h">
+<area shape="rect" id="node3" href="$ffmpeg__reader_8h.html" title="include/flitr/ffmpeg\l_reader.h" alt="" coords="1760,102,1888,149"/>
+<area shape="rect" id="node25" href="$multi__ffmpeg__producer_8h.html" title="include/flitr/multi\l_ffmpeg_producer.h" alt="" coords="779,302,915,349"/>
+<area shape="rect" id="node42" href="$ffmpeg__writer_8h.html" title="include/flitr/ffmpeg\l_writer.h" alt="" coords="572,102,700,149"/>
+<area shape="rect" id="node5" href="$ffmpeg__producer_8h.html" title="include/flitr/ffmpeg\l_producer.h" alt="" coords="1683,198,1811,245"/>
+<area shape="rect" id="node35" href="$smulti__ffmpeg__producer_8h.html" title="include/flitr/smulti\l_ffmpeg_producer.h" alt="" coords="2303,198,2439,245"/>
+<area shape="rect" id="node40" href="$ffmpeg__reader_8cpp.html" title="src/flitr/ffmpeg_reader.cpp" alt="" coords="2463,207,2636,236"/>
+<area shape="rect" id="node7" href="$cpu__shader__pass_8cpp.html" title="examples/cpu_shader\l_pass/cpu_shader_pass.cpp" alt="" coords="1115,302,1301,349"/>
+<area shape="rect" id="node9" href="$cuda__auto__contrast_8cpp.html" title="examples/cuda_auto\l_contrast/cuda_auto\l_contrast.cpp" alt="" coords="1325,293,1467,357"/>
+<area shape="rect" id="node11" href="$glsl__shader__pass_8cpp.html" title="examples/glsl_shader\l_pass/glsl_shader_pass.cpp" alt="" coords="568,302,755,349"/>
+<area shape="rect" id="node13" href="$hud__overlay_8cpp.html" title="examples/hud_overlay\l/hud_overlay.cpp" alt="" coords="1491,302,1643,349"/>
+<area shape="rect" id="node15" href="$keep__history_8cpp.html" title="examples/keep_history\l_pass/keep_history.cpp" alt="" coords="1667,302,1827,349"/>
+<area shape="rect" id="node17" href="$ortho__pick__overlay_8cpp.html" title="examples/ortho_pick\l_overlay/ortho_pick\l_overlay.cpp" alt="" coords="1851,293,1992,357"/>
+<area shape="rect" id="node19" href="$examples_2points__overlay_2points__overlay_8cpp.html" title="examples/points_overlay\l/points_overlay.cpp" alt="" coords="2016,302,2181,349"/>
+<area shape="rect" id="node21" href="$viewer__video__history__quad_8cpp.html" title="examples/viewer_video\l_history_quad/viewer\l_video_history_quad.cpp" alt="" coords="2205,293,2371,357"/>
+<area shape="rect" id="node23" href="$viewer__video__quad_8cpp.html" title="examples/viewer_video\l_quad/viewer_video_quad.cpp" alt="" coords="2395,302,2592,349"/>
+<area shape="rect" id="node31" href="$ffmpeg__producer_8cpp.html" title="src/flitr/ffmpeg_producer.cpp" alt="" coords="2616,311,2803,340"/>
+<area shape="rect" id="node33" href="$ffmpeg__producer_2test_8cpp.html" title="tests/ffmpeg_producer\l/test.cpp" alt="" coords="939,302,1091,349"/>
+<area shape="rect" id="node27" href="$viewer__multi__video__quad_8cpp.html" title="examples/viewer_multi\l_video_quad/viewer_multi\l_video_quad.cpp" alt="" coords="1848,405,2019,469"/>
+<area shape="rect" id="node29" href="$multi__ffmpeg__producer_8cpp.html" title="src/flitr/multi_ffmpeg\l_producer.cpp" alt="" coords="776,414,917,461"/>
+<area shape="rect" id="node38" href="$smulti__ffmpeg__producer_8cpp.html" title="src/flitr/smulti_ffmpeg\l_producer.cpp" alt="" coords="2877,302,3024,349"/>
+<area shape="rect" id="node44" href="$render__to__video_8h.html" title="examples/glsl_shader\l_pass/render_to_video.h" alt="" coords="555,198,717,245"/>
+<area shape="rect" id="node47" href="$multi__cpuhistogram__consumer_8h.html" title="include/flitr/multi\l_cpuhistogram_consumer.h" alt="" coords="93,198,275,245"/>
+<area shape="rect" id="node51" href="$multi__ffmpeg__consumer_8h.html" title="include/flitr/multi\l_ffmpeg_consumer.h" alt="" coords="387,198,531,245"/>
+<area shape="rect" id="node58" href="$ffmpeg__writer_8cpp.html" title="src/flitr/ffmpeg_writer.cpp" alt="" coords="741,207,912,236"/>
+<area shape="rect" id="node49" href="$multi__cpuhistogram__consumer_8cpp.html" title="src/flitr/multi_cpuhistogram\l_consumer.cpp" alt="" coords="5,302,184,349"/>
+<area shape="rect" id="node54" href="$screen__capture_8cpp.html" title="examples/screen_capture\l/screen_capture.cpp" alt="" coords="373,302,544,349"/>
+<area shape="rect" id="node56" href="$multi__ffmpeg__consumer_8cpp.html" title="src/flitr/multi_ffmpeg\l_consumer.cpp" alt="" coords="208,302,349,349"/>
+</map>
