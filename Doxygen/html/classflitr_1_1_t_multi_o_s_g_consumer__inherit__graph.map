@@ -1,0 +1,3 @@
+<map id="flitr::TMultiOSGConsumer&lt; T &gt;" name="flitr::TMultiOSGConsumer&lt; T &gt;">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html" title="{flitr::ImageConsumer\n|&#45; SharedImageBuffer_\l&#45; ImageProducer_\l|+ ImageConsumer()\l+ ~ImageConsumer()\l+ getNumReadSlotsAvailable()\l+ getNumReadSlotsReserved()\l+ reserveReadSlot()\l+ releaseReadSlot()\l+ init()\l# setSharedImageBuffer()\l}" alt="" coords="5,5,211,229"/>
+</map>

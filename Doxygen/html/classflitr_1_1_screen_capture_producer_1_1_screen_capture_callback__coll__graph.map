@@ -1,0 +1,4 @@
+<map id="flitr::ScreenCaptureProducer::ScreenCaptureCallback" name="flitr::ScreenCaptureProducer::ScreenCaptureCallback">
+<area shape="rect" id="node2" href="$classflitr_1_1_screen_capture_producer.html" title="{flitr::ScreenCaptureProducer\n|&#45; view_\l&#45; cb_\l&#45; buffer_size_\l&#45; capture_every_nth_\l&#45; trigger_count_\l&#45; do_capture_\l|+ ScreenCaptureProducer()\l+ init()\l+ shouldCaptureNow()\l+ startCapture()\l+ stopCapture()\l}" alt="" coords="29,385,216,626"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# ImageFormat_\l# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="5,5,240,333"/>
+</map>

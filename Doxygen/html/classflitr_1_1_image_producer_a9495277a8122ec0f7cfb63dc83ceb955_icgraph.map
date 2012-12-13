@@ -1,0 +1,9 @@
+<map id="flitr::ImageProducer::getFormat" name="flitr::ImageProducer::getFormat">
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#a3acd2aaf0b6a9d2149596f0136bb11d8" title="flitr::MultiCPUHistogram\lConsumer::MultiCPUHistogramConsumer" alt="" coords="189,5,456,51"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_multi_f_fmpeg_consumer.html#a16ef68c85f14b667db39dfd8597b2f78" title="flitr::MultiFFmpegConsumer\l::MultiFFmpegConsumer" alt="" coords="231,74,415,121"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_multi_f_fmpeg_producer.html#abf37f13ec1daab0bf4adf1f923503707" title="flitr::MultiFFmpegProducer\l::MultiFFmpegProducer" alt="" coords="235,143,411,190"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_t_multi_o_s_g_consumer.html#a1782598170c252762aa43d0b6a343d77" title="flitr::TMultiOSGConsumer\l::TMultiOSGConsumer" alt="" coords="236,213,409,259"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#a3d7bb6b53dbd25cab83cfefc7725a6a4" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback:\l:ScreenCaptureCallback" alt="" coords="229,283,416,347"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_shared_image_buffer.html#aba6c3ad90a690a4b8228d844777a30cb" title="flitr::SharedImageBuffer\l::initWithStorage" alt="" coords="243,370,403,417"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_s_multi_f_fmpeg_producer.html#a1a139fcac7a0a096bc0e964690010f57" title="flitr::SMultiFFmpegProducer\l::init" alt="" coords="231,439,415,486"/>
+</map>

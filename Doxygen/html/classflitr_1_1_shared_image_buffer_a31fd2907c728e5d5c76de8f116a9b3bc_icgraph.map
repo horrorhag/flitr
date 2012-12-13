@@ -1,0 +1,5 @@
+<map id="flitr::SharedImageBuffer::numAvailable" name="flitr::SharedImageBuffer::numAvailable">
+<area shape="rect" id="node3" href="$classflitr_1_1_shared_image_buffer.html#a5bed33931d9fd306361f38f8b8827f2b" title="flitr::SharedImageBuffer\l::getLeastNumReadSlotsAvailable" alt="" coords="215,5,436,51"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_shared_image_buffer.html#a05fecee04bca209e211d036e493a311c" title="flitr::SharedImageBuffer\l::getNumReadSlotsAvailable" alt="" coords="231,74,420,121"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_shared_image_buffer.html#af51a55ce88130bbb3ba523836fe8b24f" title="flitr::SharedImageBuffer\l::reserveReadSlot" alt="" coords="245,143,405,190"/>
+</map>

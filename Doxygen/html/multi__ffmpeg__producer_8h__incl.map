@@ -1,0 +1,17 @@
+<map id="include/flitr/multi_ffmpeg_producer.h" name="include/flitr/multi_ffmpeg_producer.h">
+<area shape="rect" id="node11" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="539,179,685,208"/>
+<area shape="rect" id="node52" href="$image__consumer_8h.html" title="flitr/image_consumer.h" alt="" coords="360,179,515,208"/>
+<area shape="rect" id="node55" href="$ffmpeg__producer_8h.html" title="flitr/ffmpeg_producer.h" alt="" coords="647,101,799,131"/>
+<area shape="rect" id="node62" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="2248,352,2387,381"/>
+<area shape="rect" id="node14" href="$image_8h.html" title="flitr/image.h" alt="" coords="709,352,800,381"/>
+<area shape="rect" id="node41" href="$shared__image__buffer_8h.html" title="flitr/shared_image\l_buffer.h" alt="" coords="408,257,533,303"/>
+<area shape="rect" id="node16" href="$image__format_8h.html" title="flitr/image_format.h" alt="" coords="1361,439,1495,468"/>
+<area shape="rect" id="node24" href="$image__metadata_8h.html" title="flitr/image_metadata.h" alt="" coords="1188,439,1337,468"/>
+<area shape="rect" id="node32" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="1695,439,1825,468"/>
+<area shape="rect" id="node18" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="1921,525,2033,555"/>
+<area shape="rect" id="node22" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="1415,525,1529,555"/>
+<area shape="rect" id="node58" href="$ffmpeg__reader_8h.html" title="flitr/ffmpeg_reader.h" alt="" coords="1323,265,1461,295"/>
+<area shape="rect" id="node96" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="817,265,969,295"/>
+<area shape="rect" id="node65" href="$high__resolution__time_8h.html" title="flitr/high_resolution\l_time.h" alt="" coords="2303,430,2433,477"/>
+<area shape="rect" id="node74" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="2036,439,2151,468"/>
+</map>

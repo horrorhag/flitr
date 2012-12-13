@@ -1,0 +1,5 @@
+<map id="flitr::ImageConsumer::reserveReadSlot" name="flitr::ImageConsumer::reserveReadSlot">
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html#acccdac29b5ca600265e885dcf22a2699" title="flitr::MultiCPUHistogram\lConsumerThread::run" alt="" coords="220,5,385,51"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_multi_f_fmpeg_consumer_thread.html#ad7662f15530121ea86e2c2aa9f1954fa" title="flitr::MultiFFmpegConsumer\lThread::run" alt="" coords="211,74,395,121"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_multi_o_s_g_consumer_discard_thread.html#a4b80adbb1afd4243cde3cc67978aa28e" title="flitr::MultiOSGConsumerDiscard\lThread::run" alt="" coords="197,143,408,190"/>
+</map>

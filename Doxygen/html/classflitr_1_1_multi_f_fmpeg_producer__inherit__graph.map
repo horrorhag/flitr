@@ -1,0 +1,3 @@
+<map id="flitr::MultiFFmpegProducer" name="flitr::MultiFFmpegProducer">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# ImageFormat_\l# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="5,5,240,333"/>
+</map>

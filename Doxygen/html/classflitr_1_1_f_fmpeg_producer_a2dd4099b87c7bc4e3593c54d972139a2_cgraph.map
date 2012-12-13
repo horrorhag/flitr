@@ -1,0 +1,6 @@
+<map id="flitr::FFmpegProducer::trigger" name="flitr::FFmpegProducer::trigger">
+<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_producer.html#a5dcce214520a811994878e2ed32d91a7" title="flitr::FFmpegProducer\l::seek" alt="" coords="204,66,351,113"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="415,5,551,51"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image.html#a964075cb13a8133d9f1842d318d1f65c" title="flitr::Image::setMetadata" alt="" coords="401,75,564,104"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="415,127,551,174"/>
+</map>

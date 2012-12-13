@@ -1,0 +1,9 @@
+<map id="RenderToVideo::SaveCameraPostDrawCallback::operator()" name="RenderToVideo::SaveCameraPostDrawCallback::operator()">
+<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_writer.html#a49b9bad2025d723d5ed3a03e990e000c" title="flitr::FFmpegWriter\l::writeVideoFrame" alt="" coords="251,74,381,121"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="429,5,555,51"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="429,74,555,121"/>
+<area shape="rect" id="node9" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log." alt="" coords="433,144,551,173"/>
+<area shape="rect" id="node11" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags." alt="" coords="603,144,741,173"/>
+<area shape="rect" id="node13" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="827,91,949,120"/>
+<area shape="rect" id="node15" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags." alt="" coords="791,144,985,173"/>
+</map>

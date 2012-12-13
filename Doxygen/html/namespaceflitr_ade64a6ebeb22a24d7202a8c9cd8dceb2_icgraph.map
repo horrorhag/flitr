@@ -1,0 +1,16 @@
+<map id="flitr::logMessage" name="flitr::logMessage">
+<area shape="rect" id="node3" href="$classflitr_1_1_image.html#a8180f49979648efeec9cf79aab1ebe06" title="flitr::Image::outOfMem" alt="" coords="199,5,351,35"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#a18e2b73f800bf5b410ae94563af7ce09" title="flitr::logMessage" alt="" coords="216,59,333,88"/>
+<area shape="rect" id="node7" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="173,112,376,176"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_f_fmpeg_producer.html#a7b690142fd60cd615253bff0fb0f3ebc" title="flitr::FFmpegProducer\l::init" alt="" coords="201,199,348,246"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_f_fmpeg_reader.html#a924554005adc915c2b8f04e21965ad0e" title="flitr::FFmpegReader\l::FFmpegReader" alt="" coords="205,269,344,315"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_f_fmpeg_reader.html#a2453df4330e6e590abf4b41cf5fe3051" title="flitr::FFmpegReader\l::getImage" alt="" coords="205,338,344,385"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_f_fmpeg_writer.html#a25759e64b010b266cee27b2f7fa6c338" title="flitr::FFmpegWriter\l::FFmpegWriter" alt="" coords="209,407,340,454"/>
+<area shape="rect" id="node17" href="$classflitr_1_1_f_fmpeg_writer.html#a49b9bad2025d723d5ed3a03e990e000c" title="flitr::FFmpegWriter\l::writeVideoFrame" alt="" coords="209,477,340,523"/>
+<area shape="rect" id="node21" href="$classflitr_1_1_multi_f_fmpeg_producer.html#a1d037bc608bf8228241a1e5dd06efb07" title="flitr::MultiFFmpegProducer\l::init" alt="" coords="187,546,363,593"/>
+<area shape="rect" id="node23" href="$classflitr_1_1_ortho_texture_manipulator.html#a08ed7180ab7c9dd6d241a852aebc661a" title="flitr::OrthoTextureManipulator\l::initOrthoProjection" alt="" coords="180,615,369,662"/>
+<area shape="rect" id="node25" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#a3e7062397350f0460bc99be5862674bd" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback:\l:operator()" alt="" coords="181,685,368,749"/>
+<area shape="rect" id="node27" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#ae7b020fd14ecd7dec7822f95879acce5" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback:\l:readPixels" alt="" coords="181,773,368,837"/>
+<area shape="rect" id="node29" href="$classflitr_1_1_s_multi_f_fmpeg_producer.html#a1a139fcac7a0a096bc0e964690010f57" title="flitr::SMultiFFmpegProducer\l::init" alt="" coords="183,861,367,907"/>
+<area shape="rect" id="node19" href="$struct_render_to_video_1_1_save_camera_post_draw_callback.html#a2f7420fd8245911dc8c7fc8d924445cf" title="RenderToVideo::SaveCamera\lPostDrawCallback::operator()" alt="" coords="425,477,620,523"/>
+</map>

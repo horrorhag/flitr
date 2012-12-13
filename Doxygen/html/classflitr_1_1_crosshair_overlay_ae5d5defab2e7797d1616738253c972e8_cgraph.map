@@ -1,0 +1,5 @@
+<map id="flitr::CrosshairOverlay::CrosshairOverlay" name="flitr::CrosshairOverlay::CrosshairOverlay">
+<area shape="rect" id="node3" href="$classflitr_1_1_crosshair_overlay.html#a674bffbb848634481f191570093600dd" title="flitr::CrosshairOverlay\l::makeCrosshair" alt="" coords="204,5,353,51"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="204,74,353,121"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_crosshair_overlay.html#ab7c5e02d2de6e420651e49444419d4bb" title="flitr::CrosshairOverlay\l::updateCrosshair" alt="" coords="403,5,552,51"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="main" name="main">
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="117,5,243,51"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="117,74,243,121"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_geometry_overlay.html#a6076e63d2cf42f6c13f9a9161ea7963b" title="flitr::GeometryOverlay\l::setLineWidth" alt="" coords="105,143,255,190"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_quad_overlay.html#a9d38f3ddda43b0271cae17f42fcda708" title="flitr::QuadOverlay\l::setName" alt="" coords="119,213,241,259"/>
+<area shape="rect" id="node11" href="$class_pick_handler.html#a442e619a62f02ceff0ca17fb5ebf860c" title="PickHandler::getPick" alt="" coords="108,283,252,312"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_crosshair_overlay.html#ae5d7efba9925e4a0a7ff110265b887eb" title="flitr::CrosshairOverlay\l::setCenter" alt="" coords="105,335,255,382"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_crosshair_overlay.html#ab7c5e02d2de6e420651e49444419d4bb" title="flitr::CrosshairOverlay\l::updateCrosshair" alt="" coords="304,335,453,382"/>
+</map>

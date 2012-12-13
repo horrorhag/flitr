@@ -1,0 +1,6 @@
+<map id="flitr::MultiCPUHistogramConsumer" name="flitr::MultiCPUHistogramConsumer">
+<area shape="rect" id="node9" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html" title="{flitr::MultiCPUHistogram\lConsumerThread\n|&#45; ShouldExit_\l|+ MultiCPUHistogramConsumer\lThread()\l+ run()\l+ setExit()\l}" alt="" coords="19,1691,229,1845"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html" title="{flitr::ImageConsumer\n||+ ImageConsumer()\l+ ~ImageConsumer()\l+ getNumReadSlotsAvailable()\l+ getNumReadSlotsReserved()\l+ reserveReadSlot()\l+ releaseReadSlot()\l+ init()\l# setSharedImageBuffer()\l}" alt="" coords="21,1003,227,1210"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# ImageFormat_\l# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="56,5,291,333"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_shared_image_buffer.html" title="Class for passing images between producers and consumers." alt="" coords="227,400,461,936"/>
+</map>
