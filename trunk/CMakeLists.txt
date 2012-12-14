@@ -154,6 +154,8 @@ SET(LIB_SOURCES
   src/flitr/modules/lucas_kanade/imageBiPyramid.cpp
   src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
   src/flitr/modules/target_injector/target_injector.cpp
+  src/flitr/modules/de_motion_blur/de_motion_blur.cpp
+
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
@@ -195,6 +197,7 @@ SET(LIB_SOURCES
   include/flitr/modules/lucas_kanade/imageBiPyramid.h
   include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
   include/flitr/modules/target_injector/target_injector.h
+  include/flitr/modules/de_motion_blur/de_motion_blur.h
 )
 
 
@@ -242,6 +245,7 @@ ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 
 ADD_SUBDIRECTORY(examples/target_injector)
+ADD_SUBDIRECTORY(examples/de_motion_blur)
 ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
