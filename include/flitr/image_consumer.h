@@ -98,6 +98,10 @@ class FLITR_EXPORT ImageConsumer {
 		
     virtual bool init() { return true; }
 
+
+    virtual ImageFormat getFormat(const uint32_t index = 0) const;
+
+
   protected:
     /// Called once we get added as a consumer.
     void setSharedImageBuffer(SharedImageBuffer& b) { ProducerImageBuffer_ = &b; }

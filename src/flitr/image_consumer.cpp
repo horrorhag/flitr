@@ -28,3 +28,9 @@ ImageConsumer::ImageConsumer(ImageProducer& producer) :
 {
 	ImageProducer_->addConsumer(*this);
 }
+
+
+ImageFormat ImageConsumer::getFormat(uint32_t index) const
+{
+    return ImageProducer_->getFormat(index);
+}

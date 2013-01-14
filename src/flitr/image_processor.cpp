@@ -40,9 +40,10 @@ void ImageProcessorThread::run()
     }
 }
 
-ImageProcessor::ImageProcessor(ImageProducer& producer,
-                               uint32_t images_per_slot, uint32_t buffer_size) :
-    ImageConsumer(producer),
+ImageProcessor::ImageProcessor(ImageProducer& upStreamProducer,
+                               uint32_t images_per_slot,
+                               uint32_t buffer_size) :
+    ImageConsumer(upStreamProducer),
     ImagesPerSlot_(images_per_slot),
     buffer_size_(buffer_size),
     Thread_(0)
@@ -51,9 +52,6 @@ ImageProcessor::ImageProcessor(ImageProducer& producer,
     stats_name << " ImageProcessor::process";
     ProcessorStats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector(stats_name.str()));
 
-    for (uint32_t i=0; i<images_per_slot; i++) {
-        ImageFormat_.push_back(producer.getFormat(i));
-    }
 }
 
 ImageProcessor::~ImageProcessor()
@@ -70,6 +68,7 @@ bool ImageProcessor::init()
     // Allocate storage
     SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(
                 new SharedImageBuffer(*this, buffer_size_, ImagesPerSlot_));
+
     SharedImageBuffer_->initWithStorage();
 
     return true;
