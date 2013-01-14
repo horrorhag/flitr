@@ -62,8 +62,9 @@ int main(int argc, char *argv[])
                                   true,//Do GPU LK iteration.
                                   2,//Number of GPU h-vector reduction levels.
                                   false,//Read output back to a CPU image?
-                                  false,
-                                  1,
+                                  false,//Bilinear output filter.
+                                  1,//Output scale factor.
+                                  1.0f,//Output crop factor.
                                   0.0, 1);
 
     iStab->init(root_node);

@@ -73,14 +73,14 @@ int main(int argc, char *argv[])
     }
 
 
-    targetInjector->setTargetBrightness(75.0f);
+    targetInjector->setTargetBrightness(10.0f);
 
-    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getFormat(0).getWidth()*0.5f-targetInjector->getFormat(0).getHeight()*0.5f, 0.5f,
+    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getDownstreamFormat(0).getWidth()*0.5f-targetInjector->getDownstreamFormat(0).getHeight()*0.5f, 0.5f,
                                                               1.0f, 1.0f, 0.1f,
                                                               0.8f, 0.4f,
                                                               0.0f, 0.0f));
 
-    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getFormat(0).getWidth()*0.5f-targetInjector->getFormat(0).getHeight()*0.5f, targetInjector->getFormat(0).getHeight()*0.45f,
+    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getDownstreamFormat(0).getWidth()*0.5f-targetInjector->getDownstreamFormat(0).getHeight()*0.5f, targetInjector->getDownstreamFormat(0).getHeight()*0.45f,
                                                               1.0f, 0.0f, 0.1f,
                                                               0.8f, 0.4f,
                                                               0.0f, 0.0f));
