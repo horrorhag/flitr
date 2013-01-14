@@ -23,10 +23,15 @@
 using namespace flitr;
 using std::tr1::shared_ptr;
 
-DeMotionBlur::DeMotionBlur(ImageProducer& producer,
+DeMotionBlur::DeMotionBlur(ImageProducer& upStreamProducer,
                                uint32_t images_per_slot, uint32_t buffer_size) :
-    ImageProcessor(producer, images_per_slot, buffer_size)
+    ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
 {
+    //Setup image format being produced to downstream.
+    for (uint32_t i=0; i<images_per_slot; i++) {
+        ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.
+    }
+
 }
 
 DeMotionBlur::~DeMotionBlur()
@@ -36,6 +41,7 @@ DeMotionBlur::~DeMotionBlur()
 bool DeMotionBlur::init()
 {
     bool rValue=ImageProcessor::init();
+    //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
 
     return rValue;
 }
@@ -56,7 +62,8 @@ bool DeMotionBlur::trigger()
         {
             Image const * const imRead = *(imvRead[i]);
             Image * const imWrite = *(imvWrite[i]);
-            const ImageFormat imFormat=getFormat(i);
+
+            const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
             const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
 
             const uint32_t width=imFormat.getWidth();
@@ -70,8 +77,6 @@ bool DeMotionBlur::trigger()
 
             //Do image processing here...
 
-
-            #pragma omp parallel for
             for (uint32_t y=0; y<height; y++)
             {
                 for (uint32_t x=0; x<width; x++)
@@ -90,7 +95,13 @@ bool DeMotionBlur::trigger()
                         dataWrite[offset]=(uint8_t)(dataRead[offset]);
                         dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]);
                         break;
-                        //default:
+
+                    case ImageFormat::FLITR_PIX_FMT_UNDF:
+                        //Should not happen.
+                        break;
+                    case ImageFormat::FLITR_PIX_FMT_ANY :
+                        //Should not happen.
+                        break;
                     }
 
                     offset+=bytesPerPixel;

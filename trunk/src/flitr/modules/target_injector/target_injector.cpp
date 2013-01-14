@@ -23,11 +23,17 @@
 using namespace flitr;
 using std::tr1::shared_ptr;
 
-TargetInjector::TargetInjector(ImageProducer& producer,
+TargetInjector::TargetInjector(ImageProducer& upStreamProducer,
                                uint32_t images_per_slot, uint32_t buffer_size) :
-    ImageProcessor(producer, images_per_slot, buffer_size),
+    ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
     targetBrightness_(255.0f)
 {
+
+    //Setup image format being produced to downstream.
+    for (uint32_t i=0; i<images_per_slot; i++) {
+        ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.
+    }
+
 }
 
 TargetInjector::~TargetInjector()
@@ -37,6 +43,7 @@ TargetInjector::~TargetInjector()
 bool TargetInjector::init()
 {
     bool rValue=ImageProcessor::init();
+    //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
 
     return rValue;
 }
@@ -63,8 +70,10 @@ bool TargetInjector::trigger()
         {
             Image const * const imRead = *(imvRead[i]);
             Image * const imWrite = *(imvWrite[i]);
-            const ImageFormat imFormat=getFormat(i);
+
+            const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
             const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
+
 
             const uint32_t width=imFormat.getWidth();
             const uint32_t height=imFormat.getHeight();
@@ -72,16 +81,39 @@ bool TargetInjector::trigger()
             uint8_t const * const dataRead=imRead->data();
             uint8_t * const dataWrite=imWrite->data();
 
-            uint32_t offset=0;
-
             //Copy the read/upstream image to the write/downstream image.
             // The read and write images have the same format.
             memcpy(dataWrite, dataRead, imFormat.getBytesPerImage());
 
             //Do image processing here...
+            uint32_t y=0;
+
+
             #pragma omp parallel for
-            for (uint32_t y=0; y<height; y++)
+            for (y=0; y<height; y++)
             {
+                uint32_t offset=0;
+
+                switch (pixelFormat)
+                {
+                case ImageFormat::FLITR_PIX_FMT_Y_8 :
+                    offset=y*width*1;
+                    break;
+                case ImageFormat::FLITR_PIX_FMT_RGB_8 :
+                    offset=y*width*3;
+                    break;
+                case ImageFormat::FLITR_PIX_FMT_Y_16 :
+                    offset=y*width*2;
+                    break;
+
+                case ImageFormat::FLITR_PIX_FMT_UNDF:
+                    //Should not happen.
+                    break;
+                case ImageFormat::FLITR_PIX_FMT_ANY :
+                    //Should not happen.
+                    break;
+                }
+
                 for (uint32_t x=0; x<width; x++)
                 {
                     float targetSupportDensity=0.0;
@@ -106,13 +138,18 @@ bool TargetInjector::trigger()
                         dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
                         dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
                         break;
-                        //default:
+
+                    case ImageFormat::FLITR_PIX_FMT_UNDF:
+                        //Should not happen.
+                        break;
+                    case ImageFormat::FLITR_PIX_FMT_ANY :
+                        //Should not happen.
+                        break;
                     }
 
                     offset+=bytesPerPixel;
                 }
             }
-
 
         }
 
