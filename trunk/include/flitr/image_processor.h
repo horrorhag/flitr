@@ -64,10 +64,12 @@ class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer
 public:
 
     /*! Constructor given the upstream producer.
-     *@param producer The upstream image producer.
-     *@param images_per_slot The number of images per image slot from the upstream producer.
+     *@param upStreamProducer The upstream image producer.
+     *@param images_per_slot The number of images per image slot from the upstream producer and that is produced down stream.
      *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-    ImageProcessor(ImageProducer& producer, uint32_t images_per_slot, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+    ImageProcessor(ImageProducer& upStreamProducer,
+                   uint32_t images_per_slot,
+                   uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
     /*! Virtual destructor */
     virtual ~ImageProcessor();
@@ -84,6 +86,13 @@ public:
     /*!Synchronous trigger method. Called automatically by the trigger thread if started.
      *@sa ImageProcessor::startTriggerThread*/
     virtual bool trigger() = 0;
+
+    /*! Get the image format being consumed from the upstream producer.*/
+    virtual ImageFormat getUpstreamFormat(const uint32_t index = 0) const {return ImageConsumer::getFormat(index);}
+
+
+    /*! Get the image format being produced to the downstream consumers.*/
+    virtual ImageFormat getDownstreamFormat(const uint32_t index = 0) const {return ImageProducer::getFormat(index);}
 
 protected:
     const uint32_t ImagesPerSlot_;
