@@ -54,12 +54,28 @@ class FLITR_EXPORT PointsOverlay : public GeometryOverlay
      */
     void setVertices(osg::Vec3Array& v);
 
+    /**
+     * Draw points at all locations given.
+     *
+     * \param v Array of 3D points.
+     * \param vc Array of vertex colours points.
+     */
+    void setVertices(osg::Vec3Array& v, osg::Vec4Array& vc);
+
+
     /** 
      * Add a single point to the existing list.
      * 
      * \param v Single 3D location.
      */
     void addVertex(osg::Vec3d v);
+
+    /**
+     * Add a single point to the existing list.
+     *
+     * \param v Single 3D location.
+     */
+    void addVertex(const osg::Vec3d &v, const osg::Vec4d &vc);
 
     /** 
      * Clear the list of points to draw.
@@ -69,6 +85,7 @@ class FLITR_EXPORT PointsOverlay : public GeometryOverlay
   private:
     void makeGraph();
     osg::ref_ptr<osg::Vec3Array> _Vertices;
+    osg::ref_ptr<osg::Vec4Array> _VertexColours;
     osg::ref_ptr<osg::DrawArrays> _DrawArray;
     double _PointSize;
 };
