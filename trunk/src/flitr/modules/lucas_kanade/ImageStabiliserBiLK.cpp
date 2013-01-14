@@ -20,7 +20,7 @@ void flitr::ImageStabiliserBiLK::PostBiPyramidRebuiltCallback::callback()
 
         osg::Matrixd deltaTransform=m_pImageStabiliserBiLK->getDeltaTransformationMatrix();
 
-        for (int i=0; i<m_pImageStabiliserBiLK->filterPairs_.size(); i++)
+        for (int i=0; i<(int)(m_pImageStabiliserBiLK->filterPairs_.size()); i++)
         {
 
             m_pImageStabiliserBiLK->filterPairs_[i].first=m_pImageStabiliserBiLK->filterPairs_[i].first*(1.0f-m_pImageStabiliserBiLK->filterPairs_[i].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(m_pImageStabiliserBiLK->filterPairs_[i].second);
@@ -55,7 +55,7 @@ flitr::ImageStabiliserBiLK::ImageStabiliserBiLK(const osg::TextureRectangle *i_p
                                                 unsigned long i_ulNumGPUHVectorReductionLevels,
                                                 bool i_bReadOutputBackToCPU,
                                                 bool i_bBiLinearOutputFilter,
-                                                int i_iOutputScaleFactor,
+                                                int i_iOutputScaleFactor, float i_fOutputCropFactor,
                                                 float filterHistory,
                                                 int numFilterPairs) :
 
@@ -92,6 +92,7 @@ flitr::ImageStabiliserBiLK::ImageStabiliserBiLK(const osg::TextureRectangle *i_p
     m_outputOSGImage(0),
     m_outputIPFImage(),
     m_iOutputScaleFactor(i_iOutputScaleFactor),
+    m_fOutputCropFactor(i_fOutputCropFactor),
     m_quadGeom(0),
     m_rpQuadMatrixTransform(new osg::MatrixTransform(osg::Matrixd::identity())),
     m_bBiLinearOutputFilter(i_bBiLinearOutputFilter)
@@ -111,8 +112,10 @@ flitr::ImageStabiliserBiLK::ImageStabiliserBiLK(const osg::TextureRectangle *i_p
 }
 
 
-bool flitr::ImageStabiliserBiLK::init(osg::Group *root_node)
+bool flitr::ImageStabiliserBiLK::init(osg::Group *root_group)
 {
+    osg::Group *stabRoot=new osg::Group();
+
     bool returnVal=true;
 
     const unsigned long numLevelsX=logbase(m_ulROIWidth, 2.0);
@@ -130,14 +133,14 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_node)
                                            m_ulROIX_right, m_ulROIY_right,
                                            m_ulROIWidth, m_ulROIHeight,
                                            m_bIndicateROI, m_bDoGPUPyramids, !m_bDoGPULKIterations);
-    returnVal&=m_pCurrentBiPyramid->init(root_node, &m_postBiPyramidRebuiltCallback);
+    returnVal&=m_pCurrentBiPyramid->init(stabRoot, &m_postBiPyramidRebuiltCallback);
 
     m_pPreviousBiPyramid=new ImageBiPyramid(m_pInputTexture,
                                             m_ulROIX_left, m_ulROIY_left,
                                             m_ulROIX_right, m_ulROIY_right,
                                             m_ulROIWidth, m_ulROIHeight,
                                             m_bIndicateROI, m_bDoGPUPyramids, !m_bDoGPULKIterations);
-    returnVal&=m_pPreviousBiPyramid->init(root_node, &m_postBiPyramidRebuiltCallback);
+    returnVal&=m_pPreviousBiPyramid->init(stabRoot, &m_postBiPyramidRebuiltCallback);
 
 
     //=== Allocate lk result textures and images : Begin ===//
@@ -299,7 +302,7 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_node)
     m_rpHEstimateUniform_right=new osg::Uniform("hEstimate_right", osg::Vec2(0.0, 0.0));
 
     if (m_bDoGPULKIterations)
-    {//Not CPU BiLK. Add GPU Bi-LK algo to root_node...
+    {//Not CPU BiLK. Add GPU Bi-LK algo to stabRoot...
         m_rpCurrentLKIterationRebuildSwitch=new osg::Switch();
         m_rpPreviousLKIterationRebuildSwitch=new osg::Switch();
 
@@ -319,13 +322,13 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_node)
 
 
                 //=============================================//
-                for (long reducLevel=1; reducLevel<=m_ulNumGPUHVectorReductionLevels; reducLevel++)
+                for (long reducLevel=1; reducLevel<=(long)m_ulNumGPUHVectorReductionLevels; reducLevel++)
                 {
-                    if ((level+reducLevel)>=m_ulMaxGPUHVectorReductionLevels) break;//Lowest res GPU reduction of 4x4 to 2x2 already reached.
+                    if ((level+reducLevel)>=(long)m_ulMaxGPUHVectorReductionLevels) break;//Lowest res GPU reduction of 4x4 to 2x2 already reached.
 
                     osg::Node *hVectorReduction=createHVectorReductionLevel((level+reducLevel),
                                                                             width>>(level+reducLevel), height>>(level+reducLevel),
-                                                                            reducLevel, (reducLevel==m_ulNumGPUHVectorReductionLevels));
+                                                                            reducLevel, (reducLevel==(long)m_ulNumGPUHVectorReductionLevels));
 
                     m_rpCurrentLKIterationRebuildSwitch->addChild(hVectorReduction);
                     m_rpPreviousLKIterationRebuildSwitch->addChild(hVectorReduction);
@@ -336,14 +339,14 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_node)
 
         m_rpCurrentLKIterationRebuildSwitch->setAllChildrenOff();
         m_rpPreviousLKIterationRebuildSwitch->setAllChildrenOff();
-        root_node->addChild(m_rpCurrentLKIterationRebuildSwitch.get());
-        root_node->addChild(m_rpPreviousLKIterationRebuildSwitch.get());
+        stabRoot->addChild(m_rpCurrentLKIterationRebuildSwitch.get());
+        stabRoot->addChild(m_rpPreviousLKIterationRebuildSwitch.get());
     }
     
 
 
     m_outputTexture=new osg::TextureRectangle();
-    m_outputTexture->setTextureSize(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor, m_pInputTexture->getTextureHeight()*m_iOutputScaleFactor);
+    m_outputTexture->setTextureSize(((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)), ((int)(m_pInputTexture->getTextureHeight()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)));
     if (m_bBiLinearOutputFilter)
     {
         m_outputTexture->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
@@ -362,19 +365,21 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_node)
 
     if (m_bReadOutputBackToCPU)
     {
-        flitr::ImageFormat outputFormat=flitr::ImageFormat(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor, m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor);
+        flitr::ImageFormat outputFormat=flitr::ImageFormat(((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)), ((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)));
         outputFormat.setPixelFormat(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8);
 
         m_outputIPFImage = shared_ptr<Image>(new Image(outputFormat));
 
         m_outputOSGImage=new osg::Image;
-        m_outputOSGImage->setImage(outputFormat.getWidth()*m_iOutputScaleFactor, outputFormat.getHeight()*m_iOutputScaleFactor,
+        m_outputOSGImage->setImage(((int)(outputFormat.getWidth())), ((int)(outputFormat.getHeight())),
                                    1, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
                                    m_outputIPFImage->data(),
                                    osg::Image::NO_DELETE);
     }
 
-    root_node->addChild(createOutputPass());
+    stabRoot->addChild(createOutputPass());
+
+    root_group->addChild(stabRoot);
 
     return returnVal;
 }
@@ -705,17 +710,15 @@ osg::Matrixd flitr::ImageStabiliserBiLK::getDeltaTransformationMatrix() const
     if (getROI_rightCentre()!=getROI_leftCentre())
     {
         lNorm=(m_h_right+getROI_rightCentre())-(m_h_left+getROI_leftCentre());
-        mNorm=osg::Vec2d(-lNorm.y(), lNorm.x());
-
         lNorm.normalize();
-        mNorm.normalize();
+        mNorm=osg::Vec2d(-lNorm.y(), lNorm.x());
 
         osg::Vec2d roiReference=(getROI_rightCentre()+getROI_leftCentre())*0.5-osg::Vec2d(m_pInputTexture->getTextureWidth()*0.5, m_pInputTexture->getTextureHeight()*0.5);
         osg::Vec2d transformedROIReference=osg::Vec2d(roiReference.x()*lNorm.x()+roiReference.y()*mNorm.x(),
                                                       roiReference.x()*lNorm.y()+roiReference.y()*mNorm.y());
 
         //Compensate for movement of rotation reference.
-        translation+=(roiReference-transformedROIReference);
+        translation-=(transformedROIReference-roiReference);
     } else
     {
         lNorm=osg::Vec2d(1.0, 0.0);
@@ -734,31 +737,33 @@ void flitr::ImageStabiliserBiLK::getHomographyMatrix(double &a00, double &a01, d
                                                      double &a10, double &a11, double &a12,
                                                      double &a20, double &a21, double &a22) const
 {			
-    osg::Vec2d lNorm=(m_h_right+getROI_rightCentre())-(m_h_left+getROI_leftCentre());
-    osg::Vec2d mNorm=osg::Vec2d(-lNorm.y(), lNorm.x());
     osg::Vec2d translation=(m_h_right+m_h_left)*0.5;
 
-    if ((lNorm.length2()==0)||(mNorm.length2()==0))
+    osg::Vec2d lNorm;
+    osg::Vec2d mNorm;
+
+
+    if (getROI_rightCentre()!=getROI_leftCentre())
     {
+        lNorm=(m_h_right+getROI_rightCentre())-(m_h_left+getROI_leftCentre());
         lNorm.normalize();
-        mNorm.normalize();
+        mNorm=osg::Vec2d(-lNorm.y(), lNorm.x());
 
         osg::Vec2d roiReference=(getROI_rightCentre()+getROI_leftCentre())*0.5-osg::Vec2d(m_pInputTexture->getTextureWidth()*0.5, m_pInputTexture->getTextureHeight()*0.5);
         osg::Vec2d transformedROIReference=osg::Vec2d(roiReference.x()*lNorm.x()+roiReference.y()*mNorm.x(),
                                                       roiReference.x()*lNorm.y()+roiReference.y()*mNorm.y());
 
         //Compensate for movement of rotation reference.
-        translation+=(roiReference-transformedROIReference);
+        translation-=(transformedROIReference-roiReference);
     } else
     {
         lNorm=osg::Vec2d(1.0, 0.0);
         mNorm=osg::Vec2d(0.0, 1.0);
     }
 
-    a00=lNorm.x(); 		a01=mNorm.x();		a02=translation.x();
-    a10=lNorm.y(); 		a11=mNorm.y();		a12=translation.y();
+    a00=lNorm.x(); 		a01=-mNorm.x();		a02=-translation.x();
+    a10=-lNorm.y(); 		a11=mNorm.y();		a12=-translation.y();
     a20=0.0; 		a21=0.0; 		a22=1.0;
-
 }
 
 void flitr::ImageStabiliserBiLK::offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight)
@@ -856,8 +861,7 @@ osg::Camera *flitr::ImageStabiliserBiLK::createScreenAlignedCamera(unsigned long
     osg::Camera *theCamera = new osg::Camera;
     theCamera->setClearMask(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
     theCamera->setClearColor(osg::Vec4(0.5, 0.0, 0.0, 0.0));
-    //theCamera->setProjectionMatrix(osg::Matrix::ortho2D(-0.5*i_ulWidth, 0.5*i_ulWidth, -0.5*i_ulHeight, 0.5*i_ulHeight));
-    theCamera->setProjectionMatrixAsOrtho(-1.0*i_ulWidth, 1.0*i_ulWidth, -1.0*i_ulHeight, 1.0*i_ulHeight,-100,100);
+        theCamera->setProjectionMatrixAsOrtho(-0.5/m_fOutputCropFactor*i_ulWidth, 0.5/m_fOutputCropFactor*i_ulWidth, -0.5/m_fOutputCropFactor*i_ulHeight, 0.5/m_fOutputCropFactor*i_ulHeight,-100,100);
     theCamera->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
     theCamera->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
     theCamera->setViewMatrix(osg::Matrix::identity());
@@ -935,7 +939,8 @@ osg::Node* flitr::ImageStabiliserBiLK::createOutputPass()
 
 
     osg::Camera *theCamera=createScreenAlignedCamera(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
-    theCamera->setViewport(0, 0, m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor, m_pInputTexture->getTextureHeight()*m_iOutputScaleFactor);
+
+    theCamera->setViewport(0, 0, ((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)), ((int)(m_pInputTexture->getTextureHeight()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)));
     theCamera->addChild(geode.get());
 
     theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), m_outputTexture.get());
@@ -989,13 +994,13 @@ void flitr::ImageStabiliserBiLK::updateH_BiLucasKanadeCPU()
                 dData+=4*width * (m_ulLKBorder>>levelNum);
                 prevIData+=width * (m_ulLKBorder>>levelNum);
 
-                for (long y=(m_ulLKBorder>>levelNum); y<(height-(m_ulLKBorder>>levelNum)); y++)
+                for (long y=(m_ulLKBorder>>levelNum); y<(long)(height-(m_ulLKBorder>>levelNum)); y++)
                 {
                     iData+=(m_ulLKBorder>>levelNum);
                     dData+=(m_ulLKBorder>>levelNum)<<2;
                     prevIData+=(m_ulLKBorder>>levelNum);
 
-                    for (long x=(m_ulLKBorder>>levelNum); x<(width-(m_ulLKBorder>>levelNum)); x++)
+                    for (long x=(m_ulLKBorder>>levelNum); x<(long)(width-(m_ulLKBorder>>levelNum)); x++)
                     {
                         //osg::Vec2d previousImagePixelPosition(x, y);
                         //previousImagePixelPosition-=hEstimate[pyramidNum];

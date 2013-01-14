@@ -91,11 +91,11 @@ public:
 
                 data_left+=4*lKResultWidth * lkLevelBorder;
                 data_right+=4*lKResultWidth * lkLevelBorder;
-                for (long y=(lKResultHeight-lkLevelBorder); y>lkLevelBorder; y--)
+                for (long y=(lKResultHeight-lkLevelBorder); y>(long)lkLevelBorder; y--)
                 {
                     data_left+=4 * lkLevelBorder;
                     data_right+=4 * lkLevelBorder;
-                    for (long x=(lKResultWidth-lkLevelBorder); x>lkLevelBorder; x--)
+                    for (long x=(lKResultWidth-lkLevelBorder); x>(long)lkLevelBorder; x--)
                     {
                         hNumerator_left+=osg::Vec2(*(data_left+0), *(data_left+1));
                         hDenominator_left+=*(data_left+2);
@@ -134,7 +134,7 @@ public:
                 {
                     osg::Matrixd deltaTransform=m_pImageStabiliserBiLK->getDeltaTransformationMatrix();
 
-                    for (int i=0; i<m_pImageStabiliserBiLK->filterPairs_.size(); i++)
+                    for (int i=0; i<(int)(m_pImageStabiliserBiLK->filterPairs_.size()); i++)
                     {
 
                         m_pImageStabiliserBiLK->filterPairs_[i].first=m_pImageStabiliserBiLK->filterPairs_[i].first*(1.0f-m_pImageStabiliserBiLK->filterPairs_[i].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(m_pImageStabiliserBiLK->filterPairs_[i].second);
@@ -197,11 +197,12 @@ public:
                         bool i_bReadOutputBackToCPU,
                         bool i_bBiLinearOutputFilter,
                         int i_iOutputScaleFactor,
+                        float i_fOutputCropFactor,//larger than one to crop, smaller than one to frame.
                         float filterHistory=0.0f,
-                        int numFilterPairs=1.0);
+                        int numFilterPairs=1);
 
 
-    bool init(osg::Group *root_node);
+    bool init(osg::Group *root_group);
 
     inline const osg::Image* getLKResultLevel(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
     {
@@ -350,6 +351,7 @@ private:
     shared_ptr<flitr::Image> m_outputIPFImage;
     bool m_bReadOutputBackToCPU;
     int m_iOutputScaleFactor;
+    float m_fOutputCropFactor;
 
     PostBiPyramidRebuiltCallback m_postBiPyramidRebuiltCallback;
 
