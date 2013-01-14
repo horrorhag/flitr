@@ -34,7 +34,7 @@ public:
              *@param producer The upstream image producer.
              *@param images_per_slot The number of images per image slot from the upstream producer.
              *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-    DeMotionBlur(ImageProducer& producer, uint32_t images_per_slot, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+    DeMotionBlur(ImageProducer& upStreamProducer, uint32_t images_per_slot, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
     /*! Virtual destructor */
     virtual ~DeMotionBlur();
