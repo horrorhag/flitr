@@ -27,6 +27,7 @@ PointsOverlay::PointsOverlay() :
     _PointSize(2.0)
 {
     _Vertices = new osg::Vec3Array;
+    _VertexColours = new osg::Vec4Array;
 
     makeGraph();
     dirtyBound();
@@ -40,6 +41,8 @@ void PointsOverlay::makeGraph()
     osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
     
     geom->setVertexArray(_Vertices.get());
+    geom->setColorArray(_VertexColours.get());
+    geom->setColorBinding(osg::Geometry::BIND_PER_VERTEX);
     
     _DrawArray = new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, _Vertices->size());
 
@@ -58,6 +61,29 @@ void PointsOverlay::setVertices(osg::Vec3Array& v)
     *_Vertices = v;
     _Vertices->dirty();
 
+    _VertexColours->clear();
+
+    int numVertices=_Vertices->size();
+    for (int i=0; i<numVertices; i++)
+    {
+        _VertexColours->push_back(_GeometryColour);
+    }
+
+    _VertexColours->dirty();
+
+    _DrawArray->setCount(_Vertices->size());
+
+    dirtyBound();
+}
+
+void PointsOverlay::setVertices(osg::Vec3Array& v, osg::Vec4Array& vc)
+{
+    *_Vertices = v;
+    _Vertices->dirty();
+
+    *_VertexColours = vc;
+    _VertexColours->dirty();
+
     _DrawArray->setCount(_Vertices->size());
 
     dirtyBound();
@@ -65,8 +91,16 @@ void PointsOverlay::setVertices(osg::Vec3Array& v)
 
 void PointsOverlay::addVertex(osg::Vec3d v)
 {
+    addVertex(v, _GeometryColour);
+}
+
+void PointsOverlay::addVertex(const osg::Vec3d &v, const osg::Vec4d &vc)
+{
     _Vertices->push_back(v);
     _Vertices->dirty();
+
+    _VertexColours->push_back(vc);
+    _VertexColours->dirty();
 
     _DrawArray->setCount(_Vertices->size());
 
@@ -77,6 +111,9 @@ void PointsOverlay::clearVertices()
 {
     _Vertices->clear();
     _Vertices->dirty();
+
+    _VertexColours->clear();
+    _VertexColours->dirty();
 
     _DrawArray->setCount(_Vertices->size());
 
