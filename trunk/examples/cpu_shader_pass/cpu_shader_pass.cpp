@@ -12,7 +12,7 @@
 #include <flitr/manipulator_utils.h>
 
 #include <flitr/simple_cpu_shader_pass.h>
-#include <flitr/simple_shader_pass.h>
+#include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
 
 using std::tr1::shared_ptr;
 using namespace flitr;
