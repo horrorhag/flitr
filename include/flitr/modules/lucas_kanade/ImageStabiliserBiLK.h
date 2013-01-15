@@ -276,11 +276,6 @@ public:
         return m_outputTexture.get();
     }
 
-    inline flitr::Image *getOutputIPFImage() const
-    {
-        return m_outputIPFImage.get();
-    }
-
     inline void resetQuadMatrixTransform(const osg::Matrixd &i_rMatrix)
     {
         m_rpQuadMatrixTransform->setMatrix(i_rMatrix);
@@ -348,7 +343,6 @@ private:
 
     osg::ref_ptr<osg::TextureRectangle> m_outputTexture;
     osg::ref_ptr<osg::Image> m_outputOSGImage;
-    shared_ptr<flitr::Image> m_outputIPFImage;
     bool m_bReadOutputBackToCPU;
     int m_iOutputScaleFactor;
     float m_fOutputCropFactor;
