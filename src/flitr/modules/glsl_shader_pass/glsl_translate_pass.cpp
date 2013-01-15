@@ -1,8 +1,8 @@
-#include <flitr/simple_shader_pass.h>
+#include <flitr/modules/glsl_shader_pass/glsl_translate_pass.h>
 
 using namespace flitr;
 
-SimpleShaderPass::SimpleShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLTranslatePass::GLSLTranslatePass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -18,20 +18,20 @@ SimpleShaderPass::SimpleShaderPass(osg::TextureRectangle *in_tex, bool read_back
     
     setupCamera();
 
-    uniformVariable1=osg::ref_ptr<osg::Uniform>(new osg::Uniform("variable1", (float)0.0f));
+    UniformTranslation_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("translation", osg::Vec2f(0.0f, 0.0f)));
 
     Camera_->addChild(createTexturedQuad().get());
 
     RootGroup_->addChild(Camera_.get());
 
-    //setShader("");
+    setShader();
 }
 
-SimpleShaderPass::~SimpleShaderPass()
+GLSLTranslatePass::~GLSLTranslatePass()
 {
 }
 
-osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
+osg::ref_ptr<osg::Group> GLSLTranslatePass::createTexturedQuad()
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -69,7 +69,7 @@ osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
-    StateSet_->addUniform(uniformVariable1);
+    StateSet_->addUniform(UniformTranslation_);
 
     quad_geode->addDrawable(quad_geom.get());
     
@@ -78,7 +78,7 @@ osg::ref_ptr<osg::Group> SimpleShaderPass::createTexturedQuad()
     return top_group;
 }
 
-void SimpleShaderPass::setupCamera()
+void GLSLTranslatePass::setupCamera()
 {
     // clearing
     bool need_clear = false;
@@ -111,33 +111,38 @@ void SimpleShaderPass::setupCamera()
         }
 }
 
-void SimpleShaderPass::createOutputTexture(bool read_back_to_CPU)
+void GLSLTranslatePass::createOutputTexture(bool read_back_to_CPU)
 {
     OutTexture_ = new osg::TextureRectangle;
-    
+
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
-    OutTexture_->setInternalFormat(GL_RGBA);
-    OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
-    OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
+    OutTexture_->setInternalFormat(InTexture_->getInternalFormat());
+    OutTexture_->setSourceFormat(InTexture_->getSourceFormat());
+    OutTexture_->setSourceType(InTexture_->getSourceType());
+    OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+    OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
 
     if (read_back_to_CPU)
     {
         OutImage_ = new osg::Image;
         OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
-                                 GL_RGBA, GL_UNSIGNED_BYTE);
+                                 InTexture_->getInternalFormat(), InTexture_->getInternalFormatType());
     }
-    
-    // hdr
-    //OutTexture_->setInternalFormat(GL_RGBA16F_ARB);
-    //OutTexture_->setSourceFormat(GL_RGBA);
-    //OutTexture_->setSourceType(GL_FLOAT);
 }
 
-
-void SimpleShaderPass::setShader(std::string filename)
+void GLSLTranslatePass::setShader()
 {
-    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
-    fshader->loadShaderSourceFromFile(filename);
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
+                                                         "uniform sampler2DRect textureID0;\n"
+                                                         "uniform vec2 translation;\n"
+                                                         "\n"
+                                                         "void main(void)\n"
+                                                         "{\n"
+                                                         "    vec2 texCoord = gl_TexCoord[0].xy - translation;\n"
+                                                         "    vec4 c  = texture2DRect(textureID0, texCoord);\n"
+                                                         "    gl_FragColor = c;\n"
+                                                         "}\n"
+                                                         );
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
@@ -147,8 +152,16 @@ void SimpleShaderPass::setShader(std::string filename)
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
 
-void SimpleShaderPass::setVariable1(float value)
+void GLSLTranslatePass::setTranslation(osg::Vec2f translation)
 {
-    uniformVariable1->set(value);
+    UniformTranslation_->set(translation);
 }
 
+osg::Vec2f GLSLTranslatePass::getTranslation() const
+{
+    osg::Vec2f rValue;
+
+    UniformTranslation_->get(rValue);
+
+    return rValue;
+}
