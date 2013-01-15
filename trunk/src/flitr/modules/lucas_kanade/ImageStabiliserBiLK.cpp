@@ -90,7 +90,6 @@ flitr::ImageStabiliserBiLK::ImageStabiliserBiLK(const osg::TextureRectangle *i_p
     m_postBiPyramidRebuiltCallback(this),
     m_outputTexture(0),
     m_outputOSGImage(0),
-    m_outputIPFImage(),
     m_iOutputScaleFactor(i_iOutputScaleFactor),
     m_fOutputCropFactor(i_fOutputCropFactor),
     m_quadGeom(0),
@@ -356,25 +355,19 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_group)
         m_outputTexture->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
         m_outputTexture->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
     }
-    m_outputTexture->setSourceFormat(GL_RGB);
-    m_outputTexture->setInternalFormat(GL_RGB);
-    m_outputTexture->setSourceType(GL_UNSIGNED_BYTE);
+    m_outputTexture->setSourceFormat(m_pInputTexture->getSourceFormat());
+    m_outputTexture->setInternalFormat(m_pInputTexture->getInternalFormat());
+    m_outputTexture->setSourceType(m_pInputTexture->getSourceType());
     m_outputTexture->setWrap(osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE);
     m_outputTexture->setWrap(osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE);
 
 
     if (m_bReadOutputBackToCPU)
     {
-        flitr::ImageFormat outputFormat=flitr::ImageFormat(((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)), ((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)));
-        outputFormat.setPixelFormat(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8);
-
-        m_outputIPFImage = shared_ptr<Image>(new Image(outputFormat));
-
         m_outputOSGImage=new osg::Image;
-        m_outputOSGImage->setImage(((int)(outputFormat.getWidth())), ((int)(outputFormat.getHeight())),
-                                   1, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,
-                                   m_outputIPFImage->data(),
-                                   osg::Image::NO_DELETE);
+        m_outputOSGImage->allocateImage((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f),
+                                        (int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f), 1,
+                                   m_pInputTexture->getSourceFormat(), m_pInputTexture->getSourceType());
     }
 
     stabRoot->addChild(createOutputPass());
