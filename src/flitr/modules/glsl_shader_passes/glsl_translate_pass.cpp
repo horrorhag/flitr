@@ -1,11 +1,11 @@
-#include <flitr/modules/glsl_shader_pass/glsl_crop_pass.h>
+#include <flitr/modules/glsl_shader_passes/glsl_translate_pass.h>
 
 using namespace flitr;
 
-GLSLCropPass::GLSLCropPass(osg::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU)
+GLSLTranslatePass::GLSLTranslatePass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
-    TextureWidth_ = xmax-xmin+1;//in_tex->getTextureWidth();
-    TextureHeight_ = ymax-ymin+1;//in_tex->getTextureHeight();
+    TextureWidth_ = in_tex->getTextureWidth();
+    TextureHeight_ = in_tex->getTextureHeight();
 
     RootGroup_ = new osg::Group;
     InTexture_ = in_tex;
@@ -18,18 +18,20 @@ GLSLCropPass::GLSLCropPass(osg::TextureRectangle *in_tex, int xmin, int ymin, in
     
     setupCamera();
 
-    Camera_->addChild(createTexturedQuad(xmin, ymin, xmax, ymax).get());
+    UniformTranslation_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("translation", osg::Vec2f(0.0f, 0.0f)));
+
+    Camera_->addChild(createTexturedQuad().get());
 
     RootGroup_->addChild(Camera_.get());
 
     setShader();
 }
 
-GLSLCropPass::~GLSLCropPass()
+GLSLTranslatePass::~GLSLTranslatePass()
 {
 }
 
-osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, int xmax, int ymax)
+osg::ref_ptr<osg::Group> GLSLTranslatePass::createTexturedQuad()
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -43,10 +45,10 @@ osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, in
     quad_coords->push_back(osg::Vec3d(0, 1, -1));
 
     osg::ref_ptr<osg::Vec2Array> quad_tcoords = new osg::Vec2Array; // texture coords
-    quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+0));
-    quad_tcoords->push_back(osg::Vec2(xmin+TextureWidth_, ymin+0));
-    quad_tcoords->push_back(osg::Vec2(xmin+TextureWidth_, ymin+TextureHeight_));
-    quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+TextureHeight_));
+    quad_tcoords->push_back(osg::Vec2(0, 0));
+    quad_tcoords->push_back(osg::Vec2(TextureWidth_, 0));
+    quad_tcoords->push_back(osg::Vec2(TextureWidth_, TextureHeight_));
+    quad_tcoords->push_back(osg::Vec2(0, TextureHeight_));
 
     osg::ref_ptr<osg::Geometry> quad_geom = new osg::Geometry;
     osg::ref_ptr<osg::DrawArrays> quad_da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
@@ -67,6 +69,8 @@ osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, in
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
+    StateSet_->addUniform(UniformTranslation_);
+
     quad_geode->addDrawable(quad_geom.get());
     
     top_group->addChild(quad_geode.get());
@@ -74,7 +78,7 @@ osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, in
     return top_group;
 }
 
-void GLSLCropPass::setupCamera()
+void GLSLTranslatePass::setupCamera()
 {
     // clearing
     bool need_clear = false;
@@ -107,10 +111,10 @@ void GLSLCropPass::setupCamera()
         }
 }
 
-void GLSLCropPass::createOutputTexture(bool read_back_to_CPU)
+void GLSLTranslatePass::createOutputTexture(bool read_back_to_CPU)
 {
     OutTexture_ = new osg::TextureRectangle;
-    
+
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());
     OutTexture_->setSourceFormat(InTexture_->getSourceFormat());
@@ -123,18 +127,18 @@ void GLSLCropPass::createOutputTexture(bool read_back_to_CPU)
         OutImage_ = new osg::Image;
         OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
                                  InTexture_->getInternalFormat(), InTexture_->getInternalFormatType());
-    }    
+    }
 }
 
-
-void GLSLCropPass::setShader()
+void GLSLTranslatePass::setShader()
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
                                                          "uniform sampler2DRect textureID0;\n"
+                                                         "uniform vec2 translation;\n"
                                                          "\n"
                                                          "void main(void)\n"
                                                          "{\n"
-                                                         "    vec2 texCoord = gl_TexCoord[0].xy;\n"
+                                                         "    vec2 texCoord = gl_TexCoord[0].xy - translation;\n"
                                                          "    vec4 c  = texture2DRect(textureID0, texCoord);\n"
                                                          "    gl_FragColor = c;\n"
                                                          "}\n"
@@ -148,4 +152,16 @@ void GLSLCropPass::setShader()
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
 
+void GLSLTranslatePass::setTranslation(osg::Vec2f translation)
+{
+    UniformTranslation_->set(translation);
+}
 
+osg::Vec2f GLSLTranslatePass::getTranslation() const
+{
+    osg::Vec2f rValue;
+
+    UniformTranslation_->get(rValue);
+
+    return rValue;
+}

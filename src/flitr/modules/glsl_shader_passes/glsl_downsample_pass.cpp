@@ -1,11 +1,11 @@
-#include <flitr/modules/glsl_shader_pass/glsl_shader_pass.h>
+#include <flitr/modules/glsl_shader_passes/glsl_downsample_pass.h>
 
 using namespace flitr;
 
-GLSLShaderPass::GLSLShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLDownsamplePass::GLSLDownsamplePass(osg::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU)
 {
-    TextureWidth_ = in_tex->getTextureWidth();
-    TextureHeight_ = in_tex->getTextureHeight();
+    TextureWidth_ = in_tex->getTextureWidth()/dsfactor;
+    TextureHeight_ = in_tex->getTextureHeight()/dsfactor;
 
     RootGroup_ = new osg::Group;
     InTexture_ = in_tex;
@@ -18,20 +18,20 @@ GLSLShaderPass::GLSLShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_
     
     setupCamera();
 
-    UniformVariable1_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("variable1", (float)0.0f));
+    UniformDSFactor_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("dsfactor", dsfactor));
 
     Camera_->addChild(createTexturedQuad().get());
 
     RootGroup_->addChild(Camera_.get());
 
-    //setShader("");
+    setShader();
 }
 
-GLSLShaderPass::~GLSLShaderPass()
+GLSLDownsamplePass::~GLSLDownsamplePass()
 {
 }
 
-osg::ref_ptr<osg::Group> GLSLShaderPass::createTexturedQuad()
+osg::ref_ptr<osg::Group> GLSLDownsamplePass::createTexturedQuad()
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -69,7 +69,7 @@ osg::ref_ptr<osg::Group> GLSLShaderPass::createTexturedQuad()
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
-    StateSet_->addUniform(UniformVariable1_);
+    StateSet_->addUniform(UniformDSFactor_);
 
     quad_geode->addDrawable(quad_geom.get());
     
@@ -78,7 +78,7 @@ osg::ref_ptr<osg::Group> GLSLShaderPass::createTexturedQuad()
     return top_group;
 }
 
-void GLSLShaderPass::setupCamera()
+void GLSLDownsamplePass::setupCamera()
 {
     // clearing
     bool need_clear = false;
@@ -111,7 +111,7 @@ void GLSLShaderPass::setupCamera()
         }
 }
 
-void GLSLShaderPass::createOutputTexture(bool read_back_to_CPU)
+void GLSLDownsamplePass::createOutputTexture(bool read_back_to_CPU)
 {
     OutTexture_ = new osg::TextureRectangle;
 
@@ -131,10 +131,26 @@ void GLSLShaderPass::createOutputTexture(bool read_back_to_CPU)
 }
 
 
-void GLSLShaderPass::setShader(std::string filename)
+void GLSLDownsamplePass::setShader()
 {
-    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
-    fshader->loadShaderSourceFromFile(filename);
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
+                                                         "uniform sampler2DRect textureID0;\n"
+                                                         "uniform int dsfactor;\n"
+                                                         "\n"
+                                                         "void main(void)\n"
+                                                         "{\n"
+                                                         "    vec2 texCoord = floor(gl_TexCoord[0].xy)*dsfactor;\n"
+
+                                                         "    vec4 c=vec4(0,0,0,0);\n"
+
+                                                         "    for (int j=0; j<dsfactor; j++)\n"
+                                                         "    for (int i=0; i<dsfactor; i++)\n"
+                                                         "    {\n"
+                                                         "       c  += texture2DRect(textureID0, texCoord+vec2(i+0.5,j+0.5));\n"
+                                                         "    }\n"
+                                                         "    gl_FragColor = c/(dsfactor*dsfactor);\n"
+                                                         "}\n"
+                                                         );
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
@@ -142,10 +158,5 @@ void GLSLShaderPass::setShader(std::string filename)
     FragmentProgram_->addShader(fshader.get());
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
-}
-
-void GLSLShaderPass::setVariable1(float value)
-{
-    UniformVariable1_->set(value);
 }
 

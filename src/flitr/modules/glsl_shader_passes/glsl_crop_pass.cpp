@@ -1,11 +1,11 @@
-#include <flitr/modules/glsl_shader_pass/glsl_downsample_pass.h>
+#include <flitr/modules/glsl_shader_passes/glsl_crop_pass.h>
 
 using namespace flitr;
 
-GLSLDownsamplePass::GLSLDownsamplePass(osg::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU)
+GLSLCropPass::GLSLCropPass(osg::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU)
 {
-    TextureWidth_ = in_tex->getTextureWidth()/dsfactor;
-    TextureHeight_ = in_tex->getTextureHeight()/dsfactor;
+    TextureWidth_ = xmax-xmin+1;//in_tex->getTextureWidth();
+    TextureHeight_ = ymax-ymin+1;//in_tex->getTextureHeight();
 
     RootGroup_ = new osg::Group;
     InTexture_ = in_tex;
@@ -18,20 +18,18 @@ GLSLDownsamplePass::GLSLDownsamplePass(osg::TextureRectangle *in_tex, int dsfact
     
     setupCamera();
 
-    UniformDSFactor_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("dsfactor", dsfactor));
-
-    Camera_->addChild(createTexturedQuad().get());
+    Camera_->addChild(createTexturedQuad(xmin, ymin, xmax, ymax).get());
 
     RootGroup_->addChild(Camera_.get());
 
     setShader();
 }
 
-GLSLDownsamplePass::~GLSLDownsamplePass()
+GLSLCropPass::~GLSLCropPass()
 {
 }
 
-osg::ref_ptr<osg::Group> GLSLDownsamplePass::createTexturedQuad()
+osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, int xmax, int ymax)
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -45,10 +43,10 @@ osg::ref_ptr<osg::Group> GLSLDownsamplePass::createTexturedQuad()
     quad_coords->push_back(osg::Vec3d(0, 1, -1));
 
     osg::ref_ptr<osg::Vec2Array> quad_tcoords = new osg::Vec2Array; // texture coords
-    quad_tcoords->push_back(osg::Vec2(0, 0));
-    quad_tcoords->push_back(osg::Vec2(TextureWidth_, 0));
-    quad_tcoords->push_back(osg::Vec2(TextureWidth_, TextureHeight_));
-    quad_tcoords->push_back(osg::Vec2(0, TextureHeight_));
+    quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+0));
+    quad_tcoords->push_back(osg::Vec2(xmin+TextureWidth_, ymin+0));
+    quad_tcoords->push_back(osg::Vec2(xmin+TextureWidth_, ymin+TextureHeight_));
+    quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+TextureHeight_));
 
     osg::ref_ptr<osg::Geometry> quad_geom = new osg::Geometry;
     osg::ref_ptr<osg::DrawArrays> quad_da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
@@ -69,8 +67,6 @@ osg::ref_ptr<osg::Group> GLSLDownsamplePass::createTexturedQuad()
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
-    StateSet_->addUniform(UniformDSFactor_);
-
     quad_geode->addDrawable(quad_geom.get());
     
     top_group->addChild(quad_geode.get());
@@ -78,7 +74,7 @@ osg::ref_ptr<osg::Group> GLSLDownsamplePass::createTexturedQuad()
     return top_group;
 }
 
-void GLSLDownsamplePass::setupCamera()
+void GLSLCropPass::setupCamera()
 {
     // clearing
     bool need_clear = false;
@@ -111,10 +107,10 @@ void GLSLDownsamplePass::setupCamera()
         }
 }
 
-void GLSLDownsamplePass::createOutputTexture(bool read_back_to_CPU)
+void GLSLCropPass::createOutputTexture(bool read_back_to_CPU)
 {
     OutTexture_ = new osg::TextureRectangle;
-
+    
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());
     OutTexture_->setSourceFormat(InTexture_->getSourceFormat());
@@ -127,28 +123,20 @@ void GLSLDownsamplePass::createOutputTexture(bool read_back_to_CPU)
         OutImage_ = new osg::Image;
         OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
                                  InTexture_->getInternalFormat(), InTexture_->getInternalFormatType());
-    }
+    }    
 }
 
 
-void GLSLDownsamplePass::setShader()
+void GLSLCropPass::setShader()
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
                                                          "uniform sampler2DRect textureID0;\n"
-                                                         "uniform int dsfactor;\n"
                                                          "\n"
                                                          "void main(void)\n"
                                                          "{\n"
-                                                         "    vec2 texCoord = floor(gl_TexCoord[0].xy)*dsfactor;\n"
-
-                                                         "    vec4 c=vec4(0,0,0,0);\n"
-
-                                                         "    for (int j=0; j<dsfactor; j++)\n"
-                                                         "    for (int i=0; i<dsfactor; i++)\n"
-                                                         "    {\n"
-                                                         "       c  += texture2DRect(textureID0, texCoord+vec2(i+0.5,j+0.5));\n"
-                                                         "    }\n"
-                                                         "    gl_FragColor = c/(dsfactor*dsfactor);\n"
+                                                         "    vec2 texCoord = gl_TexCoord[0].xy;\n"
+                                                         "    vec4 c  = texture2DRect(textureID0, texCoord);\n"
+                                                         "    gl_FragColor = c;\n"
                                                          "}\n"
                                                          );
 
@@ -159,4 +147,5 @@ void GLSLDownsamplePass::setShader()
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
+
 
