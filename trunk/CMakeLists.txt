@@ -149,13 +149,17 @@ SET(LIB_SOURCES
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
   src/flitr/homography_shader_pass.cpp
-  src/flitr/simple_shader_pass.cpp
   src/flitr/simple_cpu_shader_pass.cpp
+
   src/flitr/modules/lucas_kanade/imageBiPyramid.cpp
   src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
+  src/flitr/modules/glsl_shader_pass/glsl_shader_pass.cpp
+  src/flitr/modules/glsl_shader_pass/glsl_crop_pass.cpp
+  src/flitr/modules/glsl_shader_pass/glsl_translate_pass.cpp
+  src/flitr/modules/glsl_shader_pass/glsl_downsample_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
@@ -192,12 +196,16 @@ SET(LIB_SOURCES
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
   include/flitr/homography_shader_pass.h
-  include/flitr/simple_shader_pass.h
   include/flitr/simple_cpu_shader_pass.h
   include/flitr/modules/lucas_kanade/imageBiPyramid.h
   include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h
+
+  include/flitr/modules/glsl_shader_pass/glsl_shader_pass.h
+  include/flitr/modules/glsl_shader_pass/glsl_crop_pass.h
+  include/flitr/modules/glsl_shader_pass/glsl_translate_pass.h
+  include/flitr/modules/glsl_shader_pass/glsl_downsample_pass.h
 )
 
 

@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SIMPLE_SHADER_PASS_H
-#define SIMPLE_SHADER_PASS_H 1
+#ifndef GLSL_DOWNSAMPLE_PASS_H
+#define GLSL_DOWNSAMPLE_PASS_H 1
 #include <iostream>
 #include <string>
 
@@ -38,19 +38,27 @@
 
 namespace flitr {
 
-class FLITR_EXPORT SimpleShaderPass
+class FLITR_EXPORT GLSLDownsamplePass
 {
   public:
-    SimpleShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU = false);
-    ~SimpleShaderPass();
+    GLSLDownsamplePass(osg::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU = false);
+    ~GLSLDownsamplePass();
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<osg::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
-    void setShader(std::string filename);
 
-    void setVariable1(float value);
+    int getDSFactor() const
+    {
+        int rValue=0;
+
+        UniformDSFactor_->get(rValue);
+
+        return rValue;
+    }
 	
+
   private:
+    void setShader();
     osg::ref_ptr<osg::Group> createTexturedQuad();
     void createOutputTexture(bool read_back_to_CPU);
     void setupCamera();
@@ -67,7 +75,7 @@ class FLITR_EXPORT SimpleShaderPass
 	osg::ref_ptr<osg::Program> FragmentProgram_;
     osg::ref_ptr<osg::StateSet> StateSet_;
 
-    osg::ref_ptr<osg::Uniform> uniformVariable1;
+    osg::ref_ptr<osg::Uniform> UniformDSFactor_;
 };
 }
-#endif //SIMPLE_SHADER_PASS_H
+#endif //GLSL_DOWNSAMPLE_PASS_H

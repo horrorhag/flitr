@@ -1,7 +1,7 @@
 PROJECT(flitr_glsl_shader_pass)
 
 SET(SOURCES
-  glsl_shader_pass.cpp
+  glsl_shader_pass_example.cpp
 )
 
 ADD_EXECUTABLE(flitr_glsl_shader_pass ${SOURCES})
