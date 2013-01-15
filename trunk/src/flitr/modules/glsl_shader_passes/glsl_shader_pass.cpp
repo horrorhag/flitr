@@ -1,8 +1,8 @@
-#include <flitr/modules/glsl_shader_pass/glsl_translate_pass.h>
+#include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
 
 using namespace flitr;
 
-GLSLTranslatePass::GLSLTranslatePass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLShaderPass::GLSLShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -18,20 +18,20 @@ GLSLTranslatePass::GLSLTranslatePass(osg::TextureRectangle *in_tex, bool read_ba
     
     setupCamera();
 
-    UniformTranslation_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("translation", osg::Vec2f(0.0f, 0.0f)));
+    UniformVariable1_=osg::ref_ptr<osg::Uniform>(new osg::Uniform("variable1", (float)0.0f));
 
     Camera_->addChild(createTexturedQuad().get());
 
     RootGroup_->addChild(Camera_.get());
 
-    setShader();
+    //setShader("");
 }
 
-GLSLTranslatePass::~GLSLTranslatePass()
+GLSLShaderPass::~GLSLShaderPass()
 {
 }
 
-osg::ref_ptr<osg::Group> GLSLTranslatePass::createTexturedQuad()
+osg::ref_ptr<osg::Group> GLSLShaderPass::createTexturedQuad()
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -69,7 +69,7 @@ osg::ref_ptr<osg::Group> GLSLTranslatePass::createTexturedQuad()
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
-    StateSet_->addUniform(UniformTranslation_);
+    StateSet_->addUniform(UniformVariable1_);
 
     quad_geode->addDrawable(quad_geom.get());
     
@@ -78,7 +78,7 @@ osg::ref_ptr<osg::Group> GLSLTranslatePass::createTexturedQuad()
     return top_group;
 }
 
-void GLSLTranslatePass::setupCamera()
+void GLSLShaderPass::setupCamera()
 {
     // clearing
     bool need_clear = false;
@@ -111,7 +111,7 @@ void GLSLTranslatePass::setupCamera()
         }
 }
 
-void GLSLTranslatePass::createOutputTexture(bool read_back_to_CPU)
+void GLSLShaderPass::createOutputTexture(bool read_back_to_CPU)
 {
     OutTexture_ = new osg::TextureRectangle;
 
@@ -130,19 +130,11 @@ void GLSLTranslatePass::createOutputTexture(bool read_back_to_CPU)
     }
 }
 
-void GLSLTranslatePass::setShader()
+
+void GLSLShaderPass::setShader(std::string filename)
 {
-    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
-                                                         "uniform sampler2DRect textureID0;\n"
-                                                         "uniform vec2 translation;\n"
-                                                         "\n"
-                                                         "void main(void)\n"
-                                                         "{\n"
-                                                         "    vec2 texCoord = gl_TexCoord[0].xy - translation;\n"
-                                                         "    vec4 c  = texture2DRect(textureID0, texCoord);\n"
-                                                         "    gl_FragColor = c;\n"
-                                                         "}\n"
-                                                         );
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
+    fshader->loadShaderSourceFromFile(filename);
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
@@ -152,16 +144,8 @@ void GLSLTranslatePass::setShader()
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
 
-void GLSLTranslatePass::setTranslation(osg::Vec2f translation)
+void GLSLShaderPass::setVariable1(float value)
 {
-    UniformTranslation_->set(translation);
+    UniformVariable1_->set(value);
 }
 
-osg::Vec2f GLSLTranslatePass::getTranslation() const
-{
-    osg::Vec2f rValue;
-
-    UniformTranslation_->get(rValue);
-
-    return rValue;
-}
