@@ -3,8 +3,6 @@
 #include <iostream>
 #include <string.h>
 
-unsigned long g_ulNumCameras=0;
-
 unsigned long flitr::ImageStabiliserBiLK::m_ulLKBorder=32;//To be refined in the constructor.
 
 double flitr::ImageStabiliserBiLK::logbase(double a, double base)
@@ -58,43 +56,40 @@ flitr::ImageStabiliserBiLK::ImageStabiliserBiLK(const osg::TextureRectangle *i_p
                                                 int i_iOutputScaleFactor, float i_fOutputCropFactor,
                                                 float filterHistory,
                                                 int numFilterPairs) :
-
-    m_pInputTexture(i_pInputTexture),
     m_ulROIX_left(i_ulROIX_left), m_ulROIY_left(i_ulROIY_left),
     m_ulROIX_right(i_ulROIX_right), m_ulROIY_right(i_ulROIY_right),
     m_ulROIWidth(i_ulROIWidth), m_ulROIHeight(i_ulROIHeight),
+    m_ulNumLKIterations(0),
+    m_pCurrentBiPyramid(0),
+    m_pPreviousBiPyramid(0),
+    m_bAutoSwapCurrentPrevious(true),
+    m_rpQuadMatrixTransform(new osg::MatrixTransform(osg::Matrixd::identity())),
+    m_quadGeom(0),
+    m_outputTexture(0),
+    m_outputOSGImage(0),
+    m_bReadOutputBackToCPU(i_bReadOutputBackToCPU),
+    m_iOutputScaleFactor(i_iOutputScaleFactor),
+    m_fOutputCropFactor(i_fOutputCropFactor),
+    m_postBiPyramidRebuiltCallback(this),
+    m_postBiLKIterationDrawCallback(this),
+    m_lkResultImagePyramid(0),
+    m_lkResultTexturePyramid(0),
+    m_lkReducedResultImagePyramid(0),
+    m_lkReducedResultTexturePyramid(0),
+    m_imagePyramidFormat_(0),
+    m_rpCurrentLKIterationRebuildSwitch(0),
+    m_rpPreviousLKIterationRebuildSwitch(0),
+    m_rpHEstimateUniform_left(0),
+    m_rpHEstimateUniform_right(0),
+    m_pInputTexture(i_pInputTexture),
     m_bIndicateROI(i_bIndicateROI),
     m_bDoGPUPyramids(i_bDoGPUPyramids),
     m_bDoGPULKIterations(i_bDoGPULKIterations),
     m_ulNumGPUHVectorReductionLevels(i_ulNumGPUHVectorReductionLevels),
     m_ulMaxGPUHVectorReductionLevels(0),
-    m_bReadOutputBackToCPU(i_bReadOutputBackToCPU),
-
-    m_postBiLKIterationDrawCallback(this),
-    m_ulNumLKIterations(0),
-    m_imagePyramidFormat_(0),
-    m_lkResultImagePyramid(0),
-    m_lkResultTexturePyramid(0),
-    m_lkReducedResultImagePyramid(0),
-    m_lkReducedResultTexturePyramid(0),
-    m_rpCurrentLKIterationRebuildSwitch(0),
-    m_rpPreviousLKIterationRebuildSwitch(0),
-    m_rpHEstimateUniform_left(0),
-    m_rpHEstimateUniform_right(0),
-
-    m_pCurrentBiPyramid(0),
-    m_pPreviousBiPyramid(0),
-    m_bAutoSwapCurrentPrevious(true),
+    m_bBiLinearOutputFilter(i_bBiLinearOutputFilter),
     m_h_left(osg::Vec2(0.0, 0.0)), m_h_right(osg::Vec2(0.0, 0.0)),
-    m_ulFrameNumber(0),
-    m_postBiPyramidRebuiltCallback(this),
-    m_outputTexture(0),
-    m_outputOSGImage(0),
-    m_iOutputScaleFactor(i_iOutputScaleFactor),
-    m_fOutputCropFactor(i_fOutputCropFactor),
-    m_quadGeom(0),
-    m_rpQuadMatrixTransform(new osg::MatrixTransform(osg::Matrixd::identity())),
-    m_bBiLinearOutputFilter(i_bBiLinearOutputFilter)
+    m_ulFrameNumber(0)
 {
     for (int i=0; i<numFilterPairs; i++)
     {
@@ -123,9 +118,9 @@ bool flitr::ImageStabiliserBiLK::init(osg::Group *root_group)
     const unsigned long width=pow(2.0, (double)numLevelsX)+0.5;
     const unsigned long height=pow(2.0, (double)numLevelsY)+0.5;
 
-    m_ulMaxGPUHVectorReductionLevels=(unsigned long)minBLK(numLevelsX, numLevelsY);
+    m_ulMaxGPUHVectorReductionLevels=(unsigned long)std::min<unsigned long>(numLevelsX, numLevelsY);
 
-    m_ulNumGPUHVectorReductionLevels=minBLK(logbase(minBLK(width, height), 2.0)-1, m_ulNumGPUHVectorReductionLevels);
+    m_ulNumGPUHVectorReductionLevels=std::min<unsigned long>(logbase(std::min<unsigned long>(width, height), 2.0)-1, m_ulNumGPUHVectorReductionLevels);
 
     m_pCurrentBiPyramid=new ImageBiPyramid(m_pInputTexture,
                                            m_ulROIX_left, m_ulROIY_left,
@@ -446,7 +441,7 @@ osg::ref_ptr<osg::Geode> flitr::ImageStabiliserBiLK::createScreenAlignedQuadLK(u
 
 osg::Camera *flitr::ImageStabiliserBiLK::createScreenAlignedCameraLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels)
 {
-    g_ulNumCameras++;
+    //g_ulNumCameras++;
     osg::Camera *theCamera = new osg::Camera;
     theCamera->setClearMask((i_dBorderPixels>0.0) ? GL_COLOR_BUFFER_BIT : 0);
     theCamera->setClearColor(osg::Vec4(0.0, 0.0, 0.0, 0.0));
@@ -850,7 +845,7 @@ osg::ref_ptr<osg::Geode> flitr::ImageStabiliserBiLK::createScreenAlignedQuad(uns
 
 osg::Camera *flitr::ImageStabiliserBiLK::createScreenAlignedCamera(unsigned long i_ulWidth, unsigned long i_ulHeight)
 {
-    g_ulNumCameras++;
+    //g_ulNumCameras++;
     osg::Camera *theCamera = new osg::Camera;
     theCamera->setClearMask(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
     theCamera->setClearColor(osg::Vec4(0.5, 0.0, 0.0, 0.0));
