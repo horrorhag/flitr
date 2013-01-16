@@ -1,7 +1,9 @@
 #ifndef IMAGE_STABALISER_BILK
 #define IMAGE_STABALISER_BILK
 
+#ifndef NEWTON_RAPHSON_ITERATIONS
 #define NEWTON_RAPHSON_ITERATIONS 7
+#endif
 
 #include <iostream>
 #include <boost/tr1/memory.hpp>
@@ -11,12 +13,12 @@ using std::tr1::shared_ptr;
 #include <flitr/image_format.h>
 #include <flitr/image.h>
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
-#include <flitr/modules/lucas_kanade/imageBiPyramid.h>
+#include <flitr/modules/lucas_kanade/ImageBiPyramid.h>
 #include <osg/MatrixTransform>
 
 
-#define maxBLK(a,b)	(((a) > (b)) ? (a) : (b))
-#define minBLK(a,b)	(((a) < (b)) ? (a) : (b))
+//#define maxBLK(a,b)	(((a) > (b)) ? (a) : (b))
+//#define minBLK(a,b)	(((a) < (b)) ? (a) : (b))
 
 
 namespace flitr
@@ -47,11 +49,11 @@ public:
 
 
             const osg::Image *lKResultImage_left=(m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels>0) ?
-                        m_pImageStabiliserBiLK->getLKReducedResultLevel(0, minBLK(lKResultPyrLevel+m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels, m_pImageStabiliserBiLK->m_ulMaxGPUHVectorReductionLevels-1)) :
+                        m_pImageStabiliserBiLK->getLKReducedResultLevel(0, std::min<long>(lKResultPyrLevel+m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels, m_pImageStabiliserBiLK->m_ulMaxGPUHVectorReductionLevels-1)) :
                         m_pImageStabiliserBiLK->getLKResultLevel(0, lKResultPyrLevel);
 
             const osg::Image *lKResultImage_right=(m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels>0) ?
-                        m_pImageStabiliserBiLK->getLKReducedResultLevel(1, minBLK(lKResultPyrLevel+m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels, m_pImageStabiliserBiLK->m_ulMaxGPUHVectorReductionLevels-1)) :
+                        m_pImageStabiliserBiLK->getLKReducedResultLevel(1, std::min<long>(lKResultPyrLevel+m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels, m_pImageStabiliserBiLK->m_ulMaxGPUHVectorReductionLevels-1)) :
                         m_pImageStabiliserBiLK->getLKResultLevel(1, lKResultPyrLevel);
 
             const unsigned long lkLevelBorder=(m_pImageStabiliserBiLK->m_ulNumGPUHVectorReductionLevels>0) ?

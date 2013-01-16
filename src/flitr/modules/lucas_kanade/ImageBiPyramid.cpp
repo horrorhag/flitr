@@ -1,8 +1,7 @@
 #include <cstdio>
 
-#include <flitr/modules/lucas_kanade/imageBiPyramid.h>
+#include <flitr/modules/lucas_kanade/ImageBiPyramid.h>
 
-extern unsigned long g_ulNumCameras;
 
 double flitr::ImageBiPyramid::logbase(double a, double base)
 {
@@ -16,16 +15,17 @@ flitr::ImageBiPyramid::ImageBiPyramid(const osg::TextureRectangle *i_pInputTextu
 	unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
 	bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU) :
 	m_pInputTexture(i_pInputTexture),
+    m_ulNumLevels(0),
+    m_imageGausPyramid(0), m_textureGausPyramid(0),
+    m_imageGausXPyramid(0), m_textureGausXPyramid(0),
+    m_derivImagePyramid(0), m_derivTexturePyramid(0),
+    m_gausDistSqImage(0), m_gausDistSqTexture(0),
+    m_gausDistSqH2LImage(0), m_gausDistSqH2LTexture(0),
+
 	m_ulROIWidth(i_ulROIWidth), m_ulROIHeight(i_ulROIHeight),
 	m_bIndicateROI(i_bIndicateROI),
-	m_ulNumLevels(0), 
-	m_imageGausPyramid(0), m_textureGausPyramid(0),
-	m_imageGausXPyramid(0), m_textureGausXPyramid(0),
-	m_derivImagePyramid(0), m_derivTexturePyramid(0),
-	m_gausDistSqImage(0), m_gausDistSqTexture(0),
-	m_gausDistSqH2LImage(0), m_gausDistSqH2LTexture(0),
-	m_bUseGPU(i_bUseGPU),
-	m_bReadOutputBackToCPU(i_bReadOutputBackToCPU),
+    m_bUseGPU(i_bUseGPU),
+    m_bReadOutputBackToCPU(i_bReadOutputBackToCPU),
 	m_rpRebuildSwitch(0)
 {
 	m_ulpROIX=new unsigned long[2];
@@ -39,7 +39,7 @@ flitr::ImageBiPyramid::ImageBiPyramid(const osg::TextureRectangle *i_pInputTextu
 
 	unsigned long numLevelsX=logbase(m_ulROIWidth, 2.0);
 	unsigned long numLevelsY=logbase(m_ulROIHeight, 2.0);
-	unsigned long numResolutionLevels=(unsigned long)minBIP(numLevelsX, numLevelsY);
+    unsigned long numResolutionLevels=(unsigned long)std::min<unsigned long>(numLevelsX, numLevelsY);
 
 	unsigned long xPow2=pow(2.0, (double)numLevelsX)+0.5;
 	unsigned long yPow2=pow(2.0, (double)numLevelsY)+0.5;
@@ -350,7 +350,7 @@ osg::ref_ptr<osg::Geode> flitr::ImageBiPyramid::createScreenAlignedQuad(unsigned
 
 osg::Camera *flitr::ImageBiPyramid::createScreenAlignedCamera(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels=0.0)
 {
-	g_ulNumCameras++;
+//	g_ulNumCameras++;
 	osg::Camera *theCamera = new osg::Camera;
 	theCamera->setClearMask((i_dBorderPixels>0.0) ? GL_COLOR_BUFFER_BIT : 0);
 	theCamera->setClearColor(osg::Vec4(0.0, 0.0, 0.0, 0.0));
@@ -1182,7 +1182,7 @@ void flitr::ImageBiPyramid::bilinearResample(unsigned long i_ulPyramidNum, unsig
 			resampIData++;
 			for (unsigned long x=1; x<(width-1); x++)
 			{
-				if ( ((( ((long)y)+offsetY)>=0)&&(( ((long)y)+offsetY)<(height-1))) && (((((long)x)+offsetX)>=0)&&((((long)x)+offsetX)<(width-1))) )
+                if ( ((( ((long)y)+offsetY)>=0)&&(( ((long)y)+offsetY)<((long)height-1))) && (((((long)x)+offsetX)>=0)&&((((long)x)+offsetX)<((long)width-1))) )
 				{
 					float dA=iData[((0+offsetX)+(0+offsetY)*width)];
 					float dB=iData[((1+offsetX)+(0+offsetY)*width)];

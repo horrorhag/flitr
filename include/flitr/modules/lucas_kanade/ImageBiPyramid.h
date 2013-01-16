@@ -15,8 +15,8 @@ ToDo: Implement a RESET for the stabaliser!
 #include <osg/Switch>
 #include <osg/AlphaFunc>
 
-#define maxBIP(a,b)	(((a) > (b)) ? (a) : (b))
-#define minBIP(a,b)	(((a) < (b)) ? (a) : (b))
+//#define maxBIP(a,b)	(((a) > (b)) ? (a) : (b))
+//#define minBIP(a,b)	(((a) < (b)) ? (a) : (b))
 
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
 
@@ -167,7 +167,7 @@ namespace flitr {
 				for (long x=startX; x<=endX; x++)
 				{
 					const double radiusSq=(x-0.5)*(x-0.5)+ySqr;
-					const unsigned long index=minBIP(((unsigned long)radiusSq),7);
+                    const unsigned long index=std::min<unsigned long>(((unsigned long)radiusSq),7);
 					gSum+=(*data)*gaussian[index<<2];
 					data++;
 					gSumReference+=gaussian[index<<2];
@@ -206,7 +206,7 @@ namespace flitr {
 				for (long x=startX; x<=endX; x++)
 				{
 					const double radiusSq=(x-0.0)*(x-0.0)+ySqr;
-					const unsigned long index=minBIP(((unsigned long)radiusSq),5);
+                    const unsigned long index=std::min<unsigned long>(((unsigned long)radiusSq),5);
 					gSum+=(*data)*gaussian[index<<2];
 					data++;
 					gSumReference+=gaussian[index<<2];
@@ -247,11 +247,11 @@ namespace flitr {
 			long width=imageCurrent->s();
 			long height=imageCurrent->t();
 
-			long startY=maxBIP(0, -offsetFromPreviousY);
-			long startX=maxBIP(0, -offsetFromPreviousX);
+            long startY=std::max<long>(0, -offsetFromPreviousY);
+            long startX=std::max<long>(0, -offsetFromPreviousX);
 
-			long endY=minBIP(height, height-offsetFromPreviousY);
-			long endX=minBIP(height, width-offsetFromPreviousX);
+            long endY=std::min<unsigned long>(height, height-offsetFromPreviousY);
+            long endX=std::min<unsigned long>(height, width-offsetFromPreviousX);
 
 			for (long y=startY; y<endY; y++)
 			{
