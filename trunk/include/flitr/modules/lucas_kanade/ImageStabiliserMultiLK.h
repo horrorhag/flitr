@@ -13,23 +13,24 @@ using std::tr1::shared_ptr;
 #include <flitr/image_format.h>
 #include <flitr/image.h>
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
-#include <flitr/modules/lucas_kanade/ImageNPyramid.h>
+#include <flitr/modules/lucas_kanade/ImageMultiPyramid.h>
 #include <osg/MatrixTransform>
 
 
 namespace flitr
 {
 
-class ImageStabiliserNLK
+class ImageStabiliserMultiLK
 {
 public:
-    static double logbase(double a, double base);
+    static double logbase(const double a, const double base);
 
 
     class PostNLKIteration_CameraPostDrawCallback : public osg::Camera::DrawCallback
-    {//Callback signalling when a GPU BiLK iteration has completed and been readback to the CPU.
+    {//Callback signalling when a GPU LK iteration has completed that should reduced by the CPU.
+     //Will be called at least once after last GPU hvector reduction.
     public:
-        PostNLKIteration_CameraPostDrawCallback(ImageStabiliserNLK *i_pImageStabiliserNLK) :
+        PostNLKIteration_CameraPostDrawCallback(ImageStabiliserMultiLK *i_pImageStabiliserNLK) :
             m_pImageStabiliserNLK(i_pImageStabiliserNLK)
         {}
 
@@ -46,9 +47,9 @@ public:
 
             const unsigned long lkLevelBorder=(m_pImageStabiliserNLK->m_ulNumGPUHVectorReductionLevels>0) ?
                         0 :
-                        (flitr::ImageStabiliserNLK::m_ulLKBorder>>lKResultPyrLevel);
+                        (flitr::ImageStabiliserMultiLK::m_ulLKBorder>>lKResultPyrLevel);
 
-            for (int i=0; i<(int)m_pImageStabiliserNLK->N_; i++)
+            for (int i=0; i<(int)m_pImageStabiliserNLK->m_numPyramids_; i++)
             {
                 const osg::Image *lKResultImage=(m_pImageStabiliserNLK->m_ulNumGPUHVectorReductionLevels>0) ?
                             m_pImageStabiliserNLK->getLKReducedResultLevel(i, std::min<unsigned long>(lKResultPyrLevel+m_pImageStabiliserNLK->m_ulNumGPUHVectorReductionLevels, m_pImageStabiliserNLK->m_ulMaxGPUHVectorReductionLevels-1)) :
@@ -65,13 +66,13 @@ public:
 
                 if (((m_pImageStabiliserNLK->m_ulNumLKIterations-1)%NEWTON_RAPHSON_ITERATIONS)==0)
                 {//New level which is at twice the resolution of the previous level.
-                    //hEstimate not multiplied by two for consecutive iterations.
+                    //hEstimate not multiplied by two for consecutive newton-raphson iterations at same level.
                     hEstimate*=2.0;
                 }
 
-                //============================
-                //==== Calculate h-vector ====
-                //============================
+                //==============================================
+                //==== CPU Reduce: Calculate h-vector delta ====
+                //==============================================
                 {//Note: CPU reduction ONLY. Sum lKResultImage!
                     //      Ignore border of LUCAS_KANADE_BORDER pixels to improve stability.
                     float *data=(float *)lKResultImage->data();
@@ -91,81 +92,59 @@ public:
                 }
 
                 osg::Vec2d deltaHEstimate=(hDenominator!=0.0) ? (-hNumerator/hDenominator) : osg::Vec2d(0.0, 0.0);
-                //============================
-                //============================
-                //============================
+                //==============================================
+                //==============================================
+                //==============================================
 
                 hEstimate+=deltaHEstimate;
 
                 m_pImageStabiliserNLK->m_rpHEstimateUniform[i]->set(hEstimate);
 
-                if (m_pImageStabiliserNLK->m_ulNumLKIterations>=(m_pImageStabiliserNLK->m_pCurrentNPyramid->getNumLevels()*NEWTON_RAPHSON_ITERATIONS))
-                {//LK is done!
-                    m_pImageStabiliserNLK->m_ulNumLKIterations=0;
-
-                    m_pImageStabiliserNLK->m_h[i]=hEstimate;
-
-                    if (m_pImageStabiliserNLK->m_ulFrameNumber>=2)
-                    {
-                        osg::Matrixd deltaTransform=m_pImageStabiliserNLK->getDeltaTransformationMatrix();
-
-                        for (int i=0; i<(int)(m_pImageStabiliserNLK->filterPairs_.size()); i++)
-                        {
-
-                            m_pImageStabiliserNLK->filterPairs_[i].first=m_pImageStabiliserNLK->filterPairs_[i].first*(1.0f-m_pImageStabiliserNLK->filterPairs_[i].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(m_pImageStabiliserNLK->filterPairs_[i].second);
-
-                            if (i==0)
-                            {//Update output quad's transform with the delta transform.
-                                osg::Matrixd quadDeltaTransform=deltaTransform;
-                                quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-m_pImageStabiliserNLK->filterPairs_[i].first._v[0];
-                                quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-m_pImageStabiliserNLK->filterPairs_[i].first._v[1];
-
-                                osg::Matrixd quadTransform=m_pImageStabiliserNLK->m_rpQuadMatrixTransform->getMatrix();
-                                quadTransform=quadDeltaTransform*quadTransform;
-                                m_pImageStabiliserNLK->m_rpQuadMatrixTransform->setMatrix(quadTransform);
-                                m_pImageStabiliserNLK->offsetQuadPositionByMatrix(&quadTransform,
-                                                                                  m_pImageStabiliserNLK->m_pInputTexture->getTextureWidth(),
-                                                                                  m_pImageStabiliserNLK->m_pInputTexture->getTextureHeight());
-                            }
-                        }
-                    }
-
-                }
+                m_pImageStabiliserNLK->m_h[i]=hEstimate;
             }
 
+
+
+            if (m_pImageStabiliserNLK->m_ulNumLKIterations>=(m_pImageStabiliserNLK->m_pCurrentNPyramid->getNumLevels()*NEWTON_RAPHSON_ITERATIONS))
+            {//LK iterations and h-vector reductions are done so update the quad transform.
+                m_pImageStabiliserNLK->m_ulNumLKIterations=0;
+
+                //==============================================
+                //====== Do the quad transform update ==========
+                //==============================================
+                if (m_pImageStabiliserNLK->m_ulFrameNumber>=2)
+                {
+                    m_pImageStabiliserNLK->updateOutputQuadTransform();
+                }
+                //==============================================
+                //==============================================
+                //==============================================
+            }
         }
 
     private:
-        ImageStabiliserNLK *m_pImageStabiliserNLK;
+        ImageStabiliserMultiLK *m_pImageStabiliserNLK;
     };
 
 
     //==========================================================================
-    //===================================================
-    //Class: PostBiPyramidRebuiltCallback
-    // Use case 1 - Called from imageBiPyramid every time the Group Node created by createDerivLevel(...)
-    //              has been rendered. This callback's pointer is passed as a parameter to createDerivLevel(...)!
-    //              If the pointer passed to createDerivLevel(...) is zero then the callback will not be called.
-    //             * The PostPyramidRebuiltCallback may be used if the Image pyramid is built on the GPU, but the
-    //               next step of the algo is done on the CPU. Not required if the next step is done on the GPU.
-    //===================================================
     class PostNPyramidRebuiltCallback : public PostRenderCallback
-    {//Used if Pyramid built on GPU, but rest of algorithm run on CPU.
+    {//Called if Pyramid built on GPU, but rest of algorithm run on CPU.
     public:
-        PostNPyramidRebuiltCallback(ImageStabiliserNLK *i_pImageStabiliserNLK) :
+        PostNPyramidRebuiltCallback(ImageStabiliserMultiLK *i_pImageStabiliserNLK) :
             m_pImageStabiliserNLK(i_pImageStabiliserNLK)
         {}
 
         virtual void callback();
 
     private:
-        ImageStabiliserNLK *m_pImageStabiliserNLK;
+        ImageStabiliserMultiLK *m_pImageStabiliserNLK;
     };
     //==========================================================================
 
 
 
-    ImageStabiliserNLK(const osg::TextureRectangle *i_pInputTexture,
+    ImageStabiliserMultiLK(const osg::TextureRectangle *i_pInputTexture,
                        std::vector< std::pair<int,int> > &i_ROIVec,
                        unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
                        bool i_bIndicateROI,
@@ -186,13 +165,11 @@ public:
     {
         return m_lkResultImagePyramid[i_ulPyramidNum][i_ulLevel].get();
     }
+
     inline const osg::Image* getLKReducedResultLevel(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
     {
         return m_lkReducedResultImagePyramid[i_ulPyramidNum][i_ulLevel].get();
     }
-
-
-
 
     inline void setAutoSwapCurrentPrevious(bool i_bValue)
     {
@@ -224,7 +201,7 @@ public:
             swapCurrentPrevious();
         }
 
-        for (int i=0; i<(int)N_; i++)
+        for (int i=0; i<(int)m_numPyramids_; i++)
         {
             m_h[i]=osg::Vec2(0.0, 0.0);
 
@@ -238,7 +215,7 @@ public:
             m_pPreviousNPyramid->setRebuildSwitchOff();
         } else
         {
-            m_pCurrentNPyramid->rebuildBiPyramidCPU();
+            m_pCurrentNPyramid->rebuildNPyramidCPU();
             m_postNPyramidRebuiltCallback.callback();
         }
 
@@ -301,7 +278,7 @@ public:
 
 public:
     std::vector< std::pair<int,int> > m_ROIVec;
-    unsigned long N_;
+    unsigned long m_numPyramids_;
 
     const unsigned long m_ulROIWidth, m_ulROIHeight;
 
@@ -359,6 +336,30 @@ private:
     unsigned long m_ulFrameNumber;
 
     void offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight);
+
+    void updateOutputQuadTransform()
+    {
+        osg::Matrixd deltaTransform=getDeltaTransformationMatrix();
+
+        for (int filterNum=0; filterNum<(int)(filterPairs_.size()); filterNum++)
+        {
+            filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(filterPairs_[filterNum].second);
+
+            if (filterNum==0)
+            {//Update output quad's transform with the delta transform.
+                osg::Matrixd quadDeltaTransform=deltaTransform;
+                quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-filterPairs_[filterNum].first._v[0];
+                quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-filterPairs_[filterNum].first._v[1];
+
+                osg::Matrixd quadTransform=m_rpQuadMatrixTransform->getMatrix();
+                quadTransform=quadDeltaTransform*quadTransform;
+                m_rpQuadMatrixTransform->setMatrix(quadTransform);
+                offsetQuadPositionByMatrix(&quadTransform,
+                                                                  m_pInputTexture->getTextureWidth(),
+                                                                  m_pInputTexture->getTextureHeight());
+            }
+        }
+    }
 
     osg::ref_ptr<osg::Geode> createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight);
     osg::Camera *createScreenAlignedCamera(unsigned long i_ulWidth, unsigned long i_ulHeight);

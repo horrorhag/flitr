@@ -151,10 +151,10 @@ SET(LIB_SOURCES
   src/flitr/homography_shader_pass.cpp
   src/flitr/simple_cpu_shader_pass.cpp
 
-  src/flitr/modules/lucas_kanade/ImageNPyramid.cpp
-  src/flitr/modules/lucas_kanade/ImageStabiliserNLK.cpp
-  src/flitr/modules/lucas_kanade/ImageBiPyramid.cpp
-  src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
+  src/flitr/modules/lucas_kanade/ImageMultiPyramid.cpp
+  src/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.cpp
+  #src/flitr/modules/lucas_kanade/ImageBiPyramid.cpp
+  #src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
 
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
@@ -201,10 +201,10 @@ SET(LIB_SOURCES
   include/flitr/homography_shader_pass.h
   include/flitr/simple_cpu_shader_pass.h
 
-  include/flitr/modules/lucas_kanade/ImageNPyramid.h
-  include/flitr/modules/lucas_kanade/ImageStabiliserNLK.h
-  include/flitr/modules/lucas_kanade/ImageBiPyramid.h
-  include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
+  include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
+  include/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h
+  #include/flitr/modules/lucas_kanade/ImageBiPyramid.h
+  #include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h

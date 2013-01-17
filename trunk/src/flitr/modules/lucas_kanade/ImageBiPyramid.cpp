@@ -3,7 +3,7 @@
 #include <flitr/modules/lucas_kanade/ImageBiPyramid.h>
 
 
-double flitr::ImageBiPyramid::logbase(double a, double base)
+double flitr::ImageBiPyramid::logbase(const double a, const double base)
 {
    return log(a) / log(base);
 }
@@ -15,7 +15,7 @@ flitr::ImageBiPyramid::ImageBiPyramid(const osg::TextureRectangle *i_pInputTextu
 	unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
 	bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU) :
 	m_pInputTexture(i_pInputTexture),
-    m_ulNumLevels(0),
+    m_ulNumPyramidLevels(0),
     m_imageGausPyramid(0), m_textureGausPyramid(0),
     m_imageGausXPyramid(0), m_textureGausXPyramid(0),
     m_derivImagePyramid(0), m_derivTexturePyramid(0),
@@ -45,40 +45,39 @@ flitr::ImageBiPyramid::ImageBiPyramid(const osg::TextureRectangle *i_pInputTextu
 	unsigned long yPow2=pow(2.0, (double)numLevelsY)+0.5;
 
 
-	//Note: The lowest level's resolution depends on largest motion detectable on the spatial frequencies in the image.
-	//      Maybe the gaussian sd can be dynamic OR the lowest res is automatically chosen based on the spatial frequencies present.
-	//Note!!: Don't make the subtracted levels smaller than 3. A LUCAS_KANADE_BORDER pixel border is used to improve the robustness of LK.
-	m_ulNumLevels=numResolutionLevels-3;//Lowest resolution is 16x16. Smaller low resolution seems to be less stable.
+
+    m_ulNumPyramidLevels=numResolutionLevels-3;//Lowest resolution is 16x16. Smaller low resolution seems to be less stable.
 
 
-	printf("ImagePyramid::() : xDim=%d(%d) yDim=%d(%d) numLevels=%d\n", (int)xPow2, (int)m_ulROIWidth, (int)yPow2, (int)m_ulROIHeight, (int)m_ulNumLevels);
+    printf("ImagePyramid::() : xDim=%d(%d) yDim=%d(%d) numLevels=%d\n", (int)xPow2, (int)m_ulROIWidth, (int)yPow2, (int)m_ulROIHeight, (int)m_ulNumPyramidLevels);
 
 	m_imageGausPyramid=new osg::ref_ptr<osg::Image>*[2];
-		m_imageGausPyramid[0]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
-		m_imageGausPyramid[1]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
+        m_imageGausPyramid[0]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
+        m_imageGausPyramid[1]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
 	m_textureGausPyramid=new osg::ref_ptr<osg::TextureRectangle>*[2];
-		m_textureGausPyramid[0]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
-		m_textureGausPyramid[1]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
+        m_textureGausPyramid[0]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
+        m_textureGausPyramid[1]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
 
 	m_imageGausXPyramid=new osg::ref_ptr<osg::Image>*[2];
-		m_imageGausXPyramid[0]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
-		m_imageGausXPyramid[1]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
+        m_imageGausXPyramid[0]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
+        m_imageGausXPyramid[1]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
 	m_textureGausXPyramid=new osg::ref_ptr<osg::TextureRectangle>*[2];
-		m_textureGausXPyramid[0]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
-		m_textureGausXPyramid[1]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
+        m_textureGausXPyramid[0]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
+        m_textureGausXPyramid[1]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
 
 	m_derivImagePyramid=new osg::ref_ptr<osg::Image>*[2];
-		m_derivImagePyramid[0]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
-		m_derivImagePyramid[1]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
+        m_derivImagePyramid[0]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
+        m_derivImagePyramid[1]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
 	m_derivTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[2];
-		m_derivTexturePyramid[0]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
-		m_derivTexturePyramid[1]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
+        m_derivTexturePyramid[0]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
+        m_derivTexturePyramid[1]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
 
-	m_imagePyramidWidth_=new int[m_ulNumLevels];
-	m_imagePyramidHeight_=new int[m_ulNumLevels];
+    //Width and height arrays for quick reference of pyramid dimensions at each level.
+    m_imagePyramidWidth_=new int[m_ulNumPyramidLevels];
+    m_imagePyramidHeight_=new int[m_ulNumPyramidLevels];
 
 	unsigned long level=0;
-	for (level=0; level<m_ulNumLevels; level++)
+    for (level=0; level<m_ulNumPyramidLevels; level++)
 	{
 		//=== Contains gaussian filtered images ===
 		m_imageGausPyramid[0][level]=new osg::Image;
@@ -366,7 +365,7 @@ osg::Camera *flitr::ImageBiPyramid::createScreenAlignedCamera(unsigned long i_ul
 	return theCamera;
 }
 
-//TODO!!!: Still some errors at boundaries of pyramid. Either in deriv or gaus filt calculations!!! 
+//TODO!!!: Still some errors/inaccurcies at boundaries of pyramid. Either in deriv or gaus filt calculations!!!
 //         Currently solved by ignoring border of LUCAS_KANADE_BORDER pixels when calculating weighted h-vector from per-pixel h-vectors!
 osg::Node* flitr::ImageBiPyramid::createDerivLevel(unsigned long i_ulLevel, unsigned long i_ulWidth, unsigned long i_ulHeight, bool i_bDoPostPyramidRebuiltCallback)
 {
@@ -968,7 +967,7 @@ bool flitr::ImageBiPyramid::init(osg::Group *root_node, PostRenderCallback *i_pP
 			m_rpRebuildSwitch=new osg::Switch();
 
 //			unsigned long level=0;
-			for (unsigned long level=0; level<m_ulNumLevels; level++)//NB!!!! - The level/pass that does the postPyramidRebuilt callback must be rendered LAST!!!
+            for (unsigned long level=0; level<m_ulNumPyramidLevels; level++)//NB!!!! - The level/pass that does the postPyramidRebuilt callback must be rendered LAST!!!
 			{
 #define SEPERATED_XY_GAUSSIAN_CONVOLUTIONS
 //Note:Seperated gaussian results in a 5% performance increase on laptop.
@@ -991,7 +990,7 @@ bool flitr::ImageBiPyramid::init(osg::Group *root_node, PostRenderCallback *i_pP
 				}
 
 				//Note: See comment on callback at end of below line!
-				m_rpRebuildSwitch->addChild(createDerivLevel(level, width>>level, height>>level, level==(m_ulNumLevels-1) ));//Use this callback to insert CPU step directly after GPU pyramid rebuild.
+                m_rpRebuildSwitch->addChild(createDerivLevel(level, width>>level, height>>level, level==(m_ulNumPyramidLevels-1) ));//Use this callback to insert CPU step directly after GPU pyramid rebuild.
 			}
 
 			m_rpRebuildSwitch->setAllChildrenOff();

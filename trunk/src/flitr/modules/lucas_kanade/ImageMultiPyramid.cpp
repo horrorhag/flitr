@@ -1,8 +1,8 @@
 #include <cstdio>
 
-#include <flitr/modules/lucas_kanade/ImageNPyramid.h>
+#include <flitr/modules/lucas_kanade/ImageMultiPyramid.h>
 
-double flitr::ImageNPyramid::logbase(double a, double base)
+double flitr::ImageNPyramid::logbase(const double a, const double base)
 {
     return log(a) / log(base);
 }
@@ -13,7 +13,7 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
                                     unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
                                     bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU) :
     m_pInputTexture(i_pInputTexture),
-    m_ulNumLevels(0),
+    m_ulNumPyramidLevels(0),
     m_imageGausPyramid(0), m_textureGausPyramid(0),
     m_imageGausXPyramid(0), m_textureGausXPyramid(0),
     m_derivImagePyramid(0), m_derivTexturePyramid(0),
@@ -25,55 +25,58 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
     m_bReadOutputBackToCPU(i_bReadOutputBackToCPU),
     m_rpRebuildSwitch(0)
 {
-    N_=i_ROIVec.size();
+    m_numPyramids_=i_ROIVec.size();
     m_ROIVec=i_ROIVec;
 
     unsigned long numLevelsX=logbase(m_ulROIWidth, 2.0);
     unsigned long numLevelsY=logbase(m_ulROIHeight, 2.0);
     unsigned long numResolutionLevels=std::min<unsigned long>(numLevelsX, numLevelsY);
 
-    //Note: The lowest level's resolution depends on largest motion detectable on the spatial frequencies in the image.
-    //      Maybe the gaussian sd can be dynamic OR the lowest res is automatically chosen based on the spatial frequencies present.
-    //Note!!: Don't make the subtracted levels smaller than 3. A LUCAS_KANADE_BORDER pixel border is used to improve the robustness of LK.
-    m_ulNumLevels=numResolutionLevels-3;//Lowest resolution is 16x16. Smaller low resolution seems to be less stable.
+
+    m_ulNumPyramidLevels=numResolutionLevels-3;//Lowest resolution is 16x16. Smaller low resolution seems to be less stable.
 
 
     printf("ImagePyramid::() : xDim=%d(%d) yDim=%d(%d) numLevels=%d\n",
            (int)(pow(2.0, (double)numLevelsX)+0.5),
            (int)m_ulROIWidth,
            (int)(pow(2.0, (double)numLevelsY)+0.5), (int)
-           m_ulROIHeight, (int)m_ulNumLevels);
+           m_ulROIHeight, (int)m_ulNumPyramidLevels);
 
-    m_imageGausPyramid=new osg::ref_ptr<osg::Image>*[N_];
-    m_textureGausPyramid=new osg::ref_ptr<osg::TextureRectangle>*[N_];
-    m_imageGausXPyramid=new osg::ref_ptr<osg::Image>*[N_];
-    m_textureGausXPyramid=new osg::ref_ptr<osg::TextureRectangle>*[N_];
-    m_derivImagePyramid=new osg::ref_ptr<osg::Image>*[N_];
-    m_derivTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[N_];
 
-    for (int i=0; i<N_; i++)
+    m_imageGausPyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
+    m_textureGausPyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_imageGausXPyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
+    m_textureGausXPyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_derivImagePyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
+    m_derivTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+
+
+    //Allocate image and texture pointers for each pyramid.
+    for (int i=0; i<m_numPyramids_; i++)
     {
-        m_imageGausPyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
-        m_textureGausPyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
+        m_imageGausPyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
+        m_textureGausPyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
 
-        m_imageGausXPyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
-        m_textureGausXPyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
+        m_imageGausXPyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
+        m_textureGausXPyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
 
-        m_derivImagePyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumLevels];
-        m_derivTexturePyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumLevels];
+        m_derivImagePyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
+        m_derivTexturePyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
     }
 
-    m_imagePyramidWidth_=new int[m_ulNumLevels];
-    m_imagePyramidHeight_=new int[m_ulNumLevels];
+    //Width and height arrays for quick reference of pyramid dimensions at each level.
+    m_imagePyramidWidth_=new int[m_ulNumPyramidLevels];
+    m_imagePyramidHeight_=new int[m_ulNumPyramidLevels];
 
-    for (int i=0; i<N_; i++)
+
+    for (int i=0; i<m_numPyramids_; i++)
     {
-        //xPow2 and yPow2 are modified within the level for-loop!
+        //Note: xPow2 and yPow2 are modified within the 'level' for-loop below!
         unsigned long xPow2=pow(2.0, (double)numLevelsX)+0.5;
         unsigned long yPow2=pow(2.0, (double)numLevelsY)+0.5;
 
         unsigned long level=0;
-        for (level=0; level<m_ulNumLevels; level++)
+        for (level=0; level<m_ulNumPyramidLevels; level++)
         {
             //=== Contains gaussian filtered images ===
             m_imageGausPyramid[i][level]=new osg::Image;
@@ -146,7 +149,7 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
             //===
 
 
-
+            //Pyramid dimensions set here for convenience, but are the same for all pyramids.
             m_imagePyramidWidth_[level]=xPow2;
             m_imagePyramidHeight_[level]=yPow2;
 
@@ -302,7 +305,7 @@ osg::Camera *flitr::ImageNPyramid::createScreenAlignedCamera(unsigned long i_ulW
     return theCamera;
 }
 
-//TODO!!!: Still some errors at boundaries of pyramid. Either in deriv or gaus filt calculations!!! 
+//TODO!!!: Still some errors/inaccurcies at boundaries of pyramid. Either in deriv or gaus filt calculations!!!
 //         Currently solved by ignoring border of LUCAS_KANADE_BORDER pixels when calculating weighted h-vector from per-pixel h-vectors!
 osg::Node* flitr::ImageNPyramid::createDerivLevel(unsigned long i_ulLevel, unsigned long i_ulWidth, unsigned long i_ulHeight, bool i_bDoPostPyramidRebuiltCallback)
 {
@@ -310,7 +313,7 @@ osg::Node* flitr::ImageNPyramid::createDerivLevel(unsigned long i_ulLevel, unsig
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         //************************************
         //set up state set with input textures
@@ -330,43 +333,53 @@ osg::Node* flitr::ImageNPyramid::createDerivLevel(unsigned long i_ulLevel, unsig
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+
+    std::stringstream ss;
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss <<  "uniform sampler2DRect imageTexture_"<<i<<";\n";
+    }
+
+    ss <<  "void main(void)"
+           "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss <<  "  float centrePixel_"<<i<<"=texture2DRect(imageTexture_"<<i<<", gl_TexCoord[0].xy).r;\n"
+               "  float leftPixel_"<<i<<"=texture2DRect(imageTexture_"<<i<<", gl_TexCoord[0].xy-vec2(1.0, 0.0)).r;\n"
+               "  float leftDeriv_"<<i<<"=(centrePixel_"<<i<<"-leftPixel_"<<i<<");\n"
+
+               "  float rightPixel_"<<i<<"=texture2DRect(imageTexture_"<<i<<", gl_TexCoord[0].xy+vec2(1.0, 0.0)).r;\n"
+               "  float rightDeriv_"<<i<<"=(rightPixel_"<<i<<"-centrePixel_"<<i<<");\n"
+               "  float dX_"<<i<<"=(leftDeriv_"<<i<<"+rightDeriv_"<<i<<")*0.5;\n"
+
+               "  float topPixel_"<<i<<"=texture2DRect(imageTexture_"<<i<<", gl_TexCoord[0].xy-vec2(0.0, 1.0)).r;\n"
+               "  float topDeriv_"<<i<<"=(centrePixel_"<<i<<"-topPixel_"<<i<<");\n"
+
+               "  float bottomPixel_"<<i<<"=texture2DRect(imageTexture_"<<i<<", gl_TexCoord[0].xy+vec2(0.0, 1.0)).r;\n"
+               "  float bottomDeriv_"<<i<<"=(bottomPixel_"<<i<<"-centrePixel_"<<i<<");\n"
+               "  float dY_"<<i<<"=(topDeriv_"<<i<<"+bottomDeriv_"<<i<<")*0.5;\n"
+
+
+               "  gl_FragData["<<i<<"].r=dX_"<<i<<";\n"
+               "  gl_FragData["<<i<<"].g=dY_"<<i<<";\n"
+               "  gl_FragData["<<i<<"].b=dX_"<<i<<"*dX_"<<i<<"+dY_"<<i<<"*dY_"<<i<<";\n"
+               "  gl_FragData["<<i<<"].a=1.0;\n";
+    }
+    ss <<  "}\n";
+
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createDerivLevel");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect imageTexture_0;\n"
-
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float centrePixel_0=texture2DRect(imageTexture_0, gl_TexCoord[0].xy).r;\n"
-                                             "  float leftPixel_0=texture2DRect(imageTexture_0, gl_TexCoord[0].xy-vec2(1.0, 0.0)).r;\n"
-                                             "  float leftDeriv_0=(centrePixel_0-leftPixel_0);\n"
-
-                                             "  float rightPixel_0=texture2DRect(imageTexture_0, gl_TexCoord[0].xy+vec2(1.0, 0.0)).r;\n"
-                                             "  float rightDeriv_0=(rightPixel_0-centrePixel_0);\n"
-                                             "  float dX_0=(leftDeriv_0+rightDeriv_0)*0.5;\n"
-
-                                             "  float topPixel_0=texture2DRect(imageTexture_0, gl_TexCoord[0].xy-vec2(0.0, 1.0)).r;\n"
-                                             "  float topDeriv_0=(centrePixel_0-topPixel_0);\n"
-
-                                             "  float bottomPixel_0=texture2DRect(imageTexture_0, gl_TexCoord[0].xy+vec2(0.0, 1.0)).r;\n"
-                                             "  float bottomDeriv_0=(bottomPixel_0-centrePixel_0);\n"
-                                             "  float dY_0=(topDeriv_0+bottomDeriv_0)*0.5;\n"
-
-
-                                             "  gl_FragData[0].r=dX_0;\n"
-                                             "  gl_FragData[0].g=dY_0;\n"
-                                             "  gl_FragData[0].b=dX_0*dX_0+dY_0*dY_0;\n"
-                                             "  gl_FragData[0].a=1.0;\n"
-
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::Camera *theCamera=createScreenAlignedCamera(i_ulWidth, i_ulHeight);
     theCamera->addChild(geode.get());
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_derivTexturePyramid[i][i_ulLevel].get());
 
@@ -401,7 +414,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel0(unsigned long i_ulWidth, u
     geomss->addUniform(new osg::Uniform("inputTexture", 0));
     geomss->addUniform(new osg::Uniform("gausDistSqTexture", 1));
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         char uniformName[256];
         sprintf(uniformName, "ROI_%d" ,i);
@@ -411,45 +424,60 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel0(unsigned long i_ulWidth, u
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    ss << "uniform sampler2DRect inputTexture;\n"
+          "uniform sampler2DRect gausDistSqTexture;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "uniform vec2 ROI_"<<i<<";\n";
+    }
+
+    ss << "void main(void)"
+          "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  float gSum_"<<i<<"=0.0;\n";
+    }
+
+    ss << "  float gSumReference=0.0;\n"
+
+          "  for (float y=-2.0; y<=2.0; y+=1.0)\n"
+          "  {\n"
+          "    float ySq=y*y;\n"
+          "    for (float x=-2.0; x<=2.0; x+=1.0)\n"
+          "    {\n"
+          "      float radiusSq=x*x+ySq;\n"
+          "      float gausDistSqIndex=radiusSq;\n"
+          "      float gausDistSqVal=texture2DRect(gausDistSqTexture, vec2(gausDistSqIndex, 0.5)).r;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "      gSum_"<<i<<"+=texture2DRect(inputTexture, gl_TexCoord[0].xy+vec2(x,y)+ROI_"<<i<<").r*255.0*gausDistSqVal;\n";
+    }
+
+    ss << "      gSumReference+=gausDistSqVal;\n"
+          "    }\n"
+          "  }\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  gl_FragData["<<i<<"].r=gSum_"<<i<<"/gSumReference;\n";
+    }
+
+    ss << "}\n";
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createGausFiltLevel0");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect inputTexture;\n"
-                                             "uniform sampler2DRect gausDistSqTexture;\n"
-
-                                             "uniform vec2 ROI_0;\n"
-
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float gSum_0=0.0;\n"
-
-                                             "  float gSumReference=0.0;\n"
-
-                                             "  for (float y=-2.0; y<=2.0; y+=1.0)\n"
-                                             "  {\n"
-                                             "    float ySq=y*y;\n"
-                                             "    for (float x=-2.0; x<=2.0; x+=1.0)\n"
-                                             "    {\n"
-                                             "      float radiusSq=x*x+ySq;\n"
-                                             "      float gausDistSqIndex=radiusSq;\n"
-                                             "      float gausDistSqVal=texture2DRect(gausDistSqTexture, vec2(gausDistSqIndex, 0.5)).r;\n"
-
-                                             "      gSum_0+=texture2DRect(inputTexture, gl_TexCoord[0].xy+vec2(x,y)+ROI_0).r*255.0*gausDistSqVal;\n"
-
-                                             "      gSumReference+=gausDistSqVal;\n"
-                                             "    }\n"
-                                             "  }\n"
-
-                                             "  gl_FragData[0].r=gSum_0/gSumReference;\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::Camera *theCamera=createScreenAlignedCamera(i_ulWidth, i_ulHeight);
     theCamera->addChild(geode.get());
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_textureGausPyramid[i][0].get());
 
@@ -483,7 +511,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel0(unsigned long i_ulWidth, 
     geomss->addUniform(new osg::Uniform("inputTexture", 0));
     geomss->addUniform(new osg::Uniform("gausDistSqTexture", 1));
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         char uniformName[256];
         sprintf(uniformName, "ROI_%d" ,i);
@@ -493,40 +521,56 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel0(unsigned long i_ulWidth, 
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    ss << "uniform sampler2DRect inputTexture;\n"
+          "uniform sampler2DRect gausDistSqTexture;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "uniform vec2 ROI_"<<i<<";\n";
+    }
+
+    ss << "void main(void)"
+          "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  float gSum_"<<i<<"=0.0;\n";
+    }
+
+    ss << "  float gSumReference=0.0;\n"
+
+          "    for (float x=-2.0; x<=2.0; x+=1.0)\n"
+          "    {\n"
+          "      float radiusSq=x*x;\n"
+          "      float gausDistSqIndex=radiusSq;\n"
+          "      float gausDistSqVal=texture2DRect(gausDistSqTexture, vec2(gausDistSqIndex, 0.5)).r;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "      gSum_"<<i<<"+=texture2DRect(inputTexture, gl_TexCoord[0].xy+vec2(x,0)+ROI_"<<i<<").r*255.0*gausDistSqVal;\n";
+    }
+
+    ss << "      gSumReference+=gausDistSqVal;\n"
+          "    }\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  gl_FragData["<<i<<"].r=gSum_"<<i<<"/gSumReference;\n";
+    }
+
+    ss << "}\n";
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createGausXFiltLevel0");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect inputTexture;\n"
-                                             "uniform sampler2DRect gausDistSqTexture;\n"
-
-                                             "uniform vec2 ROI_0;\n"
-
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float gSum_0=0.0;\n"
-                                             "  float gSumReference=0.0;\n"
-
-                                             "    for (float x=-2.0; x<=2.0; x+=1.0)\n"
-                                             "    {\n"
-                                             "      float radiusSq=x*x;\n"
-                                             "      float gausDistSqIndex=radiusSq;\n"
-                                             "      float gausDistSqVal=texture2DRect(gausDistSqTexture, vec2(gausDistSqIndex, 0.5)).r;\n"
-
-                                             "      gSum_0+=texture2DRect(inputTexture, gl_TexCoord[0].xy+vec2(x,0)+ROI_0).r*255.0*gausDistSqVal;\n"
-
-                                             "      gSumReference+=gausDistSqVal;\n"
-                                             "    }\n"
-
-                                             "  gl_FragData[0].r=gSum_0/gSumReference;\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::Camera *theCamera=createScreenAlignedCamera(i_ulWidth, i_ulHeight);
     theCamera->addChild(geode.get());
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_textureGausXPyramid[i][0].get());
 
@@ -548,7 +592,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel0(unsigned long i_ulWidth, 
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         geomss->setTextureAttributeAndModes(i, (osg::TextureRectangle *)m_textureGausXPyramid[i][0].get(), osg::StateAttribute::ON);
         geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
@@ -559,47 +603,64 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel0(unsigned long i_ulWidth, 
     }
 
 
-    geomss->setTextureAttributeAndModes(N_, m_gausDistSqTexture.get(), osg::StateAttribute::ON);
-    geomss->setTextureAttribute(N_, new osg::TexEnv(osg::TexEnv::DECAL));
-    geomss->addUniform(new osg::Uniform("gausDistSqTexture", (int)N_));
+    geomss->setTextureAttributeAndModes(m_numPyramids_, m_gausDistSqTexture.get(), osg::StateAttribute::ON);
+    geomss->setTextureAttribute(m_numPyramids_, new osg::TexEnv(osg::TexEnv::DECAL));
+    geomss->addUniform(new osg::Uniform("gausDistSqTexture", (int)m_numPyramids_));
 
 
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
+    }
+
+    ss << "uniform sampler2DRect gausDistSqTexture;\n"
+
+          "void main(void)"
+          "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  float gSum_"<<i<<"=0.0;\n";
+    }
+
+    ss << "  float gSumReference=0.0;\n"
+
+          "    for (float y=-2.0; y<=2.0; y+=1.0)\n"
+          "    {\n"
+          "      float radiusSq=y*y;\n"
+          "      float gausDistSqIndex=radiusSq;\n"
+          "      float gausDistSqVal=texture2DRect(gausDistSqTexture, vec2(gausDistSqIndex, 0.5)).r;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "      gSum_"<<i<<"+=texture2DRect(inputTexture_"<<i<<", gl_TexCoord[0].xy+vec2(0,y)).r*gausDistSqVal;\n";
+    }
+
+    ss << "      gSumReference+=gausDistSqVal;\n"
+          "    }\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  gl_FragData["<<i<<"].r=gSum_"<<i<<"/gSumReference;\n";
+    }
+
+    ss << "}\n";
+
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createGausYFiltLevel0");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect inputTexture_0;\n"
-
-                                             "uniform sampler2DRect gausDistSqTexture;\n"
-
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float gSum_0=0.0;\n"
-                                             "  float gSumReference=0.0;\n"
-
-                                             "    for (float y=-2.0; y<=2.0; y+=1.0)\n"
-                                             "    {\n"
-                                             "      float radiusSq=y*y;\n"
-                                             "      float gausDistSqIndex=radiusSq;\n"
-                                             "      float gausDistSqVal=texture2DRect(gausDistSqTexture, vec2(gausDistSqIndex, 0.5)).r;\n"
-
-                                             "      gSum_0+=texture2DRect(inputTexture_0, gl_TexCoord[0].xy+vec2(0,y)).r*gausDistSqVal;\n"
-
-                                             "      gSumReference+=gausDistSqVal;\n"
-                                             "    }\n"
-
-                                             "  gl_FragData[0].r=gSum_0/gSumReference;\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::Camera *theCamera=createScreenAlignedCamera(i_ulWidth, i_ulHeight);
     theCamera->addChild(geode.get());
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_textureGausPyramid[i][0].get());
 
@@ -623,7 +684,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel1toN(unsigned long i_ulLevel
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         geomss->setTextureAttributeAndModes(i, this->m_textureGausPyramid[i][i_ulLevel-1].get(), osg::StateAttribute::ON);
         //	geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
@@ -634,42 +695,59 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel1toN(unsigned long i_ulLevel
         geomss->addUniform(new osg::Uniform(uniformName, i));
     }
 
-    geomss->setTextureAttributeAndModes(N_, m_gausDistSqH2LTexture.get(), osg::StateAttribute::ON);
+    geomss->setTextureAttributeAndModes(m_numPyramids_, m_gausDistSqH2LTexture.get(), osg::StateAttribute::ON);
     //	geomss->setTextureAttribute(N_, new osg::TexEnv(osg::TexEnv::DECAL));
 
-    geomss->addUniform(new osg::Uniform("gausDistSqH2LTexture", (int)N_));
+    geomss->addUniform(new osg::Uniform("gausDistSqH2LTexture", (int)m_numPyramids_));
 
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
+    }
+
+    ss << "uniform sampler2DRect gausDistSqH2LTexture;\n"
+          "void main(void)"
+          "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  float gSum_"<<i<<"=0.0;\n";
+    }
+
+    ss << "  float gSumReference=0.0;\n"
+
+          "  for (float y=-2.0; y<=3.0; y+=1.0)\n"
+          "  {\n"
+          "    float ySq=(y-0.5)*(y-0.5);\n"
+          "    for (float x=-2.0; x<=3.0; x+=1.0)\n"
+          "    {\n"
+          "      float radiusSq=(x-0.5)*(x-0.5)+ySq;\n"
+          "      float gausDistSqH2LIndex=radiusSq;\n"
+          "      float gausDistSqH2LVal=texture2DRect(gausDistSqH2LTexture, vec2(gausDistSqH2LIndex, 0.5)).r;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "      gSum_"<<i<<"+=texture2DRect(inputTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.25, 0.25))*2.0+vec2(x,y)).r*gausDistSqH2LVal;\n";//Texture coords are: 0.5, 1.5, 2.5, etc. -0.25 is to assure that texCoord*2.0 is within correct pixel.
+    }
+
+    ss << "      gSumReference+=gausDistSqH2LVal;\n"
+          "    }\n"
+          "  }\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+        ss << "  gl_FragData["<<i<<"].r=gSum_"<<i<<"/gSumReference;\n";
+    }
+
+    ss << "}\n";
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createGausFiltLevel1toN");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect inputTexture_0;\n"
-
-                                             "uniform sampler2DRect gausDistSqH2LTexture;\n"
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float gSum_0=0.0;\n"
-                                             "  float gSumReference=0.0;\n"
-
-                                             "  for (float y=-2.0; y<=3.0; y+=1.0)\n"
-                                             "  {\n"
-                                             "    float ySq=(y-0.5)*(y-0.5);\n"
-                                             "    for (float x=-2.0; x<=3.0; x+=1.0)\n"
-                                             "    {\n"
-                                             "      float radiusSq=(x-0.5)*(x-0.5)+ySq;\n"
-                                             "      float gausDistSqH2LIndex=radiusSq;\n"
-                                             "      float gausDistSqH2LVal=texture2DRect(gausDistSqH2LTexture, vec2(gausDistSqH2LIndex, 0.5)).r;\n"
-
-                                             "      gSum_0+=texture2DRect(inputTexture_0, (gl_TexCoord[0].xy-vec2(0.25, 0.25))*2.0+vec2(x,y)).r*gausDistSqH2LVal;\n"//Texture coords are: 0.5, 1.5, 2.5, etc. -0.25 is to assure that texCoord*2.0 is within correct pixel.
-                                             "      gSumReference+=gausDistSqH2LVal;\n"
-                                             "    }\n"
-                                             "  }\n"
-
-                                             "  gl_FragData[0].r=gSum_0/gSumReference;\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
 
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -678,7 +756,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel1toN(unsigned long i_ulLevel
 
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_textureGausPyramid[i][i_ulLevel].get());
 
@@ -700,7 +778,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel1toN(unsigned long i_ulLeve
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         geomss->setTextureAttributeAndModes(i, this->m_textureGausPyramid[i][i_ulLevel-1].get(), osg::StateAttribute::ON);
         //	geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
@@ -712,38 +790,55 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel1toN(unsigned long i_ulLeve
     }
 
 
-    geomss->setTextureAttributeAndModes(N_, m_gausDistSqH2LTexture.get(), osg::StateAttribute::ON);
+    geomss->setTextureAttributeAndModes(m_numPyramids_, m_gausDistSqH2LTexture.get(), osg::StateAttribute::ON);
     //	geomss->setTextureAttribute(N_, new osg::TexEnv(osg::TexEnv::DECAL));
 
-    geomss->addUniform(new osg::Uniform("gausDistSqH2LTexture", (int)N_));
+    geomss->addUniform(new osg::Uniform("gausDistSqH2LTexture", (int)m_numPyramids_));
 
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
+    }
+
+    ss << "uniform sampler2DRect gausDistSqH2LTexture;\n"
+          "void main(void)"
+          "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "  float gSum_"<<i<<"=0.0;\n";
+    }
+
+    ss << "  float gSumReference=0.0;\n"
+
+          "    for (float x=-2.0; x<=3.0; x+=1.0)\n"
+          "    {\n"
+          "      float radiusSq=(x-0.5)*(x-0.5);\n"
+          "      float gausDistSqH2LIndex=radiusSq;\n"
+          "      float gausDistSqH2LVal=texture2DRect(gausDistSqH2LTexture, vec2(gausDistSqH2LIndex, 0.5)).r;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "      gSum_"<<i<<"+=texture2DRect(inputTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.25, 0.00))*vec2(2.0, 1.0)+vec2(x,0)).r*gausDistSqH2LVal;\n";//Texture coords are: 0.5, 1.5, 2.5, etc. -0.25 is to assure that texCoord*2.0 is within correct pixel.
+    }
+
+    ss << "      gSumReference+=gausDistSqH2LVal;\n"
+          "    }\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "  gl_FragData["<<i<<"].r=gSum_"<<i<<"/gSumReference;\n";
+    }
+
+    ss << "}\n";
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createGausXFiltLevel1toN");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect inputTexture_0;\n"
-
-                                             "uniform sampler2DRect gausDistSqH2LTexture;\n"
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float gSum_0=0.0;\n"
-                                             "  float gSumReference=0.0;\n"
-
-                                             "    for (float x=-2.0; x<=3.0; x+=1.0)\n"
-                                             "    {\n"
-                                             "      float radiusSq=(x-0.5)*(x-0.5);\n"
-                                             "      float gausDistSqH2LIndex=radiusSq;\n"
-                                             "      float gausDistSqH2LVal=texture2DRect(gausDistSqH2LTexture, vec2(gausDistSqH2LIndex, 0.5)).r;\n"
-
-                                             "      gSum_0+=texture2DRect(inputTexture_0, (gl_TexCoord[0].xy-vec2(0.25, 0.00))*vec2(2.0, 1.0)+vec2(x,0)).r*gausDistSqH2LVal;\n"//Texture coords are: 0.5, 1.5, 2.5, etc. -0.25 is to assure that texCoord*2.0 is within correct pixel.
-                                             "      gSumReference+=gausDistSqH2LVal;\n"
-                                             "    }\n"
-
-                                             "  gl_FragData[0].r=gSum_0/gSumReference;\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::Camera *theCamera=createScreenAlignedCamera(i_ulWidth, i_ulHeight);
@@ -751,7 +846,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel1toN(unsigned long i_ulLeve
 
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_textureGausXPyramid[i][i_ulLevel].get());
 
@@ -773,7 +868,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel1toN(unsigned long i_ulLeve
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         geomss->setTextureAttributeAndModes(i, this->m_textureGausXPyramid[i][i_ulLevel].get(), osg::StateAttribute::ON);
         //	geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
@@ -784,38 +879,55 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel1toN(unsigned long i_ulLeve
         geomss->addUniform(new osg::Uniform(uniformName, i));
     }
 
-    geomss->setTextureAttributeAndModes(N_, m_gausDistSqH2LTexture.get(), osg::StateAttribute::ON);
+    geomss->setTextureAttributeAndModes(m_numPyramids_, m_gausDistSqH2LTexture.get(), osg::StateAttribute::ON);
     //	geomss->setTextureAttribute(N_, new osg::TexEnv(osg::TexEnv::DECAL));
 
-    geomss->addUniform(new osg::Uniform("gausDistSqH2LTexture", (int)N_));
+    geomss->addUniform(new osg::Uniform("gausDistSqH2LTexture", (int)m_numPyramids_));
 
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
+    }
+
+    ss << "uniform sampler2DRect gausDistSqH2LTexture;\n"
+          "void main(void)"
+          "{\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "  float gSum_"<<i<<"=0.0;\n";
+    }
+
+    ss << "  float gSumReference=0.0;\n"
+
+          "    for (float y=-2.0; y<=3.0; y+=1.0)\n"
+          "    {\n"
+          "      float radiusSq=(y-0.5)*(y-0.5);\n"
+          "      float gausDistSqH2LIndex=radiusSq;\n"
+          "      float gausDistSqH2LVal=texture2DRect(gausDistSqH2LTexture, vec2(gausDistSqH2LIndex, 0.5)).r;\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "      gSum_"<<i<<"+=texture2DRect(inputTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.00, 0.25))*vec2(1.0, 2.0)+vec2(0,y)).r*gausDistSqH2LVal;\n";//Texture coords are: 0.5, 1.5, 2.5, etc. -0.25 is to assure that texCoord*2.0 is within correct pixel.
+    }
+
+    ss << "      gSumReference+=gausDistSqH2LVal;\n"
+          "    }\n";
+
+    for (int i=0; i<m_numPyramids_; i++)
+    {
+    ss << "  gl_FragData["<<i<<"].r=gSum_"<<i<<"/gSumReference;\n";
+    }
+
+    ss << "}\n";
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createGausYFiltLevel1toN");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect inputTexture_0;\n"
-
-                                             "uniform sampler2DRect gausDistSqH2LTexture;\n"
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float gSum_0=0.0;\n"
-                                             "  float gSumReference=0.0;\n"
-
-                                             "    for (float y=-2.0; y<=3.0; y+=1.0)\n"
-                                             "    {\n"
-                                             "      float radiusSq=(y-0.5)*(y-0.5);\n"
-                                             "      float gausDistSqH2LIndex=radiusSq;\n"
-                                             "      float gausDistSqH2LVal=texture2DRect(gausDistSqH2LTexture, vec2(gausDistSqH2LIndex, 0.5)).r;\n"
-
-                                             "      gSum_0+=texture2DRect(inputTexture_0, (gl_TexCoord[0].xy-vec2(0.00, 0.25))*vec2(1.0, 2.0)+vec2(0,y)).r*gausDistSqH2LVal;\n"//Texture coords are: 0.5, 1.5, 2.5, etc. -0.25 is to assure that texCoord*2.0 is within correct pixel.
-                                             "      gSumReference+=gausDistSqH2LVal;\n"
-                                             "    }\n"
-
-                                             "  gl_FragData[0].r=gSum_0/gSumReference;\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
     osg::Camera *theCamera=createScreenAlignedCamera(i_ulWidth, i_ulHeight);
@@ -823,7 +935,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel1toN(unsigned long i_ulLeve
 
 
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_textureGausPyramid[i][i_ulLevel].get());
 
@@ -856,8 +968,7 @@ bool flitr::ImageNPyramid::init(osg::Group *root_node, PostRenderCallback *i_pPo
 
         m_rpRebuildSwitch=new osg::Switch();
 
-        //			unsigned long level=0;
-        for (unsigned long level=0; level<m_ulNumLevels; level++)//NB!!!! - The level/pass that does the postPyramidRebuilt callback must be rendered LAST!!!
+        for (unsigned long level=0; level<m_ulNumPyramidLevels; level++)//NB!!!! - The level/pass that does the postPyramidRebuilt callback must be rendered LAST!!!
         {
 #define SEPERATED_XY_GAUSSIAN_CONVOLUTIONS
             //Note:Seperated gaussian results in a 5% performance increase on laptop.
@@ -880,7 +991,7 @@ bool flitr::ImageNPyramid::init(osg::Group *root_node, PostRenderCallback *i_pPo
             }
 
             //Note: See comment on callback at end of below line!
-            m_rpRebuildSwitch->addChild(createDerivLevel(level, width>>level, height>>level, level==(m_ulNumLevels-1) ));//Use this callback to insert CPU step directly after GPU pyramid rebuild.
+            m_rpRebuildSwitch->addChild(createDerivLevel(level, width>>level, height>>level, level==(m_ulNumPyramidLevels-1) ));//Use this callback to insert CPU step directly after GPU pyramid rebuild.
         }
 
         m_rpRebuildSwitch->setAllChildrenOff();
@@ -895,11 +1006,11 @@ bool flitr::ImageNPyramid::init(osg::Group *root_node, PostRenderCallback *i_pPo
 
 
 //Rebuild the image pyramid using the gaussian lookup above.
-void flitr::ImageNPyramid::rebuildBiPyramidCPU()
+void flitr::ImageNPyramid::rebuildNPyramidCPU()
 {
     unsigned long numLevels=getNumLevels();
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<m_numPyramids_; i++)
     {
         for (unsigned long level=0; level<numLevels; level++)
         {

@@ -15,16 +15,13 @@ ToDo: Implement a RESET for the stabaliser!
 #include <osg/Switch>
 #include <osg/AlphaFunc>
 
-//#define maxBIP(a,b)	(((a) > (b)) ? (a) : (b))
-//#define minBIP(a,b)	(((a) < (b)) ? (a) : (b))
-
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
 
 namespace flitr {
 
 	class ImageBiPyramid {
 	public:
-		static double logbase(double a, double base);
+        static double logbase(const double a, const double base);
 
 		class PyramidRebuilt_CameraPostDrawCallback : public osg::Camera::DrawCallback
 		{//Used if the CPU needs to know when the Pyramid is rebuilt/readback.
@@ -48,13 +45,15 @@ namespace flitr {
 			unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
 			bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU);
 
+
 		bool init(osg::Group *root_node, PostRenderCallback *i_pPostPyramidRebuiltCallback);//Allocate pyramid levels
 
 		inline const osg::Image* getLevel(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
 		{
 			return m_imageGausPyramid[i_ulPyramidNum][i_ulLevel].get();
 		}
-		inline const osg::Image* getLevelDeriv(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
+
+        inline const osg::Image* getLevelDeriv(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
 		{
 			return m_derivImagePyramid[i_ulPyramidNum][i_ulLevel].get();
 		}
@@ -63,14 +62,15 @@ namespace flitr {
 		{
 			return m_imagePyramidWidth_[i_ulLevel];
 		}
-		inline int getLevelHeight(unsigned long i_ulLevel) const
+
+        inline int getLevelHeight(unsigned long i_ulLevel) const
 		{
 			return m_imagePyramidHeight_[i_ulLevel];
 		}
 
 		inline unsigned long getNumLevels() const
 		{
-			return m_ulNumLevels;
+            return m_ulNumPyramidLevels;
 		}
 
 		inline void setRebuildSwitchOn()
@@ -83,7 +83,6 @@ namespace flitr {
 		}
 
 
-		//Rebuild the image pyramid using the gaussian lookup above.
 		void rebuildBiPyramidCPU();
 
 
@@ -91,7 +90,7 @@ namespace flitr {
 	public:
 		const osg::TextureRectangle *m_pInputTexture;
 
-		unsigned long m_ulNumLevels;
+        unsigned long m_ulNumPyramidLevels;
 		osg::ref_ptr<osg::Image> **m_imageGausPyramid;//R32F Image: Gaussian kernel result.
 		osg::ref_ptr<osg::TextureRectangle> **m_textureGausPyramid;
 

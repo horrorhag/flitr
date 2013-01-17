@@ -16,27 +16,7 @@ void flitr::ImageStabiliserBiLK::PostBiPyramidRebuiltCallback::callback()
     {//CPU BiLK...
         m_pImageStabiliserBiLK->updateH_BiLucasKanadeCPU();
 
-        osg::Matrixd deltaTransform=m_pImageStabiliserBiLK->getDeltaTransformationMatrix();
-
-        for (int i=0; i<(int)(m_pImageStabiliserBiLK->filterPairs_.size()); i++)
-        {
-
-            m_pImageStabiliserBiLK->filterPairs_[i].first=m_pImageStabiliserBiLK->filterPairs_[i].first*(1.0f-m_pImageStabiliserBiLK->filterPairs_[i].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(m_pImageStabiliserBiLK->filterPairs_[i].second);
-
-            if (i==0)
-            {//Update output quad's transform with the delta transform.
-                osg::Matrixd quadDeltaTransform=deltaTransform;
-                quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-m_pImageStabiliserBiLK->filterPairs_[i].first._v[0];
-                quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-m_pImageStabiliserBiLK->filterPairs_[i].first._v[1];
-
-                osg::Matrixd quadTransform=m_pImageStabiliserBiLK->m_rpQuadMatrixTransform->getMatrix();
-                quadTransform=quadDeltaTransform*quadTransform;
-                m_pImageStabiliserBiLK->m_rpQuadMatrixTransform->setMatrix(quadTransform);
-                m_pImageStabiliserBiLK->offsetQuadPositionByMatrix(&quadTransform,
-                                                                   m_pImageStabiliserBiLK->m_pInputTexture->getTextureWidth(),
-                                                                   m_pImageStabiliserBiLK->m_pInputTexture->getTextureHeight());
-            }
-        }
+        m_pImageStabiliserBiLK->updateOutputQuadTransform();
 
     }
 }
