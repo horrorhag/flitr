@@ -134,27 +134,7 @@ public:
 
                 if (m_pImageStabiliserBiLK->m_ulFrameNumber>=2)
                 {
-                    osg::Matrixd deltaTransform=m_pImageStabiliserBiLK->getDeltaTransformationMatrix();
-
-                    for (int i=0; i<(int)(m_pImageStabiliserBiLK->filterPairs_.size()); i++)
-                    {
-
-                        m_pImageStabiliserBiLK->filterPairs_[i].first=m_pImageStabiliserBiLK->filterPairs_[i].first*(1.0f-m_pImageStabiliserBiLK->filterPairs_[i].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(m_pImageStabiliserBiLK->filterPairs_[i].second);
-
-                        if (i==0)
-                        {//Update output quad's transform with the delta transform.
-                            osg::Matrixd quadDeltaTransform=deltaTransform;
-                            quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-m_pImageStabiliserBiLK->filterPairs_[i].first._v[0];
-                            quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-m_pImageStabiliserBiLK->filterPairs_[i].first._v[1];
-
-                            osg::Matrixd quadTransform=m_pImageStabiliserBiLK->m_rpQuadMatrixTransform->getMatrix();
-                            quadTransform=quadDeltaTransform*quadTransform;
-                            m_pImageStabiliserBiLK->m_rpQuadMatrixTransform->setMatrix(quadTransform);
-                            m_pImageStabiliserBiLK->offsetQuadPositionByMatrix(&quadTransform,
-                                                                               m_pImageStabiliserBiLK->m_pInputTexture->getTextureWidth(),
-                                                                               m_pImageStabiliserBiLK->m_pInputTexture->getTextureHeight());
-                        }
-                    }
+                    m_pImageStabiliserBiLK->updateOutputQuadTransform();
                 }
 
             }
@@ -385,6 +365,30 @@ private:
     unsigned long m_ulFrameNumber;
 
     void offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight);
+
+    void updateOutputQuadTransform()
+    {
+        osg::Matrixd deltaTransform=getDeltaTransformationMatrix();
+
+        for (int filterNum=0; filterNum<(int)(filterPairs_.size()); filterNum++)
+        {
+            filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(filterPairs_[filterNum].second);
+
+            if (filterNum==0)
+            {//Update output quad's transform with the delta transform.
+                osg::Matrixd quadDeltaTransform=deltaTransform;
+                quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-filterPairs_[filterNum].first._v[0];
+                quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-filterPairs_[filterNum].first._v[1];
+
+                osg::Matrixd quadTransform=m_rpQuadMatrixTransform->getMatrix();
+                quadTransform=quadDeltaTransform*quadTransform;
+                m_rpQuadMatrixTransform->setMatrix(quadTransform);
+                offsetQuadPositionByMatrix(&quadTransform,
+                                                                  m_pInputTexture->getTextureWidth(),
+                                                                  m_pInputTexture->getTextureHeight());
+            }
+        }
+    }
 
     osg::ref_ptr<osg::Geode> createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dTextXOffset, double i_dTextYOffset);
     osg::Camera *createScreenAlignedCamera(unsigned long i_ulWidth, unsigned long i_ulHeight);

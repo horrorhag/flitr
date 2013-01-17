@@ -14,17 +14,16 @@ ToDo: Implement a RESET for the stabaliser!
 #include <osg/Geode>
 #include <osg/Switch>
 #include <osg/AlphaFunc>
-
-//#define maxBIP(a,b)	(((a) > (b)) ? (a) : (b))
-//#define minBIP(a,b)	(((a) < (b)) ? (a) : (b))
+#include <sstream>
 
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
+
 
 namespace flitr {
 
     class ImageNPyramid {
 	public:
-		static double logbase(double a, double base);
+        static double logbase(const double a, const double base);
 
 		class PyramidRebuilt_CameraPostDrawCallback : public osg::Camera::DrawCallback
 		{//Used if the CPU needs to know when the Pyramid is rebuilt/readback.
@@ -47,13 +46,15 @@ namespace flitr {
 			unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
 			bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU);
 
+
 		bool init(osg::Group *root_node, PostRenderCallback *i_pPostPyramidRebuiltCallback);//Allocate pyramid levels
 
 		inline const osg::Image* getLevel(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
 		{
 			return m_imageGausPyramid[i_ulPyramidNum][i_ulLevel].get();
 		}
-		inline const osg::Image* getLevelDeriv(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
+
+        inline const osg::Image* getLevelDeriv(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
 		{
 			return m_derivImagePyramid[i_ulPyramidNum][i_ulLevel].get();
 		}
@@ -62,35 +63,37 @@ namespace flitr {
 		{
 			return m_imagePyramidWidth_[i_ulLevel];
 		}
-		inline int getLevelHeight(unsigned long i_ulLevel) const
+
+        inline int getLevelHeight(unsigned long i_ulLevel) const
 		{
 			return m_imagePyramidHeight_[i_ulLevel];
 		}
 
 		inline unsigned long getNumLevels() const
 		{
-			return m_ulNumLevels;
+            return m_ulNumPyramidLevels;
 		}
 
 		inline void setRebuildSwitchOn()
 		{
 			m_rpRebuildSwitch->setAllChildrenOn();
 		}
-		inline void setRebuildSwitchOff()
+
+        inline void setRebuildSwitchOff()
 		{
 			m_rpRebuildSwitch->setAllChildrenOff();
 		}
 
 
-		//Rebuild the image pyramid using the gaussian lookup above.
-		void rebuildBiPyramidCPU();
+        //Rebuild the image pyramid on the CPU.
+        void rebuildNPyramidCPU();
 
 
 	//private:
 	public:
 		const osg::TextureRectangle *m_pInputTexture;
 
-		unsigned long m_ulNumLevels;
+        unsigned long m_ulNumPyramidLevels;
 		osg::ref_ptr<osg::Image> **m_imageGausPyramid;//R32F Image: Gaussian kernel result.
 		osg::ref_ptr<osg::TextureRectangle> **m_textureGausPyramid;
 
@@ -109,7 +112,7 @@ namespace flitr {
 		int *m_imagePyramidHeight_;
 
         std::vector< std::pair<int,int> > m_ROIVec;
-        int N_;
+        int m_numPyramids_;
 
 		const unsigned long m_ulROIWidth;
 		const unsigned long m_ulROIHeight;
@@ -138,7 +141,6 @@ namespace flitr {
 
 		//Get gaussian filtered pixel from level i_ulLevel.
 		// The filter kernel is centre in the four pixels that has (i_ulX, i_ulY) as the top-left corner.
-//ToDo: Make the filter's sd configurable!!!
 //ToDo: Optimise execution by doing gaussian filter on entire texture instead of per pixel lookup.
 		inline double gaussianLookupCPU(float *data, const long i_lX, const long i_lY, const unsigned long i_ulWidth, const unsigned long i_ulHeight) const
 		{

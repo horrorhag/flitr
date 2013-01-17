@@ -1,49 +1,29 @@
-#include <flitr/modules/lucas_kanade/ImageStabiliserNLK.h>
+#include <flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h>
 
 #include <iostream>
 #include <string.h>
 
 
-unsigned long flitr::ImageStabiliserNLK::m_ulLKBorder=32;//To be refined in the constructor.
+unsigned long flitr::ImageStabiliserMultiLK::m_ulLKBorder=32;//To be refined in the constructor.
 
-double flitr::ImageStabiliserNLK::logbase(double a, double base)
+double flitr::ImageStabiliserMultiLK::logbase(const double a, const double base)
 {
     return log(a) / log(base);
 }
 
-void flitr::ImageStabiliserNLK::PostNPyramidRebuiltCallback::callback()
-{
+void flitr::ImageStabiliserMultiLK::PostNPyramidRebuiltCallback::callback()
+{//Called if Pyramid built on GPU, but rest of algorithm run on CPU.
     if ((!m_pImageStabiliserNLK->m_bDoGPULKIterations)&&(m_pImageStabiliserNLK->m_ulFrameNumber>=2))
     {//CPU NLK...
         m_pImageStabiliserNLK->updateH_NLucasKanadeCPU();
 
-        osg::Matrixd deltaTransform=m_pImageStabiliserNLK->getDeltaTransformationMatrix();
-
-        for (int filterNum=0; filterNum<(int)(m_pImageStabiliserNLK->filterPairs_.size()); filterNum++)
-        {
-            m_pImageStabiliserNLK->filterPairs_[filterNum].first=m_pImageStabiliserNLK->filterPairs_[filterNum].first*(1.0f-m_pImageStabiliserNLK->filterPairs_[filterNum].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(m_pImageStabiliserNLK->filterPairs_[filterNum].second);
-
-            if (filterNum==0)
-            {//Update output quad's transform with the delta transform.
-                osg::Matrixd quadDeltaTransform=deltaTransform;
-                quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-m_pImageStabiliserNLK->filterPairs_[filterNum].first._v[0];
-                quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-m_pImageStabiliserNLK->filterPairs_[filterNum].first._v[1];
-
-                osg::Matrixd quadTransform=m_pImageStabiliserNLK->m_rpQuadMatrixTransform->getMatrix();
-                quadTransform=quadDeltaTransform*quadTransform;
-                m_pImageStabiliserNLK->m_rpQuadMatrixTransform->setMatrix(quadTransform);
-                m_pImageStabiliserNLK->offsetQuadPositionByMatrix(&quadTransform,
-                                                                  m_pImageStabiliserNLK->m_pInputTexture->getTextureWidth(),
-                                                                  m_pImageStabiliserNLK->m_pInputTexture->getTextureHeight());
-            }
-        }
-
+        m_pImageStabiliserNLK->updateOutputQuadTransform();
     }
 }
 
 
 
-flitr::ImageStabiliserNLK::ImageStabiliserNLK(const osg::TextureRectangle *i_pInputTexture,
+flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const osg::TextureRectangle *i_pInputTexture,
                                               std::vector< std::pair<int,int> > &i_ROIVec,
                                               unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
                                               bool i_bIndicateROI,
@@ -88,12 +68,12 @@ flitr::ImageStabiliserNLK::ImageStabiliserNLK(const osg::TextureRectangle *i_pIn
     m_ulFrameNumber(0)
 {
     m_ROIVec=i_ROIVec;
-    N_=i_ROIVec.size();
+    m_numPyramids_=i_ROIVec.size();
 
-    m_rpHEstimateUniform=new osg::ref_ptr<osg::Uniform>[N_];
-    m_h=new osg::Vec2[N_];
+    m_rpHEstimateUniform=new osg::ref_ptr<osg::Uniform>[m_numPyramids_];
+    m_h=new osg::Vec2[m_numPyramids_];
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         m_rpHEstimateUniform[i]=0;
         m_h[i]=osg::Vec2(0.0, 0.0);
@@ -114,7 +94,7 @@ flitr::ImageStabiliserNLK::ImageStabiliserNLK(const osg::TextureRectangle *i_pIn
 }
 
 
-bool flitr::ImageStabiliserNLK::init(osg::Group *root_group)
+bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
 {
     osg::Group *stabRoot=new osg::Group();
 
@@ -144,14 +124,14 @@ bool flitr::ImageStabiliserNLK::init(osg::Group *root_group)
 
 
     //=== Allocate lk result textures and images : Begin ===//
-    m_lkResultImagePyramid=new osg::ref_ptr<osg::Image>*[N_];
-    m_lkResultTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[N_];
-    m_lkReducedResultImagePyramid=new osg::ref_ptr<osg::Image>*[N_];
-    m_lkReducedResultTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[N_];
+    m_lkResultImagePyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
+    m_lkResultTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_lkReducedResultImagePyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
+    m_lkReducedResultTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
 
     m_imagePyramidFormat_=new ImageFormat[m_ulMaxGPUHVectorReductionLevels];
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         //xPow2 and yPow2 are modified within the level for-loop!
         unsigned long xPow2=pow(2.0, (double)numLevelsX)+0.5;
@@ -255,7 +235,7 @@ bool flitr::ImageStabiliserNLK::init(osg::Group *root_group)
     }
     //=== Allocate lk result textures and images : End ===//
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         char uniformName[256];
         sprintf(uniformName, "hEstimate_%d" ,i);
@@ -275,11 +255,11 @@ bool flitr::ImageStabiliserNLK::init(osg::Group *root_group)
                 //=== Calculate weighted per pixel h-vector ===//
                 m_rpCurrentLKIterationRebuildSwitch->addChild(createNLKIteration(m_pCurrentNPyramid, m_pPreviousNPyramid, level,
                                                                                  width>>level, height>>level,
-                                                                                 !(m_ulNumGPUHVectorReductionLevels>0)));
+                                                                                 (m_ulNumGPUHVectorReductionLevels==0)));
 
                 m_rpPreviousLKIterationRebuildSwitch->addChild(createNLKIteration(m_pPreviousNPyramid, m_pCurrentNPyramid, level,
                                                                                   width>>level, height>>level,
-                                                                                  !(m_ulNumGPUHVectorReductionLevels>0)));
+                                                                                  (m_ulNumGPUHVectorReductionLevels==0)));
                 //=============================================//
 
 
@@ -341,7 +321,7 @@ bool flitr::ImageStabiliserNLK::init(osg::Group *root_group)
 }
 
 
-osg::ref_ptr<osg::Geode> flitr::ImageStabiliserNLK::createScreenAlignedQuadLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels)
+osg::ref_ptr<osg::Geode> flitr::ImageStabiliserMultiLK::createScreenAlignedQuadLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels)
 {
     osg::ref_ptr<osg::Geode>       geode;
     osg::ref_ptr<osg::Geometry>    geom;
@@ -407,7 +387,7 @@ osg::ref_ptr<osg::Geode> flitr::ImageStabiliserNLK::createScreenAlignedQuadLK(un
     return geode;
 }
 
-osg::Camera *flitr::ImageStabiliserNLK::createScreenAlignedCameraLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels)
+osg::Camera *flitr::ImageStabiliserMultiLK::createScreenAlignedCameraLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels)
 {
     //g_ulNumCameras++;
     osg::Camera *theCamera = new osg::Camera;
@@ -425,89 +405,98 @@ osg::Camera *flitr::ImageStabiliserNLK::createScreenAlignedCameraLK(unsigned lon
 }
 
 
-osg::Node* flitr::ImageStabiliserNLK::createNLKIteration(ImageNPyramid *i_pCurrentNPyramid, ImageNPyramid *i_pPreviousNPyramid, unsigned long i_ulLevel, unsigned long i_ulWidth, unsigned long i_ulHeight, bool i_bDoPostLKIterationCallback)
+osg::Node* flitr::ImageStabiliserMultiLK::createNLKIteration(ImageNPyramid *i_pCurrentNPyramid, ImageNPyramid *i_pPreviousNPyramid, unsigned long i_ulLevel, unsigned long i_ulWidth, unsigned long i_ulHeight, bool i_bDoPostLKIterationCallback)
 {
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuadLK(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
     char uniformName[256];
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         geomss->setTextureAttributeAndModes(i, i_pCurrentNPyramid->m_textureGausPyramid[i][i_ulLevel].get(), osg::StateAttribute::ON);
         //	geomss->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
         sprintf(uniformName, "gausFiltTexture_%d" ,i);
         geomss->addUniform(new osg::Uniform(uniformName, (int)i));
 
-        geomss->setTextureAttributeAndModes(i+N_, i_pCurrentNPyramid->m_derivTexturePyramid[i][i_ulLevel].get(), osg::StateAttribute::ON);
+        geomss->setTextureAttributeAndModes(i+m_numPyramids_, i_pCurrentNPyramid->m_derivTexturePyramid[i][i_ulLevel].get(), osg::StateAttribute::ON);
         //	geomss->setTextureAttribute(i+N_, new osg::TexEnv(osg::TexEnv::DECAL));
         sprintf(uniformName, "derivTexture_%d" ,i);
-        geomss->addUniform(new osg::Uniform(uniformName, (int)(i+N_)));
+        geomss->addUniform(new osg::Uniform(uniformName, (int)(i+m_numPyramids_)));
 
-        geomss->setTextureAttributeAndModes(i+N_*2, i_pPreviousNPyramid->m_textureGausPyramid[i][i_ulLevel].get(), osg::StateAttribute::ON);
+        geomss->setTextureAttributeAndModes(i+m_numPyramids_*2, i_pPreviousNPyramid->m_textureGausPyramid[i][i_ulLevel].get(), osg::StateAttribute::ON);
         //	geomss->setTextureAttribute(i+N_*2, new osg::TexEnv(osg::TexEnv::DECAL));
         sprintf(uniformName, "previousgausFiltTexture_%d" ,i);
-        geomss->addUniform(new osg::Uniform(uniformName, (int)(i+N_*2)));
+        geomss->addUniform(new osg::Uniform(uniformName, (int)(i+m_numPyramids_*2)));
 
         geomss->addUniform(m_rpHEstimateUniform[i]);
     }
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+
+    for (int i=0; i<(int)m_numPyramids_; i++)
+    {
+    ss << "uniform sampler2DRect gausFiltTexture_"<<i<<";\n"
+
+          "uniform sampler2DRect derivTexture_"<<i<<";\n"
+
+          "uniform sampler2DRect previousgausFiltTexture_"<<i<<";\n"
+
+          "uniform vec2 hEstimate_"<<i<<";\n";
+}
+
+    ss << "void main(void)"
+          "{\n";
+
+    for (int i=0; i<(int)m_numPyramids_; i++)
+    {
+    ss << "  float imagePixel_"<<i<<"=texture2DRect(gausFiltTexture_"<<i<<", gl_TexCoord[0].xy).r;\n"
+          "  vec3 derivPixel_"<<i<<"=texture2DRect(derivTexture_"<<i<<", gl_TexCoord[0].xy).rgb;\n"
+
+
+          //======================
+          ////Bi-linear filter for RGBAF32 pixel. Would not be required on newer hardware!
+          "  vec2 previousImagePixelPosition_"<<i<<"=(gl_TexCoord[0].xy-vec2(0.5, 0.5))-hEstimate_"<<i<<";\n"
+          "  vec2 previousImagePixelPositionFloor_"<<i<<"=floor(previousImagePixelPosition_"<<i<<");\n"
+          "  vec2 previousImagePixelPositionFrac_"<<i<<"=previousImagePixelPosition_"<<i<<"-previousImagePixelPositionFloor_"<<i<<";\n"
+
+          "  float previousImagePixelTopLeft_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(0.5, 0.5)).r;\n"
+          "  float previousImagePixelTopRight_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(1.5, 0.5)).r;\n"
+          "  float previousImagePixelBotLeft_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(0.5, 1.5)).r;\n"
+          "  float previousImagePixelBotRight_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(1.5, 1.5)).r;\n"
+          "  float previousImagePixelTop_"<<i<<"=(previousImagePixelTopRight_"<<i<<"-previousImagePixelTopLeft_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".x+previousImagePixelTopLeft_"<<i<<";\n"
+          "  float previousImagePixelBot_"<<i<<"=(previousImagePixelBotRight_"<<i<<"-previousImagePixelBotLeft_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".x+previousImagePixelBotLeft_"<<i<<";\n"
+          "  float previousImagePixel_"<<i<<"=(previousImagePixelBot_"<<i<<"-previousImagePixelTop_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".y+previousImagePixelTop_"<<i<<";\n"
+          //======================
+          //OR
+          //======================
+          //"  vec2 previousImagePixelPosition_"<<i<<"=gl_TexCoord[0].xy-hEstimate_"<<i<<";\n"
+          //"  float previousImagePixel_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPosition_"<<i<<").r;\n"
+          //======================
+
+          "  float error_"<<i<<"=imagePixel_"<<i<<"-previousImagePixel_"<<i<<";\n"
+          "  vec2 hNumerator_"<<i<<"=derivPixel_"<<i<<".rg * error_"<<i<<";\n"
+          "  float hDenominator_"<<i<<"=derivPixel_"<<i<<".b;\n"
+
+          "  gl_FragData["<<i<<"].rg=hNumerator_"<<i<<";\n"
+          "  gl_FragData["<<i<<"].b=hDenominator_"<<i<<";\n";
+}
+
+    ss << "}\n";
+
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createLKIteration");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect gausFiltTexture_0;\n"
-
-                                             "uniform sampler2DRect derivTexture_0;\n"
-
-                                             "uniform sampler2DRect previousgausFiltTexture_0;\n"
-
-                                             "uniform vec2 hEstimate_0;\n"
-
-                                             "void main(void)"
-                                             "{\n"
-                                             "  float imagePixel_0=texture2DRect(gausFiltTexture_0, gl_TexCoord[0].xy).r;\n"
-                                             "  vec3 derivPixel_0=texture2DRect(derivTexture_0, gl_TexCoord[0].xy).rgb;\n"
-
-
-                                             //======================
-                                             ////Bi-linear filter for RGBAF32 pixel. Would not be required on newer hardware!
-                                             "  vec2 previousImagePixelPosition_0=(gl_TexCoord[0].xy-vec2(0.5, 0.5))-hEstimate_0;\n"
-                                             "  vec2 previousImagePixelPositionFloor_0=floor(previousImagePixelPosition_0);\n"
-                                             "  vec2 previousImagePixelPositionFrac_0=previousImagePixelPosition_0-previousImagePixelPositionFloor_0;\n"
-
-                                             "  float previousImagePixelTopLeft_0=texture2DRect(previousgausFiltTexture_0, previousImagePixelPositionFloor_0+vec2(0.5, 0.5)).r;\n"
-                                             "  float previousImagePixelTopRight_0=texture2DRect(previousgausFiltTexture_0, previousImagePixelPositionFloor_0+vec2(1.5, 0.5)).r;\n"
-                                             "  float previousImagePixelBotLeft_0=texture2DRect(previousgausFiltTexture_0, previousImagePixelPositionFloor_0+vec2(0.5, 1.5)).r;\n"
-                                             "  float previousImagePixelBotRight_0=texture2DRect(previousgausFiltTexture_0, previousImagePixelPositionFloor_0+vec2(1.5, 1.5)).r;\n"
-                                             "  float previousImagePixelTop_0=(previousImagePixelTopRight_0-previousImagePixelTopLeft_0)*previousImagePixelPositionFrac_0.x+previousImagePixelTopLeft_0;\n"
-                                             "  float previousImagePixelBot_0=(previousImagePixelBotRight_0-previousImagePixelBotLeft_0)*previousImagePixelPositionFrac_0.x+previousImagePixelBotLeft_0;\n"
-                                             "  float previousImagePixel_0=(previousImagePixelBot_0-previousImagePixelTop_0)*previousImagePixelPositionFrac_0.y+previousImagePixelTop_0;\n"
-                                             //======================
-                                             //OR
-                                             //======================
-                                             //"  vec2 previousImagePixelPosition_0=gl_TexCoord[0].xy-hEstimate_0;\n"
-                                             //"  float previousImagePixel_0=texture2DRect(previousgausFiltTexture_0, previousImagePixelPosition_0).r;\n"
-                                             //======================
-
-                                             "  float error_0=imagePixel_0-previousImagePixel_0;\n"
-                                             "  vec2 hNumerator_0=derivPixel_0.rg * error_0;\n"
-                                             "  float hDenominator_0=derivPixel_0.b;\n"
-
-                                             "  gl_FragData[0].rg=hNumerator_0;\n"
-                                             "  gl_FragData[0].b=hDenominator_0;\n"
-                                             //	    "  gl_FragData[0].a=1.0;\n"
-
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
 
     osg::Camera *theCamera=createScreenAlignedCameraLK(i_ulWidth, i_ulHeight);
     theCamera->addChild(geode.get());
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_lkResultTexturePyramid[i][i_ulLevel].get());
     }
@@ -515,7 +504,7 @@ osg::Node* flitr::ImageStabiliserNLK::createNLKIteration(ImageNPyramid *i_pCurre
 
     if (i_bDoPostLKIterationCallback)
     {
-        for (int i=0; i<(int)N_; i++)
+        for (int i=0; i<(int)m_numPyramids_; i++)
         {
             theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_lkResultImagePyramid[i][i_ulLevel].get());
         }
@@ -526,7 +515,7 @@ osg::Node* flitr::ImageStabiliserNLK::createNLKIteration(ImageNPyramid *i_pCurre
 }   
 
 
-osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long i_ulLevel, unsigned long i_ulWidth,
+osg::Node* flitr::ImageStabiliserMultiLK::createHVectorReductionLevel(unsigned long i_ulLevel, unsigned long i_ulWidth,
                                                                   unsigned long i_ulHeight, unsigned long i_ulReductionLevel,
                                                                   bool i_bDoPostLKIterationCallback)
 {
@@ -538,7 +527,7 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
         geode = createScreenAlignedQuadLK(i_ulWidth, i_ulHeight, (m_ulLKBorder>>(i_ulLevel-1+1)));//'*0.5' because we're working with a boundary at the next HIGHER resolution.
         geomss = geode->getOrCreateStateSet();
 
-        for (int i=0; i<(int)N_; i++)
+        for (int i=0; i<(int)m_numPyramids_; i++)
         {
             geomss->setTextureAttributeAndModes(i, this->m_lkResultTexturePyramid[i][i_ulLevel-1].get(), osg::StateAttribute::ON);
             //	geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
@@ -548,7 +537,7 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
         geode = createScreenAlignedQuadLK(i_ulWidth, i_ulHeight, 0);
         geomss = geode->getOrCreateStateSet();
 
-        for (int i=0; i<(int)N_; i++)
+        for (int i=0; i<(int)m_numPyramids_; i++)
         {
             geomss->setTextureAttributeAndModes(i, this->m_lkReducedResultTexturePyramid[i][i_ulLevel-1].get(), osg::StateAttribute::ON);
             //	geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
@@ -558,7 +547,7 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
     //****************
     //add the uniforms
     //****************
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         char uniformName[256];
         sprintf(uniformName, "highResLKResultTexture_%d",i);
@@ -568,21 +557,29 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
     //*******************************************
     //create and add the shaders to the state set
     //*******************************************
+    std::stringstream ss;
+    for (int i=0; i<(int)m_numPyramids_; i++)
+    {
+    ss << "uniform sampler2DRect highResLKResultTexture_"<<i<<";\n";
+    }
+
+    ss << "void main(void)"
+          "{\n";
+
+    for (int i=0; i<(int)m_numPyramids_; i++)
+    {
+    ss << "  vec4 imagePixel0_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 0.5));\n"
+          "  vec4 imagePixel1_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 0.5));\n"
+          "  vec4 imagePixel2_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 1.5));\n"
+          "  vec4 imagePixel3_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 1.5));\n"
+
+          "  gl_FragData["<<i<<"]=(imagePixel0_"<<i<<"+imagePixel1_"<<i<<"+imagePixel2_"<<i<<"+imagePixel3_"<<i<<");\n";
+}
+    ss << "}\n";
+
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
     textureShader->setName("createHVectorReductionLevel");
-    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT,
-                                             "uniform sampler2DRect highResLKResultTexture_0;\n"
-
-                                             "void main(void)"
-                                             "{\n"
-                                             "  vec4 imagePixel0_0=texture2DRect(highResLKResultTexture_0, (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 0.5));\n"
-                                             "  vec4 imagePixel1_0=texture2DRect(highResLKResultTexture_0, (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 0.5));\n"
-                                             "  vec4 imagePixel2_0=texture2DRect(highResLKResultTexture_0, (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 1.5));\n"
-                                             "  vec4 imagePixel3_0=texture2DRect(highResLKResultTexture_0, (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 1.5));\n"
-
-                                             "  gl_FragData[0]=(imagePixel0_0+imagePixel1_0+imagePixel2_0+imagePixel3_0);\n"
-                                             "}\n"
-                                             ));
+    textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
 
@@ -596,7 +593,7 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
     }
     theCamera->addChild(geode.get());
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_lkReducedResultTexturePyramid[i][i_ulLevel].get());
     }
@@ -604,7 +601,7 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
     if (i_bDoPostLKIterationCallback)
     {
         //LK iteration result currently readback to CPU for h-vector reduction operation!
-        for (int i=0; i<(int)N_; i++)
+        for (int i=0; i<(int)m_numPyramids_; i++)
         {
             theCamera->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER0+i), this->m_lkReducedResultImagePyramid[i][i_ulLevel].get());
         }
@@ -615,9 +612,14 @@ osg::Node* flitr::ImageStabiliserNLK::createHVectorReductionLevel(unsigned long 
 }
 
 
-osg::Matrixd flitr::ImageStabiliserNLK::getDeltaTransformationMatrix() const
+osg::Matrixd flitr::ImageStabiliserMultiLK::getDeltaTransformationMatrix() const
 {			
-    osg::Vec2d translation=m_h[0];
+    osg::Vec2d translation=osg::Vec2d(0.0, 0.0);
+    for (int i=0; i<(int)m_numPyramids_; i++)
+    {
+        translation+=m_h[i];
+    }
+    translation/=m_numPyramids_;
 
     osg::Vec2d lNorm;
     osg::Vec2d mNorm;
@@ -635,7 +637,7 @@ osg::Matrixd flitr::ImageStabiliserNLK::getDeltaTransformationMatrix() const
     return transformation;
 }
 
-void flitr::ImageStabiliserNLK::getHomographyMatrix(double &a00, double &a01, double &a02,
+void flitr::ImageStabiliserMultiLK::getHomographyMatrix(double &a00, double &a01, double &a02,
                                                     double &a10, double &a11, double &a12,
                                                     double &a20, double &a21, double &a22) const
 {			
@@ -654,7 +656,7 @@ void flitr::ImageStabiliserNLK::getHomographyMatrix(double &a00, double &a01, do
     a20=0.0; 		a21=0.0; 		a22=1.0;
 }
 
-void flitr::ImageStabiliserNLK::offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight)
+void flitr::ImageStabiliserMultiLK::offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight)
 {
 
     osg::Vec4d vert=osg::Vec4d(0.0, 0.0, 0.0, -1.0);
@@ -677,7 +679,7 @@ void flitr::ImageStabiliserNLK::offsetQuadPositionByMatrix(const osg::Matrixd *i
 }
 
 
-osg::ref_ptr<osg::Geode> flitr::ImageStabiliserNLK::createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight)
+osg::ref_ptr<osg::Geode> flitr::ImageStabiliserMultiLK::createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight)
 {
     osg::ref_ptr<osg::Geode>       geode;
     
@@ -743,7 +745,7 @@ osg::ref_ptr<osg::Geode> flitr::ImageStabiliserNLK::createScreenAlignedQuad(unsi
     return geode;
 }
 
-osg::Camera *flitr::ImageStabiliserNLK::createScreenAlignedCamera(unsigned long i_ulWidth, unsigned long i_ulHeight)
+osg::Camera *flitr::ImageStabiliserMultiLK::createScreenAlignedCamera(unsigned long i_ulWidth, unsigned long i_ulHeight)
 {
     //g_ulNumCameras++;
     osg::Camera *theCamera = new osg::Camera;
@@ -761,7 +763,7 @@ osg::Camera *flitr::ImageStabiliserNLK::createScreenAlignedCamera(unsigned long 
 }
 
 
-osg::Node* flitr::ImageStabiliserNLK::createOutputPass()
+osg::Node* flitr::ImageStabiliserMultiLK::createOutputPass()
 {
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
@@ -776,7 +778,7 @@ osg::Node* flitr::ImageStabiliserNLK::createOutputPass()
     geomss->addUniform(new osg::Uniform("inputTexture", 0));
 
     char uniformName[256];
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         sprintf(uniformName,"ROIX_%d",i);
         geomss->addUniform(new osg::Uniform(uniformName, (float)(m_ROIVec[i].first)));
@@ -797,7 +799,7 @@ osg::Node* flitr::ImageStabiliserNLK::createOutputPass()
 
     ss << "uniform sampler2DRect inputTexture;\n";
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         ss << "uniform float ROIX_"<<i<<";\n"
               "uniform float ROIY_"<<i<<";\n";
@@ -812,7 +814,7 @@ osg::Node* flitr::ImageStabiliserNLK::createOutputPass()
           "  vec2 inputTexCoord=gl_TexCoord[0].xy;\n"
           "  vec3 imagePixel=texture2DRect(inputTexture, inputTexCoord.xy).rgb;\n";
 
-    for (int i=0; i<N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         ss << "  if ((inputTexCoord.x>ROIX_"<<i<<")&&(inputTexCoord.x<(ROIWidth+ROIX_"<<i<<")) &&\n"
               "      (inputTexCoord.y>ROIY_"<<i<<")&&(inputTexCoord.y<(ROIHeight+ROIY_"<<i<<")) )\n"
@@ -846,16 +848,16 @@ osg::Node* flitr::ImageStabiliserNLK::createOutputPass()
 }   
 
 //Lucas-Kanade algorithm...
-void flitr::ImageStabiliserNLK::updateH_NLucasKanadeCPU()
+void flitr::ImageStabiliserMultiLK::updateH_NLucasKanadeCPU()
 {
     //	CViewScopeTimer scopeTimer(&timer, &timingMap, "findH_lucasKanade");
     long numLevels=m_pCurrentNPyramid->getNumLevels();
-    osg::Vec2d hEstimate[N_];
+    osg::Vec2d hEstimate[m_numPyramids_];
 
     //	float *tempVizBuf=new float[m_pCurrentBiPyramid->getLevelFormat(0).getWidth() * m_pCurrentBiPyramid->getLevelFormat(0).getHeight()];
     float *resampPreviousImg=new float[m_pCurrentNPyramid->getLevelWidth(0) * m_pCurrentNPyramid->getLevelHeight(0)];
 
-    for (unsigned long pyramidNum=0; pyramidNum<N_; pyramidNum++)
+    for (unsigned long pyramidNum=0; pyramidNum<m_numPyramids_; pyramidNum++)
     {
         hEstimate[pyramidNum]=osg::Vec2d(0.0, 0.0);
 
@@ -952,7 +954,7 @@ void flitr::ImageStabiliserNLK::updateH_NLucasKanadeCPU()
     //	delete [] tempVizBuf;
     delete [] resampPreviousImg;
 
-    for (int i=0; i<(int)N_; i++)
+    for (int i=0; i<(int)m_numPyramids_; i++)
     {
         this->m_h[i]=hEstimate[i]*0.5;
     }
