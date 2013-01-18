@@ -15,6 +15,12 @@
 
 #include <flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h>
 
+#include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
+#include <flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h>
+#include <flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h>
+
+#include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
+
 using std::tr1::shared_ptr;
 using namespace flitr;
 
@@ -25,7 +31,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    //#define USE_TEST_PATTERN 1
+//#define USE_TEST_PATTERN 1
 #ifdef USE_TEST_PATTERN
     shared_ptr<TestPatternProducer> ip(new TestPatternProducer(1024, 768, ImageFormat::FLITR_PIX_FMT_Y_8, 0.1));
     if (!ip->init()) {
@@ -50,9 +56,20 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
 
+    //===
+    shared_ptr<flitr::CPUShaderPass> gfp(new flitr::CPUShaderPass(osgc->getOutputTexture()));
+    gfp->setGPUShader("/home/ballon/flitr/share/flitr/shaders/copy.frag");
+
+    if (gfp->getOutImage())
+    {
+        gfp->setPostRenderCPUShader(new CPUPhotometricCalibration_Shader(gfp->getOutImage(), 0.5, 0.025));
+    }
+
+    root_node->addChild(gfp->getRoot().get());
+
 
     //==================
-    unsigned long roi_dim=1000;
+    unsigned long roi_dim=256;
 
     std::vector< std::pair<int,int> > roiVec;
 
@@ -65,7 +82,7 @@ int main(int argc, char *argv[])
     }
 
 
-    ImageStabiliserMultiLK *iStab=new ImageStabiliserMultiLK(osgc->getOutputTexture(0, 0),
+    ImageStabiliserMultiLK *iStab=new ImageStabiliserMultiLK(gfp->getOutputTexture(),
                                                              roiVec,
                                                              roi_dim, roi_dim,
                                                              true,//Indicate ROI?

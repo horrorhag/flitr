@@ -56,6 +56,7 @@ void MultiCPUHistogramConsumerThread::run()
                     const uint32_t numBins=256;
                     const uint32_t pixelStride=Consumer_->PixelStride_;
 
+
                     // Zero the histogram.
                     for (uint32_t binNum=0; binNum<numBins; binNum++)
                     {
@@ -63,12 +64,11 @@ void MultiCPUHistogramConsumerThread::run()
                     }
 
                     // Generate histogram.
-                    for (uint32_t i=0; i<(numPixels*numComponents); i+=(pixelStride*numComponents))
+                    const uint32_t numElements=numPixels*numComponents;
+                    const uint32_t elementStride=pixelStride*numComponents;
+                    for (uint32_t i=0; i<numElements; i+=elementStride)
                     {
-                        //if ((i%numComponents)==0)//Only considers the first component at the moment.
-                        {
                             (*histogram)[data[i]]+=pixelStride;
-                        }
                     }
 
                     Consumer_->HistogramUpdatedVect_[imNum]=true;

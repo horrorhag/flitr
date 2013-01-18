@@ -1,4 +1,4 @@
-#include <flitr/homography_shader_pass.h>
+#include <flitr/modules/glsl_shader_passes/homography_shader_pass.h>
 
 using namespace flitr;
 

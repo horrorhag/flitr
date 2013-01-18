@@ -1,9 +1,11 @@
-#include <flitr/simple_cpu_shader_pass.h>
+#include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
 
 using namespace flitr;
 
-SimpleCPUShaderPass::SimpleCPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex, bool read_back_to_CPU)
+CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex)
 {
+    bool read_back_to_CPU=true;
+
     RootGroup_ = new osg::Group;
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -39,8 +41,10 @@ SimpleCPUShaderPass::SimpleCPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_
     RootGroup_->addChild(Camera_.get());
 }
 
-SimpleCPUShaderPass::SimpleCPUShaderPass(osg::ref_ptr<osg::Image> in_img, bool read_back_to_CPU)
+CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
 {
+    bool read_back_to_CPU=true;
+
     RootGroup_ = new osg::Group;
     TextureWidth_ = in_img->s();
     TextureHeight_ = in_img->t();
@@ -83,11 +87,11 @@ SimpleCPUShaderPass::SimpleCPUShaderPass(osg::ref_ptr<osg::Image> in_img, bool r
     RootGroup_->addChild(Camera_.get());
 }
 
-SimpleCPUShaderPass::~SimpleCPUShaderPass()
+CPUShaderPass::~CPUShaderPass()
 {
 }
 
-osg::ref_ptr<osg::Group> SimpleCPUShaderPass::createTexturedQuad()
+osg::ref_ptr<osg::Group> CPUShaderPass::createTexturedQuad()
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -132,7 +136,7 @@ osg::ref_ptr<osg::Group> SimpleCPUShaderPass::createTexturedQuad()
     return top_group;
 }
 
-void SimpleCPUShaderPass::setupCamera()
+void CPUShaderPass::setupCamera()
 {
     // clearing
     bool need_clear = true;
@@ -167,17 +171,17 @@ void SimpleCPUShaderPass::setupCamera()
         }
 }
 
-void SimpleCPUShaderPass::setPreDrawCPUShader(CPUShader *cpuShader)
+void CPUShaderPass::setPreRenderCPUShader(CPUShader *cpuShader)
 {
     Camera_->setPreDrawCallback(cpuShader);
 }
 
-void SimpleCPUShaderPass::setPostDrawCPUShader(CPUShader *cpuShader)
+void CPUShaderPass::setPostRenderCPUShader(CPUShader *cpuShader)
 {
     Camera_->setPostDrawCallback(cpuShader);
 }
 
-void SimpleCPUShaderPass::setGPUShader(std::string filename)
+void CPUShaderPass::setGPUShader(std::string filename)
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
     fshader->loadShaderSourceFromFile(filename);
