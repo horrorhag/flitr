@@ -148,8 +148,8 @@ SET(LIB_SOURCES
   src/flitr/plot2D_overlay.cpp
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
-  src/flitr/homography_shader_pass.cpp
-  src/flitr/simple_cpu_shader_pass.cpp
+
+  src/flitr/modules/cpu_shader_passes/cpu_shader_pass.cpp
 
   src/flitr/modules/lucas_kanade/ImageMultiPyramid.cpp
   src/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.cpp
@@ -163,6 +163,7 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_crop_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_translate_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_downsample_pass.cpp
+  src/flitr/modules/glsl_shader_passes/homography_shader_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
@@ -198,8 +199,10 @@ SET(LIB_SOURCES
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
-  include/flitr/homography_shader_pass.h
-  include/flitr/simple_cpu_shader_pass.h
+
+  include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h
+  include/flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h
+  include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
 
   include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
   include/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h
@@ -213,6 +216,7 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_crop_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_translate_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_downsample_pass.h
+  include/flitr/modules/glsl_shader_passes/homography_shader_pass.h
 )
 
 

@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SIMPLE_CPU_SHADER_PASS_H
-#define SIMPLE_CPU_SHADER_PASS 1
+#ifndef CPU_SHADER_PASS_H
+#define CPU_SHADER_PASS_H q
 
 #include <flitr/flitr_export.h>
 
@@ -37,17 +37,17 @@
 
 namespace flitr {
 
-class FLITR_EXPORT SimpleCPUShaderPass {
+class FLITR_EXPORT CPUShaderPass {
 public:
 
-    class CPUShader : public osg::Camera::DrawCallback
+    class FLITR_EXPORT CPUShader : public osg::Camera::DrawCallback
     {
     };
 
-    class CPUExample_ShaderPass : public CPUShader
+    class FLITR_EXPORT CPUExample_Shader : public CPUShader
     {
     public:
-        CPUExample_ShaderPass(osg::Image* image) :
+        CPUExample_Shader(osg::Image* image) :
             Image_(image)
         {
         }
@@ -76,9 +76,9 @@ public:
 
 
 public:
-    SimpleCPUShaderPass(osg::ref_ptr<osg::Image> in_img, bool read_back_to_CPU = false);
-    SimpleCPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex, bool read_back_to_CPU = false);
-    ~SimpleCPUShaderPass();
+    CPUShaderPass(osg::ref_ptr<osg::Image> in_img);
+    CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex);
+    ~CPUShaderPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
 
@@ -86,16 +86,18 @@ public:
 
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
 
-    osg::ref_ptr<osg::Image> getInImage() { return InImage_; }
+
     osg::ref_ptr<osg::Image> getOutImage() { return OutImage_; }
 
-    void setPreDrawCPUShader(CPUShader *cpuShader);
 
-    void setPostDrawCPUShader(CPUShader *cpuShader);
+    void setPostRenderCPUShader(CPUShader *cpuShader);
 
     void setGPUShader(std::string filename);
 
 private:
+    osg::ref_ptr<osg::Image> getInImage() { return InImage_; }
+    void setPreRenderCPUShader(CPUShader *cpuShader);
+
     osg::ref_ptr<osg::Group> createTexturedQuad();
     void setupCamera();
 
@@ -116,4 +118,4 @@ private:
 };
 
 }
-#endif //SIMPLE_CPU_SHADER_PASS_H
+#endif //CPU_SHADER_PASS_H

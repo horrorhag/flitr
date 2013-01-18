@@ -1,7 +1,7 @@
 PROJECT(flitr_cpu_shader_pass)
 
 SET(SOURCES
-  cpu_shader_pass.cpp
+  cpu_shader_pass_example.cpp
 )
 
 ADD_EXECUTABLE(flitr_cpu_shader_pass ${SOURCES})

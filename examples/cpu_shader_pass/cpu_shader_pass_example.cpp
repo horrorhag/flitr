@@ -8,101 +8,21 @@
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_osg_consumer.h>
+#include <flitr/multi_cpuhistogram_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 
-#include <flitr/simple_cpu_shader_pass.h>
+#include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
+#include <flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h>
+#include <flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h>
+
 #include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
 
 using std::tr1::shared_ptr;
 using namespace flitr;
 
 
-
-class CPUHistogram_Shader : public SimpleCPUShaderPass::CPUShader
-{
-public:
-    CPUHistogram_Shader(osg::Image* image) :
-        Image_(image)
-    {
-        Histogram_=new uint32_t[256];
-        HistogramMap_=new uint32_t[256];
-    }
-
-    virtual void operator () (osg::RenderInfo& renderInfo) const
-    {//Reduce the image.
-        const unsigned long width=Image_->s();
-        const unsigned long height=Image_->t();
-        const unsigned long numPixels=width*height;
-        const unsigned long numComponents=osg::Image::computeNumComponents(Image_->getPixelFormat());
-
-        unsigned char * const data=(unsigned char *)Image_->data();
-
-        for (uint32_t binNum=0; binNum<=255; binNum++)
-        {
-            Histogram_[binNum]=0;
-            HistogramMap_[binNum]=0;
-        }
-
-        // Generate histogram.
-        const uint32_t stride=1;
-        for (uint32_t i=0; i<(numPixels*numComponents); i+=stride)
-        {
-            if ((i%numComponents)==0) Histogram_[data[i]]+=stride;
-        }
-
-        /*
-        std::cout << "Histogram0:";
-        for (uint32_t binNum=0; binNum<=255; binNum++)
-        {
-            std::cout << Histogram_[binNum] << " ";
-        }
-        std::cout << "\n";
-        std::cout.flush();
-*/
-
-        // Generate histogram transformation function.
-        float cuma=0.0f;
-        float reqCuma=0.0f;
-        uint32_t cumaBin=0;
-        for (uint32_t binNum=0; binNum<256; binNum++)
-        {
-            //Linear for equalisation...
-            reqCuma=((binNum+1)/((float)256.0f))*numPixels;
-            //OR
-            //From target histogram for matching...
-            //reqCuma+=Histogram_[binNum];
-
-            while (cuma<reqCuma)
-            {
-                cuma+=Histogram_[cumaBin];
-                //std::cout << cumaBin << " => " << binNum << " " << cuma << "/" << reqCuma << "/" << numPixels << "\n";
-                //std::cout.flush();
-                HistogramMap_[cumaBin]=binNum;
-                cumaBin++;
-            }
-
-        }
-
-
-        // Apply histogram transformation.
-        for (uint32_t i=0; i<(numPixels*numComponents); i++)
-        {
-            data[i]=HistogramMap_[data[i]];
-        }
-
-
-
-        Image_->dirty();
-    }
-
-    osg::Image* Image_;
-
-    uint32_t *Histogram_;
-    uint32_t *HistogramMap_;
-};
-
-class CPUSUM_Shader : public SimpleCPUShaderPass::CPUShader
+class CPUSUM_Shader : public CPUShaderPass::CPUShader
 {
 public:
     CPUSUM_Shader(osg::Image* image) :
@@ -144,7 +64,7 @@ public:
     osg::Image* Image_;
 };
 
-class CPUGAUSFILT_Shader : public SimpleCPUShaderPass::CPUShader
+class CPUGAUSFILT_Shader : public CPUShaderPass::CPUShader
 {
 public:
     CPUGAUSFILT_Shader(osg::Image* image) :
@@ -237,28 +157,38 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
 
+    MultiCPUHistogramConsumer mhc(*ffp, 1);
+    if (!mhc.init()) {
+        std::cerr << "Could not init histogram consumer.\n";
+        exit(-1);
+    }
+
+
     //===
-    shared_ptr<flitr::SimpleCPUShaderPass> gfp(new flitr::SimpleCPUShaderPass(osgc->getOutputTexture(), true));
+    shared_ptr<flitr::CPUShaderPass> gfp(new flitr::CPUShaderPass(osgc->getOutputTexture()));
     //OR
     //shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShader(osgc->getOSGImage(), true));
     //===
 
     gfp->setGPUShader(argv[2]);
 
-    if (gfp->getInImage())
-    {
-        //gfp->setPreDrawCPUShader(new CPUGAUSFILT_Shader(gfp->getInImage()));
-        gfp->setPreDrawCPUShader(new CPUHistogram_Shader(gfp->getInImage()));
-    }
+    osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
+
 
     if (gfp->getOutImage())
     {
-        //gfp->setPostDrawCPUShader(new CPUGAUSFILT_Shader(gfp->getOutImage()));
+        //gfp->setPostRenderCPUShader(new CPUGAUSFILT_Shader(gfp->getOutImage()));
+
+        gfp->setPostRenderCPUShader(new CPUPhotometricCalibration_Shader(gfp->getOutImage(), 0.5, 0.025));
+
+        prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(gfp->getOutImage()));
+        //gfp->setPostRenderCPUShader(prmCPUShader);
     }
 
     root_node->addChild(gfp->getRoot().get());
 
 
+    //shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
     shared_ptr<TexturedQuad> quad(new TexturedQuad(gfp->getOutputTexture()));
     //shared_ptr<TexturedQuad> quad(new TexturedQuad(gfp->getOutImage()));
 
@@ -276,10 +206,26 @@ int main(int argc, char *argv[])
     adjustCameraManipulatorHomeForYUp(tb);
     
     while(!viewer.done()) {
+
         ffp->trigger();
+
+        if (mhc.isHistogramUpdated(0))
+        {
+            std::vector<int32_t> histogram=mhc.getHistogram(0);
+
+            std::vector<uint8_t> histogramIdentityMap=MultiCPUHistogramConsumer::calcHistogramIdentityMap();//NoColourAdj.
+
+            std::vector<uint8_t> histogramStretchMap=MultiCPUHistogramConsumer::calcHistogramStretchMap(histogram, mhc.getNumPixels(0), 0.1, 0.9);
+
+            std::vector<uint8_t> histogramEqualiseMap=MultiCPUHistogramConsumer::calcHistogramMatchMap(histogram, MultiCPUHistogramConsumer::calcRefHistogramForEqualisation(mhc.getNumPixels(0)));
+
+            prmCPUShader->setPaletteMap(histogramStretchMap);
+        }
+
         if (osgc->getNext()) {
             viewer.frame();
         }
+
     }
 
     return 0;
