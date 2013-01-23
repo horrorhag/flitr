@@ -6,6 +6,7 @@
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
 
+#include <flitr/points_overlay.h>
 #include <flitr/test_pattern_producer.h>
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_osg_consumer.h>
@@ -31,9 +32,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-//#define USE_TEST_PATTERN 1
+#define USE_TEST_PATTERN 1
 #ifdef USE_TEST_PATTERN
-    shared_ptr<TestPatternProducer> ip(new TestPatternProducer(1024, 768, ImageFormat::FLITR_PIX_FMT_Y_8, 0.1));
+    shared_ptr<TestPatternProducer> ip(new TestPatternProducer(1024, 768, ImageFormat::FLITR_PIX_FMT_Y_8, 0.5, 6));
     if (!ip->init()) {
         std::cerr << "Could not instantiate the test pattern producer.\n";
         exit(-1);
@@ -59,12 +60,7 @@ int main(int argc, char *argv[])
     //===
     shared_ptr<flitr::CPUShaderPass> gfp(new flitr::CPUShaderPass(osgc->getOutputTexture()));
     gfp->setGPUShader("/home/ballon/flitr/share/flitr/shaders/copy.frag");
-
-    if (gfp->getOutImage())
-    {
-        gfp->setPostRenderCPUShader(new CPUPhotometricCalibration_Shader(gfp->getOutImage(), 0.5, 0.025));
-    }
-
+    gfp->setPostRenderCPUShader(new CPUPhotometricCalibration_Shader(gfp->getOutImage(), 0.5, 0.025));
     root_node->addChild(gfp->getRoot().get());
 
 
@@ -73,14 +69,10 @@ int main(int argc, char *argv[])
 
     std::vector< std::pair<int,int> > roiVec;
 
-    for (int y=25; y<(ip->getFormat().getHeight()-(25+roi_dim))/2; y+=roi_dim*2)
-    {
-        for (int x=25; x<ip->getFormat().getWidth()-(25+roi_dim); x+=roi_dim*2)
-        {
-            roiVec.push_back(std::pair<int,int>(x, y));
-        }
-    }
-
+    roiVec.push_back(std::pair<int,int>(25, 25));
+    roiVec.push_back(std::pair<int,int>(ip->getFormat().getWidth()-roi_dim-25, 25));
+    roiVec.push_back(std::pair<int,int>(ip->getFormat().getWidth()-roi_dim-25, ip->getFormat().getHeight()-roi_dim-25));
+    roiVec.push_back(std::pair<int,int>(25, ip->getFormat().getHeight()-roi_dim-25));
 
     ImageStabiliserMultiLK *iStab=new ImageStabiliserMultiLK(gfp->getOutputTexture(),
                                                              roiVec,
@@ -93,7 +85,7 @@ int main(int argc, char *argv[])
                                                              false,//Bilinear output filter.
                                                              1,//Output scale factor.
                                                              1.0f,//Output crop factor.
-                                                             0.0, 1);
+                                                             0.3, 1);
     //==================
 
     iStab->init(root_node);
@@ -101,34 +93,16 @@ int main(int argc, char *argv[])
     iStab->setAutoSwapCurrentPrevious(true); //Do not compare successive frames with each other. E.g. compare all frames with specific reference frame.
 
 
+    //shared_ptr<TexturedQuad> quad(new TexturedQuad(gfp->getOutputTexture()));
     shared_ptr<TexturedQuad> quad(new TexturedQuad(iStab->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
 
-    //=== ===//
-    /*
-    const int width( 800 ), height( 450 );
-    const std::string version( "3.1" );
-    osg::ref_ptr< osg::GraphicsContext::Traits > traits = new osg::GraphicsContext::Traits();
-    traits->x = 20; traits->y = 30;
-    traits->width = width; traits->height = height;
-    traits->windowDecoration = true;
-    traits->doubleBuffer = true;
-    traits->glContextVersion = version;
-    osg::ref_ptr< osg::GraphicsContext > gc = osg::GraphicsContext::createGraphicsContext( traits.get() );
-    if( !gc.valid() )
-    {
-        osg::notify( osg::FATAL ) << "Unable to create OpenGL v" << version << " context." << std::endl;
-        return( 1 );
-    }
 
-    // Create a Camera that uses the above OpenGL context.
-    osg::Camera* cam = new osg::Camera;
-    cam->setGraphicsContext( gc.get() );
-    // Must set perspective projection for fovy and aspect.
-    cam->setProjectionMatrix( osg::Matrix::perspective( 30., (double)width/(double)height, 1., 100. ) );
-    // Unlike OpenGL, OSG viewport does *not* default to window dimensions.
-    cam->setViewport( new osg::Viewport( 0, 0, width, height ) );
-    */
+    PointsOverlay* pov = new PointsOverlay();
+    pov->setPointSize(11);
+    pov->setColour(osg::Vec4(1.0, 0.0, 0.0, 0.8));
+    root_node->addChild(pov);
+
 
     osgViewer::Viewer viewer;
     //viewer.setCamera( cam );
@@ -136,13 +110,7 @@ int main(int argc, char *argv[])
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
 
-    // for non GL3/GL4 and non GLES2 platforms we need enable the osg_ uniforms that the shaders will use,
-    // you don't need thse two lines on GL3/GL4 and GLES2 specific builds as these will be enable by default.
-    //gc->getState()->setUseModelViewAndProjectionUniforms(true);
-    //gc->getState()->setUseVertexAttributeAliasing(true);
-
     viewer.realize();
-    //=== ===//
 
 
     ImageFormat imf = ip->getFormat();
@@ -165,6 +133,13 @@ int main(int argc, char *argv[])
             }
 
             viewer.frame();
+
+            pov->clearVertices();
+            for (int i=0; i<iStab->getNumPyramids(); i++)
+            {
+                osg::Vec2f rc=iStab->getTransformedROI_Centre(i);
+                pov->addVertex(osg::Vec3d(rc._v[0], ip->getFormat().getHeight() - rc._v[1] - 1, 0.1));
+            }
 
             numFramesDone++;
         }

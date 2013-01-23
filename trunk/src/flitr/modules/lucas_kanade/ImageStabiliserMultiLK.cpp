@@ -24,17 +24,17 @@ void flitr::ImageStabiliserMultiLK::PostNPyramidRebuiltCallback::callback()
 
 
 flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const osg::TextureRectangle *i_pInputTexture,
-                                              std::vector< std::pair<int,int> > &i_ROIVec,
-                                              unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
-                                              bool i_bIndicateROI,
-                                              bool i_bDoGPUPyramids,
-                                              bool i_bDoGPULKIterations,
-                                              unsigned long i_ulNumGPUHVectorReductionLevels,
-                                              bool i_bReadOutputBackToCPU,
-                                              bool i_bBiLinearOutputFilter,
-                                              int i_iOutputScaleFactor, float i_fOutputCropFactor,
-                                              float filterHistory,
-                                              int numFilterPairs) :
+                                                      std::vector< std::pair<int,int> > &i_ROIVec,
+                                                      unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
+                                                      bool i_bIndicateROI,
+                                                      bool i_bDoGPUPyramids,
+                                                      bool i_bDoGPULKIterations,
+                                                      unsigned long i_ulNumGPUHVectorReductionLevels,
+                                                      bool i_bReadOutputBackToCPU,
+                                                      bool i_bBiLinearOutputFilter,
+                                                      int i_iOutputScaleFactor, float i_fOutputCropFactor,
+                                                      float filterHistory,
+                                                      int numFilterPairs) :
 
     m_ulROIWidth(i_ulROIWidth), m_ulROIHeight(i_ulROIHeight),
     m_ulNumLKIterations(0),
@@ -67,8 +67,20 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const osg::TextureRectangl
     m_bBiLinearOutputFilter(i_bBiLinearOutputFilter),
     m_ulFrameNumber(0)
 {
+    if (m_pInputTexture->getFilter(osg::Texture::MIN_FILTER)!=osg::Texture::LINEAR)
+    {
+        logMessage(LOG_CRITICAL) << "WARNING: ImageStabiliserMultiLK:: The input texture does not have its filter set to bi-linear/LINEAR. The registration will not be as accurate as it could be!!!\n";
+    }
+
     m_ROIVec=i_ROIVec;
+
     m_numPyramids_=i_ROIVec.size();
+
+    for (uint32_t i=0; i<m_numPyramids_; i++)
+    {
+        osg::Vec2f rc=getROI_Centre(i);
+        m_TransformedROICentreVec.push_back(std::pair<double, double>((double)rc._v[0], (double)rc._v[1]));
+    }
 
     m_rpHEstimateUniform=new osg::ref_ptr<osg::Uniform>[m_numPyramids_];
     m_h=new osg::Vec2[m_numPyramids_];
@@ -88,7 +100,7 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const osg::TextureRectangl
 
     if (!i_pInputTexture->getImage())
     {
-        if (m_bDoGPUPyramids==false) logMessage(LOG_INFO) << "WARNING: Forcing the GPU pyramid construction to ON. Reason: The input texture is not available as an image on the CPU.\n";
+        if (m_bDoGPUPyramids==false) logMessage(LOG_INFO) << "WARNING: ImageStabiliserMultiLK:: Forcing the GPU pyramid construction to ON. Reason: The input texture is not available as an image on the CPU.\n";
         m_bDoGPUPyramids=true;
     }
 }
@@ -438,51 +450,51 @@ osg::Node* flitr::ImageStabiliserMultiLK::createNLKIteration(ImageNPyramid *i_pC
 
     for (int i=0; i<(int)m_numPyramids_; i++)
     {
-    ss << "uniform sampler2DRect gausFiltTexture_"<<i<<";\n"
+        ss << "uniform sampler2DRect gausFiltTexture_"<<i<<";\n"
 
-          "uniform sampler2DRect derivTexture_"<<i<<";\n"
+              "uniform sampler2DRect derivTexture_"<<i<<";\n"
 
-          "uniform sampler2DRect previousgausFiltTexture_"<<i<<";\n"
+              "uniform sampler2DRect previousgausFiltTexture_"<<i<<";\n"
 
-          "uniform vec2 hEstimate_"<<i<<";\n";
-}
+              "uniform vec2 hEstimate_"<<i<<";\n";
+    }
 
     ss << "void main(void)"
           "{\n";
 
     for (int i=0; i<(int)m_numPyramids_; i++)
     {
-    ss << "  float imagePixel_"<<i<<"=texture2DRect(gausFiltTexture_"<<i<<", gl_TexCoord[0].xy).r;\n"
-          "  vec3 derivPixel_"<<i<<"=texture2DRect(derivTexture_"<<i<<", gl_TexCoord[0].xy).rgb;\n"
+        ss << "  float imagePixel_"<<i<<"=texture2DRect(gausFiltTexture_"<<i<<", gl_TexCoord[0].xy).r;\n"
+              "  vec3 derivPixel_"<<i<<"=texture2DRect(derivTexture_"<<i<<", gl_TexCoord[0].xy).rgb;\n"
 
 
-          //======================
-          ////Bi-linear filter for RGBAF32 pixel. Would not be required on newer hardware!
-          "  vec2 previousImagePixelPosition_"<<i<<"=(gl_TexCoord[0].xy-vec2(0.5, 0.5))-hEstimate_"<<i<<";\n"
-          "  vec2 previousImagePixelPositionFloor_"<<i<<"=floor(previousImagePixelPosition_"<<i<<");\n"
-          "  vec2 previousImagePixelPositionFrac_"<<i<<"=previousImagePixelPosition_"<<i<<"-previousImagePixelPositionFloor_"<<i<<";\n"
+              //======================
+              ////Bi-linear filter for RGBAF32 pixel. Would not be required on newer hardware!
+              "  vec2 previousImagePixelPosition_"<<i<<"=(gl_TexCoord[0].xy-vec2(0.5, 0.5))-hEstimate_"<<i<<";\n"
+              "  vec2 previousImagePixelPositionFloor_"<<i<<"=floor(previousImagePixelPosition_"<<i<<");\n"
+              "  vec2 previousImagePixelPositionFrac_"<<i<<"=previousImagePixelPosition_"<<i<<"-previousImagePixelPositionFloor_"<<i<<";\n"
 
-          "  float previousImagePixelTopLeft_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(0.5, 0.5)).r;\n"
-          "  float previousImagePixelTopRight_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(1.5, 0.5)).r;\n"
-          "  float previousImagePixelBotLeft_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(0.5, 1.5)).r;\n"
-          "  float previousImagePixelBotRight_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(1.5, 1.5)).r;\n"
-          "  float previousImagePixelTop_"<<i<<"=(previousImagePixelTopRight_"<<i<<"-previousImagePixelTopLeft_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".x+previousImagePixelTopLeft_"<<i<<";\n"
-          "  float previousImagePixelBot_"<<i<<"=(previousImagePixelBotRight_"<<i<<"-previousImagePixelBotLeft_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".x+previousImagePixelBotLeft_"<<i<<";\n"
-          "  float previousImagePixel_"<<i<<"=(previousImagePixelBot_"<<i<<"-previousImagePixelTop_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".y+previousImagePixelTop_"<<i<<";\n"
-          //======================
-          //OR
-          //======================
-          //"  vec2 previousImagePixelPosition_"<<i<<"=gl_TexCoord[0].xy-hEstimate_"<<i<<";\n"
-          //"  float previousImagePixel_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPosition_"<<i<<").r;\n"
-          //======================
+              "  float previousImagePixelTopLeft_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(0.5, 0.5)).r;\n"
+              "  float previousImagePixelTopRight_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(1.5, 0.5)).r;\n"
+              "  float previousImagePixelBotLeft_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(0.5, 1.5)).r;\n"
+              "  float previousImagePixelBotRight_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPositionFloor_"<<i<<"+vec2(1.5, 1.5)).r;\n"
+              "  float previousImagePixelTop_"<<i<<"=(previousImagePixelTopRight_"<<i<<"-previousImagePixelTopLeft_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".x+previousImagePixelTopLeft_"<<i<<";\n"
+              "  float previousImagePixelBot_"<<i<<"=(previousImagePixelBotRight_"<<i<<"-previousImagePixelBotLeft_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".x+previousImagePixelBotLeft_"<<i<<";\n"
+              "  float previousImagePixel_"<<i<<"=(previousImagePixelBot_"<<i<<"-previousImagePixelTop_"<<i<<")*previousImagePixelPositionFrac_"<<i<<".y+previousImagePixelTop_"<<i<<";\n"
+              //======================
+              //OR
+              //======================
+              //"  vec2 previousImagePixelPosition_"<<i<<"=gl_TexCoord[0].xy-hEstimate_"<<i<<";\n"
+              //"  float previousImagePixel_"<<i<<"=texture2DRect(previousgausFiltTexture_"<<i<<", previousImagePixelPosition_"<<i<<").r;\n"
+              //======================
 
-          "  float error_"<<i<<"=imagePixel_"<<i<<"-previousImagePixel_"<<i<<";\n"
-          "  vec2 hNumerator_"<<i<<"=derivPixel_"<<i<<".rg * error_"<<i<<";\n"
-          "  float hDenominator_"<<i<<"=derivPixel_"<<i<<".b;\n"
+              "  float error_"<<i<<"=imagePixel_"<<i<<"-previousImagePixel_"<<i<<";\n"
+              "  vec2 hNumerator_"<<i<<"=derivPixel_"<<i<<".rg * error_"<<i<<";\n"
+              "  float hDenominator_"<<i<<"=derivPixel_"<<i<<".b;\n"
 
-          "  gl_FragData["<<i<<"].rg=hNumerator_"<<i<<";\n"
-          "  gl_FragData["<<i<<"].b=hDenominator_"<<i<<";\n";
-}
+              "  gl_FragData["<<i<<"].rg=hNumerator_"<<i<<";\n"
+              "  gl_FragData["<<i<<"].b=hDenominator_"<<i<<";\n";
+    }
 
     ss << "}\n";
 
@@ -516,8 +528,8 @@ osg::Node* flitr::ImageStabiliserMultiLK::createNLKIteration(ImageNPyramid *i_pC
 
 
 osg::Node* flitr::ImageStabiliserMultiLK::createHVectorReductionLevel(unsigned long i_ulLevel, unsigned long i_ulWidth,
-                                                                  unsigned long i_ulHeight, unsigned long i_ulReductionLevel,
-                                                                  bool i_bDoPostLKIterationCallback)
+                                                                      unsigned long i_ulHeight, unsigned long i_ulReductionLevel,
+                                                                      bool i_bDoPostLKIterationCallback)
 {
     osg::ref_ptr<osg::Geode> geode = 0;
     osg::ref_ptr<osg::StateSet> geomss = 0;
@@ -560,7 +572,7 @@ osg::Node* flitr::ImageStabiliserMultiLK::createHVectorReductionLevel(unsigned l
     std::stringstream ss;
     for (int i=0; i<(int)m_numPyramids_; i++)
     {
-    ss << "uniform sampler2DRect highResLKResultTexture_"<<i<<";\n";
+        ss << "uniform sampler2DRect highResLKResultTexture_"<<i<<";\n";
     }
 
     ss << "void main(void)"
@@ -568,13 +580,13 @@ osg::Node* flitr::ImageStabiliserMultiLK::createHVectorReductionLevel(unsigned l
 
     for (int i=0; i<(int)m_numPyramids_; i++)
     {
-    ss << "  vec4 imagePixel0_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 0.5));\n"
-          "  vec4 imagePixel1_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 0.5));\n"
-          "  vec4 imagePixel2_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 1.5));\n"
-          "  vec4 imagePixel3_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 1.5));\n"
+        ss << "  vec4 imagePixel0_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 0.5));\n"
+              "  vec4 imagePixel1_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 0.5));\n"
+              "  vec4 imagePixel2_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(1.5, 1.5));\n"
+              "  vec4 imagePixel3_"<<i<<"=texture2DRect(highResLKResultTexture_"<<i<<", (gl_TexCoord[0].xy-vec2(0.5, 0.5))*2.0+vec2(0.5, 1.5));\n"
 
-          "  gl_FragData["<<i<<"]=(imagePixel0_"<<i<<"+imagePixel1_"<<i<<"+imagePixel2_"<<i<<"+imagePixel3_"<<i<<");\n";
-}
+              "  gl_FragData["<<i<<"]=(imagePixel0_"<<i<<"+imagePixel1_"<<i<<"+imagePixel2_"<<i<<"+imagePixel3_"<<i<<");\n";
+    }
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
@@ -638,8 +650,8 @@ osg::Matrixd flitr::ImageStabiliserMultiLK::getDeltaTransformationMatrix() const
 }
 
 void flitr::ImageStabiliserMultiLK::getHomographyMatrix(double &a00, double &a01, double &a02,
-                                                    double &a10, double &a11, double &a12,
-                                                    double &a20, double &a21, double &a22) const
+                                                        double &a10, double &a11, double &a12,
+                                                        double &a20, double &a21, double &a22) const
 {			
     osg::Vec2d translation=m_h[0];
 
@@ -658,7 +670,6 @@ void flitr::ImageStabiliserMultiLK::getHomographyMatrix(double &a00, double &a01
 
 void flitr::ImageStabiliserMultiLK::offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight)
 {
-
     osg::Vec4d vert=osg::Vec4d(0.0, 0.0, 0.0, -1.0);
     osg::ref_ptr<osg::Vec3Array> vcoords = new osg::Vec3Array; // vertex coords
 
@@ -675,6 +686,30 @@ void flitr::ImageStabiliserMultiLK::offsetQuadPositionByMatrix(const osg::Matrix
     vcoords->push_back(osg::Vec3d(vert.x(), vert.z(), -1));
 
     m_quadGeom->setVertexArray(vcoords.get());
+}
+
+void flitr::ImageStabiliserMultiLK::offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeight)
+{
+    osg::ref_ptr<osg::Vec3Array> vcoords = new osg::Vec3Array; // vertex coords
+
+    for (double y=1.0; y<i_ulHeight-1.0f-0.5; y+=((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS))
+    {
+        for (double x=1.0; x<i_ulWidth-1.0f-0.5; x+=((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS)
+        {
+
+            osg::Vec2 v1=transformLRCoordByROICentres(osg::Vec2f(x,                                               y));
+            osg::Vec2 v2=transformLRCoordByROICentres(osg::Vec2f(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y));
+            osg::Vec2 v3=transformLRCoordByROICentres(osg::Vec2f(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
+            osg::Vec2 v4=transformLRCoordByROICentres(osg::Vec2f(x,                                               y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
+
+            vcoords->push_back(osg::Vec3(v1._v[0]-((double)i_ulWidth)*0.5, v1._v[1]-((double)i_ulHeight)*0.5, -1.0));
+            vcoords->push_back(osg::Vec3(v2._v[0]-((double)i_ulWidth)*0.5, v2._v[1]-((double)i_ulHeight)*0.5, -1.0));
+            vcoords->push_back(osg::Vec3(v3._v[0]-((double)i_ulWidth)*0.5, v3._v[1]-((double)i_ulHeight)*0.5, -1.0));
+            vcoords->push_back(osg::Vec3(v4._v[0]-((double)i_ulWidth)*0.5, v4._v[1]-((double)i_ulHeight)*0.5, -1.0));
+        }
+    }
+
+    m_quadGeom->setVertexArray(vcoords.get());
 
 }
 
@@ -688,45 +723,43 @@ osg::ref_ptr<osg::Geode> flitr::ImageStabiliserMultiLK::createScreenAlignedQuad(
     osg::ref_ptr<osg::Vec4Array>   colors;
     osg::ref_ptr<osg::DrawArrays>  da;
     
-    //*************************************
-    //create the group and its single geode
-    //*************************************
-    //    sceneGroup = new osg::Group();
     geode   = new osg::Geode();
-    
-    //********************************************
-    //create quad to stick the stitched texture on
-    //********************************************
-    da = new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, 4);
-    
+
     //******************************
     //set quad colour to white
     //******************************
     colors = new osg::Vec4Array;
     colors->push_back(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
 
-    //**************************************************************
-    //set the texture coords to coincide with the size of the stitch
-    //**************************************************************
+
     tcoords = new osg::Vec2Array;
-    tcoords->push_back(osg::Vec2(1,         1));
-    tcoords->push_back(osg::Vec2(i_ulWidth-1, 1));
-    tcoords->push_back(osg::Vec2(i_ulWidth-1, i_ulHeight-1));
-    tcoords->push_back(osg::Vec2(1,         i_ulHeight-1));
-    
-    //********************************************
-    //set up the quad in free space recalling that
-    //the camera is going to look along the Z axis
-    //********************************************
     vcoords = new osg::Vec3Array;
-    vcoords->push_back(osg::Vec3d(-(i_ulWidth-2.0)*0.5,     -(i_ulHeight-2.0)*0.5,      -1));
-    vcoords->push_back(osg::Vec3d((i_ulWidth-2.0)*0.5, -(i_ulHeight-2.0)*0.5,      -1));
-    vcoords->push_back(osg::Vec3d((i_ulWidth-2.0)*0.5, (i_ulHeight-2.0)*0.5, -1));
-    vcoords->push_back(osg::Vec3d(-(i_ulWidth-2.0)*0.5,     (i_ulHeight-2.0)*0.5, -1));
-    
-    //*************************************
-    //tie all the above properties together
-    //*************************************
+
+    for (double y=1.0; y<i_ulHeight-1.0f-0.5; y+=((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS))
+    {
+        for (double x=1.0; x<i_ulWidth-1.0f-0.5; x+=((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS)
+        {
+         tcoords->push_back(osg::Vec2(x,                                  y));
+         tcoords->push_back(osg::Vec2(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y));
+         tcoords->push_back(osg::Vec2(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
+         tcoords->push_back(osg::Vec2(x,                                  y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
+
+         osg::Vec2 v1=(osg::Vec2f(x,                                  y));
+         osg::Vec2 v2=(osg::Vec2f(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y));
+         osg::Vec2 v3=(osg::Vec2f(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
+         osg::Vec2 v4=(osg::Vec2f(x,                                  y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
+
+         vcoords->push_back(osg::Vec3(v1._v[0]-((double)i_ulWidth)*0.5, v1._v[1]-((double)i_ulHeight)*0.5, -1.0));
+         vcoords->push_back(osg::Vec3(v2._v[0]-((double)i_ulWidth)*0.5, v2._v[1]-((double)i_ulHeight)*0.5, -1.0));
+         vcoords->push_back(osg::Vec3(v3._v[0]-((double)i_ulWidth)*0.5, v3._v[1]-((double)i_ulHeight)*0.5, -1.0));
+         vcoords->push_back(osg::Vec3(v4._v[0]-((double)i_ulWidth)*0.5, v4._v[1]-((double)i_ulHeight)*0.5, -1.0));
+        }
+    }
+
+
+    da = new osg::DrawArrays(osg::PrimitiveSet::QUADS, 0, vcoords->size());
+
+
     m_quadGeom = new osg::Geometry;
     m_quadGeom->setVertexArray(vcoords.get());
     m_quadGeom->setTexCoordArray(0, tcoords.get());

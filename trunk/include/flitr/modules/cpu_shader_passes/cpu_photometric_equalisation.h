@@ -36,11 +36,8 @@ public:
         const uint32_t numElements=numPixels*numComponents;
         for (uint32_t i=0; i<numElements; i++)
         {
-            if ((data[i]<224)&&(data[i]>32))//Only use mid-tones for measurement.
-            {
-                sum+=data[i];
-                numElementsSummed++;
-            }
+            sum+=data[i];
+            numElementsSummed++;
         }
 
         if (numElementsSummed)

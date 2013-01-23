@@ -28,8 +28,8 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex)
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());
     OutTexture_->setSourceFormat(InTexture_->getSourceFormat());
     OutTexture_->setSourceType(InTexture_->getSourceType());
-    OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
-    OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
+    OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
+    OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
 
     if (OutImage_)
         OutTexture_->setImage(OutImage_);//Also sets the texture's source format and type.

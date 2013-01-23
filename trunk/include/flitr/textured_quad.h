@@ -29,6 +29,7 @@
 #include <osg/Geometry>
 #include <osg/TextureRectangle>
 #include <osg/Texture2D>
+#include <osg/TexEnv>
 #include <osg/MatrixTransform>
 
 namespace flitr {
