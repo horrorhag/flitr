@@ -42,8 +42,9 @@ class FLITR_EXPORT TestPatternProducer : public ImageProducer {
      * format.
      * 
      */
-    TestPatternProducer(uint32_t width, uint32_t height, ImageFormat::PixelFormat out_pix_fmt,
-                        float patternSpeed,
+    TestPatternProducer(const uint32_t width, const uint32_t height, const ImageFormat::PixelFormat out_pix_fmt,
+                        const float patternSpeed,
+                        const uint8_t patternScale,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
     /**
@@ -63,9 +64,11 @@ class FLITR_EXPORT TestPatternProducer : public ImageProducer {
 
 
   private:
-    uint32_t buffer_size_;
+    const uint32_t buffer_size_;
     uint32_t numFramesDone_;
-    float patternSpeed_;
+
+    const float patternSpeed_;
+    const uint8_t patternScale_;
 };
 
 }

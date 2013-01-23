@@ -20,6 +20,8 @@ using std::tr1::shared_ptr;
 namespace flitr
 {
 
+#define NUM_OUTPUT_QUAD_STEPS 10
+
 class ImageStabiliserMultiLK
 {
 public:
@@ -28,7 +30,7 @@ public:
 
     class PostNLKIteration_CameraPostDrawCallback : public osg::Camera::DrawCallback
     {//Callback signalling when a GPU LK iteration has completed that should reduced by the CPU.
-     //Will be called at least once after last GPU hvector reduction.
+        //Will be called at least once after last GPU hvector reduction.
     public:
         PostNLKIteration_CameraPostDrawCallback(ImageStabiliserMultiLK *i_pImageStabiliserNLK) :
             m_pImageStabiliserNLK(i_pImageStabiliserNLK)
@@ -145,21 +147,26 @@ public:
 
 
     ImageStabiliserMultiLK(const osg::TextureRectangle *i_pInputTexture,
-                       std::vector< std::pair<int,int> > &i_ROIVec,
-                       unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
-                       bool i_bIndicateROI,
-                       bool i_bDoGPUPyramids,
-                       bool i_bDoGPULKIterations,
-                       unsigned long i_ulNumGPUHVectorReductionLevels,
-                       bool i_bReadOutputBackToCPU,
-                       bool i_bBiLinearOutputFilter,
-                       int i_iOutputScaleFactor,
-                       float i_fOutputCropFactor,//larger than one to crop, smaller than one to frame.
-                       float filterHistory=0.0f,
-                       int numFilterPairs=1);
+                           std::vector< std::pair<int,int> > &i_ROIVec,
+                           unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
+                           bool i_bIndicateROI,
+                           bool i_bDoGPUPyramids,
+                           bool i_bDoGPULKIterations,
+                           unsigned long i_ulNumGPUHVectorReductionLevels,
+                           bool i_bReadOutputBackToCPU,
+                           bool i_bBiLinearOutputFilter,
+                           int i_iOutputScaleFactor,
+                           float i_fOutputCropFactor,//larger than one to crop, smaller than one to frame.
+                           float filterHistory=0.0f,
+                           int numFilterPairs=1);
 
 
     bool init(osg::Group *root_group);
+
+    uint32_t getNumPyramids() const
+    {
+        return m_ROIVec.size();
+    }
 
     inline const osg::Image* getLKResultLevel(unsigned long i_ulPyramidNum, unsigned long i_ulLevel) const
     {
@@ -276,6 +283,19 @@ public:
         }
     }
 
+
+    inline osg::Vec2f getROI_Centre(const unsigned long i_ulPyramidNum) const
+    {
+        return osg::Vec2f(m_ROIVec[i_ulPyramidNum].first+m_ulROIWidth*0.5f,
+                          m_ROIVec[i_ulPyramidNum].second+m_ulROIHeight*0.5f);
+    }
+
+    inline osg::Vec2f getTransformedROI_Centre(const unsigned long i_ulPyramidNum) const
+    {
+        return osg::Vec2f(m_TransformedROICentreVec[i_ulPyramidNum].first,
+                          m_TransformedROICentreVec[i_ulPyramidNum].second);
+    }
+
 public:
     std::vector< std::pair<int,int> > m_ROIVec;
     unsigned long m_numPyramids_;
@@ -291,6 +311,7 @@ private:
     bool m_bAutoSwapCurrentPrevious;
 
     osg::ref_ptr<osg::MatrixTransform> m_rpQuadMatrixTransform;
+    std::vector< std::pair<double,double> > m_TransformedROICentreVec;
     osg::ref_ptr<osg::Geometry>       m_quadGeom;
 
     osg::ref_ptr<osg::TextureRectangle> m_outputTexture;
@@ -335,30 +356,116 @@ private:
     osg::Vec2 *m_h;
     unsigned long m_ulFrameNumber;
 
+private:
     void offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight);
 
+    osg::Vec2f transformLRCoordByROICentres(const osg::Vec2f LRCoord) const
+    {
+        const float yFrac= (LRCoord._v[1]-getROI_Centre(0).y()) / (getROI_Centre(3).y()-getROI_Centre(0).y());
+        const osg::Vec2f left=( getTransformedROI_Centre(3) - getTransformedROI_Centre(0)) * yFrac + getTransformedROI_Centre(0);
+        const osg::Vec2f right=( getTransformedROI_Centre(2) - getTransformedROI_Centre(1)) * yFrac + getTransformedROI_Centre(1);
+
+        return (right-left) * ( (LRCoord._v[0]-getROI_Centre(0).x())/(getROI_Centre(1).x()-getROI_Centre(0).x()) ) + left;
+    }
+
+    void offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeigt);
+
+public:
     void updateOutputQuadTransform()
     {
-        osg::Matrixd deltaTransform=getDeltaTransformationMatrix();
+        osg::Matrixd deltaTransformMatrix=getDeltaTransformationMatrix();
 
         for (int filterNum=0; filterNum<(int)(filterPairs_.size()); filterNum++)
         {
-            filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(deltaTransform(3,0), deltaTransform(3,2))*(filterPairs_[filterNum].second);
-
-            if (filterNum==0)
-            {//Update output quad's transform with the delta transform.
-                osg::Matrixd quadDeltaTransform=deltaTransform;
-                quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-filterPairs_[filterNum].first._v[0];
-                quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-filterPairs_[filterNum].first._v[1];
-
-                osg::Matrixd quadTransform=m_rpQuadMatrixTransform->getMatrix();
-                quadTransform=quadDeltaTransform*quadTransform;
-                m_rpQuadMatrixTransform->setMatrix(quadTransform);
-                offsetQuadPositionByMatrix(&quadTransform,
-                                                                  m_pInputTexture->getTextureWidth(),
-                                                                  m_pInputTexture->getTextureHeight());
-            }
+            filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(deltaTransformMatrix(3,0), deltaTransformMatrix(3,2))*(filterPairs_[filterNum].second);
         }
+
+        {//Update output quad's transform with the delta transform.
+            osg::Matrixd quadDeltaTransform=deltaTransformMatrix;
+            quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-filterPairs_[0].first._v[0];
+            quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-filterPairs_[0].first._v[1];
+
+            osg::Matrixd quadTransform=m_rpQuadMatrixTransform->getMatrix();
+            quadTransform=quadDeltaTransform*quadTransform;
+            m_rpQuadMatrixTransform->setMatrix(quadTransform);
+
+            //offsetQuadPositionByMatrix(&quadTransform,
+            //                           m_pInputTexture->getTextureWidth(),
+            //                           m_pInputTexture->getTextureHeight());
+        }
+
+        //Update transformed ROI centres.
+        double ax, ay, ar, bx, by, br;
+
+            //=== ROI 0 ===//
+            ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
+            ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
+            ar=sqrt(ax*ax+ay*ay);
+            ax/=ar;
+            ay/=ar;
+
+            bx=m_TransformedROICentreVec[3].first - m_TransformedROICentreVec[0].first;
+            by=m_TransformedROICentreVec[3].second - m_TransformedROICentreVec[0].second;
+            br=sqrt(bx*bx+by*by);
+            bx/=br;
+            by/=br;
+
+            m_TransformedROICentreVec[0].first-=m_h[0]._v[0] * ax + m_h[0]._v[1] * bx;
+            m_TransformedROICentreVec[0].second-=m_h[0]._v[0] * ay + m_h[0]._v[1] * by;
+            //=== ===//
+
+            //=== ROI 1 ===//
+            ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
+            ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
+            ar=sqrt(ax*ax+ay*ay);
+            ax/=ar;
+            ay/=ar;
+
+            bx=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[1].first;
+            by=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[1].second;
+            br=sqrt(bx*bx+by*by);
+            bx/=br;
+            by/=br;
+
+            m_TransformedROICentreVec[1].first-=m_h[1]._v[0] * ax + m_h[1]._v[1] * bx;
+            m_TransformedROICentreVec[1].second-=m_h[1]._v[0] * ay + m_h[1]._v[1] * by;
+            //=== ===//
+
+            //=== ROI 2 ===//
+            ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
+            ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
+            ar=sqrt(ax*ax+ay*ay);
+            ax/=ar;
+            ay/=ar;
+
+            bx=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[1].first;
+            by=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[1].second;
+            br=sqrt(bx*bx+by*by);
+            bx/=br;
+            by/=br;
+
+            m_TransformedROICentreVec[2].first-=m_h[2]._v[0] * ax + m_h[2]._v[1] * bx;
+            m_TransformedROICentreVec[2].second-=m_h[2]._v[0] * ay + m_h[2]._v[1] * by;
+            //=== ===//
+
+            //=== ROI 2 ===//
+            ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
+            ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
+            ar=sqrt(ax*ax+ay*ay);
+            ax/=ar;
+            ay/=ar;
+
+            bx=m_TransformedROICentreVec[3].first - m_TransformedROICentreVec[0].first;
+            by=m_TransformedROICentreVec[3].second - m_TransformedROICentreVec[0].second;
+            br=sqrt(bx*bx+by*by);
+            bx/=br;
+            by/=br;
+
+            m_TransformedROICentreVec[3].first-=m_h[3]._v[0] * ax + m_h[3]._v[1] * bx;
+            m_TransformedROICentreVec[3].second-=m_h[3]._v[0] * ay + m_h[3]._v[1] * by;
+            //=== ===//
+
+            offsetQuadPositionByROICentres(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
     }
 
     osg::ref_ptr<osg::Geode> createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight);
@@ -366,11 +473,6 @@ private:
 
     osg::Node* createOutputPass();
 
-    inline osg::Vec2f getROI_Centre(unsigned long i_ulPyramidNum) const
-    {
-        return osg::Vec2f(m_ROIVec[i_ulPyramidNum].first+m_ulROIWidth*0.5,
-                          m_ROIVec[i_ulPyramidNum].second+m_ulROIHeight*0.5);
-    }
 
     static unsigned long m_ulLKBorder;
 

@@ -163,6 +163,8 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_crop_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_translate_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_downsample_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_downsample_x_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_downsample_y_pass.cpp
   src/flitr/modules/glsl_shader_passes/homography_shader_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
@@ -216,6 +218,8 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_crop_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_translate_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_downsample_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_downsample_x_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_downsample_y_pass.h
   include/flitr/modules/glsl_shader_passes/homography_shader_pass.h
 )
 

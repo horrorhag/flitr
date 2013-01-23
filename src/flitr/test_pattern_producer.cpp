@@ -24,10 +24,11 @@ using namespace flitr;
 using std::tr1::shared_ptr;
 
 
-TestPatternProducer::TestPatternProducer(uint32_t width, uint32_t height, ImageFormat::PixelFormat out_pix_fmt,
-                                         float patternSpeed,
+TestPatternProducer::TestPatternProducer(const uint32_t width, const uint32_t height, const ImageFormat::PixelFormat out_pix_fmt,
+                                         const float patternSpeed, const uint8_t patternScale,
                                          uint32_t buffer_size) :
-    buffer_size_(buffer_size), numFramesDone_(0), patternSpeed_(patternSpeed)
+    buffer_size_(buffer_size), numFramesDone_(0),
+    patternSpeed_(patternSpeed), patternScale_(patternScale)
 {
     ImageFormat_.push_back(ImageFormat(width, height, out_pix_fmt));
 }
@@ -51,50 +52,85 @@ bool TestPatternProducer::trigger()
     Image *image=*(imv[0]);
 
     {
-        double testPatternFrame=numFramesDone_*patternSpeed_;
-        unsigned char *inputData=image->data();
+        const float testPatternFrame=numFramesDone_*patternSpeed_;
+        unsigned char * const data=image->data();
 
         unsigned long offset=0;
-        double patternOffsetX=100.0*sin(testPatternFrame*0.05)+10.0*sin(testPatternFrame*2.5);
-        double patternOffsetY=100.0*cos(testPatternFrame*0.05)+10.0*cos(testPatternFrame*2.5);
-        double l=cos(sin(testPatternFrame*0.01*1.0)*0.45);
-        double m=sin(sin(testPatternFrame*0.01*1.0)*0.45);
-        double rotCentreX=ImageFormat_[0].getWidth()*0.5;
-        double rotCentreY=ImageFormat_[0].getHeight()*0.5;
+        const double patternOffsetX=/*100.0*sin(testPatternFrame*0.05)+10.0*sin(testPatternFrame*2.5) +*/ 100000.5;
+        const double patternOffsetY=/*100.0*cos(testPatternFrame*0.05)+10.0*cos(testPatternFrame*2.5) +*/ 100000.5;
 
-        for (long y=0; y<ImageFormat_[0].getHeight(); y++)
+        const double l=cos(sin(testPatternFrame*0.01)*0.45);
+        const double m=sin(sin(testPatternFrame*0.01)*0.45);
+        const double n=-m;
+        const double o=l;
+
+        const int32_t halfWidth=ImageFormat_[0].getWidth() >> 1;
+        const int32_t halfHeight=ImageFormat_[0].getHeight() >> 1;
+
+
+
+        if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
         {
-            for (long x=0; x<ImageFormat_[0].getWidth(); x++)
+            for (int32_t y=-halfHeight; y<halfHeight; y++)
             {
+                double fix=-halfWidth*l+y*n+patternOffsetX;
+                double fiy=-halfWidth*m+y*o+patternOffsetY;
 
-                unsigned long ix=(long)((x-rotCentreX)*l+(y-rotCentreY)*(-m)+patternOffsetX + 100000.5);
-                unsigned long iy=(long)((x-rotCentreX)*m+(y-rotCentreY)*( l)+patternOffsetY + 100000.5);
-
-                if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
+                for (int32_t x=-halfWidth; x<halfWidth; x++)
                 {
-                  inputData[offset]=( ( (ix>>6)+(iy>>6) ) %2 )*255;
-                  offset+=1;
-                } else
-                    if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_16)
-                    {
-                      inputData[offset]=( ( ( (ix>>6)+(iy>>6) ) %2 )*65535 ) & 0xFF;
-                      inputData[offset+1]=( ( ( (ix>>6)+(iy>>6) ) %2 )*65535 ) >> 8;
-                      offset+=2;
-                    } else
-                        if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
-                        {
-                          inputData[offset]=( ( (ix>>6)+(iy>>6) ) %2 )*255;
-                          inputData[offset+1]=( ( (ix>>6)+(iy>>6) ) %2 )*255;
-                          inputData[offset+2]=( ( (ix>>6)+(iy>>6) ) %2 )*255;
-                          offset+=3;
-                        } else
-                        {
-                            std::cout << "TestPatternProducer::trigger(), unknown output pixel format.\n";
-                            std::cout.flush();
-                            assert(0);
-                        }
+                    const uint8_t patternColour=( ( (((int32_t)fix)>>patternScale_)+(((int32_t)fiy)>>patternScale_) ) % 2 ) * 0xFF;
+
+                    data[offset]=patternColour;
+
+                    offset++;
+                    fix+=l;
+                    fiy+=m;
+                }
             }
-        }
+        } else
+            if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_16)
+            {
+                for (int32_t y=-halfHeight; y<halfHeight; y++)
+                {
+                    double fix=-halfWidth*l+y*n+patternOffsetX;
+                    double fiy=-halfWidth*m+y*o+patternOffsetY;
+
+                    for (int32_t x=-halfWidth; x<halfWidth; x++)
+                    {
+                        const uint8_t patternColour=( ( (((int32_t)fix)>>patternScale_)+(((int32_t)fiy)>>patternScale_) ) % 2 ) * 0xFF;
+
+                        data[offset]=data[offset+1]=patternColour;
+
+                        offset+=2;
+                        fix+=l;
+                        fiy+=m;
+                    }
+                }
+            } else
+                if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                {
+                    for (int32_t y=-halfHeight; y<halfHeight; y++)
+                    {
+                        double fix=-halfWidth*l+y*n+patternOffsetX;
+                        double fiy=-halfWidth*m+y*o+patternOffsetY;
+
+                        for (int32_t x=-halfWidth; x<halfWidth; x++)
+                        {
+                            const uint8_t patternColour=( ( (((int32_t)fix)>>patternScale_)+(((int32_t)fiy)>>patternScale_) ) % 2 ) * 0xFF;
+
+                            data[offset]=data[offset+1]=data[offset+2]=patternColour;
+
+                            offset+=3;
+                            fix+=l;
+                            fiy+=m;
+                        }
+                    }
+                } else
+                {
+                    std::cout << "TestPatternProducer::trigger(), unknown output pixel format.\n";
+                    std::cout.flush();
+                    assert(0);
+                }
     }
 
     numFramesDone_++;

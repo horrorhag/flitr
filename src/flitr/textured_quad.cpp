@@ -44,6 +44,8 @@ void TexturedQuad::setTexture(osg::Image* in_image)
     GeomStateSet_->setTextureAttributeAndModes(0, 
                                                trect.get(),
                                                osg::StateAttribute::ON);
+
+    GeomStateSet_->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
 }
 
 TexturedQuad::TexturedQuad(osg::TextureRectangle* in_tex)
