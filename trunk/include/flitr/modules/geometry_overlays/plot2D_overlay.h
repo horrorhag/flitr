@@ -21,7 +21,7 @@
 #ifndef FLITR_PLOT2D_OVERLAY_H
 #define FLITR_PLOT2D_OVERLAY_H 1
 
-#include <flitr/geometry_overlay.h>
+#include <flitr/modules/geometry_overlays/geometry_overlay.h>
 
 #include <osg/ref_ptr>
 #include <osg/Node>

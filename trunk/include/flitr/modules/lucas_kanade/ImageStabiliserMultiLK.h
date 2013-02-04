@@ -248,10 +248,6 @@ public:
 
     osg::Matrixd getDeltaTransformationMatrix() const;
 
-    void getHomographyMatrix(double &a00, double &a01, double &a02,
-                             double &a10, double &a11, double &a12,
-                             double &a20, double &a21, double &a22) const;
-
     inline osg::Vec2 getHVector(unsigned long i_ulPyramidNum) const
     {
         return m_h[i_ulPyramidNum];
@@ -356,25 +352,52 @@ private:
     osg::Vec2 *m_h;
     unsigned long m_ulFrameNumber;
 
-private:
-    void offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight);
 
+private:
     osg::Vec2f transformLRCoordByROICentres(const osg::Vec2f LRCoord) const
     {
-        const float yFrac= (LRCoord._v[1]-getROI_Centre(0).y()) / (getROI_Centre(3).y()-getROI_Centre(0).y());
-        const osg::Vec2f left=( getTransformedROI_Centre(3) - getTransformedROI_Centre(0)) * yFrac + getTransformedROI_Centre(0);
-        const osg::Vec2f right=( getTransformedROI_Centre(2) - getTransformedROI_Centre(1)) * yFrac + getTransformedROI_Centre(1);
+        if (m_numPyramids_==1)
+        {
+            return LRCoord - getROI_Centre(0) + getTransformedROI_Centre(0);
+        } else
+            if (m_numPyramids_==2)
+            {
+                const osg::Vec2f A=getROI_Centre(1) - getROI_Centre(0);
+                const float aSq=A.length2();
+                const osg::Vec2f B(A._v[1], -A._v[0]);
 
-        return (right-left) * ( (LRCoord._v[0]-getROI_Centre(0).x())/(getROI_Centre(1).x()-getROI_Centre(0).x()) ) + left;
+                const osg::Vec2f tA=getTransformedROI_Centre(1) - getTransformedROI_Centre(0);
+                const osg::Vec2f tB(tA._v[1], -tA._v[0]);
+
+                const float xFrac=(LRCoord-getROI_Centre(0)) * A / aSq;
+                const float yFrac=(LRCoord-getROI_Centre(0)) * B / aSq;
+
+                return tA*xFrac + tB*yFrac + getTransformedROI_Centre(0);
+            } else
+                if (m_numPyramids_==4)
+                {
+                    const float yFrac= (LRCoord._v[1]-getROI_Centre(0).y()) / (getROI_Centre(3).y()-getROI_Centre(0).y());
+
+                    const osg::Vec2f left=( getTransformedROI_Centre(3) - getTransformedROI_Centre(0)) * yFrac + getTransformedROI_Centre(0);
+                    const osg::Vec2f right=( getTransformedROI_Centre(2) - getTransformedROI_Centre(1)) * yFrac + getTransformedROI_Centre(1);
+
+                    return (right-left) * ( (LRCoord._v[0]-getROI_Centre(0).x())/(getROI_Centre(1).x()-getROI_Centre(0).x()) ) + left;
+                } else
+                {
+                    logMessage(LOG_CRITICAL) << "WARNING: ImageStabiliserMultiLK does not support a " << m_numPyramids_ << "point homography!!!\n";
+                    return osg::Vec2f(0.0f, 0.0f);
+                }
     }
 
     void offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeigt);
 
 public:
+
     void updateOutputQuadTransform()
     {
         osg::Matrixd deltaTransformMatrix=getDeltaTransformationMatrix();
 
+        //=== Older code with transform filter ===
         for (int filterNum=0; filterNum<(int)(filterPairs_.size()); filterNum++)
         {
             filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(deltaTransformMatrix(3,0), deltaTransformMatrix(3,2))*(filterPairs_[filterNum].second);
@@ -388,84 +411,129 @@ public:
             osg::Matrixd quadTransform=m_rpQuadMatrixTransform->getMatrix();
             quadTransform=quadDeltaTransform*quadTransform;
             m_rpQuadMatrixTransform->setMatrix(quadTransform);
-
-            //offsetQuadPositionByMatrix(&quadTransform,
-            //                           m_pInputTexture->getTextureWidth(),
-            //                           m_pInputTexture->getTextureHeight());
         }
+        //===
 
-        //Update transformed ROI centres.
-        double ax, ay, ar, bx, by, br;
 
-            //=== ROI 0 ===//
-            ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
-            ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
-            ar=sqrt(ax*ax+ay*ay);
-            ax/=ar;
-            ay/=ar;
+        //=== Update transformed ROI centres. ===
 
-            bx=m_TransformedROICentreVec[3].first - m_TransformedROICentreVec[0].first;
-            by=m_TransformedROICentreVec[3].second - m_TransformedROICentreVec[0].second;
-            br=sqrt(bx*bx+by*by);
-            bx/=br;
-            by/=br;
+        if (m_numPyramids_==1)
+        {
+            m_TransformedROICentreVec[0].first-= m_h[0]._v[0];
+            m_TransformedROICentreVec[0].second-= m_h[0]._v[1];
+        } else
+            if (m_numPyramids_==2)
+            {
+                float ax, ay, ar, bx, by, br;
 
-            m_TransformedROICentreVec[0].first-=m_h[0]._v[0] * ax + m_h[0]._v[1] * bx;
-            m_TransformedROICentreVec[0].second-=m_h[0]._v[0] * ay + m_h[0]._v[1] * by;
-            //=== ===//
+                ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
+                ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
+                bx=-ay;
+                by=ax;
 
-            //=== ROI 1 ===//
-            ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
-            ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
-            ar=sqrt(ax*ax+ay*ay);
-            ax/=ar;
-            ay/=ar;
+                ar=sqrt(ax*ax+ay*ay);
+                ax/=ar;
+                ay/=ar;
 
-            bx=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[1].first;
-            by=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[1].second;
-            br=sqrt(bx*bx+by*by);
-            bx/=br;
-            by/=br;
+                float scale=1.0;//(getTransformedROI_Centre(1) - getTransformedROI_Centre(0)).length() / (getROI_Centre(1) - getROI_Centre(0)).length();
 
-            m_TransformedROICentreVec[1].first-=m_h[1]._v[0] * ax + m_h[1]._v[1] * bx;
-            m_TransformedROICentreVec[1].second-=m_h[1]._v[0] * ay + m_h[1]._v[1] * by;
-            //=== ===//
+                br=sqrt(bx*bx+by*by);
+                bx/=br;
+                by/=br;
 
-            //=== ROI 2 ===//
-            ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
-            ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
-            ar=sqrt(ax*ax+ay*ay);
-            ax/=ar;
-            ay/=ar;
+                //=== ROI 0 ===//
+                m_TransformedROICentreVec[0].first-=m_h[0]._v[0] * ax * scale + m_h[0]._v[1] * bx * scale;
+                m_TransformedROICentreVec[0].second-=m_h[0]._v[0] * ay * scale + m_h[0]._v[1] * by * scale;
+                //=== ===//
 
-            bx=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[1].first;
-            by=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[1].second;
-            br=sqrt(bx*bx+by*by);
-            bx/=br;
-            by/=br;
+                //=== ROI 1 ===//
+                m_TransformedROICentreVec[1].first-=m_h[1]._v[0] * ax * scale + m_h[1]._v[1] * bx * scale;
+                m_TransformedROICentreVec[1].second-=m_h[1]._v[0] * ay * scale + m_h[1]._v[1] * by * scale;
+                //=== ===//
+            } else
+                if (m_numPyramids_==4)
+                {
+                    float ax, ay, ar, bx, by, br;
 
-            m_TransformedROICentreVec[2].first-=m_h[2]._v[0] * ax + m_h[2]._v[1] * bx;
-            m_TransformedROICentreVec[2].second-=m_h[2]._v[0] * ay + m_h[2]._v[1] * by;
-            //=== ===//
+                    float scaleTop=(getTransformedROI_Centre(1) - getTransformedROI_Centre(0)).length() / (getROI_Centre(1) - getROI_Centre(0)).length();
+                    float scaleBottom=(getTransformedROI_Centre(2) - getTransformedROI_Centre(3)).length() / (getROI_Centre(2) - getROI_Centre(3)).length();
+                    float scaleLeft=(getTransformedROI_Centre(3) - getTransformedROI_Centre(0)).length() / (getROI_Centre(3) - getROI_Centre(0)).length();
+                    float scaleRight=(getTransformedROI_Centre(2) - getTransformedROI_Centre(1)).length() / (getROI_Centre(2) - getROI_Centre(1)).length();
 
-            //=== ROI 2 ===//
-            ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
-            ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
-            ar=sqrt(ax*ax+ay*ay);
-            ax/=ar;
-            ay/=ar;
+                    //=== ROI 0 ===//
+                    ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
+                    ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
+                    ar=sqrt(ax*ax+ay*ay);
+                    ax/=ar;
+                    ay/=ar;
 
-            bx=m_TransformedROICentreVec[3].first - m_TransformedROICentreVec[0].first;
-            by=m_TransformedROICentreVec[3].second - m_TransformedROICentreVec[0].second;
-            br=sqrt(bx*bx+by*by);
-            bx/=br;
-            by/=br;
+                    bx=m_TransformedROICentreVec[3].first - m_TransformedROICentreVec[0].first;
+                    by=m_TransformedROICentreVec[3].second - m_TransformedROICentreVec[0].second;
+                    br=sqrt(bx*bx+by*by);
+                    bx/=br;
+                    by/=br;
 
-            m_TransformedROICentreVec[3].first-=m_h[3]._v[0] * ax + m_h[3]._v[1] * bx;
-            m_TransformedROICentreVec[3].second-=m_h[3]._v[0] * ay + m_h[3]._v[1] * by;
-            //=== ===//
+                    m_TransformedROICentreVec[0].first-=m_h[0]._v[0] * ax * scaleTop + m_h[0]._v[1] * bx * scaleLeft;
+                    m_TransformedROICentreVec[0].second-=m_h[0]._v[0] * ay * ax * scaleTop + m_h[0]._v[1] * by * scaleLeft;
+                    //=== ===//
 
-            offsetQuadPositionByROICentres(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
+                    //=== ROI 1 ===//
+                    ax=m_TransformedROICentreVec[1].first - m_TransformedROICentreVec[0].first;
+                    ay=m_TransformedROICentreVec[1].second - m_TransformedROICentreVec[0].second;
+                    ar=sqrt(ax*ax+ay*ay);
+                    ax/=ar;
+                    ay/=ar;
+
+                    bx=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[1].first;
+                    by=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[1].second;
+                    br=sqrt(bx*bx+by*by);
+                    bx/=br;
+                    by/=br;
+
+                    m_TransformedROICentreVec[1].first-=m_h[1]._v[0] * ax * scaleTop + m_h[1]._v[1] * bx * scaleRight;
+                    m_TransformedROICentreVec[1].second-=m_h[1]._v[0] * ay * scaleTop + m_h[1]._v[1] * by * scaleRight;
+                    //=== ===//
+
+                    //=== ROI 2 ===//
+                    ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
+                    ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
+                    ar=sqrt(ax*ax+ay*ay);
+                    ax/=ar;
+                    ay/=ar;
+
+                    bx=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[1].first;
+                    by=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[1].second;
+                    br=sqrt(bx*bx+by*by);
+                    bx/=br;
+                    by/=br;
+
+                    m_TransformedROICentreVec[2].first-=m_h[2]._v[0] * ax * scaleBottom + m_h[2]._v[1] * bx * scaleRight;
+                    m_TransformedROICentreVec[2].second-=m_h[2]._v[0] * ay * scaleBottom + m_h[2]._v[1] * by * scaleRight;
+                    //=== ===//
+
+                    //=== ROI 2 ===//
+                    ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
+                    ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
+                    ar=sqrt(ax*ax+ay*ay);
+                    ax/=ar;
+                    ay/=ar;
+
+                    bx=m_TransformedROICentreVec[3].first - m_TransformedROICentreVec[0].first;
+                    by=m_TransformedROICentreVec[3].second - m_TransformedROICentreVec[0].second;
+                    br=sqrt(bx*bx+by*by);
+                    bx/=br;
+                    by/=br;
+
+                    m_TransformedROICentreVec[3].first-=m_h[3]._v[0] * ax * scaleBottom + m_h[3]._v[1] * bx * scaleLeft;
+                    m_TransformedROICentreVec[3].second-=m_h[3]._v[0] * ay * scaleBottom + m_h[3]._v[1] * by * scaleLeft;
+                    //=== ===//
+                } else
+                {
+                    logMessage(LOG_CRITICAL) << "WARNING: ImageStabiliserMultiLK does not support a " << m_numPyramids_ << "point homography!!!\n";
+                }
+        //===
+
+        offsetQuadPositionByROICentres(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
     }
 
     osg::ref_ptr<osg::Geode> createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight);

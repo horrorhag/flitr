@@ -3,8 +3,8 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
-#include <flitr/quad_overlay.h>
-#include <flitr/crosshair_overlay.h>
+#include <flitr/modules/geometry_overlays/quad_overlay.h>
+#include <flitr/modules/geometry_overlays/crosshair_overlay.h>
 
 #include <osg/Vec3>
 #include <osg/Vec4>

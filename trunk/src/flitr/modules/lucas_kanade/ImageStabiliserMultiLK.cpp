@@ -649,44 +649,6 @@ osg::Matrixd flitr::ImageStabiliserMultiLK::getDeltaTransformationMatrix() const
     return transformation;
 }
 
-void flitr::ImageStabiliserMultiLK::getHomographyMatrix(double &a00, double &a01, double &a02,
-                                                        double &a10, double &a11, double &a12,
-                                                        double &a20, double &a21, double &a22) const
-{			
-    osg::Vec2d translation=m_h[0];
-
-    osg::Vec2d lNorm;
-    osg::Vec2d mNorm;
-
-    {
-        lNorm=osg::Vec2d(1.0, 0.0);
-        mNorm=osg::Vec2d(0.0, 1.0);
-    }
-
-    a00=lNorm.x(); 		a01=-mNorm.x();		a02=-translation.x();
-    a10=-lNorm.y(); 		a11=mNorm.y();		a12=-translation.y();
-    a20=0.0; 		a21=0.0; 		a22=1.0;
-}
-
-void flitr::ImageStabiliserMultiLK::offsetQuadPositionByMatrix(const osg::Matrixd *i_pTransformation, unsigned long i_ulWidth, unsigned long i_ulHeight)
-{
-    osg::Vec4d vert=osg::Vec4d(0.0, 0.0, 0.0, -1.0);
-    osg::ref_ptr<osg::Vec3Array> vcoords = new osg::Vec3Array; // vertex coords
-
-    vert=osg::Vec4d(-0.5*(i_ulWidth-2.0), 0, -0.5*(i_ulHeight-2.0), 1.0)*(*i_pTransformation);
-    vcoords->push_back(osg::Vec3d(vert.x(), vert.z(), -1));
-
-    vert=osg::Vec4d(0.5*(i_ulWidth-2.0), 0, -0.5*(i_ulHeight-2.0), 1.0)*(*i_pTransformation);
-    vcoords->push_back(osg::Vec3d(vert.x(), vert.z(), -1));
-
-    vert=osg::Vec4d(0.5*(i_ulWidth-2.0), 0, 0.5*(i_ulHeight-2.0), 1.0)*(*i_pTransformation);
-    vcoords->push_back(osg::Vec3d(vert.x(), vert.z(), -1));
-
-    vert=osg::Vec4d(-0.5*(i_ulWidth-2.0), 0, 0.5*(i_ulHeight-2.0), 1.0)*(*i_pTransformation);
-    vcoords->push_back(osg::Vec3d(vert.x(), vert.z(), -1));
-
-    m_quadGeom->setVertexArray(vcoords.get());
-}
 
 void flitr::ImageStabiliserMultiLK::offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeight)
 {

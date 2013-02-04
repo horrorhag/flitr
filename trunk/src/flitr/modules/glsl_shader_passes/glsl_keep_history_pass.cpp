@@ -1,7 +1,7 @@
-#include "keep_history_pass.h"
+#include <flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h>
 #include <osgUtil/CullVisitor>
 
-void KeepHistoryPass::CameraCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
+void GLSLKeepHistoryPass::CameraCullCallback::operator()(osg::Node* node, osg::NodeVisitor* nv)
 {
     osg::Camera* fboCam = dynamic_cast<osg::Camera*>( node );
     osgUtil::CullVisitor* cv = dynamic_cast<osgUtil::CullVisitor*>(nv);
@@ -17,12 +17,12 @@ void KeepHistoryPass::CameraCullCallback::operator()(osg::Node* node, osg::NodeV
     traverse(node, nv);
 }
 
-void KeepHistoryPass::CameraPostDrawCallback::operator()(osg::RenderInfo& ri) const
+void GLSLKeepHistoryPass::CameraPostDrawCallback::operator()(osg::RenderInfo& ri) const
 {
     hp_->frameDone();
 }
 
-KeepHistoryPass::KeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size) :
+GLSLKeepHistoryPass::GLSLKeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size) :
     HistorySize_(hist_size),
     OverwriteIndex_(0),
     ValidHistory_(0),
@@ -48,11 +48,11 @@ KeepHistoryPass::KeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size) :
     setShader("");
 }
 
-KeepHistoryPass::~KeepHistoryPass()
+GLSLKeepHistoryPass::~GLSLKeepHistoryPass()
 {
 }
 
-osg::ref_ptr<osg::Group> KeepHistoryPass::createTexturedQuad()
+osg::ref_ptr<osg::Group> GLSLKeepHistoryPass::createTexturedQuad()
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
     
@@ -97,7 +97,7 @@ osg::ref_ptr<osg::Group> KeepHistoryPass::createTexturedQuad()
     return top_group;
 }
 
-void KeepHistoryPass::setupCamera()
+void GLSLKeepHistoryPass::setupCamera()
 {
     // clearing
     bool need_clear = false;
@@ -128,7 +128,7 @@ void KeepHistoryPass::setupCamera()
     Camera_->setFinalDrawCallback(new CameraPostDrawCallback(this));
 }
 
-void KeepHistoryPass::createOutputTextures()
+void GLSLKeepHistoryPass::createOutputTextures()
 {
     for (int i=0; i<HistorySize_; ++i) {
         OutTextures_.push_back(new osg::TextureRectangle);
@@ -142,7 +142,7 @@ void KeepHistoryPass::createOutputTextures()
     }
 }
 
-osg::ref_ptr<osg::TextureRectangle> KeepHistoryPass::getOutputTexture(int age) 
+osg::ref_ptr<osg::TextureRectangle> GLSLKeepHistoryPass::getOutputTexture(int age)
 {
     // get to within valid range
     age = age % HistorySize_;
@@ -158,7 +158,7 @@ osg::ref_ptr<osg::TextureRectangle> KeepHistoryPass::getOutputTexture(int age)
     return OutTextures_[t]; 
 }
 
-void KeepHistoryPass::setShader(std::string filename)
+void GLSLKeepHistoryPass::setShader(std::string filename)
 {
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
@@ -172,7 +172,7 @@ void KeepHistoryPass::setShader(std::string filename)
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
 
-void KeepHistoryPass::frameDone()
+void GLSLKeepHistoryPass::frameDone()
 {
     FirstPass_ = false;
     OverwriteIndex_++;

@@ -5,10 +5,10 @@
 
 namespace flitr {
 
-class FLITR_EXPORT CPUPhotometricCalibration_Shader : public flitr::CPUShaderPass::CPUShader
+class FLITR_EXPORT CPUPhotometricEqualisation_Shader : public flitr::CPUShaderPass::CPUShader
 {
 public:
-    CPUPhotometricCalibration_Shader(osg::Image* image, double initialTargetAverage, double targetAverageUpdateSpeed=0.025) :
+    CPUPhotometricEqualisation_Shader(osg::Image* image, double initialTargetAverage, double targetAverageUpdateSpeed=0.025) :
         Image_(image),
         TargetAverage_(new double),
         TargetAverageUpdateSpeed_(targetAverageUpdateSpeed)
@@ -16,7 +16,7 @@ public:
         *TargetAverage_=initialTargetAverage;
     }
 
-    ~CPUPhotometricCalibration_Shader()
+    ~CPUPhotometricEqualisation_Shader()
     {
         delete TargetAverage_;
     }

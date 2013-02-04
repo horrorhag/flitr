@@ -1,7 +1,6 @@
 PROJECT(flitr_keep_history_pass)
 
 SET(SOURCES
-  keep_history_pass.cpp
   keep_history.cpp
 )
 

@@ -123,14 +123,12 @@ ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
 
 SET(LIB_SOURCES
   src/flitr/hud.cpp
-  src/flitr/crosshair_overlay.cpp
   src/flitr/ffmpeg_producer.cpp
   src/flitr/test_pattern_producer.cpp
   src/flitr/smulti_ffmpeg_producer.cpp
   src/flitr/ffmpeg_reader.cpp
   src/flitr/ffmpeg_utils.cpp
   src/flitr/ffmpeg_writer.cpp
-  src/flitr/geometry_overlay.cpp
   src/flitr/high_resolution_time.cpp
   src/flitr/image_consumer.cpp
   src/flitr/image_processor.cpp
@@ -143,9 +141,13 @@ SET(LIB_SOURCES
   src/flitr/multi_ffmpeg_producer.cpp
   src/flitr/multi_osg_consumer.cpp
   src/flitr/ortho_texture_manipulator.cpp
-  src/flitr/points_overlay.cpp
-  src/flitr/quad_overlay.cpp
-  src/flitr/plot2D_overlay.cpp
+
+  src/flitr/modules/geometry_overlays/crosshair_overlay.cpp
+  src/flitr/modules/geometry_overlays/geometry_overlay.cpp
+  src/flitr/modules/geometry_overlays/points_overlay.cpp
+  src/flitr/modules/geometry_overlays/quad_overlay.cpp
+  src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
+
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
 
@@ -166,10 +168,12 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_downsample_x_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_downsample_y_pass.cpp
   src/flitr/modules/glsl_shader_passes/homography_shader_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/hud.h
-  include/flitr/crosshair_overlay.h
   include/flitr/ffmpeg_producer.h
   include/flitr/test_pattern_producer.h
   include/flitr/smulti_ffmpeg_producer.h
@@ -178,7 +182,6 @@ SET(LIB_SOURCES
   include/flitr/ffmpeg_writer.h
   include/flitr/flitr_export.h
   include/flitr/flitr_stdint.h
-  include/flitr/geometry_overlay.h
   include/flitr/high_resolution_time.h
   include/flitr/image_consumer.h
   include/flitr/image_processor.h
@@ -195,9 +198,13 @@ SET(LIB_SOURCES
   include/flitr/multi_ffmpeg_producer.h
   include/flitr/multi_osg_consumer.h
   include/flitr/ortho_texture_manipulator.h
-  include/flitr/points_overlay.h
-  include/flitr/quad_overlay.h
-  include/flitr/plot2D_overlay.h
+
+  include/flitr/modules/geometry_overlays/crosshair_overlay.h
+  include/flitr/modules/geometry_overlays/geometry_overlay.h
+  include/flitr/modules/geometry_overlays/points_overlay.h
+  include/flitr/modules/geometry_overlays/quad_overlay.h
+  include/flitr/modules/geometry_overlays/plot2D_overlay.h
+
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
@@ -205,6 +212,7 @@ SET(LIB_SOURCES
   include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h
   include/flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h
   include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
+  include/flitr/modules/cpu_shader_passes/cpu_uniform_noise_shader.h
 
   include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
   include/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h
@@ -221,6 +229,9 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_downsample_x_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_downsample_y_pass.h
   include/flitr/modules/glsl_shader_passes/homography_shader_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h
 )
 
 
