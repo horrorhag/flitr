@@ -39,6 +39,9 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex)
     setupCamera();
     Camera_->addChild(createTexturedQuad().get());
     RootGroup_->addChild(Camera_.get());
+
+    // make sure other state doesn't bleed into here, attach empty shader
+    setGPUShader("");
 }
 
 CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)

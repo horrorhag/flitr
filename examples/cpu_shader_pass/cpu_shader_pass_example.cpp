@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 
     gfp->setGPUShader(argv[2]);
         //gfp->setPostRenderCPUShader(new CPUGAUSFILT_Shader(gfp->getOutImage()));
-        gfp->setPostRenderCPUShader(new CPUPhotometricCalibration_Shader(gfp->getOutImage(), 0.5, 0.025));
+        gfp->setPostRenderCPUShader(new CPUPhotometricEqualisation_Shader(gfp->getOutImage(), 0.5, 0.025));
 
         osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
         prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(gfp->getOutImage()));

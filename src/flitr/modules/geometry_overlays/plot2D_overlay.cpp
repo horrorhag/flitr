@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/plot2D_overlay.h>
+#include <flitr/modules/geometry_overlays/plot2D_overlay.h>
 
 using namespace flitr;
 

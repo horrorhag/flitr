@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/quad_overlay.h>
+#include <flitr/modules/geometry_overlays/quad_overlay.h>
 
 using namespace flitr;
 

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/crosshair_overlay.h>
+#include <flitr/modules/geometry_overlays/crosshair_overlay.h>
 
 using namespace flitr;
 

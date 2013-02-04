@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/geometry_overlay.h>
+#include <flitr/modules/geometry_overlays/geometry_overlay.h>
 
 using namespace flitr;
 

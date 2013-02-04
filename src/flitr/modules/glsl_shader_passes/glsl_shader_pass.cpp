@@ -24,7 +24,8 @@ GLSLShaderPass::GLSLShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_
 
     RootGroup_->addChild(Camera_.get());
 
-    //setShader("");
+    // make sure other state doesn't bleed into here, attach empty shader
+    setShader("");
 }
 
 GLSLShaderPass::~GLSLShaderPass()

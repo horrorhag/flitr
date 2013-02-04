@@ -11,7 +11,7 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 
-#include "keep_history_pass.h"
+#include <flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h>
 
 using std::tr1::shared_ptr;
 using namespace flitr;
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
 
-    shared_ptr<KeepHistoryPass> hp(new KeepHistoryPass(osgc->getOutputTexture(), history_size));
+    shared_ptr<GLSLKeepHistoryPass> hp(new GLSLKeepHistoryPass(osgc->getOutputTexture(), history_size));
     if (argc > 2) {
         hp->setShader(argv[2]);
     }

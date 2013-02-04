@@ -1,5 +1,5 @@
-#ifndef KEEP_HISTORY_PASS_H
-#define KEEP_HISTORY_PASS_H 1
+#ifndef GLSL_KEEP_HISTORY_PASS_H
+#define GLSL_KEEP_HISTORY_PASS_H 1
 
 #include <osg/ref_ptr>
 #include <osg/Group>
@@ -11,10 +11,10 @@
 #include <osg/Texture2D>
 #include <osg/TextureRectangle>
 
-class KeepHistoryPass {
+class GLSLKeepHistoryPass {
   public:
-    KeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size);
-    ~KeepHistoryPass();
+    GLSLKeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size);
+    ~GLSLKeepHistoryPass();
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<osg::TextureRectangle> getOutputTexture(int age=0);
     void setShader(std::string filename);
@@ -43,19 +43,19 @@ class KeepHistoryPass {
 
     struct CameraCullCallback : public osg::NodeCallback 
     {
-        CameraCullCallback(KeepHistoryPass* hp) : hp_(hp) {}
+        CameraCullCallback(GLSLKeepHistoryPass* hp) : hp_(hp) {}
         virtual void operator()(osg::Node* node, osg::NodeVisitor* nv);
       protected:
-        KeepHistoryPass* hp_;
+        GLSLKeepHistoryPass* hp_;
     };
     
     struct CameraPostDrawCallback : public osg::Camera::DrawCallback
     {
-        CameraPostDrawCallback(KeepHistoryPass* hp) : hp_(hp) {}
+        CameraPostDrawCallback(GLSLKeepHistoryPass* hp) : hp_(hp) {}
         virtual void operator()(osg::RenderInfo& ri) const;
       protected:
-        KeepHistoryPass* hp_;
+        GLSLKeepHistoryPass* hp_;
     };
 };
 
-#endif //KEEP_HISTORY_PASS_H
+#endif //GLSL_KEEP_HISTORY_PASS_H
