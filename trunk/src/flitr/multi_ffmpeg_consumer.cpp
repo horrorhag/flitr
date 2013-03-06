@@ -37,6 +37,7 @@ void MultiFFmpegConsumerThread::run()
             if (Consumer_->Writing_) {
                 Consumer_->MultiWriteStats_->tick();
 
+                {
                 unsigned int i=0;
                 #pragma omp parallel for
                 for (i=0; i<num_writers; i++) {
@@ -47,6 +48,7 @@ void MultiFFmpegConsumerThread::run()
                         Consumer_->FFmpegWriters_[i]->writeVideoFrame(im->data());
                         Consumer_->MetadataWriters_[i]->writeFrame(*im);
                     }
+                }
                 }
 
                 Consumer_->MultiWriteStats_->tock();
