@@ -39,7 +39,11 @@ void MultiCPUHistogramConsumerThread::run()
 
             if ((imageCount % imageStride)==0)
             {
-                for (uint32_t imNum=0; imNum<Consumer_->ImagesPerSlot_; imNum++)
+                uint32_t imNum=0;
+
+                {
+                #pragma omp parallel for
+                for (imNum=0; imNum<Consumer_->ImagesPerSlot_; imNum++)
                 {// Calculate the histogram.
                     Image* im = *(imv[imNum]);
 
@@ -66,12 +70,14 @@ void MultiCPUHistogramConsumerThread::run()
                     // Generate histogram.
                     const uint32_t numElements=numPixels*numComponents;
                     const uint32_t elementStride=pixelStride*numComponents;
+
                     for (uint32_t i=0; i<numElements; i+=elementStride)
                     {
                             (*histogram)[data[i]]+=pixelStride;
                     }
 
                     Consumer_->HistogramUpdatedVect_[imNum]=true;
+                }
                 }
             }
             // indicate we are done with the image/s

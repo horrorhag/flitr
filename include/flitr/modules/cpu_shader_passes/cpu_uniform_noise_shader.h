@@ -28,10 +28,12 @@ public:
         unsigned char * const data=(unsigned char *)Image_->data();
 
 
+        const float randAtt=NoiseLevel_ * 255.0f / RAND_MAX;
         const uint32_t numElements=numPixels*numComponents;
+
         for (uint32_t i=0; i<numElements; i++)
         {
-            int pvalue=data[i]+255.0f*NoiseLevel_*rand()/((float)RAND_MAX) + 0.5f;
+            int pvalue=data[i]+randAtt*rand() + 0.5f;
 
             data[i]=(pvalue<255) ? pvalue : 255;
         }

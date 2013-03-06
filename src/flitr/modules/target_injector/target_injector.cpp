@@ -88,7 +88,7 @@ bool TargetInjector::trigger()
             //Do image processing here...
             uint32_t y=0;
 
-
+            {
             #pragma omp parallel for
             for (y=0; y<height; y++)
             {
@@ -149,6 +149,7 @@ bool TargetInjector::trigger()
 
                     offset+=bytesPerPixel;
                 }
+            }
             }
 
         }

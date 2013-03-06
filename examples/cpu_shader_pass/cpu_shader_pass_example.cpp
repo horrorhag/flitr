@@ -22,6 +22,7 @@ using std::tr1::shared_ptr;
 using namespace flitr;
 
 
+//=== Example CPU shader: Image SUM ===//
 class CPUSUM_Shader : public CPUShaderPass::CPUShader
 {
 public:
@@ -63,7 +64,9 @@ public:
 
     osg::Image* Image_;
 };
+//=== ===
 
+//=== Example CPU shader: Gausian Filter ===
 class CPUGAUSFILT_Shader : public CPUShaderPass::CPUShader
 {
 public:
@@ -133,13 +136,13 @@ public:
 
     osg::Image* Image_;
 };
-
+//=== ===
 
 
 int main(int argc, char *argv[])
 {
     if (argc != 3) {
-        std::cout << "Usage: " << argv[0] << " video_file glsl_shader_file (Note: cpu pre- and post-shaders in C++ main.cpp).\n";
+        std::cout << "Usage: " << argv[0] << " video_file glsl_shader_file (Note: cpu pre- and post-shaders set in code in C++ main.cpp).\n";
         return 1;
     }
 
@@ -149,6 +152,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
+
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ffp,1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer.\n";
@@ -156,6 +160,7 @@ int main(int argc, char *argv[])
     }
 
     osg::Group *root_node = new osg::Group;
+
 
     MultiCPUHistogramConsumer mhc(*ffp, 1);
     if (!mhc.init()) {
@@ -165,24 +170,26 @@ int main(int argc, char *argv[])
 
 
     //===
-    shared_ptr<flitr::CPUShaderPass> gfp(new flitr::CPUShaderPass(osgc->getOutputTexture()));
+    shared_ptr<flitr::CPUShaderPass> cpuShaderPass(new flitr::CPUShaderPass(osgc->getOutputTexture()));
     //OR
     //shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShader(osgc->getOSGImage(), true));
     //===
 
-    gfp->setGPUShader(argv[2]);
-        //gfp->setPostRenderCPUShader(new CPUGAUSFILT_Shader(gfp->getOutImage()));
-        gfp->setPostRenderCPUShader(new CPUPhotometricEqualisation_Shader(gfp->getOutImage(), 0.5, 0.025));
 
+    cpuShaderPass->setGPUShader(argv[2]);
         osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
-        prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(gfp->getOutImage()));
-        //gfp->setPostRenderCPUShader(prmCPUShader);
-    root_node->addChild(gfp->getRoot().get());
+        prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(cpuShaderPass->getOutImage()));
+        //cpuShaderPass->setPostRenderCPUShader(prmCPUShader);
+
+        //cpuShaderPass->setPostRenderCPUShader(new CPUGAUSFILT_Shader(cpuShaderPass->getOutImage()));
+        cpuShaderPass->setPostRenderCPUShader(new CPUPhotometricEqualisation_Shader(cpuShaderPass->getOutImage(), 0.2, 0.025));
+
+        //cpuShaderPass->setPostRenderCPUShader(new CPUSUM_Shader(cpuShaderPass->getOutImage()));
+    root_node->addChild(cpuShaderPass->getRoot().get());
 
 
-    //shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
-    shared_ptr<TexturedQuad> quad(new TexturedQuad(gfp->getOutputTexture()));
-    //shared_ptr<TexturedQuad> quad(new TexturedQuad(gfp->getOutImage()));
+    shared_ptr<TexturedQuad> quad(new TexturedQuad(cpuShaderPass->getOutputTexture()));
+    //shared_ptr<TexturedQuad> quad(new TexturedQuad(cpuShaderPass->getOutImage()));
 
     root_node->addChild(quad->getRoot().get());
 
@@ -192,6 +199,7 @@ int main(int argc, char *argv[])
     viewer.setSceneData(root_node);
 
     //viewer.setUpViewInWindow(480+40, 40, 640, 480);
+
     viewer.realize();
     osgGA::TrackballManipulator* tb = new osgGA::TrackballManipulator;
     viewer.setCameraManipulator(tb);
@@ -211,7 +219,7 @@ int main(int argc, char *argv[])
 
             std::vector<uint8_t> histogramEqualiseMap=MultiCPUHistogramConsumer::calcHistogramMatchMap(histogram, MultiCPUHistogramConsumer::calcRefHistogramForEqualisation(mhc.getNumPixels(0)));
 
-            prmCPUShader->setPaletteMap(histogramStretchMap);
+            prmCPUShader->setPaletteMap(histogramEqualiseMap);
         }
 
         if (osgc->getNext()) {
