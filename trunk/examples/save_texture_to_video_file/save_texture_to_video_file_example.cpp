@@ -60,9 +60,9 @@ int main(int argc, char *argv[])
 //                                                                      ImageFormat::FLITR_PIX_FMT_Y_16, //Produced format is Y_16!
                                                                       ssp->getOutputTexture()->getTextureWidth(),
                                                                       ssp->getOutputTexture()->getTextureHeight(),
-                                                                      true,
-                                                                      3,
-                                                                      true));
+                                                                      true,//keep image aspect.
+                                                                      3,//producer buffer sze.
+                                                                      true));//blocking operation.
     if (!tcp->init()) {
         std::cerr << "Could not init TextureCaptureProducer.\n";
         exit(-1);
