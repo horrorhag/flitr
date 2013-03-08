@@ -291,6 +291,7 @@ ADD_SUBDIRECTORY(examples/keep_history_pass)
 ADD_SUBDIRECTORY(examples/points_overlay)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/hud_overlay)
+ADD_SUBDIRECTORY(examples/save_texture_to_video_file)
 
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
