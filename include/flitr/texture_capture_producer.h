@@ -37,6 +37,7 @@
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
 
+#include <OpenThreads/Thread>
 
 namespace flitr {
 
@@ -86,20 +87,33 @@ class TextureCaptureProducer : public ImageProducer {
 
     struct TextureCaptureDrawCallback : public osg::Camera::DrawCallback
     {
-        TextureCaptureDrawCallback(TextureCaptureProducer* producer) :
-            producer_(producer)
+        TextureCaptureDrawCallback(TextureCaptureProducer* producer, bool blocking) :
+            producer_(producer),
+            blocking_(blocking)
         {}
         
         virtual void operator () (osg::RenderInfo& renderInfo) const
         {
             if (producer_->enabled_)
             {
-                std::vector<Image**> imv = producer_->reserveWriteSlot();
-                if (imv.size() != 1) {
-                    logMessage(LOG_CRITICAL) << "Dropping frames - no space in texture capture buffer\n";
-                    logMessage(LOG_CRITICAL).flush();
-                    return;
-                }
+                std::vector<Image**> imv;
+                do {
+                    imv = producer_->reserveWriteSlot();
+
+                    if (imv.size()!=1)
+                    {
+                        if (blocking_)
+                        {//sleep and try again i.e. block viewer's frame.
+                          OpenThreads::Thread::microSleep(1000);
+                        } else
+                        {//drop this frame i.e. do not block viewer's frame.
+                            logMessage(LOG_CRITICAL) << "Dropping frames - no space in texture capture buffer\n";
+                            logMessage(LOG_CRITICAL).flush();
+                            return;
+                        }
+                    }
+                } while (imv.size() != 1);
+
 
                 Image* im = *(imv[0]);
                 osg::TextureRectangle* trect_ = producer_->OutputTexture_.get();
@@ -125,8 +139,8 @@ class TextureCaptureProducer : public ImageProducer {
                     pixelType=GL_UNSIGNED_SHORT;
                     break;
                 default:
-                    pixelFormat=GL_RGB;
-                    pixelType=GL_UNSIGNED_SHORT;
+                    std::cerr << "Pixel format " << producer_->OutputFormat_.getPixelFormat() << " not yet implemented in TextureCaptureProducer.\n";
+                    exit(-1);
                 }
 
                 glGetTexImage(trect_->getTextureTarget(), 0, //level
@@ -168,6 +182,7 @@ class TextureCaptureProducer : public ImageProducer {
             }
         }
         TextureCaptureProducer* producer_;
+        bool blocking_;//blocking the viewer frame method as opposed to dropping image frames.
     };
 
 public:
@@ -177,7 +192,8 @@ public:
             uint32_t new_width,
             uint32_t new_height,
             bool keep_aspect,
-            uint32_t buffer_size);
+            uint32_t buffer_size,
+            bool blocking=false);
 
     bool init();
 
@@ -211,7 +227,9 @@ private:
 
     bool KeepAspect_;
 
+
     uint32_t BufferSize_;
+    bool blocking_;
 
     bool enabled_;
     std::string SaveNextImageTo_;

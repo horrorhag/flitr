@@ -14,6 +14,8 @@
 
 #include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
 
+#include <flitr/texture_capture_producer.h>
+
 using std::tr1::shared_ptr;
 using namespace flitr;
 
@@ -26,7 +28,8 @@ int main(int argc, char *argv[])
 
     //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_16));
     shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
-    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));
+    //shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));//Produced format is the same as the video pixel format!
+
     if (!ffp->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -44,17 +47,17 @@ int main(int argc, char *argv[])
     ssp->setShader(argv[2]);
     root_node->addChild(ssp->getRoot().get());
 
-    ssp->setVariable1(2.0f);
 
     shared_ptr<TexturedQuad> quad(new TexturedQuad(ssp->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
+
 
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
 
-    //viewer.setUpViewInWindow(480+40, 40, 640, 480);
+    viewer.setUpViewInWindow(40, 40, 640, 480);
     viewer.realize();
     osgGA::TrackballManipulator* tb = new osgGA::TrackballManipulator;
     viewer.setCameraManipulator(tb);

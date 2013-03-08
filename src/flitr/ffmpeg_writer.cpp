@@ -45,8 +45,8 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     WriteFrameStats_ = shared_ptr<StatsCollector>(new StatsCollector(writeframe_stats_name.str()));
 
     /* register all codecs, demux and protocols */
-    avcodec_register_all();
     av_register_all();
+//    avcodec_register_all();
 
     //=== VideoEncodeBuffer_ for use with older avcodec_encode_video(...) ===
     // be safe with size
@@ -95,7 +95,8 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
 
     //=== FormatContext_ ===
-    FormatContext_ = avformat_alloc_context();
+    //BD FormatContext_ = avformat_alloc_context();
+    avformat_alloc_output_context2(&FormatContext_, OutputFormat_, NULL, filename.c_str());
 
     if (!FormatContext_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate video format context.\n";
@@ -103,9 +104,8 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         throw FFmpegWriterException();
     }
 
-    FormatContext_->oformat = OutputFormat_;
+    //BD FormatContext_->oformat = OutputFormat_;
     sprintf(FormatContext_->filename, "%s", SaveFileName_.c_str());
-
 
 
     //=== AVCodec_ ===
@@ -232,11 +232,8 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     //=== ===
 
 
-
-
     //=== VideoStream_ ===
     VideoStream_ = avformat_new_stream(FormatContext_, AVCodec_);
-    //VideoStream_ = avformat_new_stream(FormatContext_, AVCodec_);
     if (!VideoStream_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate video stream.\n";
         logMessage(LOG_CRITICAL).flush();
@@ -246,6 +243,8 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
     //=== AVCodecContext_ ===
     AVCodecContext_=VideoStream_->codec;
+    //AVCodecContext_->thread_count=2;
+    //AVCodecContext_->thread_type=FF_THREAD_SLICE;
 
     avcodec_get_context_defaults3(AVCodecContext_, AVCodec_);
 
@@ -281,7 +280,6 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         logMessage(LOG_CRITICAL).flush();
         throw FFmpegWriterException();
     }
-
 
 #if LIBAVFORMAT_VERSION_INT < ((54<<16) + (6<<8) + 100)
     if (av_set_parameters(FormatContext_, NULL) < 0) {
@@ -321,7 +319,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
 
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
-    if (avio_open(&FormatContext_->pb, SaveFileName_.c_str(), AVIO_FLAG_WRITE) < 0) {
+    if ((!(OutputFormat_->flags & AVFMT_NOFILE))&&(avio_open(&FormatContext_->pb, SaveFileName_.c_str(), AVIO_FLAG_WRITE) < 0)) {
 #else
     if (url_fopen(&FormatContext_->pb, SaveFileName_.c_str(), URL_WRONLY) < 0) {
 #endif
@@ -331,12 +329,45 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     }
 
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
-    avformat_write_header(FormatContext_,NULL);
+    AVDictionary *options = NULL;
+    //av_dict_set(&options, "video_size", "1380x1038", 0);
+    //av_dict_set(&options, "pixel_format", av_get_pix_fmt_name(PIX_FMT_GRAY16LE), 0);
+    //av_dict_set(&options, "pix_fmt", av_get_pix_fmt_name(PIX_FMT_GRAY16LE), 0);
+    //av_dict_set(&options, "width", "1380", 0);
+    //av_dict_set(&options, "height", "1038", 0);
+    av_dict_set(&options, "codec_type", "AVMEDIA_TYPE_VIDEO", 0);
+    //av_dict_set(&options, "codec_tag", "1", 0);
+    if (avformat_write_header(FormatContext_,&options)!=0)
+    {
+        logMessage(LOG_CRITICAL) << "Could not write header.\n";
+        logMessage(LOG_CRITICAL).flush();
+        throw FFmpegWriterException();
+    }
+
+    AVDictionaryEntry *t = NULL;
+
+    while ( (t = av_dict_get(options, "", t, AV_DICT_IGNORE_SUFFIX)) )
+    {
+        std::cout << "Header dict option not found: " << t->key << " " << t->value << "\n";
+    }
+    std::cout.flush();
+
 #else
-    av_write_header(FormatContext_);
+        if (av_write_header(FormatContext_)!=0)
+        {
+            logMessage(LOG_CRITICAL) << "Could not write header.\n";
+            logMessage(LOG_CRITICAL).flush();
+            throw FFmpegWriterException();
+        }
 #endif
 
     WrittenFrameCount_ = 0;
+
+    std::cout << "codec_tag=" << AVCodecContext_->codec_tag << "\n";
+    std::cout.flush();
+    AVCodecContext_->codec_tag=1;
+
+
 }
 
 FFmpegWriter::~FFmpegWriter()
@@ -363,12 +394,13 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
     avpicture_fill((AVPicture *)InputFrame_, in_buf, InputFrameFormat_, ImageFormat_.getWidth(), ImageFormat_.getHeight());
 
 #if defined FLITR_USE_SWSCALE
+/*
     if ((InputFrameFormat_!=PIX_FMT_GRAY8)&&(InputFrameFormat_!=PIX_FMT_GRAY16LE))
     {//Sometime the image has to be flipped.
         InputFrame_->data[0] += InputFrame_->linesize[0] * (AVCodecContext_->height-1);
         InputFrame_->linesize[0]*=-1;
     }
-
+*/
     //int *test = InputFrame_->linesize;
     //printf("%d %d %d %d\n", test[0], test[1], test[2], test[3]);
     sws_scale(ConvertToSaveCtx_,
