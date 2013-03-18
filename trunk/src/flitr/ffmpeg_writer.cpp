@@ -114,7 +114,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         Codec_=(flitr::VideoCodec)OutputFormat_->video_codec;
     }
 
-    AVCodec_=avcodec_find_encoder((CodecID)Codec_);
+    AVCodec_=avcodec_find_encoder((AVCodecID)Codec_);
 
     if (!AVCodec_) {
         logMessage(LOG_CRITICAL) << "Cannot find video codec.\n";
@@ -220,7 +220,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         std::cout << "   Valid pixel formats are unspecified. Will choose the input pixel format.\n";
     }
 
-    if ( (((CodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==PIX_FMT_RGB24) )
+    if ( (((AVCodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==PIX_FMT_RGB24) )
     {//It seems that ffmpeg swaps the rgb components when using the raw codec.
         SaveFrameFormat_=PIX_FMT_BGR24;
         std::cout << "   Using pixel format " << av_get_pix_fmt_name(SaveFrameFormat_) << " instead of " << av_get_pix_fmt_name(PIX_FMT_RGB24) <<" because it seems that FFmpeg swaps the rgb when using raw codec.\n";
@@ -248,7 +248,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
     avcodec_get_context_defaults3(AVCodecContext_, AVCodec_);
 
-    AVCodecContext_->codec_id=(CodecID)Codec_;
+    AVCodecContext_->codec_id=(AVCodecID)Codec_;
 
     if (bit_rate>0) AVCodecContext_->bit_rate = bit_rate;
 
