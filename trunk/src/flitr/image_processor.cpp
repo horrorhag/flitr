@@ -19,6 +19,7 @@
  */
 
 #include <flitr/image_processor.h>
+#include <sstream>
 
 using namespace flitr;
 using std::tr1::shared_ptr;

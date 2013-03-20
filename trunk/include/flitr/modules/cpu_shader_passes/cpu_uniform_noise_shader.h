@@ -1,7 +1,9 @@
 #ifndef CPU_UNIFORM_NOISE_SHADER
 #define CPU_UNIFORM_NOISE_SHADER 1
 
+#include <flitr/flitr_export.h>
 #include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
+
 
 namespace flitr {
 

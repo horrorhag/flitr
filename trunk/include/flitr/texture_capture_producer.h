@@ -39,6 +39,8 @@
 
 #include <OpenThreads/Thread>
 
+#include <flitr/flitr_export.h>
+
 namespace flitr {
 
 
@@ -83,7 +85,7 @@ public:
 };
 
 
-class TextureCaptureProducer : public ImageProducer {
+class FLITR_EXPORT TextureCaptureProducer : public ImageProducer {
 
     struct TextureCaptureDrawCallback : public osg::Camera::DrawCallback
     {

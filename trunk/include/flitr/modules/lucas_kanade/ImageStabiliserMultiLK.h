@@ -10,6 +10,7 @@
 
 using std::tr1::shared_ptr;
 
+#include <flitr/flitr_export.h>
 #include <flitr/image_format.h>
 #include <flitr/image.h>
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
@@ -22,7 +23,7 @@ namespace flitr
 
 #define NUM_OUTPUT_QUAD_STEPS 10
 
-class ImageStabiliserMultiLK
+class FLITR_EXPORT ImageStabiliserMultiLK
 {
 public:
     static double logbase(const double a, const double base);

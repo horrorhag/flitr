@@ -11,7 +11,9 @@
 #include <osg/Texture2D>
 #include <osg/TextureRectangle>
 
-class GLSLKeepHistoryPass {
+#include <flitr/flitr_export.h>
+
+class FLITR_EXPORT GLSLKeepHistoryPass {
   public:
     GLSLKeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size);
     ~GLSLKeepHistoryPass();

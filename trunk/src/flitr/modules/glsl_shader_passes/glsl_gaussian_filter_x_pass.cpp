@@ -1,4 +1,7 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.h>
+
 
 using namespace flitr;
 

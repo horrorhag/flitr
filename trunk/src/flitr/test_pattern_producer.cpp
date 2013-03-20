@@ -19,6 +19,7 @@
  */
 
 #include <flitr/test_pattern_producer.h>
+#include <cassert>
 
 using namespace flitr;
 using std::tr1::shared_ptr;
