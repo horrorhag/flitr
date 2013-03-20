@@ -86,7 +86,7 @@ bool TargetInjector::trigger()
             memcpy(dataWrite, dataRead, imFormat.getBytesPerImage());
 
             //Do image processing here...
-            uint32_t y=0;
+            int32_t y=0;
 
             {
             #pragma omp parallel for

@@ -1,7 +1,9 @@
 #ifndef CPU_PALETTE_REMAP_SHADER
 #define CPU_PALETTE_REMAP_SHADER 1
 
+#include <flitr/flitr_export.h>
 #include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
+
 
 namespace flitr {
 

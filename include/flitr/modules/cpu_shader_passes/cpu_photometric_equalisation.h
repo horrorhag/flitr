@@ -1,6 +1,7 @@
 #ifndef CPU_PHOTOMETRIC_EQUALISATION_SHADER
 #define CPU_PHOTOMETRIC_EQUALISATION_SHADER 1
 
+#include <flitr/flitr_export.h>
 #include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
 #include <flitr/stats_collector.h>
 

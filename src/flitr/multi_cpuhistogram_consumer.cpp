@@ -39,7 +39,7 @@ void MultiCPUHistogramConsumerThread::run()
 
             if ((imageCount % imageStride)==0)
             {
-                uint32_t imNum=0;
+                int32_t imNum=0;
 
                 {
                 #pragma omp parallel for
