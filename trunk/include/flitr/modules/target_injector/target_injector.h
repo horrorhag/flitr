@@ -22,6 +22,7 @@
 #define TARGET_INJECTOR_H 1
 
 #include <flitr/image_processor.h>
+#include <boost/timer.hpp>
 
 namespace flitr {
 
@@ -40,21 +41,72 @@ public:
             px_(px), py_(py),
             dx_(dx), dy_(dy), v_(v),
             sa_(sa), sb_(sb),
-            dsa_(dsa), dsb_(dsb)
+            dsa_(dsa), dsb_(dsb),
+			interval_(0),
+			elapsedTime_(0)
         {
             //Normalise the direction vector.
             dx_/=sqrt(dx_*dx_+dy_*dy_);
             dy_/=sqrt(dx_*dx_+dy_*dy_);
         }
 
+		SyntheticTarget(float px, float py, 
+						const std::vector< std::pair<float, float> >& samples, 
+						float interval,
+						float sa, float sb,
+						float dsa=0.0f, float dsb=0.0f) :
+			px_(px), py_(py),
+            dx_(0), dy_(0), v_(0),
+            sa_(sa), sb_(sb),
+            dsa_(dsa), dsb_(dsb),
+			samples_(samples),
+			interval_(interval),
+			elapsedTime_(0)
+		{
+		}
+
 
         //Note: Makes use of default copy and assignment constructors.
 
 
-        void update()
+        void update(float dT)
         {
-            px_+=dx_ * v_;
-            py_+=dy_ * v_;
+			if (interval_ == 0.0f)
+			{
+				px_+=dx_ * v_;
+				py_+=dy_ * v_;
+			}
+			else
+			{
+				elapsedTime_ += dT;
+				int index = (int)(elapsedTime_ / interval_);
+				
+				if (index >= samples_.size() - 1) 
+				{
+					px_ = samples_.back().first;
+					py_ = samples_.back().second;
+				}
+				else
+				{
+					std::pair<float, float> curSample = samples_[index];
+					std::pair<float, float> nextSample = samples_[index+1];
+					float weight = (elapsedTime_ - (index * interval_)) / interval_;
+
+					// lerp
+					float x = curSample.first + (nextSample.first - curSample.first) * weight;
+					float y = curSample.second + (nextSample.second - curSample.second) * weight;
+
+					dx_ = (x - px_);
+					dy_ = (y - py_);
+					//Normalise the direction vector.
+					dx_/=sqrt(dx_*dx_+dy_*dy_);
+					dy_/=sqrt(dx_*dx_+dy_*dy_);
+
+					px_ = x;
+					py_ = y;
+				}
+				
+			}
 
             sa_+=dsa_;
             sb_+=dsb_;
@@ -106,6 +158,10 @@ public:
 
         float sa_, sb_;
         float dsa_, dsb_;
+
+		std::vector<std::pair<float, float>> samples_;	//!< position samples for a given interval [pixels]
+		float interval_;								//!< interval [s]
+		float elapsedTime_;									//!< elapsed time since start [s]
     };
 
 
@@ -144,6 +200,7 @@ private:
 
     float targetBrightness_;
     std::vector<SyntheticTarget> targetVector_;
+	boost::timer timer_;
 };
 
 }

@@ -28,6 +28,7 @@ TargetInjector::TargetInjector(ImageProducer& upStreamProducer,
     ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
     targetBrightness_(255.0f)
 {
+	timer_.restart();
 
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -56,13 +57,16 @@ bool TargetInjector::trigger()
         std::vector<Image**> imvWrite=reserveWriteSlot();
 
         //Start stats measurement event.
-        ProcessorStats_->tick();
+        
+		// Update timer
+		float dT = (float)timer_.elapsed();
+		timer_.restart();
 
         //Update the synthetic targets.
         std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();
         for (; iter!=targetVector_.end(); iter++)
         {
-            iter->update();
+            iter->update(dT);
         }
 
         unsigned int i=0;
@@ -90,7 +94,7 @@ bool TargetInjector::trigger()
 
             {
             #pragma omp parallel for
-            for (y=0; y<height; y++)
+            for (y=0; y<(int32_t)height; y++)
             {
                 uint32_t offset=0;
 
