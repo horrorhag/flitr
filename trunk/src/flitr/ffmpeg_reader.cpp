@@ -222,6 +222,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     //std::cout << "FrameNum = " << im_number << "\n";
     //std::cout << "RateNum  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num << "\n";
     //std::cout << "RateDen  = " << FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den << "\n";
+    //std::cout.flush();
 
     // Do not seek if we have a single frame source
     // Assume we are looking for frame 0, XXX assert maybe
@@ -249,6 +250,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
             //std::cout << "Seekret = " << seekret << "\n";
             //std::cout << "Rescale = " << av_rescale_q(seek_time, AV_TIME_BASE_Q, FormatContext_->streams[VideoStreamIndex_]->time_base) << "\n";
             //std::cout << "Norm    = " << seek_time << "\n";
+            //std::cout.flush();
         }
     }
 
@@ -302,12 +304,14 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
                 //  std::cout << "seekt   = " << seek_time << "\n";
                 //  std::cout << "PTS     = " << pkt_pts_scaled << "\n";
                 //  std::cout << "Dur     = " << pkt_duration_scaled << "\n";
+                //  std::cout.flush();
                 //}
 
                 if (pkt_pts_scaled >= seek_time ||
                         pkt_pts_scaled + pkt_duration_scaled > seek_time) {
                     // we are done
                     //fprintf(stderr, "LOOP %d\n", loopcount);
+                    //fflush(stderr);
                     break;
                 }
             }
@@ -331,6 +335,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
               ConvertedFrame_->data, ConvertedFrame_->linesize);
     
     //printf("%d %d\n", DecodedFrame_->linesize, ConvertedFrame_->linesize);
+    //fflush(stdout);
 #else
     img_convert((AVPicture *)ConvertedFrame_, PIX_FMT_GRAY8,
                 (AVPicture *)DecodedFrame_, CodecContext_->pix_fmt,

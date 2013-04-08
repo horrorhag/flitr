@@ -129,6 +129,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         int framerateIndex=0;
 
         std::cout << "FFmpegWriter: Requested framerate of " << (FrameRate_.num / ((float)FrameRate_.den)) << " and valid pixel framerates are: ";
+        std::cout.flush();
 
         float requestedFramerate=FrameRate_.num / ((float)FrameRate_.den);
 
@@ -146,6 +147,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
             }
 
             std::cout << ((*codecFramerates).num / ((float)(*codecFramerates).den)) << " ";
+            std::cout.flush();
             framerateIndex++;
             codecFramerates++;
         }
@@ -153,6 +155,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         FrameRate_=AVCodec_->supported_framerates[closestFramerateIndex];
         std::cout << "\n";
         std::cout << "   Using framerate: " << (FrameRate_.num / ((float)FrameRate_.den)) << "\n";
+        std::cout.flush();
     }
 
     //=== Choose SaveFrameFormat_ ===
@@ -160,6 +163,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     std::cout << "FFmpegWriter: Frame pixel format is " << av_get_pix_fmt_name(InputFrameFormat_) << " ";
     std::cout << "(" << av_get_bits_per_pixel(&inputPixdesc)/((float)inputPixdesc.nb_components) << "bpc, " << ((int32_t)inputPixdesc.nb_components) << " channels) ";
     std::cout << ".\n";
+    std::cout.flush();
 
     if (AVCodec_->pix_fmts!=0)
     {//Choose the input frame format if the codec support it. Otherwise choose an alternative supported format.
@@ -169,6 +173,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         AVPixFmtDescriptor bestMatchPixdesc=av_pix_fmt_descriptors[bestMatchPixelFormat];
 
         std::cout << "   Valid codec pixel formats are: ";
+        std::cout.flush();
         while ((*codecPixelFormats)!=PIX_FMT_NONE)
         {
             AVPixFmtDescriptor codecPixdesc=av_pix_fmt_descriptors[(*codecPixelFormats)];
@@ -193,6 +198,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
             std::cout << av_get_pix_fmt_name(*codecPixelFormats) << " ";
             std::cout << "(" << av_get_bits_per_pixel(&codecPixdesc)/((float)codecPixdesc.nb_components) << "bpc, " << ((int32_t)codecPixdesc.nb_components) << " channels) ";
+            std::cout.flush();
 
             if ((*codecPixelFormats)==InputFrameFormat_)
             {
@@ -218,12 +224,14 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     {//Valid pixel formats are unspecified. Just choose the input format.
         SaveFrameFormat_ = InputFrameFormat_;
         std::cout << "   Valid pixel formats are unspecified. Will choose the input pixel format.\n";
+        std::cout.flush();
     }
 
     if ( (((AVCodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==PIX_FMT_RGB24) )
     {//It seems that ffmpeg swaps the rgb components when using the raw codec.
         SaveFrameFormat_=PIX_FMT_BGR24;
         std::cout << "   Using pixel format " << av_get_pix_fmt_name(SaveFrameFormat_) << " instead of " << av_get_pix_fmt_name(PIX_FMT_RGB24) <<" because it seems that FFmpeg swaps the rgb when using raw codec.\n";
+        std::cout.flush();
     } else
     {
         std::cout << "   Using pixel format: " << av_get_pix_fmt_name(SaveFrameFormat_) <<"\n";
@@ -403,6 +411,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 */
     //int *test = InputFrame_->linesize;
     //printf("%d %d %d %d\n", test[0], test[1], test[2], test[3]);
+    //fflush(stdout);
     sws_scale(ConvertToSaveCtx_,
               InputFrame_->data, InputFrame_->linesize, 0, AVCodecContext_->height,
               SaveFrame_->data, SaveFrame_->linesize);
@@ -499,6 +508,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 bool FFmpegWriter::closeVideoFile()
 {
     std::cout << "FFmpegWriter: Assert " << VideoStream_->pts.val << "==" << WrittenFrameCount_ << "\n";
+    std::cout.flush();
 
     av_write_trailer(FormatContext_);
     
