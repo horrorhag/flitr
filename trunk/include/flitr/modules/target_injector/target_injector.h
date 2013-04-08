@@ -159,7 +159,7 @@ public:
         float sa_, sb_;
         float dsa_, dsb_;
 
-		std::vector<std::pair<float, float>> samples_;	//!< position samples for a given interval [pixels]
+		std::vector<std::pair<float, float> > samples_;	//!< position samples for a given interval [pixels]
 		float interval_;								//!< interval [s]
 		float elapsedTime_;									//!< elapsed time since start [s]
     };

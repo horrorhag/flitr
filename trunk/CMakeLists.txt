@@ -162,6 +162,7 @@ SET(LIB_SOURCES
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_copy_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_crop_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_translate_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_downsample_pass.cpp
@@ -223,6 +224,7 @@ SET(LIB_SOURCES
   include/flitr/modules/de_motion_blur/de_motion_blur.h
 
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_copy_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_crop_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_translate_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_downsample_pass.h
