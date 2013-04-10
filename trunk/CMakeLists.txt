@@ -113,7 +113,10 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h.in ${CMAKE_SOURC
 
 
 IF(FLITR_WITH_OSGCUDA)
-FIND_PACKAGE(CUDA 4.0 REQUIRED)
+        # uses FindCUDA from CMake
+        FIND_PACKAGE(CUDA 4.0 REQUIRED)
+        LINK_DIRECTORIES(/usr/local/cuda/lib64)
+        INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES}/C/common/inc)
 ENDIF()
 
 
@@ -199,6 +202,8 @@ SET(LIB_SOURCES
   include/flitr/multi_ffmpeg_producer.h
   include/flitr/multi_osg_consumer.h
   include/flitr/ortho_texture_manipulator.h
+
+  include/flitr/modules/parameters/parameters.h
 
   include/flitr/modules/geometry_overlays/crosshair_overlay.h
   include/flitr/modules/geometry_overlays/geometry_overlay.h

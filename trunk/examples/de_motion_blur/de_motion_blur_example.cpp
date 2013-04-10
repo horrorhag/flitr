@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 
     shared_ptr<DeMotionBlur> deMotionBlur(new DeMotionBlur(*ffp, 1));
     if (!deMotionBlur->init()) {
-        std::cerr << "Could not initialise the target injector.\n";
+        std::cerr << "Could not initialise the DeMotionBlur.\n";
         exit(-1);
     }
 
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     std::stringstream filenameStringStream;
-    filenameStringStream << argv[1] << "_ti";
+    filenameStringStream << argv[1] << "_dmb";
     mffc->openFiles(filenameStringStream.str());
     mffc->startWriting();
 
