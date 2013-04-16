@@ -11,7 +11,7 @@ class FLITR_EXPORT CPUPaletteRemap_Shader : public flitr::CPUShaderPass::CPUShad
 {
 public:
     CPUPaletteRemap_Shader(osg::Image* image) :
-        Image_(image)
+        Image_(image), enabled_(true)
     {
         paletteMap_=new uint32_t[256];
         for (uint32_t i=0; i<256; i++)
@@ -26,21 +26,24 @@ public:
 
     virtual void operator () (osg::RenderInfo& renderInfo) const
     {
-        const unsigned long width=Image_->s();
-        const unsigned long height=Image_->t();
-        const unsigned long numPixels=width*height;
-        const unsigned long numComponents=osg::Image::computeNumComponents(Image_->getPixelFormat());
-
-        unsigned char * const data=(unsigned char *)Image_->data();
-
-        // Apply palette transformation.
-        const uint32_t numElements=numPixels*numComponents;
-        for (uint32_t i=0; i<numElements; i++)
+        if (enabled_)
         {
-            data[i]=paletteMap_[data[i]];
-        }
+            const unsigned long width=Image_->s();
+            const unsigned long height=Image_->t();
+            const unsigned long numPixels=width*height;
+            const unsigned long numComponents=osg::Image::computeNumComponents(Image_->getPixelFormat());
 
-        Image_->dirty();
+            unsigned char * const data=(unsigned char *)Image_->data();
+
+            // Apply palette transformation.
+            const uint32_t numElements=numPixels*numComponents;
+            for (uint32_t i=0; i<numElements; i++)
+            {
+                data[i]=paletteMap_[data[i]];
+            }
+
+            Image_->dirty();
+        }
     }
 
     osg::Image* Image_;
@@ -55,8 +58,30 @@ public:
         }
     }
 
+    virtual int getNumberOfParms()
+    {
+        return 0;
+    }
+
+    virtual std::string getTitle()
+    {
+        return "Palette Remap";
+    }
+
+    virtual void enable(bool state=true)
+    {
+        enabled_=state;
+    }
+
+    virtual bool isEnabled()
+    {
+        return enabled_;
+    }
+
 private:
     uint32_t *paletteMap_;
+
+    bool enabled_;
 };
 }
 #endif //CPU_PALETTE_REMAP_SHADER

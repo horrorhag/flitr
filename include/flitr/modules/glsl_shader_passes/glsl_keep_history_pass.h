@@ -12,13 +12,15 @@
 #include <osg/TextureRectangle>
 
 #include <flitr/flitr_export.h>
+#include <flitr/modules/parameters/parameters.h>
+#include <flitr/texture.h>
 
 class FLITR_EXPORT GLSLKeepHistoryPass {
   public:
-    GLSLKeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size);
+    GLSLKeepHistoryPass(flitr::TextureRectangle* in_tex, int hist_size);
     ~GLSLKeepHistoryPass();
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
-    osg::ref_ptr<osg::TextureRectangle> getOutputTexture(int age=0);
+    osg::ref_ptr<flitr::TextureRectangle> getOutputTexture(int age=0);
     void setShader(std::string filename);
 	
   private:
@@ -29,8 +31,8 @@ class FLITR_EXPORT GLSLKeepHistoryPass {
 
     osg::ref_ptr<osg::Group> RootGroup_;
     osg::ref_ptr<osg::Camera> Camera_;
-    osg::ref_ptr<osg::TextureRectangle> InTexture_;
-    std::vector< osg::ref_ptr<osg::TextureRectangle> > OutTextures_;
+    osg::ref_ptr<flitr::TextureRectangle> InTexture_;
+    std::vector< osg::ref_ptr<flitr::TextureRectangle> > OutTextures_;
 
     int TextureWidth_;
     int TextureHeight_;

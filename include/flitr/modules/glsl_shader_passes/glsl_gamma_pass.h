@@ -98,7 +98,17 @@ class FLITR_EXPORT GLSLGammaPass : public Parameters
     // TODO: these need to be moved to a image processing process interface class or something like that
     virtual void enable(bool state=true)
     {
-        Enabled_=state;
+        if ((Enabled_) && (!state) )
+        {//Disable this pass.
+            GammaBeforeDisable_=getGamma();
+            setGamma(1.0);
+            Enabled_=false;
+        } else
+            if ((!Enabled_) && (state) )
+            {//Enable this pass.
+                setGamma(GammaBeforeDisable_);
+                Enabled_=true;
+            }
     }
 
     virtual bool isEnabled()
@@ -127,6 +137,7 @@ class FLITR_EXPORT GLSLGammaPass : public Parameters
     osg::ref_ptr<osg::StateSet> StateSet_;
 
     osg::ref_ptr<osg::Uniform> UniformGamma_;
+    float GammaBeforeDisable_;
 
     bool Enabled_;
 };

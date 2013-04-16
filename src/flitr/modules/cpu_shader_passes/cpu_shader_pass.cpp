@@ -2,7 +2,7 @@
 
 using namespace flitr;
 
-CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex)
+CPUShaderPass::CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex)
 {
     bool read_back_to_CPU=true;
 
@@ -23,7 +23,7 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex)
                                  InTexture_->getSourceFormat(), InTexture_->getSourceType());
     }
 
-    OutTexture_ = new osg::TextureRectangle();
+    OutTexture_ = new flitr::TextureRectangle();
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());
     OutTexture_->setSourceFormat(InTexture_->getSourceFormat());
@@ -54,7 +54,7 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
 
     //===
     InImage_ = in_img;
-    InTexture_ = new osg::TextureRectangle;
+    InTexture_ = new flitr::TextureRectangle;
     InTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     InTexture_->setInternalFormat(in_img->getPixelFormat());
     InTexture_->setSourceFormat(in_img->getPixelFormat());
@@ -72,7 +72,7 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
                                  InTexture_->getSourceFormat(), InTexture_->getSourceType());
     }
 
-    OutTexture_ = new osg::TextureRectangle();
+    OutTexture_ = new flitr::TextureRectangle();
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());
     OutTexture_->setSourceFormat(InTexture_->getSourceFormat());

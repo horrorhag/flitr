@@ -17,6 +17,9 @@ ToDo: Implement a RESET for the stabaliser!
 #include <sstream>
 
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
+#include <flitr/flitr_export.h>
+#include <flitr/modules/parameters/parameters.h>
+#include <flitr/texture.h>
 
 
 namespace flitr {
@@ -41,7 +44,7 @@ namespace flitr {
 		};
 
 
-        ImageNPyramid(const osg::TextureRectangle *i_pInputTexture,
+        ImageNPyramid(const flitr::TextureRectangle *i_pInputTexture,
             std::vector< std::pair<int,int> > &i_ROIVec,
 			unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
 			bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU);
@@ -91,22 +94,22 @@ namespace flitr {
 
 	//private:
 	public:
-		const osg::TextureRectangle *m_pInputTexture;
+        const flitr::TextureRectangle *m_pInputTexture;
 
         unsigned long m_ulNumPyramidLevels;
 		osg::ref_ptr<osg::Image> **m_imageGausPyramid;//R32F Image: Gaussian kernel result.
-		osg::ref_ptr<osg::TextureRectangle> **m_textureGausPyramid;
+        osg::ref_ptr<flitr::TextureRectangle> **m_textureGausPyramid;
 
 		osg::ref_ptr<osg::Image> **m_imageGausXPyramid;//R32F Image: Gaussian kernel result.
-		osg::ref_ptr<osg::TextureRectangle> **m_textureGausXPyramid;
+        osg::ref_ptr<flitr::TextureRectangle> **m_textureGausXPyramid;
 
 		osg::ref_ptr<osg::Image> **m_derivImagePyramid;//R32F Image: Gaussian kernel result.
-		osg::ref_ptr<osg::TextureRectangle> **m_derivTexturePyramid;
+        osg::ref_ptr<flitr::TextureRectangle> **m_derivTexturePyramid;
 
 		osg::ref_ptr<osg::Image> m_gausDistSqImage;
-		osg::ref_ptr<osg::TextureRectangle> m_gausDistSqTexture;
+        osg::ref_ptr<flitr::TextureRectangle> m_gausDistSqTexture;
 		osg::ref_ptr<osg::Image> m_gausDistSqH2LImage;
-		osg::ref_ptr<osg::TextureRectangle> m_gausDistSqH2LTexture;
+        osg::ref_ptr<flitr::TextureRectangle> m_gausDistSqH2LTexture;
 
 		int *m_imagePyramidWidth_;
 		int *m_imagePyramidHeight_;

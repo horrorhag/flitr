@@ -22,7 +22,7 @@ void GLSLKeepHistoryPass::CameraPostDrawCallback::operator()(osg::RenderInfo& ri
     hp_->frameDone();
 }
 
-GLSLKeepHistoryPass::GLSLKeepHistoryPass(osg::TextureRectangle* in_tex, int hist_size) :
+GLSLKeepHistoryPass::GLSLKeepHistoryPass(flitr::TextureRectangle* in_tex, int hist_size) :
     HistorySize_(hist_size),
     OverwriteIndex_(0),
     ValidHistory_(0),
@@ -131,7 +131,7 @@ void GLSLKeepHistoryPass::setupCamera()
 void GLSLKeepHistoryPass::createOutputTextures()
 {
     for (int i=0; i<HistorySize_; ++i) {
-        OutTextures_.push_back(new osg::TextureRectangle);
+        OutTextures_.push_back(new flitr::TextureRectangle);
         OutTextures_[i]->setTextureSize(TextureWidth_, TextureHeight_);
         OutTextures_[i]->setInternalFormat(GL_RGB);
         //OutTextures_[i]->setInternalFormat(GL_LUMINANCE);
@@ -142,7 +142,7 @@ void GLSLKeepHistoryPass::createOutputTextures()
     }
 }
 
-osg::ref_ptr<osg::TextureRectangle> GLSLKeepHistoryPass::getOutputTexture(int age)
+osg::ref_ptr<flitr::TextureRectangle> GLSLKeepHistoryPass::getOutputTexture(int age)
 {
     // get to within valid range
     age = age % HistorySize_;
