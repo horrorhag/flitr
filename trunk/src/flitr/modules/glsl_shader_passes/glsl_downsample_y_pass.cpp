@@ -2,7 +2,7 @@
 
 using namespace flitr;
 
-GLSLDownsampleYPass::GLSLDownsampleYPass(osg::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU)
+GLSLDownsampleYPass::GLSLDownsampleYPass(flitr::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight()/dsfactor;
@@ -113,7 +113,7 @@ void GLSLDownsampleYPass::setupCamera()
 
 void GLSLDownsampleYPass::createOutputTexture(bool read_back_to_CPU)
 {
-    OutTexture_ = new osg::TextureRectangle;
+    OutTexture_ = new flitr::TextureRectangle;
 
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());

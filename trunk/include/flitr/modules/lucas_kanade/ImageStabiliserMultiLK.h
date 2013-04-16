@@ -147,7 +147,7 @@ public:
 
 
 
-    ImageStabiliserMultiLK(const osg::TextureRectangle *i_pInputTexture,
+    ImageStabiliserMultiLK(const flitr::TextureRectangle *i_pInputTexture,
                            std::vector< std::pair<int,int> > &i_ROIVec,
                            unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
                            bool i_bIndicateROI,
@@ -236,7 +236,7 @@ public:
 
     void updateH_NLucasKanadeCPU();
 
-    inline osg::TextureRectangle *getOutputTexture() const
+    inline flitr::TextureRectangle *getOutputTexture() const
     {
         return m_outputTexture.get();
     }
@@ -311,7 +311,7 @@ private:
     std::vector< std::pair<double,double> > m_TransformedROICentreVec;
     osg::ref_ptr<osg::Geometry>       m_quadGeom;
 
-    osg::ref_ptr<osg::TextureRectangle> m_outputTexture;
+    osg::ref_ptr<flitr::TextureRectangle> m_outputTexture;
     osg::ref_ptr<osg::Image> m_outputOSGImage;
 
     bool m_bReadOutputBackToCPU;
@@ -323,9 +323,9 @@ private:
     PostNLKIteration_CameraPostDrawCallback m_postNLKIterationDrawCallback;
 
     osg::ref_ptr<osg::Image> **m_lkResultImagePyramid;
-    osg::ref_ptr<osg::TextureRectangle> **m_lkResultTexturePyramid;
+    osg::ref_ptr<flitr::TextureRectangle> **m_lkResultTexturePyramid;
     osg::ref_ptr<osg::Image> **m_lkReducedResultImagePyramid;
-    osg::ref_ptr<osg::TextureRectangle> **m_lkReducedResultTexturePyramid;
+    osg::ref_ptr<flitr::TextureRectangle> **m_lkReducedResultTexturePyramid;
 
     ImageFormat *m_imagePyramidFormat_;
     osg::ref_ptr<osg::Switch> m_rpCurrentLKIterationRebuildSwitch;
@@ -340,7 +340,7 @@ private:
     osg::ref_ptr<osg::Geode> createScreenAlignedQuadLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels=0);
     osg::Camera *createScreenAlignedCameraLK(unsigned long i_ulWidth, unsigned long i_ulHeight, double i_dBorderPixels=0.0);
 
-    const osg::TextureRectangle *m_pInputTexture;
+    const flitr::TextureRectangle *m_pInputTexture;
 
     const bool m_bIndicateROI;
     bool m_bDoGPUPyramids;

@@ -23,7 +23,7 @@ void flitr::ImageStabiliserMultiLK::PostNPyramidRebuiltCallback::callback()
 
 
 
-flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const osg::TextureRectangle *i_pInputTexture,
+flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const flitr::TextureRectangle *i_pInputTexture,
                                                       std::vector< std::pair<int,int> > &i_ROIVec,
                                                       unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
                                                       bool i_bIndicateROI,
@@ -137,9 +137,9 @@ bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
 
     //=== Allocate lk result textures and images : Begin ===//
     m_lkResultImagePyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
-    m_lkResultTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_lkResultTexturePyramid=new osg::ref_ptr<flitr::TextureRectangle>*[m_numPyramids_];
     m_lkReducedResultImagePyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
-    m_lkReducedResultTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_lkReducedResultTexturePyramid=new osg::ref_ptr<flitr::TextureRectangle>*[m_numPyramids_];
 
     m_imagePyramidFormat_=new ImageFormat[m_ulMaxGPUHVectorReductionLevels];
 
@@ -154,11 +154,11 @@ bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
 
         m_lkResultImagePyramid[i]=new osg::ref_ptr<osg::Image>[m_pCurrentNPyramid->getNumLevels()];
 
-        m_lkResultTexturePyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_pCurrentNPyramid->getNumLevels()];
+        m_lkResultTexturePyramid[i]=new osg::ref_ptr<flitr::TextureRectangle>[m_pCurrentNPyramid->getNumLevels()];
 
         m_lkReducedResultImagePyramid[i]=new osg::ref_ptr<osg::Image>[m_ulMaxGPUHVectorReductionLevels];
 
-        m_lkReducedResultTexturePyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulMaxGPUHVectorReductionLevels];
+        m_lkReducedResultTexturePyramid[i]=new osg::ref_ptr<flitr::TextureRectangle>[m_ulMaxGPUHVectorReductionLevels];
 
 
         //=== Initialise LK result images and textures. For GPU LK Iterations ONLY! ===//
@@ -175,10 +175,10 @@ bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
             m_lkResultImagePyramid[i][level]->setDataType(GL_FLOAT);
 
 
-            m_lkResultTexturePyramid[i][level]=new osg::TextureRectangle();
+            m_lkResultTexturePyramid[i][level]=new flitr::TextureRectangle();
             m_lkResultTexturePyramid[i][level]->setTextureSize(xPow2, yPow2);
-            m_lkResultTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-            m_lkResultTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+            m_lkResultTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+            m_lkResultTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
             m_lkResultTexturePyramid[i][level]->setInternalFormat(GL_RGBA32F_ARB);
             m_lkResultTexturePyramid[i][level]->setSourceFormat(GL_RGBA);
             m_lkResultTexturePyramid[i][level]->setSourceType(GL_FLOAT);
@@ -195,10 +195,10 @@ bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
             m_lkReducedResultImagePyramid[i][level]->setDataType(GL_FLOAT);
 
 
-            m_lkReducedResultTexturePyramid[i][level]=new osg::TextureRectangle();
+            m_lkReducedResultTexturePyramid[i][level]=new flitr::TextureRectangle();
             m_lkReducedResultTexturePyramid[i][level]->setTextureSize(xPow2, yPow2);
-            m_lkReducedResultTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-            m_lkReducedResultTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+            m_lkReducedResultTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+            m_lkReducedResultTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
             m_lkReducedResultTexturePyramid[i][level]->setInternalFormat(GL_RGBA32F_ARB);
             m_lkReducedResultTexturePyramid[i][level]->setSourceFormat(GL_RGBA);
             m_lkReducedResultTexturePyramid[i][level]->setSourceType(GL_FLOAT);
@@ -226,10 +226,10 @@ bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
             m_lkReducedResultImagePyramid[i][level]->setDataType(GL_FLOAT);
 
 
-            m_lkReducedResultTexturePyramid[i][level]=new osg::TextureRectangle();
+            m_lkReducedResultTexturePyramid[i][level]=new flitr::TextureRectangle();
             m_lkReducedResultTexturePyramid[i][level]->setTextureSize(xPow2, yPow2);
-            m_lkReducedResultTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-            m_lkReducedResultTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+            m_lkReducedResultTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+            m_lkReducedResultTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
             m_lkReducedResultTexturePyramid[i][level]->setInternalFormat(GL_RGBA32F_ARB);
             m_lkReducedResultTexturePyramid[i][level]->setSourceFormat(GL_RGBA);
             m_lkReducedResultTexturePyramid[i][level]->setSourceType(GL_FLOAT);
@@ -299,16 +299,16 @@ bool flitr::ImageStabiliserMultiLK::init(osg::Group *root_group)
     
 
 
-    m_outputTexture=new osg::TextureRectangle();
+    m_outputTexture=new flitr::TextureRectangle();
     m_outputTexture->setTextureSize(((int)(m_pInputTexture->getTextureWidth()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)), ((int)(m_pInputTexture->getTextureHeight()*m_iOutputScaleFactor/m_fOutputCropFactor+0.5f)));
     if (m_bBiLinearOutputFilter)
     {
-        m_outputTexture->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::LINEAR);
-        m_outputTexture->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::LINEAR);
+        m_outputTexture->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::LINEAR);
+        m_outputTexture->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::LINEAR);
     } else
     {
-        m_outputTexture->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-        m_outputTexture->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+        m_outputTexture->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+        m_outputTexture->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
     }
     m_outputTexture->setSourceFormat(m_pInputTexture->getSourceFormat());
     m_outputTexture->setInternalFormat(m_pInputTexture->getInternalFormat());
@@ -763,7 +763,7 @@ osg::Node* flitr::ImageStabiliserMultiLK::createOutputPass()
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    geomss->setTextureAttributeAndModes(0,(osg::TextureRectangle *)m_pInputTexture, osg::StateAttribute::ON);
+    geomss->setTextureAttributeAndModes(0,(flitr::TextureRectangle *)m_pInputTexture, osg::StateAttribute::ON);
     //	geomss->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
 
 
@@ -942,7 +942,7 @@ void flitr::ImageStabiliserMultiLK::updateH_NLucasKanadeCPU()
                         =maxBIP(minBIP(tempVizBuf[(x>>vLevel)+(y>>vLevel)*(width>>vLevel)]*1, 127.0), -128)+128;
                 }
 
-                ((osg::TextureRectangle *)m_pInputTexture)->getImage()->dirty();
+                ((flitr::TextureRectangle *)m_pInputTexture)->getImage()->dirty();
             }
 */
     }

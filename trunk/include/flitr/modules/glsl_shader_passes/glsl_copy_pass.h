@@ -24,6 +24,7 @@
 #include <string>
 
 #include <flitr/flitr_export.h>
+#include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
 
 #include <osg/ref_ptr>

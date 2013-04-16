@@ -5,7 +5,7 @@
 
 using namespace flitr;
 
-GLSLGaussianFilterXPass::GLSLGaussianFilterXPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLGaussianFilterXPass::GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -22,10 +22,10 @@ GLSLGaussianFilterXPass::GLSLGaussianFilterXPass(osg::TextureRectangle *in_tex, 
     Kernel1DImage_->setPixelFormat(GL_RED);
     Kernel1DImage_->setDataType(GL_FLOAT);
 
-    Kernel1DTexture_=new osg::TextureRectangle();
+    Kernel1DTexture_=new flitr::TextureRectangle();
     Kernel1DTexture_->setTextureSize(TextureWidth_, 1);
-    Kernel1DTexture_->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-    Kernel1DTexture_->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+    Kernel1DTexture_->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+    Kernel1DTexture_->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
     Kernel1DTexture_->setInternalFormat(GL_FLOAT_R_NV);
     Kernel1DTexture_->setSourceFormat(GL_RED);
     Kernel1DTexture_->setSourceType(GL_FLOAT);
@@ -138,7 +138,7 @@ void GLSLGaussianFilterXPass::setupCamera()
 
 void GLSLGaussianFilterXPass::createOutputTexture(bool read_back_to_CPU)
 {
-    OutTexture_ = new osg::TextureRectangle;
+    OutTexture_ = new flitr::TextureRectangle;
 
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());

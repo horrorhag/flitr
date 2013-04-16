@@ -2,7 +2,7 @@
 
 using namespace flitr;
 
-GLSLTranslatePass::GLSLTranslatePass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLTranslatePass::GLSLTranslatePass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -113,7 +113,7 @@ void GLSLTranslatePass::setupCamera()
 
 void GLSLTranslatePass::createOutputTexture(bool read_back_to_CPU)
 {
-    OutTexture_ = new osg::TextureRectangle;
+    OutTexture_ = new flitr::TextureRectangle;
 
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());

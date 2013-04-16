@@ -2,7 +2,7 @@
 
 using namespace flitr;
 
-HomographyShaderPass::HomographyShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+HomographyShaderPass::HomographyShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -151,7 +151,7 @@ void HomographyShaderPass::setupCamera()
 
 void HomographyShaderPass::createOutputTexture(bool read_back_to_CPU)
 {
-    OutTexture_ = new osg::TextureRectangle;
+    OutTexture_ = new flitr::TextureRectangle;
     
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(GL_RGBA);

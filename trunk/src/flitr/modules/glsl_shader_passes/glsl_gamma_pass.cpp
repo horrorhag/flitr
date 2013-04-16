@@ -3,7 +3,8 @@
 using namespace flitr;
 
 GLSLGammaPass::GLSLGammaPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU) :
-    Enabled_(false)
+    Enabled_(true),
+    GammaBeforeDisable_(1.0)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -12,7 +13,7 @@ GLSLGammaPass::GLSLGammaPass(flitr::TextureRectangle *in_tex, bool read_back_to_
     InTexture_ = in_tex;
     OutTexture_=0;
     OutImage_=0;
-   
+
     createOutputTexture(read_back_to_CPU);
 
     Camera_ = new osg::Camera;
@@ -103,13 +104,13 @@ void GLSLGammaPass::setupCamera()
     Camera_->setRenderOrder(osg::Camera::PRE_RENDER);
     Camera_->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 
-	// attach the texture and use it as the color buffer.
-	Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutTexture_.get());
+    // attach the texture and use it as the color buffer.
+    Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutTexture_.get());
 
-	if (OutImage_!=0)
-        {
-	    Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutImage_.get());
-        }
+    if (OutImage_!=0)
+    {
+        Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutImage_.get());
+    }
 }
 
 void GLSLGammaPass::createOutputTexture(bool read_back_to_CPU)

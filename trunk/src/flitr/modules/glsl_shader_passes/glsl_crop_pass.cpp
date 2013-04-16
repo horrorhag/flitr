@@ -2,7 +2,7 @@
 
 using namespace flitr;
 
-GLSLCropPass::GLSLCropPass(osg::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU)
+GLSLCropPass::GLSLCropPass(flitr::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU)
 {
     TextureWidth_ = xmax-xmin+1;//in_tex->getTextureWidth();
     TextureHeight_ = ymax-ymin+1;//in_tex->getTextureHeight();
@@ -109,7 +109,7 @@ void GLSLCropPass::setupCamera()
 
 void GLSLCropPass::createOutputTexture(bool read_back_to_CPU)
 {
-    OutTexture_ = new osg::TextureRectangle;
+    OutTexture_ = new flitr::TextureRectangle;
     
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());

@@ -2,7 +2,7 @@
 
 using namespace flitr;
 
-GLSLShaderPass::GLSLShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLShaderPass::GLSLShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
@@ -114,7 +114,7 @@ void GLSLShaderPass::setupCamera()
 
 void GLSLShaderPass::createOutputTexture(bool read_back_to_CPU)
 {
-    OutTexture_ = new osg::TextureRectangle;
+    OutTexture_ = new flitr::TextureRectangle;
 
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
     OutTexture_->setInternalFormat(InTexture_->getInternalFormat());

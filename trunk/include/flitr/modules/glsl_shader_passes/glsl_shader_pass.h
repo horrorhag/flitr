@@ -24,6 +24,8 @@
 #include <string>
 
 #include <flitr/flitr_export.h>
+#include <flitr/modules/parameters/parameters.h>
+#include <flitr/texture.h>
 
 #include <osg/ref_ptr>
 #include <osg/Group>
@@ -41,10 +43,10 @@ namespace flitr {
 class FLITR_EXPORT GLSLShaderPass
 {
   public:
-    GLSLShaderPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU = false);
+    GLSLShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
     ~GLSLShaderPass();
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
-    osg::ref_ptr<osg::TextureRectangle> getOutputTexture() { return OutTexture_; }
+    osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
     void setShader(std::string filename);
 
@@ -57,8 +59,8 @@ class FLITR_EXPORT GLSLShaderPass
 
     osg::ref_ptr<osg::Group> RootGroup_;
     osg::ref_ptr<osg::Camera> Camera_;
-    osg::ref_ptr<osg::TextureRectangle> InTexture_;
-	osg::ref_ptr<osg::TextureRectangle> OutTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> InTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
     osg::ref_ptr<osg::Image> OutImage_;
 
     int TextureWidth_;

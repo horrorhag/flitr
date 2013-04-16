@@ -24,6 +24,8 @@
 #include <string>
 
 #include <flitr/flitr_export.h>
+#include <flitr/modules/parameters/parameters.h>
+#include <flitr/texture.h>
 
 #include <osg/ref_ptr>
 #include <osg/Group>
@@ -41,11 +43,11 @@ namespace flitr {
 class FLITR_EXPORT GLSLGaussianFilterXPass
 {
   public:
-    GLSLGaussianFilterXPass(osg::TextureRectangle *in_tex, bool read_back_to_CPU = false);
+    GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
     ~GLSLGaussianFilterXPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
-    osg::ref_ptr<osg::TextureRectangle> getOutputTexture() { return OutTexture_; }
+    osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
 
     void setStandardDeviation(float sd);
@@ -74,8 +76,8 @@ class FLITR_EXPORT GLSLGaussianFilterXPass
 
     osg::ref_ptr<osg::Group> RootGroup_;
     osg::ref_ptr<osg::Camera> Camera_;
-    osg::ref_ptr<osg::TextureRectangle> InTexture_;
-	osg::ref_ptr<osg::TextureRectangle> OutTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> InTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
     osg::ref_ptr<osg::Image> OutImage_;
 
     int TextureWidth_;
@@ -86,7 +88,7 @@ class FLITR_EXPORT GLSLGaussianFilterXPass
 
     float StandardDeviation_;
 
-    osg::ref_ptr<osg::TextureRectangle> Kernel1DTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> Kernel1DTexture_;
     osg::ref_ptr<osg::Image> Kernel1DImage_;
     osg::ref_ptr<osg::Uniform> KernelSizeUniform_;
 };

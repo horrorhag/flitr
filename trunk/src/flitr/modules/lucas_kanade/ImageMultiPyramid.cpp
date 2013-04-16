@@ -8,7 +8,7 @@ double flitr::ImageNPyramid::logbase(const double a, const double base)
 }
 
 
-flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture,
+flitr::ImageNPyramid::ImageNPyramid(const flitr::TextureRectangle *i_pInputTexture,
                                     std::vector< std::pair<int,int> > &i_ROIVec,
                                     unsigned long i_ulROIWidth, unsigned long i_ulROIHeight,
                                     bool i_bIndicateROI, bool i_bUseGPU, bool i_bReadOutputBackToCPU) :
@@ -44,24 +44,24 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
 
 
     m_imageGausPyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
-    m_textureGausPyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_textureGausPyramid=new osg::ref_ptr<flitr::TextureRectangle>*[m_numPyramids_];
     m_imageGausXPyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
-    m_textureGausXPyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_textureGausXPyramid=new osg::ref_ptr<flitr::TextureRectangle>*[m_numPyramids_];
     m_derivImagePyramid=new osg::ref_ptr<osg::Image>*[m_numPyramids_];
-    m_derivTexturePyramid=new osg::ref_ptr<osg::TextureRectangle>*[m_numPyramids_];
+    m_derivTexturePyramid=new osg::ref_ptr<flitr::TextureRectangle>*[m_numPyramids_];
 
 
     //Allocate image and texture pointers for each pyramid.
     for (int i=0; i<m_numPyramids_; i++)
     {
         m_imageGausPyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
-        m_textureGausPyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
+        m_textureGausPyramid[i]=new osg::ref_ptr<flitr::TextureRectangle>[m_ulNumPyramidLevels];
 
         m_imageGausXPyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
-        m_textureGausXPyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
+        m_textureGausXPyramid[i]=new osg::ref_ptr<flitr::TextureRectangle>[m_ulNumPyramidLevels];
 
         m_derivImagePyramid[i]=new osg::ref_ptr<osg::Image>[m_ulNumPyramidLevels];
-        m_derivTexturePyramid[i]=new osg::ref_ptr<osg::TextureRectangle>[m_ulNumPyramidLevels];
+        m_derivTexturePyramid[i]=new osg::ref_ptr<flitr::TextureRectangle>[m_ulNumPyramidLevels];
     }
 
     //Width and height arrays for quick reference of pyramid dimensions at each level.
@@ -85,10 +85,10 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
             m_imageGausPyramid[i][level]->setPixelFormat(GL_RED);
             m_imageGausPyramid[i][level]->setDataType(GL_FLOAT);
             //===
-            m_textureGausPyramid[i][level]=new osg::TextureRectangle();
+            m_textureGausPyramid[i][level]=new flitr::TextureRectangle();
             m_textureGausPyramid[i][level]->setTextureSize(xPow2, yPow2);
-            m_textureGausPyramid[i][level]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-            m_textureGausPyramid[i][level]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+            m_textureGausPyramid[i][level]->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+            m_textureGausPyramid[i][level]->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
             m_textureGausPyramid[i][level]->setInternalFormat(GL_FLOAT_R_NV);
             m_textureGausPyramid[i][level]->setSourceFormat(GL_RED);
             m_textureGausPyramid[i][level]->setSourceType(GL_FLOAT);
@@ -109,10 +109,10 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
             m_imageGausXPyramid[i][level]->setPixelFormat(GL_RED);
             m_imageGausXPyramid[i][level]->setDataType(GL_FLOAT);
             //===
-            m_textureGausXPyramid[i][level]=new osg::TextureRectangle();
+            m_textureGausXPyramid[i][level]=new flitr::TextureRectangle();
             m_textureGausXPyramid[i][level]->setTextureSize(xPow2, (level==0) ? yPow2 : (yPow2*2));
-            m_textureGausXPyramid[i][level]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-            m_textureGausXPyramid[i][level]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+            m_textureGausXPyramid[i][level]->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+            m_textureGausXPyramid[i][level]->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
             m_textureGausXPyramid[i][level]->setInternalFormat(GL_FLOAT_R_NV);
             m_textureGausXPyramid[i][level]->setSourceFormat(GL_RED);
             m_textureGausXPyramid[i][level]->setSourceType(GL_FLOAT);
@@ -133,10 +133,10 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
             m_derivImagePyramid[i][level]->setPixelFormat(GL_RGBA);
             m_derivImagePyramid[i][level]->setDataType(GL_FLOAT);
             //===
-            m_derivTexturePyramid[i][level]=new osg::TextureRectangle();
+            m_derivTexturePyramid[i][level]=new flitr::TextureRectangle();
             m_derivTexturePyramid[i][level]->setTextureSize(xPow2, yPow2);
-            m_derivTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-            m_derivTexturePyramid[i][level]->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+            m_derivTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+            m_derivTexturePyramid[i][level]->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
             m_derivTexturePyramid[i][level]->setInternalFormat(GL_RGBA32F_ARB);
             m_derivTexturePyramid[i][level]->setSourceFormat(GL_RGBA);
             m_derivTexturePyramid[i][level]->setSourceType(GL_FLOAT);
@@ -174,10 +174,10 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
         data[16]=0.04; data[17]=0.04; data[18]=0.04; data[19]=0.04;
         data[20]=0.00; data[21]=0.00; data[22]=0.00; data[23]=0.00;
 
-        m_gausDistSqTexture=new osg::TextureRectangle();
+        m_gausDistSqTexture=new flitr::TextureRectangle();
         m_gausDistSqTexture->setTextureSize(6, 1);
-        m_gausDistSqTexture->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-        m_gausDistSqTexture->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+        m_gausDistSqTexture->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+        m_gausDistSqTexture->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
         m_gausDistSqTexture->setInternalFormat(GL_RGBA32F_ARB);
         m_gausDistSqTexture->setSourceFormat(GL_RGBA);
         m_gausDistSqTexture->setSourceType(GL_FLOAT);
@@ -204,10 +204,10 @@ flitr::ImageNPyramid::ImageNPyramid(const osg::TextureRectangle *i_pInputTexture
         data[24]=0.01; data[25]=0.01; data[26]=0.01; data[27]=0.01;
         data[28]=0.00; data[29]=0.00; data[30]=0.00; data[31]=0.00;
 
-        m_gausDistSqH2LTexture=new osg::TextureRectangle();
+        m_gausDistSqH2LTexture=new flitr::TextureRectangle();
         m_gausDistSqH2LTexture->setTextureSize(8, 1);
-        m_gausDistSqH2LTexture->setFilter(osg::TextureRectangle::MIN_FILTER,osg::TextureRectangle::NEAREST);
-        m_gausDistSqH2LTexture->setFilter(osg::TextureRectangle::MAG_FILTER,osg::TextureRectangle::NEAREST);
+        m_gausDistSqH2LTexture->setFilter(flitr::TextureRectangle::MIN_FILTER,flitr::TextureRectangle::NEAREST);
+        m_gausDistSqH2LTexture->setFilter(flitr::TextureRectangle::MAG_FILTER,flitr::TextureRectangle::NEAREST);
         m_gausDistSqH2LTexture->setInternalFormat(GL_RGBA32F_ARB);
         m_gausDistSqH2LTexture->setSourceFormat(GL_RGBA);
         m_gausDistSqH2LTexture->setSourceType(GL_FLOAT);
@@ -402,7 +402,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel0(unsigned long i_ulWidth, u
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    geomss->setTextureAttributeAndModes(0, (osg::TextureRectangle *)m_pInputTexture, osg::StateAttribute::ON);
+    geomss->setTextureAttributeAndModes(0, (flitr::TextureRectangle *)m_pInputTexture, osg::StateAttribute::ON);
     geomss->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
 
     geomss->setTextureAttributeAndModes(1, m_gausDistSqTexture.get(), osg::StateAttribute::ON);
@@ -499,7 +499,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel0(unsigned long i_ulWidth, 
     osg::ref_ptr<osg::Geode> geode = createScreenAlignedQuad(i_ulWidth, i_ulHeight);
     osg::ref_ptr<osg::StateSet> geomss = geode->getOrCreateStateSet();
 
-    geomss->setTextureAttributeAndModes(0, (osg::TextureRectangle *)m_pInputTexture, osg::StateAttribute::ON);
+    geomss->setTextureAttributeAndModes(0, (flitr::TextureRectangle *)m_pInputTexture, osg::StateAttribute::ON);
     geomss->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
 
     geomss->setTextureAttributeAndModes(1, m_gausDistSqTexture.get(), osg::StateAttribute::ON);
@@ -594,7 +594,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel0(unsigned long i_ulWidth, 
 
     for (int i=0; i<m_numPyramids_; i++)
     {
-        geomss->setTextureAttributeAndModes(i, (osg::TextureRectangle *)m_textureGausXPyramid[i][0].get(), osg::StateAttribute::ON);
+        geomss->setTextureAttributeAndModes(i, (flitr::TextureRectangle *)m_textureGausXPyramid[i][0].get(), osg::StateAttribute::ON);
         geomss->setTextureAttribute(i, new osg::TexEnv(osg::TexEnv::DECAL));
 
         char uniformName[256];

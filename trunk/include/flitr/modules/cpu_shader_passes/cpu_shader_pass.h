@@ -22,6 +22,8 @@
 #define CPU_SHADER_PASS_H q
 
 #include <flitr/flitr_export.h>
+#include <flitr/modules/parameters/parameters.h>
+#include <flitr/texture.h>
 
 #include <osg/ref_ptr>
 #include <osg/Group>
@@ -35,12 +37,14 @@
 #include <osg/Image>
 #include <iostream>
 
+#include <stdint.h>
+
 namespace flitr {
 
 class FLITR_EXPORT CPUShaderPass {
 public:
 
-    class FLITR_EXPORT CPUShader : public osg::Camera::DrawCallback
+    class FLITR_EXPORT CPUShader : public osg::Camera::DrawCallback, public flitr::Parameters
     {
     };
 
@@ -77,12 +81,12 @@ public:
 
 public:
     CPUShaderPass(osg::ref_ptr<osg::Image> in_img);
-    CPUShaderPass(osg::ref_ptr<osg::TextureRectangle> in_tex);
+    CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex);
     ~CPUShaderPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
 
-    osg::ref_ptr<osg::TextureRectangle> getOutputTexture() { return OutTexture_; }
+    osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
 
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
 
@@ -105,10 +109,10 @@ private:
     osg::ref_ptr<osg::Camera> Camera_;
 
     osg::ref_ptr<osg::Image> InImage_;
-    osg::ref_ptr<osg::TextureRectangle> InTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> InTexture_;
 
     osg::ref_ptr<osg::Image> OutImage_;
-    osg::ref_ptr<osg::TextureRectangle> OutTexture_;
+    osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
 
     unsigned long TextureWidth_;
     unsigned long TextureHeight_;
