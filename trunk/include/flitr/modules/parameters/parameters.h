@@ -33,7 +33,8 @@ public:
         PARM_INT,
         PARM_FLOAT,
         PARM_DOUBLE,
-        PARM_BOOL
+        PARM_BOOL,
+	PARM_ENUM
     };
 
     virtual int getNumberOfParms() { return 0; }
@@ -43,15 +44,19 @@ public:
 
     virtual std::string getTitle() { return "Title"; }
 
+    virtual int getEnum(int id) { return 0; }
+    virtual std::string getEnumText(int id, int v) { return "Default"; }
     virtual int getInt(int id) { return 0; }
     virtual float getFloat(int id) { return 0.f; }
     virtual double getDouble(int id) { return 0.0; }
     virtual bool getBool(int id) { return false; }
 
+    virtual bool getEnumRange(int id, int &low, int &high) { return false; }
     virtual bool getIntRange(int id, int &low, int &high) { return false; }
     virtual bool getFloatRange(int id, float &low, float &high) { return false; }
     virtual bool getDoubleRange(int id, double &low, double &high) { return false; }
 
+    virtual bool setEnum(int id, int v) { return false; }
     virtual bool setInt(int id, int v) { return false; }
     virtual bool setFloat(int id, float v) { return false; }
     virtual bool setDouble(int id, double v) { return false; }
