@@ -18,10 +18,17 @@ public:
         {
             paletteMap_[i]=i;
         }
+
+        parameterTitle_=std::string("Palette Remap");
     }
     ~CPUPaletteRemap_Shader()
     {
         delete [] paletteMap_;
+    }
+
+    virtual void setParameterTitle(const std::string &rValue)
+    {
+        parameterTitle_=rValue;
     }
 
     virtual void operator () (osg::RenderInfo& renderInfo) const
@@ -65,7 +72,7 @@ public:
 
     virtual std::string getTitle()
     {
-        return "Palette Remap";
+        return parameterTitle_;
     }
 
     virtual void enable(bool state=true)
@@ -80,6 +87,8 @@ public:
 
 private:
     uint32_t *paletteMap_;
+
+    std::string parameterTitle_;
 
     bool enabled_;
 };
