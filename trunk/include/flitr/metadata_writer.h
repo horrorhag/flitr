@@ -33,11 +33,11 @@ namespace flitr {
 class FLITR_EXPORT MetadataWriter {
   public:
     MetadataWriter(std::string filename);
-    ~MetadataWriter();
+    virtual ~MetadataWriter();
 
-    bool writeFrame(Image& in_frame);
+    virtual bool writeFrame(Image& in_frame);
 
-  private:
+  protected:
     std::ofstream FileStream_;
 
     bool openFile();

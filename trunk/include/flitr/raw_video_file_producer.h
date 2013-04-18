@@ -1,5 +1,5 @@
 /* Framework for Live Image Transformation (FLITr)
- * Copyright (c) 2010 CSIR
+ * Copyright (c) 2013 CSIR
  * 
  * This file is part of FLITr.
  *
@@ -18,34 +18,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FFMPEG_PRODUCER_H
-#define FFMPEG_PRODUCER_H 1
+#ifndef RAW_VIDEO_FILE_PRODUCER_H
+#define RAW_VIDEO_FILE_PRODUCER_H 1
 
 #include <boost/tr1/memory.hpp>
 
-#include <flitr/ffmpeg_reader.h>
 #include <flitr/metadata_reader.h>
 #include <flitr/image_producer.h>
+#include <flitr/raw_video_file_reader.h>
 
 namespace flitr {
 
 /**
- * Simple producer to read images from FFmpeg supported video files or
- * still images.
+ * Simple producer to read images from Custom FLITr video recording file.
  * 
+ * This class reads the custom FLITr recording and reproduces the image stream
+ * from the file using the flitr::RawVideoFileReader class.
  */
-class FLITR_EXPORT FFmpegProducer : public ImageProducer {
+class FLITR_EXPORT RawVideoFileProducer : public ImageProducer {
   public:
     /** 
      * Constructs the producer.
      * 
-     * \param filename Video or image file name.
-     * \param out_pix_fmt The pixel format of the output. Whatever the
-     * actual input format, it will be converted to this requested
-     * format.
-     * 
+     * \param[in] filename Video file name.
+     * \param[in] buffer_size Buffer size to use for the video images read
+     *              from the file
      */
-    FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+    RawVideoFileProducer(std::string filename, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
     bool setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata);
 
@@ -96,7 +95,7 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
     std::string filename_;
 
     /// The reader to do the actual reading.
-    std::tr1::shared_ptr<FFmpegReader> Reader_;
+    std::tr1::shared_ptr<RawVideoFileReader> Reader_;
 
     std::tr1::shared_ptr<MetadataReader> MetadataReader_;
     std::tr1::shared_ptr<ImageMetadata> DefaultMetadata_;
@@ -105,10 +104,10 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
     uint32_t NumImages_;
     /// Last correctly read frame.
     int32_t CurrentImage_;
-
+    /// Buffer size
     uint32_t buffer_size_;
 };
 
 }
 
-#endif //FFMPEG_PRODUCER_H
+#endif //RAW_VIDEO_FILE_PRODUCER_H

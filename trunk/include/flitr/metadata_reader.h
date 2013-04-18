@@ -33,11 +33,11 @@ namespace flitr {
 class FLITR_EXPORT MetadataReader {
   public:
     MetadataReader(std::string filename);
-    ~MetadataReader();
+    virtual ~MetadataReader();
 
-    bool readFrame(Image& out_frame, uint32_t seek_to=std::numeric_limits<uint32_t>::max());
+    virtual bool readFrame(Image& out_frame, uint32_t seek_to=std::numeric_limits<uint32_t>::max());
 
-  private:
+  protected:
     std::ifstream FileStream_;
 
     bool openFile();

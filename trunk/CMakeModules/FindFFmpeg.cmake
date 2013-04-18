@@ -153,7 +153,7 @@ ENDMACRO(FFmpeg_FIND)
 
 
 # find stdint.h
-IF(WIN32)
+IF(MSVC)
 
     FIND_PATH(FFmpeg_STDINT_INCLUDE_DIR stdint.h
         PATHS
@@ -174,6 +174,8 @@ IF(WIN32)
 
     IF(FFmpeg_STDINT_INCLUDE_DIR)
         SET(STDINT_OK TRUE)
+    ELSE()
+        MESSAGE("Could not find stdint.h")
     ENDIF()
 
 ELSE()

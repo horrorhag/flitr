@@ -76,6 +76,15 @@ osg::ref_ptr<osg::Group> GLSLShaderPass::createTexturedQuad()
     
     top_group->addChild(quad_geode.get());
 
+    /* Set the names of all of the nodes to 'flitr_glsl_shader_pass' so that
+     * they can be identified using their object names in the OSG tree.
+     * TODO: add a public function that can be used to set the names of these
+     * objects */
+    top_group->setName("flitr_glsl_shader_pass");
+    quad_geode->setName("flitr_glsl_shader_pass");
+    quad_geom->setName("flitr_glsl_shader_pass");
+    quad_da->setName("flitr_glsl_shader_pass");
+
     return top_group;
 }
 
