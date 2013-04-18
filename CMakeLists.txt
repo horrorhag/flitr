@@ -125,6 +125,10 @@ ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
 
 
 SET(LIB_SOURCES
+  src/flitr/multi_raw_video_file_consumer.cpp
+  src/flitr/raw_video_file_writer.cpp
+  src/flitr/raw_video_file_reader.cpp
+  src/flitr/raw_video_file_producer.cpp
   src/flitr/hud.cpp
   src/flitr/ffmpeg_producer.cpp
   src/flitr/test_pattern_producer.cpp
@@ -178,6 +182,11 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
+  include/flitr/raw_video_file_utils.h
+  include/flitr/multi_raw_video_file_consumer.h
+  include/flitr/raw_video_file_writer.h
+  include/flitr/raw_video_file_reader.h
+  include/flitr/raw_video_file_producer.h
   include/flitr/hud.h
   include/flitr/ffmpeg_producer.h
   include/flitr/test_pattern_producer.h
@@ -241,6 +250,7 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h
+  
 )
 
 
@@ -261,7 +271,7 @@ ADD_LIBRARY(flitr SHARED
 )
 
 
-IF(MSVC) 
+IF(WIN32) 
   TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSEIF(APPLE)
   TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})

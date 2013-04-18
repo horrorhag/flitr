@@ -32,6 +32,7 @@ namespace flitr {
  */
 class FLITR_EXPORT ImageFormat {
   public:
+    /// Do not change enum values
     enum PixelFormat {
         FLITR_PIX_FMT_ANY = 0,
         FLITR_PIX_FMT_Y_8 = 1,

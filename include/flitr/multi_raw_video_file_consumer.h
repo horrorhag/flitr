@@ -1,5 +1,5 @@
 /* Framework for Live Image Transformation (FLITr)
- * Copyright (c) 2010 CSIR
+ * Copyright (c) 2013 CSIR
  * 
  * This file is part of FLITr.
  *
@@ -18,41 +18,48 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MULTI_FFMPEG_CONSUMER_H
-#define MULTI_FFMPEG_CONSUMER_H 1
+#ifndef MULTI_RAW_VIDEO_FILE_CONSUMER_H
+#define MULTI_RAW_VIDEO_FILE_CONSUMER_H 1
 
-#include <flitr/ffmpeg_utils.h>
+#include <flitr/stats_collector.h>
 #include <flitr/image_consumer.h>
-#include <flitr/ffmpeg_writer.h>
 #include <flitr/metadata_writer.h>
+#include <flitr/raw_video_file_writer.h>
 
 #include <OpenThreads/Thread>
 #include <OpenThreads/Mutex>
 
 namespace flitr {
 
-class MultiFFmpegConsumer;
+class MultiRawVideoFileConsumer;
 
-class MultiFFmpegConsumerThread : public OpenThreads::Thread {
+/* This thread can be reused from the multi FFmpeg consumer */
+class MultiRawVideoFileConsumerThread : public OpenThreads::Thread {
   public: 
-    MultiFFmpegConsumerThread(MultiFFmpegConsumer *consumer) :
+    MultiRawVideoFileConsumerThread(MultiRawVideoFileConsumer *consumer) :
         Consumer_(consumer),
         ShouldExit_(false) {}
     void run();
     void setExit() { ShouldExit_ = true; }
   private:
-    MultiFFmpegConsumer *Consumer_;
+    MultiRawVideoFileConsumer *Consumer_;
     bool ShouldExit_;
 };
 
-class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
-    friend class MultiFFmpegConsumerThread;
+/**
+ * The MultiRawVideoFileConsumer class.
+ *
+ * This consumer makes use of the flitr::RawVideoFileWriter to write multiple
+ * video streams to multiple FLITr Custom recordings.
+ *
+ * For more information about the custom FLITr recording format look at the
+ * documentation on the flitr::RawVideoFileWriter.
+ */
+class FLITR_EXPORT MultiRawVideoFileConsumer : public ImageConsumer {
+    friend class MultiRawVideoFileConsumerThread;
   public:
-    MultiFFmpegConsumer(ImageProducer& producer, uint32_t images_per_slot);
-    virtual ~MultiFFmpegConsumer();
-
-    bool setCodec(VideoCodec codec, int32_t bit_rate=-1);
-    bool setContainer(VideoContainer container);
+    MultiRawVideoFileConsumer(ImageProducer& producer, uint32_t images_per_slot);
+    virtual ~MultiRawVideoFileConsumer();
 
     bool init();
 
@@ -67,14 +74,10 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
   protected:
     std::vector<ImageFormat> ImageFormat_;
     uint32_t ImagesPerSlot_;
-
-    VideoCodec Codec_;
-    int32_t BitRate_;
-    VideoContainer Container_;
 		
-    MultiFFmpegConsumerThread *Thread_;
+    MultiRawVideoFileConsumerThread *Thread_;
 		
-    std::vector<FFmpegWriter *> FFmpegWriters_;
+    std::vector<RawVideoFileWriter *> RawVideoFileWriters_;
     std::vector<MetadataWriter *> MetadataWriters_;
 
     OpenThreads::Mutex WritingMutex_;
@@ -86,4 +89,4 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
 
 }
 
-#endif //MULTI_FFMPEG_CONSUMER_H
+#endif //MULTI_RAW_VIDEO_FILE_CONSUMER_H

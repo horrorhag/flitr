@@ -85,6 +85,17 @@ inline uint64_t clockResNanoSec()
     return timespec_to_ns(&timestamp_ts);
 }
 
+//!Sleep or block execution for specified microseconds. Do not return early like usleep(...) might.
+inline void ublock(uint64_t blockTimeUS)
+{
+    const uint64_t currentTimeNS=currentTimeNanoSec();
+    const uint64_t blockUntilTimeNS=currentTimeNS+blockTimeUS*1000;
+
+    do {
+        usleep(0);
+    } while (currentTimeNanoSec()<blockUntilTimeNS);
+}
+
 #if 0
 int main(void)
 {
@@ -103,17 +114,6 @@ int main(void)
 extern uint64_t currentTimeNanoSec();
 
 #endif
-
-//!Sleep or block execution for specified microseconds. Do not return early like usleep(...) might.
-inline void ublock(uint64_t blockTimeUS)
-{
-    const uint64_t currentTimeNS=currentTimeNanoSec();
-    const uint64_t blockUntilTimeNS=currentTimeNS+blockTimeUS*1000;
-
-    do {
-        usleep(0);
-    } while (currentTimeNanoSec()<blockUntilTimeNS);
-}
 
 
 #endif // HIGHRES_TIME_H
