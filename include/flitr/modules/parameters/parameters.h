@@ -30,6 +30,7 @@ class Parameters
 public:
     enum EParmType
     {
+        PARM_UNDF,
         PARM_INT,
         PARM_FLOAT,
         PARM_DOUBLE,
@@ -39,8 +40,8 @@ public:
 
     virtual int getNumberOfParms() { return 0; }
 
-    virtual EParmType getParmType(int id) {}
-    virtual std::string getParmName(int id) {}
+    virtual EParmType getParmType(int id) { return PARM_UNDF;}
+    virtual std::string getParmName(int id) { return std::string("PARM_UNDF");}
 
     virtual std::string getTitle() { return "Title"; }
 
