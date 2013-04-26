@@ -39,9 +39,6 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex)
     setupCamera();
     Camera_->addChild(createTexturedQuad().get());
     RootGroup_->addChild(Camera_.get());
-
-    // make sure other state doesn't bleed into here, attach empty shader
-    setGPUShader("");
 }
 
 CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
@@ -165,7 +162,7 @@ void CPUShaderPass::setupCamera()
     Camera_->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 
 
-	// attach the texture and use it as the color buffer.
+    // attach the texture and use it as the color buffer.
     Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutTexture_.get());
 
     if (OutImage_)
@@ -186,7 +183,7 @@ void CPUShaderPass::setPostRenderCPUShader(CPUShader *cpuShader)
 
 void CPUShaderPass::setGPUShader(std::string filename)
 {
-    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT );
     fshader->loadShaderSourceFromFile(filename);
 
     FragmentProgram_ = 0;
