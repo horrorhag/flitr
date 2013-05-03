@@ -8,6 +8,7 @@
 
 #include <flitr/multi_ffmpeg_producer.h>
 #include <flitr/smulti_ffmpeg_producer.h>
+#include <flitr/smulti_raw_video_file_producer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
@@ -57,7 +58,19 @@ int main(int argc, char *argv[])
 
     int num_videos = argc-1;
 
-    shared_ptr<SMultiFFmpegProducer> mffp(new SMultiFFmpegProducer(fnames, ImageFormat::FLITR_PIX_FMT_ANY));
+    shared_ptr<ImageProducer> mffp;
+
+    shared_ptr<SMultiFFmpegProducer> mffpFFmpeg(new SMultiFFmpegProducer(fnames, ImageFormat::FLITR_PIX_FMT_ANY));
+    shared_ptr<SMultiRawVideoFileProducer> mffpFvf(new SMultiRawVideoFileProducer(fnames, ImageFormat::FLITR_PIX_FMT_ANY));
+    if (fnames[0].find(".fvf")!=std::string::npos)
+    {
+        mffp = mffpFvf;
+    }
+    else
+    {
+        mffp = mffpFFmpeg;
+    }
+
     if (!mffp->init()) {
         std::cerr << "Could not load input files\n";
         exit(-1);
@@ -97,7 +110,15 @@ int main(int argc, char *argv[])
     viewer.setCameraManipulator(tb);
     adjustCameraManipulatorHomeForYUp(tb);
     
-    uint32_t frameRate=mffp->getFrameRate(0);
+    uint32_t frameRate;
+    if (fnames[0].find(".fvf")!=std::string::npos)
+    {
+       frameRate = mffpFvf->getFrameRate(0);
+    } else
+    {
+       frameRate = mffpFFmpeg->getFrameRate(0);
+    }
+
     double framePeriodNS=1.0e9 / frameRate;
     double nextFrameTimeNS=currentTimeNanoSec()+framePeriodNS;
 
