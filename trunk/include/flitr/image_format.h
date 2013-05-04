@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -31,7 +31,7 @@ namespace flitr {
  * pixel type) of an image.
  */
 class FLITR_EXPORT ImageFormat {
-  public:
+public:
     /// Do not change enum values
     enum PixelFormat {
         FLITR_PIX_FMT_ANY = 0,
@@ -59,27 +59,91 @@ class FLITR_EXPORT ImageFormat {
 
     inline void setWidth(uint32_t w) { Width_ = w; }
     inline void setHeight(uint32_t h) { Height_ = h; }
-    inline void setPixelFormat(PixelFormat pix_fmt) 
-    { 
+    inline void setPixelFormat(PixelFormat pix_fmt)
+    {
         PixelFormat_ = pix_fmt;
         setBytesPerPixel();
         setComponentsPerPixel();
     }
     
-  private:
-    inline void setBytesPerPixel() 
+    inline void cnvrtPixelFormat(uint8_t const * const inData, uint8_t * const outData, const PixelFormat outFormat) const
     {
-        switch (PixelFormat_) {
-          case FLITR_PIX_FMT_Y_8:
+        switch (PixelFormat_)
+        {
+        case FLITR_PIX_FMT_Y_8:
+            switch (outFormat)
+            {
+            case FLITR_PIX_FMT_Y_8:
+                *outData=*inData;
+                break;
+            case FLITR_PIX_FMT_RGB_8:
+                *(outData+0)=*inData;
+                *(outData+1)=*inData;
+                *(outData+2)=*inData;
+                break;
+            case FLITR_PIX_FMT_Y_16:
+                *(outData+0)=0;
+                *(outData+1)=*inData;
+                break;
+            }
+            break;
+        case FLITR_PIX_FMT_RGB_8:
+            switch (outFormat)
+            {
+            case FLITR_PIX_FMT_Y_8:
+                *outData=( ((uint16_t)(*(inData+0)))+
+                           ((uint16_t)(*(inData+1)))+
+                           ((uint16_t)(*(inData+2))) )/3;
+                break;
+            case FLITR_PIX_FMT_RGB_8:
+                *(outData+0)=*(inData+0);
+                *(outData+1)=*(inData+1);
+                *(outData+2)=*(inData+2);
+                break;
+            case FLITR_PIX_FMT_Y_16:
+                uint16_t y16=( ( ((uint32_t)(*(inData+0)))+
+                                 ((uint32_t)(*(inData+1)))+
+                                 ((uint32_t)(*(inData+2))) ) << 8 ) / 3;
+                *(outData+0)=y16 & 0xFF;
+                *(outData+1)=(y16 >> 8) & 0xFF;
+                break;
+            }
+            break;
+        case FLITR_PIX_FMT_Y_16:
+            switch (outFormat)
+            {
+            case FLITR_PIX_FMT_Y_8:
+                *outData=*(inData+1);
+                break;
+            case FLITR_PIX_FMT_RGB_8:
+                *(outData+0)=*(inData+1);
+                *(outData+1)=*(inData+1);
+                *(outData+2)=*(inData+1);
+                break;
+            case FLITR_PIX_FMT_Y_16:
+                *(outData+0)=*(inData+0);
+                *(outData+1)=*(inData+1);
+                break;
+            }
+            break;
+        }
+    }
+
+private:
+    inline void setBytesPerPixel()
+    {
+        switch (PixelFormat_)
+        {
+        case FLITR_PIX_FMT_Y_8:
             BytesPerPixel_ = 1;
             break;
-          case FLITR_PIX_FMT_RGB_8:
+        case FLITR_PIX_FMT_RGB_8:
             BytesPerPixel_ = 3;
             break;
-          case FLITR_PIX_FMT_Y_16:
+        case FLITR_PIX_FMT_Y_16:
             BytesPerPixel_ = 2;
             break;
-          default:
+        default:
             // \todo maybe return error
             BytesPerPixel_ = 1;
         }
@@ -87,17 +151,18 @@ class FLITR_EXPORT ImageFormat {
 
     inline void setComponentsPerPixel()
     {
-        switch (PixelFormat_) {
-          case FLITR_PIX_FMT_Y_8:
+        switch (PixelFormat_)
+        {
+        case FLITR_PIX_FMT_Y_8:
             ComponentsPerPixel_ = 1;
             break;
-          case FLITR_PIX_FMT_RGB_8:
+        case FLITR_PIX_FMT_RGB_8:
             ComponentsPerPixel_ = 3;
             break;
-          case FLITR_PIX_FMT_Y_16:
+        case FLITR_PIX_FMT_Y_16:
             ComponentsPerPixel_ = 1;
             break;
-          default:
+        default:
             // \todo maybe return error
             ComponentsPerPixel_ = 1;
         }
