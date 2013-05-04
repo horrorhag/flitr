@@ -149,6 +149,7 @@ SET(LIB_SOURCES
   src/flitr/multi_ffmpeg_producer.cpp
   src/flitr/multi_osg_consumer.cpp
   src/flitr/ortho_texture_manipulator.cpp
+  src/flitr/image_multiplexer.cpp
 
   src/flitr/modules/geometry_overlays/crosshair_overlay.cpp
   src/flitr/modules/geometry_overlays/geometry_overlay.cpp
@@ -215,6 +216,7 @@ SET(LIB_SOURCES
   include/flitr/multi_ffmpeg_producer.h
   include/flitr/multi_osg_consumer.h
   include/flitr/ortho_texture_manipulator.h
+  include/flitr/image_multiplexer.h
 
   include/flitr/modules/parameters/parameters.h
 
@@ -315,6 +317,7 @@ ADD_SUBDIRECTORY(examples/points_overlay)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/hud_overlay)
 ADD_SUBDIRECTORY(examples/save_texture_to_video_file)
+ADD_SUBDIRECTORY(examples/producer_multiplexer)
 
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
