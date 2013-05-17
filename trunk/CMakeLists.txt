@@ -233,6 +233,7 @@ SET(LIB_SOURCES
   include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h
   include/flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h
   include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
+  include/flitr/modules/cpu_shader_passes/cpu_local_photometric_equalisation.h
   include/flitr/modules/cpu_shader_passes/cpu_uniform_noise_shader.h
 
   include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
