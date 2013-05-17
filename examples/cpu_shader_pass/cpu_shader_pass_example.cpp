@@ -15,6 +15,7 @@
 #include <flitr/modules/cpu_shader_passes/cpu_shader_pass.h>
 #include <flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h>
 #include <flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h>
+#include <flitr/modules/cpu_shader_passes/cpu_local_photometric_equalisation.h>
 
 #include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
 
@@ -178,11 +179,11 @@ int main(int argc, char *argv[])
 
     cpuShaderPass->setGPUShader(argv[2]);
         osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
-        prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(cpuShaderPass->getOutImage()));
+        //prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(cpuShaderPass->getOutImage()));
         //cpuShaderPass->setPostRenderCPUShader(prmCPUShader);
 
         //cpuShaderPass->setPostRenderCPUShader(new CPUGAUSFILT_Shader(cpuShaderPass->getOutImage()));
-        cpuShaderPass->setPostRenderCPUShader(new CPUPhotometricEqualisation_Shader(cpuShaderPass->getOutImage(), 0.2, 0.025));
+        cpuShaderPass->setPostRenderCPUShader(new CPULocalPhotometricEqualisation_Shader(cpuShaderPass->getOutImage(), 0.1, 0.5, 0.025));
 
         //cpuShaderPass->setPostRenderCPUShader(new CPUSUM_Shader(cpuShaderPass->getOutImage()));
     root_node->addChild(cpuShaderPass->getRoot().get());
@@ -208,7 +209,7 @@ int main(int argc, char *argv[])
     while(!viewer.done()) {
 
         ffp->trigger();
-
+/*
         if (mhc.isHistogramUpdated(0))
         {
             std::vector<int32_t> histogram=mhc.getHistogram(0);
@@ -221,7 +222,7 @@ int main(int argc, char *argv[])
 
             prmCPUShader->setPaletteMap(histogramEqualiseMap);
         }
-
+*/
         if (osgc->getNext()) {
             viewer.frame();
         }

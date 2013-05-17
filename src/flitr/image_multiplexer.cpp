@@ -18,8 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/image_multiplexer.h>
 #include <sstream>
+
+#include <OpenThreads/Thread>
+
+#include <flitr/image_multiplexer.h>
 
 using namespace flitr;
 using std::tr1::shared_ptr;
@@ -28,11 +31,9 @@ void ImageMultiplexerThread::run()
 {
     while (true)
     {
-        if (!IM_->trigger())
-        {
-            // wait a while for producers and consumers.
-            Thread::microSleep(1000);
-        }
+        IM_->trigger();
+
+        Thread::microSleep(1000);
 
         // check for exit
         if (ShouldExit_) {
@@ -47,7 +48,7 @@ ImageMultiplexer::ImageMultiplexer(uint32_t w, uint32_t h, ImageFormat::PixelFor
     ImagesPerSlot_(images_per_slot),
     buffer_size_(buffer_size),
     Thread_(0),
-    SingleSource_(-1),
+    PlexerSource_(-1),
     ConsumerIndex_(0),
     DownstreamWidth_(w),
     DownstreamHeight_(h),
@@ -107,80 +108,100 @@ bool ImageMultiplexer::trigger()
     std::vector<Image**> imvWrite;
     std::vector<Image**> imvRead;
 
+    //std::cout << getNumWriteSlotsAvailable() << "@write\n";
+    //std::cout.flush();
+
+    int32_t ThreadPlexerSource=PlexerSource_;
+
     if (getNumWriteSlotsAvailable())
     {
+        /*
+        for (size_t i=0; i<ImageConsumerVec_.size(); i++)
+        {
+            std::cout << ImageConsumerVec_[i]->getNumReadSlotsAvailable() << "@" << i << "\n";
+            std::cout.flush();
+        }
+
+        std::cout << "Currently" << "@" << ConsumerIndex_ << "\n";
+        std::cout.flush();
+        */
         if (ImageConsumerVec_[ConsumerIndex_]->getNumReadSlotsAvailable())
         {
             ProcessorStats_->tick();
 
             imvRead=ImageConsumerVec_[ConsumerIndex_]->reserveReadSlot();
-
-            if ((SingleSource_<0)||(ConsumerIndex_==SingleSource_))
+            if (imvRead.size()==ImagesPerSlot_)
             {
-                imvWrite=reserveWriteSlot();
 
-                unsigned int i=0;
-                for (i=0; i<ImagesPerSlot_; i++)
+                if ((ThreadPlexerSource<0)||(ConsumerIndex_==ThreadPlexerSource))
                 {
-                    Image const * const imRead = *(imvRead[i]);
-                    Image * const imWrite = *(imvWrite[i]);
-
-                    const ImageFormat imReadFormat=getUpstreamFormat(ConsumerIndex_, i);
-                    const ImageFormat::PixelFormat pixelReadFormat=imReadFormat.getPixelFormat();
-
-                    const ImageFormat imWriteFormat=getDownstreamFormat(i);
-                    const ImageFormat::PixelFormat pixelWriteFormat=imWriteFormat.getPixelFormat();
-
-                    const uint32_t readWidth=imReadFormat.getWidth();
-                    const uint32_t readHeight=imReadFormat.getHeight();
-                    const uint32_t readBytesPerPixel=imReadFormat.getBytesPerPixel();
-
-                    const uint32_t writeWidth=imWriteFormat.getWidth();
-                    const uint32_t writeHeight=imWriteFormat.getHeight();
-                    const uint32_t writeBytesPerPixel=imWriteFormat.getBytesPerPixel();
-
-                    uint8_t const * const dataRead=imRead->data();
-                    uint8_t * const dataWrite=imWrite->data();
-
-                    uint32_t writeOffset=0;
-                    const float readXOffset_delta_float=((float)readWidth)/writeWidth;
-
-                    //Do image copy and format conversion here...
-
-                    for (uint32_t y=0; y<writeHeight; y++)
+                    imvWrite=reserveWriteSlot();
+                    if (imvWrite.size()==ImagesPerSlot_)
                     {
-                        const uint32_t readOffset=((uint32_t)((((float)y)/writeHeight) * readHeight)) * readWidth;
-
-                        float readXOffset_float=0.0;
-
-                        for (uint32_t x=0; x<writeWidth; x++)
+                        unsigned int i=0;
+                        for (i=0; i<ImagesPerSlot_; i++)
                         {
-                            imReadFormat.cnvrtPixelFormat(dataRead+((uint32_t)(readOffset+readXOffset_float))*readBytesPerPixel,
-                                                          dataWrite+writeOffset,
-                                                          pixelWriteFormat);
+                            Image const * const imRead = *(imvRead[i]);
+                            Image * const imWrite = *(imvWrite[i]);
 
-                            writeOffset+=writeBytesPerPixel;
+                            const ImageFormat imReadFormat=getUpstreamFormat(ConsumerIndex_, i);
+                            const ImageFormat::PixelFormat pixelReadFormat=imReadFormat.getPixelFormat();
 
-                            readXOffset_float+=readXOffset_delta_float;
+                            const ImageFormat imWriteFormat=getDownstreamFormat(i);
+                            const ImageFormat::PixelFormat pixelWriteFormat=imWriteFormat.getPixelFormat();
+
+                            const uint32_t readWidth=imReadFormat.getWidth();
+                            const uint32_t readHeight=imReadFormat.getHeight();
+                            const uint32_t readBytesPerPixel=imReadFormat.getBytesPerPixel();
+
+                            const uint32_t writeWidth=imWriteFormat.getWidth();
+                            const uint32_t writeHeight=imWriteFormat.getHeight();
+                            const uint32_t writeBytesPerPixel=imWriteFormat.getBytesPerPixel();
+
+                            uint8_t const * const dataRead=imRead->data();
+                            uint8_t * const dataWrite=imWrite->data();
+
+                            uint32_t writeOffset=0;
+                            const float readXOffset_delta_float=((float)readWidth)/writeWidth;
+
+                            //Do image copy and format conversion here...
+
+                            for (uint32_t y=0; y<writeHeight; y++)
+                            {
+                                const uint32_t readOffset=((uint32_t)((((float)y)/writeHeight) * readHeight)) * readWidth;
+
+                                float readXOffset_float=0.0;
+
+                                for (uint32_t x=0; x<writeWidth; x++)
+                                {
+                                    imReadFormat.cnvrtPixelFormat(dataRead+((uint32_t)(readOffset+readXOffset_float))*readBytesPerPixel,
+                                                                  dataWrite+writeOffset,
+                                                                  pixelWriteFormat);
+
+                                    writeOffset+=writeBytesPerPixel;
+
+                                    readXOffset_float+=readXOffset_delta_float;
+                                }
+                            }
+
+
                         }
+
+                        releaseWriteSlot();
                     }
-
-
                 }
 
-                releaseWriteSlot();
+                ImageConsumerVec_[ConsumerIndex_]->releaseReadSlot();
+
+                ConsumerIndex_=(ConsumerIndex_+1)%ImageConsumerVec_.size();
             }
-
-            ImageConsumerVec_[ConsumerIndex_]->releaseReadSlot();
-
-            ConsumerIndex_=(ConsumerIndex_+1)%ImageConsumerVec_.size();
 
             ProcessorStats_->tock();
         }
     }
 
 
-    return false;
+    return true;
 }
 
 

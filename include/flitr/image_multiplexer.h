@@ -104,11 +104,15 @@ public:
     }
     void setSingleSource(int32_t source)
     {
-        SingleSource_=source;
+        PlexerSource_=source;
+    }
+    int32_t getSource()
+    {
+        return PlexerSource_;
     }
     void useAllSources()
     {
-        SingleSource_=-1;
+        PlexerSource_=-1;
     }
 
 protected:
@@ -121,7 +125,7 @@ protected:
 private:
     ImageMultiplexerThread *Thread_;
 
-    int32_t SingleSource_;
+    int32_t PlexerSource_;
 
     std::vector<std::tr1::shared_ptr<ImageConsumer> > ImageConsumerVec_;
     uint32_t ConsumerIndex_;
