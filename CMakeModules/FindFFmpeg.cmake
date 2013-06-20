@@ -153,9 +153,13 @@ ENDMACRO(FFmpeg_FIND)
 
 
 # find stdint.h
-IF(MSVC)
+IF(MSVC OR MINGW)
 
-    FIND_PATH(FFmpeg_STDINT_INCLUDE_DIR stdint.h
+	SET(STDINT_OK TRUE)
+	
+ELSEIF(WIN32)
+
+	FIND_PATH(FFmpeg_STDINT_INCLUDE_DIR stdint.h
         PATHS
         ${FFmpeg_ROOT}/include
         $ENV{FFMPEG_DIR}/include
@@ -171,13 +175,13 @@ IF(MSVC)
         PATH_SUFFIXES ffmpeg
         DOC "Location of FFmpeg stdint.h Header"
     )
-
-    IF(FFmpeg_STDINT_INCLUDE_DIR)
+	
+	IF(FFmpeg_STDINT_INCLUDE_DIR)
         SET(STDINT_OK TRUE)
     ELSE()
         MESSAGE("Could not find stdint.h")
     ENDIF()
-
+	
 ELSE()
 
     SET(STDINT_OK TRUE)
