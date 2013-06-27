@@ -21,6 +21,7 @@
 #ifndef LOG_MESSAGE_H
 #define LOG_MESSAGE_H 1
 
+#include <flitr/flitr_export.h>
 #include <ostream>
 
 #include <flitr/flitr_stdint.h>
@@ -52,7 +53,7 @@ uint32_t getLogMessageCategory();
 bool initLogMessage();
 
 /// Actually log.
-extern std::ostream& logMessage(const LogMessageCategory category);
+FLITR_EXPORT extern std::ostream& logMessage(const LogMessageCategory category);
 
 inline std::ostream& logMessage(void) { return logMessage(LOG_ALL); }
 
