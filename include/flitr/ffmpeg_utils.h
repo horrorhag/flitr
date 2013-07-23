@@ -25,6 +25,7 @@
 
 extern "C" {
 #include <libavformat/avformat.h>
+#include <libavutil/pixfmt.h>
 }
 
 #undef PixelFormat
