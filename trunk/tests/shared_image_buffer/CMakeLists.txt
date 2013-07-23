@@ -5,4 +5,4 @@ SET(SOURCES
 )
 
 ADD_EXECUTABLE(test_shared_image_buffer ${SOURCES})
-TARGET_LINK_LIBRARIES(test_shared_image_buffer flitr)
+TARGET_LINK_LIBRARIES(test_shared_image_buffer flitr ${FFmpeg_LIBRARIES})
