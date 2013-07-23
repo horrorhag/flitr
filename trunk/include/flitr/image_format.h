@@ -74,16 +74,24 @@ public:
             switch (outFormat)
             {
             case FLITR_PIX_FMT_Y_8:
+            {
                 *outData=*inData;
+            }
                 break;
             case FLITR_PIX_FMT_RGB_8:
+            {
                 *(outData+0)=*inData;
                 *(outData+1)=*inData;
                 *(outData+2)=*inData;
+            }
                 break;
             case FLITR_PIX_FMT_Y_16:
+            {
                 *(outData+0)=0;
                 *(outData+1)=*inData;
+            }
+                break;
+            default:
                 break;
             }
             break;
@@ -91,21 +99,29 @@ public:
             switch (outFormat)
             {
             case FLITR_PIX_FMT_Y_8:
+            {
                 *outData=( ((uint16_t)(*(inData+0)))+
                            ((uint16_t)(*(inData+1)))+
                            ((uint16_t)(*(inData+2))) )/3;
+            }
                 break;
             case FLITR_PIX_FMT_RGB_8:
+            {
                 *(outData+0)=*(inData+0);
                 *(outData+1)=*(inData+1);
                 *(outData+2)=*(inData+2);
+            }
                 break;
             case FLITR_PIX_FMT_Y_16:
+            {
                 uint16_t y16=( ( ((uint32_t)(*(inData+0)))+
                                  ((uint32_t)(*(inData+1)))+
                                  ((uint32_t)(*(inData+2))) ) << 8 ) / 3;
                 *(outData+0)=y16 & 0xFF;
                 *(outData+1)=(y16 >> 8) & 0xFF;
+            }
+                break;
+            default:
                 break;
             }
             break;
@@ -113,18 +129,28 @@ public:
             switch (outFormat)
             {
             case FLITR_PIX_FMT_Y_8:
+            {
                 *outData=*(inData+1);
+            }
                 break;
             case FLITR_PIX_FMT_RGB_8:
+            {
                 *(outData+0)=*(inData+1);
                 *(outData+1)=*(inData+1);
                 *(outData+2)=*(inData+1);
+            }
                 break;
             case FLITR_PIX_FMT_Y_16:
+            {
                 *(outData+0)=*(inData+0);
                 *(outData+1)=*(inData+1);
+            }
+                break;
+            default:
                 break;
             }
+            break;
+        default:
             break;
         }
     }

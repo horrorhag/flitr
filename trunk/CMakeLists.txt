@@ -314,15 +314,15 @@ ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
-ADD_SUBDIRECTORY(examples/points_overlay)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
-ADD_SUBDIRECTORY(examples/hud_overlay)
-ADD_SUBDIRECTORY(examples/save_texture_to_video_file)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
 
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
+  ADD_SUBDIRECTORY(examples/save_texture_to_video_file)
+  ADD_SUBDIRECTORY(examples/hud_overlay)
+  ADD_SUBDIRECTORY(examples/points_overlay)
   ADD_SUBDIRECTORY(examples/screen_capture)
 ENDIF()
 
