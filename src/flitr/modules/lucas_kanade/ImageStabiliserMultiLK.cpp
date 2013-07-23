@@ -36,6 +36,7 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const flitr::TextureRectan
                                                       float filterHistory,
                                                       int numFilterPairs) :
 
+    m_numPyramids_(i_ROIVec.size()),
     m_ulROIWidth(i_ulROIWidth), m_ulROIHeight(i_ulROIHeight),
     m_ulNumLKIterations(0),
     m_pCurrentNPyramid(0),
@@ -73,8 +74,6 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const flitr::TextureRectan
     }
 
     m_ROIVec=i_ROIVec;
-
-    m_numPyramids_=i_ROIVec.size();
 
     for (uint32_t i=0; i<m_numPyramids_; i++)
     {
@@ -847,7 +846,7 @@ void flitr::ImageStabiliserMultiLK::updateH_NLucasKanadeCPU()
 {
     //	CViewScopeTimer scopeTimer(&timer, &timingMap, "findH_lucasKanade");
     long numLevels=m_pCurrentNPyramid->getNumLevels();
-    osg::Vec2d hEstimate[m_numPyramids_];
+    osg::Vec2d hEstimate[/*m_numPyramids_*/256];
 
     //	float *tempVizBuf=new float[m_pCurrentBiPyramid->getLevelFormat(0).getWidth() * m_pCurrentBiPyramid->getLevelFormat(0).getHeight()];
     float *resampPreviousImg=new float[m_pCurrentNPyramid->getLevelWidth(0) * m_pCurrentNPyramid->getLevelHeight(0)];

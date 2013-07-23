@@ -295,7 +295,7 @@ public:
 
 public:
     std::vector< std::pair<int,int> > m_ROIVec;
-    unsigned long m_numPyramids_;
+    const unsigned long m_numPyramids_;
 
     const unsigned long m_ulROIWidth, m_ulROIHeight;
 

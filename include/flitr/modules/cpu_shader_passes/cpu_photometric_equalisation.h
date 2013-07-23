@@ -22,7 +22,7 @@ public:
         stats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector("CPUPhotometricEqualisation_Shader"));
     }
 
-    ~CPUPhotometricEqualisation_Shader()
+    virtual ~CPUPhotometricEqualisation_Shader()
     {
         delete TargetAverage_;
     }
@@ -68,7 +68,7 @@ public:
             for (int i=0; i<256; i++)
             {
                 const double equalisedValue=i*ef+0.5;
-                remap[i]=equalisedValue<255.5 ? equalisedValue : 255.5;
+                remap[i]=equalisedValue<255.5 ? equalisedValue : 255;
             }
             //=== ===
 
