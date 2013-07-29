@@ -182,10 +182,10 @@ TexturedQuad::~TexturedQuad()
 TexturedQuadAB::TexturedQuadAB(osg::Image* in_image_A, osg::Image* in_image_B)
 {
     init();
-    setTexture(in_image_A, in_image_B);
+    setTextures(in_image_A, in_image_B);
 }
 
-void TexturedQuadAB::setTexture(osg::Image* in_image_A, osg::Image* in_image_B)
+void TexturedQuadAB::setTextures(osg::Image* in_image_A, osg::Image* in_image_B)
 {
     Width_A_ = in_image_A->s();
     Height_A_ = in_image_A->t();
@@ -225,10 +225,10 @@ void TexturedQuadAB::setTexture(osg::Image* in_image_A, osg::Image* in_image_B)
 TexturedQuadAB::TexturedQuadAB(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B)
 {
     init();
-    setTexture(in_tex_A, in_tex_B);
+    setTextures(in_tex_A, in_tex_B);
 }
 
-void TexturedQuadAB::setTexture(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B)
+void TexturedQuadAB::setTextures(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B)
 {
     Width_A_  = in_tex_A->getTextureWidth();
     Height_A_ = in_tex_A->getTextureHeight();
@@ -254,10 +254,10 @@ void TexturedQuadAB::setTexture(osg::TextureRectangle* in_tex_A, osg::TextureRec
 TexturedQuadAB::TexturedQuadAB(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B)
 {
     init();
-    setTexture(in_tex_A, in_tex_B);
+    setTextures(in_tex_A, in_tex_B);
 }
 
-void TexturedQuadAB::setTexture(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B)
+void TexturedQuadAB::setTextures(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B)
 {
     Width_A_  = in_tex_A->getTextureWidth();
     Height_A_ = in_tex_A->getTextureHeight();
@@ -281,7 +281,7 @@ void TexturedQuadAB::setTexture(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex
 
 }
 
-void TexturedQuadAB::setShader(std::string filename)
+void TexturedQuadAB::setShader(const std::string &filename)
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT );
     fshader->loadShaderSourceFromFile(filename);
@@ -296,7 +296,8 @@ void TexturedQuadAB::setShader(std::string filename)
     GeomStateSet_->addUniform(new osg::Uniform("textureID0", 0));
     GeomStateSet_->addUniform(new osg::Uniform("textureID1", 1));
 
-    GeomStateSet_->addUniform(BlendUniform_);
+    GeomStateSet_->addUniform(ColourMaskAUniform_);
+    GeomStateSet_->addUniform(ColourMaskBUniform_);
 }
 
 void TexturedQuadAB::init()
@@ -308,7 +309,8 @@ void TexturedQuadAB::init()
     Geode_->setName("flitr_textured_quad");
     Geode_->setCullingActive(false);
 
-    BlendUniform_=new osg::Uniform("blend", (float)1.0f);
+    ColourMaskAUniform_=new osg::Uniform("colourMaskA", osg::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
+    ColourMaskBUniform_=new osg::Uniform("colourMaskB", osg::Vec4f(1.0f, 1.0f, 1.0f, 1.0f));
 
     RootGroup_->addChild(MatrixTransform_.get());
     MatrixTransform_->addChild(Geode_.get());
