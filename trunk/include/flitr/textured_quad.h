@@ -66,24 +66,31 @@ class FLITR_EXPORT TexturedQuad {
     bool OldUseNormalised_;
 };
 
+/*! Textured quad similar to TexturedQuad, but with two textures which may be masked/combined with the user applied shader.*/
 class FLITR_EXPORT TexturedQuadAB {
   public:
     TexturedQuadAB(osg::Image* in_image_A, osg::Image* in_image_B);
     TexturedQuadAB(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B);
     TexturedQuadAB(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B);
     ~TexturedQuadAB();
-    void setTexture(osg::Image* in_image_A, osg::Image* in_image_B);
-    void setTexture(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B);
-    void setTexture(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B);
+
+    void setTextures(osg::Image* in_image_A, osg::Image* in_image_B);
+    void setTextures(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B);
+    void setTextures(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B);
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
 
-    void setShader(std::string filename);
+    void setShader(const std::string &filename);
 
-    void setBlend(float blend)
+    void setColourMaskA(const osg::Vec4f &colourMask)
     {
-        BlendUniform_->set(blend);
+        ColourMaskAUniform_->set(colourMask);
+    }
+
+    void setColourMaskB(const osg::Vec4f &colourMask)
+    {
+        ColourMaskBUniform_->set(colourMask);
     }
 
   private:
@@ -97,7 +104,8 @@ class FLITR_EXPORT TexturedQuadAB {
     osg::ref_ptr<osg::StateSet> GeomStateSet_;
     osg::ref_ptr<osg::Program> FragmentProgram_;
 
-    osg::ref_ptr<osg::Uniform> BlendUniform_;
+    osg::ref_ptr<osg::Uniform> ColourMaskAUniform_;
+    osg::ref_ptr<osg::Uniform> ColourMaskBUniform_;
 
     int Width_A_;
     int Height_A_;
