@@ -115,8 +115,20 @@ bool TMultiOSGConsumer<T>::init()
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1, 
-                                           GL_RGB, GL_UNSIGNED_BYTE);
+										   GL_RGB, GL_UNSIGNED_BYTE);
             break;
+		  case ImageFormat::FLITR_PIX_FMT_BGR:
+			  DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+				  ImageFormat_[i].getHeight(),
+				  1, 
+				  GL_BGR, GL_UNSIGNED_BYTE);
+			  break;
+		  case ImageFormat::FLITR_PIX_FMT_BGRA:
+			  DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+				  ImageFormat_[i].getHeight(),
+				  1, 
+				  GL_BGRA, GL_UNSIGNED_BYTE);
+			  break;
           case ImageFormat::FLITR_PIX_FMT_Y_16:
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
@@ -153,6 +165,22 @@ bool TMultiOSGConsumer<T>::init()
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
+			  case ImageFormat::FLITR_PIX_FMT_BGR:
+				  OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+					  ImageFormat_[i].getHeight(),
+					  1, 
+					  GL_RGB, GL_BGR, GL_UNSIGNED_BYTE, 
+					  DummyImages_[i]->data(),
+					  osg::Image::NO_DELETE);
+				  break;
+			  case ImageFormat::FLITR_PIX_FMT_BGRA:
+				  OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+					  ImageFormat_[i].getHeight(),
+					  1, 
+					  GL_RGB, GL_BGRA, GL_UNSIGNED_BYTE, 
+					  DummyImages_[i]->data(),
+					  osg::Image::NO_DELETE);
+				  break;
               case ImageFormat::FLITR_PIX_FMT_Y_16:
                 
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
@@ -168,7 +196,7 @@ bool TMultiOSGConsumer<T>::init()
             }
 
             OutputTextures_[h].push_back(new T());
-            OutputTextures_[h][i]->setInternalFormat(OSGImages_[h][i]->getPixelFormat());
+            OutputTextures_[h][i]->setInternalFormat(OSGImages_[h][i]->getInternalTextureFormat());
             OutputTextures_[h][i]->setSourceFormat(OSGImages_[h][i]->getPixelFormat());
             OutputTextures_[h][i]->setSourceType(OSGImages_[h][i]->getDataType());
             OutputTextures_[h][i]->setTextureWidth(ImageFormat_[i].getWidth());
@@ -260,6 +288,22 @@ bool TMultiOSGConsumer<T>::getNext()
                                                           ImageFormat_[i].getHeight(),
                                                           1, 
                                                           GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                                          im->data(),
+                                                          osg::Image::NO_DELETE);
+                break;
+			  case ImageFormat::FLITR_PIX_FMT_BGR:
+				  OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+					  ImageFormat_[i].getHeight(),
+					  1, 
+					  GL_RGB, GL_BGR, GL_UNSIGNED_BYTE, 
+					  im->data(),
+					  osg::Image::NO_DELETE);
+				  break;
+			  case ImageFormat::FLITR_PIX_FMT_BGRA:
+                OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                                                          ImageFormat_[i].getHeight(),
+                                                          1, 
+                                                          GL_RGB, GL_BGRA, GL_UNSIGNED_BYTE, 
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
