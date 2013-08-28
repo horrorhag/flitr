@@ -38,7 +38,9 @@ public:
         FLITR_PIX_FMT_Y_8 = 1,
         FLITR_PIX_FMT_RGB_8 = 2,
         FLITR_PIX_FMT_Y_16 = 3,
-        FLITR_PIX_FMT_UNDF
+        FLITR_PIX_FMT_UNDF = 4,
+		FLITR_PIX_FMT_BGR = 5,
+		FLITR_PIX_FMT_BGRA
     };
     
     ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8):
@@ -166,6 +168,12 @@ private:
         case FLITR_PIX_FMT_RGB_8:
             BytesPerPixel_ = 3;
             break;
+		case FLITR_PIX_FMT_BGR:
+            BytesPerPixel_ = 3;
+            break;
+		case FLITR_PIX_FMT_BGRA:
+            BytesPerPixel_ = 4;
+            break;
         case FLITR_PIX_FMT_Y_16:
             BytesPerPixel_ = 2;
             break;
@@ -184,6 +192,12 @@ private:
             break;
         case FLITR_PIX_FMT_RGB_8:
             ComponentsPerPixel_ = 3;
+            break;
+		case FLITR_PIX_FMT_BGR:
+            ComponentsPerPixel_ = 3;
+            break;
+		case FLITR_PIX_FMT_BGRA:
+            ComponentsPerPixel_ = 4;
             break;
         case FLITR_PIX_FMT_Y_16:
             ComponentsPerPixel_ = 1;
