@@ -40,8 +40,7 @@ struct VideoParam
 namespace
 {
 	static flitr::VideoParam* gVid = 0;
-	//const std::string config_default = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dsvl_input><camera show_format_dialog=\"false\" friendly_name=\"\"><pixel_format><RGB24 flip_h=\"true\" flip_v=\"true\"/></pixel_format></camera></dsvl_input>";
-	const std::string config_default = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dsvl_input><camera show_format_dialog=\"false\" friendly_name=\"PGR\"><pixel_format><RGB24 flip_h=\"true\" flip_v=\"false\"/></pixel_format></camera></dsvl_input>";
+	const std::string config_default = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><dsvl_input><camera show_format_dialog=\"true\" friendly_name=\"PGR\"><pixel_format><RGB24 flip_h=\"true\" flip_v=\"false\"/></pixel_format></camera></dsvl_input>";
 }
 
 /**************************************************************
@@ -194,7 +193,7 @@ bool VideoProducer::init()
 
 	
 	
-	ImageFormat_.push_back(ImageFormat(640, 480, ImageFormat::FLITR_PIX_FMT_BGR));
+	ImageFormat_.push_back(ImageFormat(frame_width, frame_height, ImageFormat::FLITR_PIX_FMT_BGR));
 
     SharedImageBuffer_ = std::tr1::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, imageSlots, 1));
     SharedImageBuffer_->initWithStorage();

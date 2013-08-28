@@ -230,6 +230,11 @@ SET(LIB_SOURCES
   include/flitr/stats_collector.h
   include/flitr/textured_quad.h
 
+  # Video
+  include/flitr/video_producer.h
+  # include/flitr/video_linux_v4l.h
+  include/flitr/video_win32_directshow.h
+
   include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h
   include/flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h
   include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
@@ -260,7 +265,6 @@ SET(LIB_SOURCES
   
 )
 
-
 #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
 IF(NOT APPLE)
   SET(LIB_SOURCES
@@ -270,9 +274,23 @@ IF(NOT APPLE)
     include/flitr/screen_capture_producer.h
     include/flitr/texture_capture_producer.h
   )
-ENDIF()
+ENDIF() 
 
+# tinyxml
+ADD_SUBDIRECTORY(src/flitr/tinyxml)
+  
+# Video
+if(WIN32)
+	ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)
+endif(WIN32)
+# if(UNIX)
+	# ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
+# endif(UNIX)
 
+INCLUDE_DIRECTORIES(
+	${LIB_INCL_DIRS}
+)
+	
 ADD_LIBRARY(flitr SHARED
   ${LIB_SOURCES}
 )
@@ -291,6 +309,7 @@ TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
 #TARGET_LINK_LIBRARIES(flitr debug OpenThreadsd osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
 ENDIF()
 
+TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} ${LIB_LINK_LIBRARIES})
 
 IF(FLITR_WITH_OSGCUDA)
   TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} osgCuda)
@@ -316,7 +335,7 @@ ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
-
+ADD_SUBDIRECTORY(examples/video_producer)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
