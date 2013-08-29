@@ -50,7 +50,7 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     SET(Boost_USE_MULTITHREADED ON)
     SET(Boost_ADDITIONAL_VERSIONS "1.49")
 
-    FIND_PACKAGE(Boost 1.49 REQUIRED COMPONENTS filesystem system)
+    FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS filesystem system)
 
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
     LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
@@ -335,7 +335,7 @@ ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
-ADD_SUBDIRECTORY(examples/video_producer)
+# ADD_SUBDIRECTORY(examples/video_producer)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
