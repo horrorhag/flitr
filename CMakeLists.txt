@@ -156,6 +156,7 @@ SET(LIB_SOURCES
   src/flitr/modules/geometry_overlays/points_overlay.cpp
   src/flitr/modules/geometry_overlays/quad_overlay.cpp
   src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
+  src/flitr/modules/geometry_overlays/text_label_overlay.cpp
 
   src/flitr/shared_image_buffer.cpp
   src/flitr/textured_quad.cpp
@@ -225,6 +226,7 @@ SET(LIB_SOURCES
   include/flitr/modules/geometry_overlays/points_overlay.h
   include/flitr/modules/geometry_overlays/quad_overlay.h
   include/flitr/modules/geometry_overlays/plot2D_overlay.h
+  include/flitr/modules/geometry_overlays/text_label_overlay.h
 
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
