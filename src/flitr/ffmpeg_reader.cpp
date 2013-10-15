@@ -61,7 +61,9 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     //av_dict_set(&options, "pix_fmt", av_get_pix_fmt_name(PIX_FMT_GRAY8), 0);
     //av_dict_set(&options, "width", "1380", 0);
     //av_dict_set(&options, "height", "1038", 0);
+	av_dict_set(&options, "rtsp_transport", "tcp", 0);
     av_dict_set(&options, "codec_type", "AVMEDIA_TYPE_VIDEO", 0);
+	avformat_network_init();
 
 
     //int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, &FormatParameters_);
