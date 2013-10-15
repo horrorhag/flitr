@@ -33,7 +33,7 @@ TextLabelOverlay::TextLabelOverlay(double centre_x, double centre_y, const std::
     _Text->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
     _Text->setCharacterSize(32.0f);
     _Text->setDataVariance(osg::Object::DYNAMIC);
-    _Text->setBackdropType(osgText::Text::DROP_SHADOW_BOTTOM_RIGHT);
+    _Text->setBackdropType(osgText::Text::OUTLINE);
 
     _Text->setText(text);
     _Text->setPosition(osg::Vec3(centre_x, centre_y, 0.0));
