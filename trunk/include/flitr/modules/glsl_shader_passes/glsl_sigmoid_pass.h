@@ -53,17 +53,15 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
     osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
 
-    void setOffset(float value);
-    float getOffset() const;
+    void setCentre(float value);
+    float getCentre() const;
     void setSlope(float value);
     float getSlope() const;
-    void setScale(float value);
-    float getScale() const;
 
 
     virtual int getNumberOfParms()
     {
-        return 3;
+        return 2;
     }
 
     virtual EParmType getParmType(int id)
@@ -75,9 +73,8 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
     {
         switch (id)
         {
-        case 0 :return std::string("offset");
+        case 0 :return std::string("centre");
         case 1 :return std::string("slope");
-        case 2 :return std::string("scale");
         }
         return std::string("???");
     }
@@ -91,9 +88,8 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
     {
         switch (id)
         {
-        case 0 : return getOffset();
+        case 0 : return getCentre();
         case 1 : return getSlope();
-        case 2 : return getScale();
         }
         return 0;
     }
@@ -102,15 +98,11 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
     {
         if (id==0)
         {
-            low=-10.0; high=0;
+            low=0.0; high=1.0;
         }
         else if (id==1)
         {
-            low=-10.0; high=10.0;
-        }
-        else if (id==2)
-        {
-            low=0.01; high=10.0;
+            low=-100.0; high=100.0;
         }
 
         return true;
@@ -120,9 +112,8 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
     {
         switch (id)
         {
-        case 0 : setOffset(v); break;
+        case 0 : setCentre(v); break;
         case 1 : setSlope(v); break;
-        case 2 : setScale(v); break;
         }
         return true;
     }
@@ -159,9 +150,8 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
 	osg::ref_ptr<osg::Program> FragmentProgram_;
     osg::ref_ptr<osg::StateSet> StateSet_;
 
-    osg::ref_ptr<osg::Uniform> UniformOffset_;
+    osg::ref_ptr<osg::Uniform> UniformCentre_;
     osg::ref_ptr<osg::Uniform> UniformSlope_;
-    osg::ref_ptr<osg::Uniform> UniformScale_;
 
     bool Enabled_;
 };

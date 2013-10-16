@@ -21,9 +21,8 @@ GLSLSigmoidPass::GLSLSigmoidPass(flitr::TextureRectangle *in_tex, bool read_back
     
     setupCamera();
 
-    UniformOffset_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("offset", (float)1.0f) );
+    UniformCentre_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("centre", (float)0.5f) );
     UniformSlope_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("slope", (float)1.0f) );
-    UniformScale_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("scale", (float)1.0f) );
 
     Camera_->addChild(createTexturedQuad().get());
 
@@ -81,9 +80,8 @@ osg::ref_ptr<osg::Group> GLSLSigmoidPass::createTexturedQuad()
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
-    StateSet_->addUniform(UniformOffset_);
+    StateSet_->addUniform(UniformCentre_);
     StateSet_->addUniform(UniformSlope_);
-    StateSet_->addUniform(UniformScale_);
 
     quad_geode->addDrawable(quad_geom.get());
     
@@ -148,16 +146,18 @@ void GLSLSigmoidPass::setShader()
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
                                                          "uniform sampler2DRect textureID0;\n"
-                                                         "uniform float offset;\n"
+                                                         "uniform float centre;\n"
                                                          "uniform float slope;\n"
-                                                         "uniform float scale;\n"
                                                          "\n"
                                                          "void main(void)\n"
                                                          "{\n"
                                                          "    vec2 texCoord = gl_TexCoord[0].xy;\n"
                                                          "    vec3 rgb  = texture2DRect(textureID0, texCoord).rgb;\n"
-                                                         "    gl_FragColor.rgb = scale * (1.0f / (1.0f + exp(-(rgb*slope+offset))));\n"
-                                                         "    gl_FragColor.a = 1.0f;\n"
+
+                                                         "    vec3 s=(rgb - vec3(centre, centre, centre)) * slope;\n"
+                                                         "    gl_FragColor.rgb = 1.0 / (1.0 + exp(-s));\n"
+
+                                                         "    gl_FragColor.a = 1.0;\n"
                                                          "}\n"
                                                          );
 
@@ -169,16 +169,16 @@ void GLSLSigmoidPass::setShader()
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
 
-void GLSLSigmoidPass::setOffset(float value)
+void GLSLSigmoidPass::setCentre(float value)
 {
-    UniformOffset_->set(value);
+    UniformCentre_->set(value);
 }
 
-float GLSLSigmoidPass::getOffset() const
+float GLSLSigmoidPass::getCentre() const
 {
-    float rValue=1.0f;
+    float rValue=0.5f;
 
-    UniformOffset_->get(rValue);
+    UniformCentre_->get(rValue);
 
     return rValue;
 }
@@ -196,17 +196,3 @@ float GLSLSigmoidPass::getSlope() const
 
     return rValue;
 }
-void GLSLSigmoidPass::setScale(float value)
-{
-    UniformScale_->set(value);
-}
-
-float GLSLSigmoidPass::getScale() const
-{
-    float rValue=1.0f;
-
-    UniformScale_->get(rValue);
-
-    return rValue;
-}
-
