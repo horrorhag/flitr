@@ -24,6 +24,7 @@
 
 #ifdef _WINDOWS
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <Windows.h>
 #endif
 
@@ -153,7 +154,7 @@ bool TMultiOSGConsumer<T>::init()
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1, 
-                                           GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
+                                           GL_RGB, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
@@ -279,7 +280,7 @@ bool TMultiOSGConsumer<T>::getNext()
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
                                                           1, 
-                                                          GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
+                                                          GL_RGB, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
@@ -320,6 +321,8 @@ bool TMultiOSGConsumer<T>::getNext()
                 break;
             }
 			OSGImages_[HistoryWritePos_][i]->dirty();
+			if (ImageFormat_[i].getFlipVertical()) OSGImages_[HistoryWritePos_][i]->flipVertical();
+			if (ImageFormat_[i].getFlipHorizontal()) OSGImages_[HistoryWritePos_][i]->flipHorizontal();
 		}
 
         // rewire the output textures
