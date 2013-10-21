@@ -43,10 +43,12 @@ public:
 		FLITR_PIX_FMT_BGRA
     };
     
-    ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8):
+    ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
         Width_(w),
         Height_(h),
-        PixelFormat_(pix_fmt)
+        PixelFormat_(pix_fmt),
+		flipV_(flipV),
+		flipH_(flipH)
     {
         setBytesPerPixel();
         setComponentsPerPixel();
@@ -59,6 +61,9 @@ public:
     inline uint32_t getBytesPerPixel() const { return BytesPerPixel_; }
     inline uint32_t getBytesPerImage() const { return Width_ * Height_ * BytesPerPixel_; }
 
+	inline bool getFlipVertical() { return flipV_; }
+	inline bool getFlipHorizontal() { return flipH_; }
+
     inline void setWidth(uint32_t w) { Width_ = w; }
     inline void setHeight(uint32_t h) { Height_ = h; }
     inline void setPixelFormat(PixelFormat pix_fmt)
@@ -67,6 +72,9 @@ public:
         setBytesPerPixel();
         setComponentsPerPixel();
     }
+
+	inline void flipVertical() { flipV_ = !flipV_; }
+	inline void flipHorizontal() { flipH_ = !flipH_; }
     
     inline void cnvrtPixelFormat(uint8_t const * const inData, uint8_t * const outData, const PixelFormat outFormat) const
     {
@@ -213,6 +221,8 @@ private:
     PixelFormat PixelFormat_;
     uint32_t BytesPerPixel_;
     uint32_t ComponentsPerPixel_;
+	bool flipV_;
+	bool flipH_;
 };
 
 }
