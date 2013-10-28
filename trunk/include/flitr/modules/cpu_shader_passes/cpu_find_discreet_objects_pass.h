@@ -27,6 +27,10 @@
 namespace flitr 
 {
 
+/*!
+* Takes a binary input image and finds bounding rectangles for all discreet objects in the image. 
+* Bounding rectangles can be expanded and combined to improve results.
+*/
 class FLITR_EXPORT CPUFindDiscreetObjectsPass : public flitr::CPUShaderPass::CPUShader
 {
 public:
@@ -48,13 +52,18 @@ public:
 
     virtual void operator () (osg::RenderInfo& renderInfo) const;
 
-	void GetRects(std::map<int, Rect>& rects);
+	//! Expand bounding rectangles by the given percentage, intersecting rectangles are combined [0,1]
+	void ExpandRects(float percentage) { expandRects_ = percentage; }
+
+	//! Call each frame to retrieve the bounding rectangles of discreet objects
+	void GetBoundingRects(std::vector<Rect>& rects);
 
 private:
 	void FindEdges();
 
 private:
 	osg::Image* Image_;
+	float expandRects_;
 };
 
 }

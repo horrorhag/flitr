@@ -42,6 +42,10 @@
 
 namespace flitr {
 
+/*!
+*	Takes an input image and produces a binary output image where all values above a given
+*	threshold becomes 1 and everything else becomes 0.
+*/
 class FLITR_EXPORT GLSLThresholdPass : public Parameters
 {
   public:
@@ -52,40 +56,9 @@ class FLITR_EXPORT GLSLThresholdPass : public Parameters
     osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
 
-    void setThreshold(int value);
+	//! Value between 0 and 1, anything above \c threshold becomes 1 else 0
+    void setThreshold(float value);
     float getThreshold() const;
-
-
-    virtual int getNumberOfParms()
-    {
-        return 1;
-    }
-
-    virtual EParmType getParmType(int id)
-    {
-        return PARM_INT;
-    }
-
-    virtual std::string getParmName(int id)
-    {
-        return std::string("threshold");
-    }
-
-    virtual std::string getTitle()
-    {
-        return "Threshold Pass";
-    }
-
-    virtual int getInt(int id)
-    {
-        return getThreshold();
-    }
-
-    virtual bool setInt(int id, float v)
-    {
-        setThreshold(v);
-        return true;
-    }
 
   private:
     void setShader();
