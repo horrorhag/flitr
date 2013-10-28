@@ -162,7 +162,8 @@ SET(LIB_SOURCES
   src/flitr/textured_quad.cpp
 
   src/flitr/modules/cpu_shader_passes/cpu_shader_pass.cpp
-
+  src/flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.cpp
+  
   src/flitr/modules/lucas_kanade/ImageMultiPyramid.cpp
   src/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.cpp
   #src/flitr/modules/lucas_kanade/ImageBiPyramid.cpp
@@ -184,6 +185,7 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_threshold_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/raw_video_file_utils.h
@@ -242,6 +244,7 @@ SET(LIB_SOURCES
   include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
   include/flitr/modules/cpu_shader_passes/cpu_local_photometric_equalisation.h
   include/flitr/modules/cpu_shader_passes/cpu_uniform_noise_shader.h
+  include/flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.h
 
   include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
   include/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h
@@ -264,6 +267,7 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_threshold_pass.h
   
 )
 
@@ -292,6 +296,8 @@ endif(WIN32)
 INCLUDE_DIRECTORIES(
 	${LIB_INCL_DIRS}
 )
+
+source_group("src" FILES ${LIB_SOURCES})
 	
 ADD_LIBRARY(flitr SHARED
   ${LIB_SOURCES}
@@ -337,7 +343,7 @@ ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
-# ADD_SUBDIRECTORY(examples/video_producer)
+ADD_SUBDIRECTORY(examples/video_producer)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
