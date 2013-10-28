@@ -18,7 +18,7 @@ GLSLThresholdPass::GLSLThresholdPass(flitr::TextureRectangle *in_tex, bool read_
     
     setupCamera();
 
-    UniformThreshold_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("threshold", 128) );
+    UniformThreshold_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("threshold", 0.5f) );
 
     Camera_->addChild(createTexturedQuad().get());
 
@@ -134,14 +134,14 @@ void GLSLThresholdPass::setShader()
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT,
                                                          "uniform sampler2DRect textureID0;\n"
-                                                         "uniform int threshold;\n"
+                                                         "uniform float threshold;\n"
                                                          "\n"
                                                          "void main(void)\n"
                                                          "{\n"
                                                          "    vec2 texCoord = gl_TexCoord[0].xy;\n"
                                                          "    vec3 rgb  = texture2DRect(textureID0, texCoord).rgb;\n"
 														 "    float grey = dot(rgb, vec3( 0.2125, 0.7154, 0.0721 ));\n"
-														 "    if (grey > 0.1)\n"
+														 "    if (grey > threshold)\n"
 														 "    {\n"
 														 "        grey = 1.0;\n"
 														 "    }\n"
@@ -162,7 +162,7 @@ void GLSLThresholdPass::setShader()
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
 
-void GLSLThresholdPass::setThreshold(int value)
+void GLSLThresholdPass::setThreshold(float value)
 {
     UniformThreshold_->set(value);
 }
