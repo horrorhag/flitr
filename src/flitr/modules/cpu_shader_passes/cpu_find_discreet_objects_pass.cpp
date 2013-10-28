@@ -12,13 +12,15 @@ namespace
 	
 	std::vector<int> used(10000);
 	std::map< int, std::vector< std::pair<int, int> > > borders;
-	std::map< int, CPUFindDiscreetObjectsPass::Rect > rectangles;
+	std::vector< CPUFindDiscreetObjectsPass::Rect > rectangles;
 }
 
 void FollowBorder(int idx, int width, int w, int h);
+bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::Rect r2);
 
-CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image) :
-    Image_(image)
+CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image) 
+	: Image_(image)
+	, expandRects_(0.0f)
 {
 	temp = 0;
 }
@@ -40,8 +42,8 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 	if (!temp)
 		temp = new unsigned char[width*height];
 
-	unsigned long i;
 	// find edges
+	int i;
 	for (unsigned long w=0; w<width; w++)
 	{
 		for (unsigned long h=0; h<height; h++)
@@ -76,7 +78,8 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		}
 	}
 
-	for (i=0; i<borders.size(); i++)
+	// bounding rectangles
+	for (i=0; i<(int)borders.size(); i++)
 	{
 		int left = width, top = height, bottom = 0, right = 0;
 		std::vector< std::pair<int, int> > border = borders[i];
@@ -91,65 +94,67 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		}
 		if (border.size()>0)
 		{
-			rectangles[i] = Rect(left, right, top, bottom);
+			int growV = (right - left) * expandRects_;
+			int growH = (bottom - top) * expandRects_;
+			rectangles.push_back(Rect(left-growV, right+growV, top-growH, bottom+growH));
+		}
+	}
+
+	// intersections
+	bool intersect = true;
+	
+	while (intersect)
+	{
+		if (rectangles.size() < 2) intersect = false;
+		for (i = 0; i < ((int)rectangles.size())-1; i++)
+		{
+			for (int j = i+1; j < (int)rectangles.size(); j++)
+			{
+				intersect = (Intersect(rectangles[i], rectangles[j]) || Intersect(rectangles[j], rectangles[i]));
+				if (intersect)
+				{
+					int left, top, bottom, right;
+					
+					if (rectangles[i].left < rectangles[j].left) 
+						left = rectangles[i].left;
+					else
+						left = rectangles[j].left;
+					if (rectangles[i].right > rectangles[j].right) 
+						right = rectangles[i].right;
+					else
+						right = rectangles[j].right;
+					if (rectangles[i].top < rectangles[j].top)
+						top = rectangles[i].top;
+					else
+						top = rectangles[j].top;
+					if (rectangles[i].bottom > rectangles[j].bottom)
+						bottom = rectangles[i].bottom;
+					else
+						bottom = rectangles[j].bottom;
+
+					rectangles.push_back(Rect(left, right, top, bottom));
+					rectangles.erase(rectangles.begin()+i);
+					rectangles.erase(rectangles.begin()+j);
+					break;
+				}
+				if (intersect)
+					break;
+			}
 		}
 	}
 
 	// draw edges
-	for (i=0; i < (width*height); i++)
+	for (i=0; i < (int)(width*height); i++)
 	{
 		data[i] = temp[i];
 	}
 
-	// clear
-	//for (i=0; i < (width*height); i++)
-	//{
-	//	data[i] = 0;
-	//}
-
-	//// draw borders
-	//for (i=0; i<borders.size(); i++)
-	//{
-	//	std::vector< std::pair<int, int> > border = borders[i];
-	//	for(int j=0; j < (int)border.size(); j++)
-	//	{
-	//		int w = border[j].first;
-	//		int h = border[j].second;
-	//		int idx = (h*width) + w;
-	//		data[idx] = 255;
-	//	}
-	//}
-
-	// draw rects
-	//for (i=0; i < rectangles.size(); i++)
-	//{
-	//	int w = rectangles[i].left;
-	//	int h = rectangles[i].top;
-	//	int idx = (h*width) + w;
-	//	data[idx] = 255;
-
-	//	w = rectangles[i].left;
-	//	h = rectangles[i].bottom;
-	//	idx = (h*width) + w;
-	//	data[idx] = 255;
-
-	//	w = rectangles[i].right;
-	//	h = rectangles[i].top;
-	//	idx = (h*width) + w;
-	//	data[idx] = 255;
-
-	//	w = rectangles[i].right;
-	//	h = rectangles[i].bottom;
-	//	idx = (h*width) + w;
-	//	data[idx] = 255;
-	//}
-
     Image_->dirty();
 }
 
-void CPUFindDiscreetObjectsPass::GetRects(std::map<int, Rect>& rects)
+void CPUFindDiscreetObjectsPass::GetBoundingRects(std::vector<Rect>& rects)
 {
-	rects.insert(rectangles.begin(), rectangles.end());
+	rects.swap(rectangles); 
 }
 
 void FollowBorder(int idx, int width, int w, int h)
@@ -166,4 +171,13 @@ void FollowBorder(int idx, int width, int w, int h)
 		borders[idx].push_back(std::pair<int,int>(dw,dh));
 		FollowBorder(idx, width, dw, dh);
 	}
+}
+
+bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::Rect r2)
+{
+	return ( (r1.left >= r2.left && r1.left <= r2.right) && (r1.top >= r2.top && r1.top <= r2.bottom)
+		|| (r1.right >= r2.left && r1.right <= r2.right) && (r1.top >= r2.top && r1.top <= r2.bottom)
+		|| (r1.left >= r2.left && r1.left <= r2.right) && (r1.bottom >= r2.top && r1.bottom <= r2.bottom)
+		|| (r1.right >= r2.left && r1.right <= r2.right) && (r1.bottom >= r2.top && r1.bottom <= r2.bottom)
+		);
 }
