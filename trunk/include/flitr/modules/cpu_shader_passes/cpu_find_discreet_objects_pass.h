@@ -41,10 +41,21 @@ public:
 		int top;
 		int bottom;
 
+		float centerX;
+		float centerY;
+
+		int width;
+		int height;
+
 		Rect() {};
 		Rect(int l, int r, int t, int b)
 			: left(l), right(r), top(t), bottom(b)	
-		{}
+		{
+			width = right - left;
+			height = bottom - top;
+			centerX = left + width/2;
+			centerY = top + height/2;
+		}
 	};
 
     CPUFindDiscreetObjectsPass(osg::Image* image);
