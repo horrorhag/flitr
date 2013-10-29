@@ -67,6 +67,12 @@ public:
 	//! The minimum height considered as a object
 	void SetMinHeight(int height) { minHeight_ = height; }
 
+	//! The maximum width considered as a object
+	void SetMaxWidth(int width) { maxWidth_ = width; }
+
+	//! The max height considered as a object
+	void SetMaxHeight(int height) { maxHeight_ = height; }
+
 	//! Call each frame to retrieve the bounding rectangles of discreet objects
 	void GetBoundingRects(std::vector<Rect>& rects);
 
@@ -80,6 +86,8 @@ private:
 	int maxArea_;
 	int minWidth_;
 	int minHeight_;
+	int maxWidth_;
+	int maxHeight_;
 };
 
 }
