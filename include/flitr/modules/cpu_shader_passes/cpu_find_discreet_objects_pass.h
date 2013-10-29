@@ -55,6 +55,9 @@ public:
 	//! Expand bounding rectangles by the given percentage, intersecting rectangles are combined [0,1]
 	void ExpandRects(float percentage) { expandRects_ = percentage; }
 
+	//! The minimum area considered as a object
+	void SetMinArea(int area) { minArea_ = area; }
+
 	//! Call each frame to retrieve the bounding rectangles of discreet objects
 	void GetBoundingRects(std::vector<Rect>& rects);
 
@@ -64,6 +67,7 @@ private:
 private:
 	osg::Image* Image_;
 	float expandRects_;
+	int minArea_;
 };
 
 }
