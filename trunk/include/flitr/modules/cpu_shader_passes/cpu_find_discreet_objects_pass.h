@@ -58,6 +58,15 @@ public:
 	//! The minimum area considered as a object
 	void SetMinArea(int area) { minArea_ = area; }
 
+	//! The maximum area considered as a object
+	void SetMaxArea(int area) { maxArea_ = area; }
+
+	//! The minimum width considered as a object
+	void SetMinWidth(int width) { minWidth_ = width; }
+
+	//! The minimum height considered as a object
+	void SetMinHeight(int height) { minHeight_ = height; }
+
 	//! Call each frame to retrieve the bounding rectangles of discreet objects
 	void GetBoundingRects(std::vector<Rect>& rects);
 
@@ -68,6 +77,9 @@ private:
 	osg::Image* Image_;
 	float expandRects_;
 	int minArea_;
+	int maxArea_;
+	int minWidth_;
+	int minHeight_;
 };
 
 }
