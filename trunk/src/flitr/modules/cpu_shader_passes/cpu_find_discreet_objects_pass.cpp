@@ -22,10 +22,12 @@ bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::
 CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image) 
 	: Image_(image)
 	, expandRects_(0.0f)
-	, minArea_(std::numeric_limits<int>::max())
-	, maxArea_(0)
-	, minWidth_(std::numeric_limits<int>::max())
-	, minHeight_(std::numeric_limits<int>::max())
+	, minArea_(0)
+	, maxArea_(std::numeric_limits<int>::max())
+	, minWidth_(0)
+	, minHeight_(0)
+	, maxWidth_(std::numeric_limits<int>::max())
+	, maxHeight_(std::numeric_limits<int>::max())
 {
 	temp = 0;
 }
@@ -173,7 +175,7 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		h = r.bottom-r.top;
 		area = w * h;
 
-		if (area < minArea_ || w < minWidth_ || h < minHeight_ || area > maxArea_)
+		if (area < minArea_ || w < minWidth_ || h < minHeight_ || area > maxArea_ || w > maxWidth_ || h > maxHeight_)
 		{
 			rectangles.erase(rectangles.begin()+i);
 		}
