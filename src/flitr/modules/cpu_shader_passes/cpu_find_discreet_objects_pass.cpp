@@ -1,6 +1,7 @@
 #include <flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.h>
 
 #include <algorithm> 
+#include <limits>
 
 using namespace flitr;
 
@@ -15,13 +16,16 @@ namespace
 	std::vector< CPUFindDiscreetObjectsPass::Rect > rectangles;
 }
 
-void FollowBorder(int idx, int width, int w, int h);
+void FollowBorder(int idx, int width, int height, int w, int h);
 bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::Rect r2);
 
 CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image) 
 	: Image_(image)
 	, expandRects_(0.0f)
-	, minArea_(-1)
+	, minArea_(std::numeric_limits<int>::max())
+	, maxArea_(0)
+	, minWidth_(std::numeric_limits<int>::max())
+	, minHeight_(std::numeric_limits<int>::max())
 {
 	temp = 0;
 }
@@ -74,7 +78,7 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 			i = (h*width) + w;
 			if (temp[i] == 0 || (std::find(used.begin(), used.end(), i)!=used.end()) )
 				continue;
-			FollowBorder(idx, width, w, h);
+			FollowBorder(idx, width, height, w, h);
 			idx++;
 		}
 	}
@@ -97,13 +101,25 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		{
 			int growV = (right - left) * expandRects_;
 			int growH = (bottom - top) * expandRects_;
-			rectangles.push_back(Rect(left-growV, right+growV, top-growH, bottom+growH));
+			
+			left-=growV;
+			right+=growV;
+			top-=growV;
+			bottom+=growH;
+
+			if (left < 0) left = 0;
+			if (right >= width) right = width-1;
+			if (top < 0) top = 0;
+			if (bottom >= height) bottom = height-1;
+
+			rectangles.push_back(Rect(left, right, top, bottom));
 		}
 	}
 
 	// intersections
 	bool intersect = true;
 	
+	Rect r1,r2;
 	while (intersect)
 	{
 		if (rectangles.size() < 2) intersect = false;
@@ -115,23 +131,26 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 				if (intersect)
 				{
 					int left, top, bottom, right;
-					
-					if (rectangles[i].left < rectangles[j].left) 
-						left = rectangles[i].left;
+				
+					r1 = rectangles[i];
+					r2 = rectangles[j];
+
+					if (r1.left < r2.left) 
+						left = r1.left;
 					else
-						left = rectangles[j].left;
-					if (rectangles[i].right > rectangles[j].right) 
-						right = rectangles[i].right;
+						left = r2.left;
+					if (r1.right > r2.right) 
+						right = r1.right;
 					else
-						right = rectangles[j].right;
-					if (rectangles[i].top < rectangles[j].top)
-						top = rectangles[i].top;
+						right = r2.right;
+					if (r1.top < r2.top)
+						top = r1.top;
 					else
-						top = rectangles[j].top;
-					if (rectangles[i].bottom > rectangles[j].bottom)
-						bottom = rectangles[i].bottom;
+						top = r2.top;
+					if (r1.bottom > r2.bottom)
+						bottom = r1.bottom;
 					else
-						bottom = rectangles[j].bottom;
+						bottom = r2.bottom;
 
 					rectangles.push_back(Rect(left, right, top, bottom));
 					rectangles.erase(rectangles.begin()+i);
@@ -144,18 +163,21 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		}
 	}
 
-	if (minArea_ > 0)
+	// Min and Max checks
+	Rect r;
+	int area, w, h;
+	for (i = rectangles.size()-1; i >= 0 ; i--)
 	{
-		Rect r;
-		for (i = rectangles.size()-1; i >= 0 ; i--)
+		r = rectangles[i];
+		w = r.right-r.left;
+		h = r.bottom-r.top;
+		area = w * h;
+
+		if (area < minArea_ || w < minWidth_ || h < minHeight_ || area > maxArea_)
 		{
-			r = rectangles[i];
-			int area = (r.right-r.left)*(r.bottom-r.top);
-			if (area < minArea_)
-			{
-				rectangles.erase(rectangles.begin()+i);
-			}
+			rectangles.erase(rectangles.begin()+i);
 		}
+	}
 	}
 	
 
@@ -173,19 +195,22 @@ void CPUFindDiscreetObjectsPass::GetBoundingRects(std::vector<Rect>& rects)
 	rects.swap(rectangles); 
 }
 
-void FollowBorder(int idx, int width, int w, int h)
+void FollowBorder(int idx, int width, int height, int w, int h)
 {
+	int size = width*height;
 	int i, dh, dw;
 	for (int l = 0; l < 8; l++)
 	{
 		dh = h+delta[l][0];
 		dw = w+delta[l][1];
 		i = (dh*width) + dw;
+		if (i >= size)
+			continue;
 		if (temp[i] == 0 || (std::find(used.begin(), used.end(), i)!=used.end()) )
 			continue;
 		used.push_back(i);
 		borders[idx].push_back(std::pair<int,int>(dw,dh));
-		FollowBorder(idx, width, dw, dh);
+		FollowBorder(idx, width, height, dw, dh);
 	}
 }
 
