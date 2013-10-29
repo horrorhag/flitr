@@ -178,7 +178,6 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 			rectangles.erase(rectangles.begin()+i);
 		}
 	}
-	}
 	
 
 	// draw edges
