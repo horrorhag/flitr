@@ -21,6 +21,7 @@ bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::
 CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image) 
 	: Image_(image)
 	, expandRects_(0.0f)
+	, minArea_(-1)
 {
 	temp = 0;
 }
@@ -142,6 +143,21 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 			}
 		}
 	}
+
+	if (minArea_ > 0)
+	{
+		Rect r;
+		for (i = rectangles.size()-1; i >= 0 ; i--)
+		{
+			r = rectangles[i];
+			int area = (r.right-r.left)*(r.bottom-r.top);
+			if (area < minArea_)
+			{
+				rectangles.erase(rectangles.begin()+i);
+			}
+		}
+	}
+	
 
 	// draw edges
 	for (i=0; i < (int)(width*height); i++)
