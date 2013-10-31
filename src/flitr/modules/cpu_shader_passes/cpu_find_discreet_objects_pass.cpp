@@ -43,8 +43,8 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
     rectangles.resize(0);
     edgelist.resize(0);
 
-    const unsigned long width=Image_->s();
-    const unsigned long height=Image_->t();
+    int width = Image_->s();
+    int height = Image_->t();
 	int size = width*height;
     if (used.size()!=size)
     {
@@ -65,7 +65,7 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
             temp[i] = 0;
             continue;
         }
-        if (data[i+1] == 0 || data[i-1] == 0 || data[i+width] == 0 || data[i-width] == 0)
+        if (data[i+1] == 0 || data[i-1] == 0 || ( (i+width)<size && data[i+width] == 0 ) || ( ((i-width)>0) && data[i-width] == 0 ))
         {
             edgelist.push_back(i);
             temp[i] = 255;
@@ -123,22 +123,10 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 				intersect = (Intersect(r1, r2));
 				if (intersect)
 				{
-					if (r1.left < r2.left) 
-						left = r1.left;
-					else
-						left = r2.left;
-					if (r1.right > r2.right) 
-						right = r1.right;
-					else
-						right = r2.right;
-					if (r1.bottom > r2.bottom)
-						bottom = r1.bottom;
-					else
-						bottom = r2.bottom;
-					if (r1.top < r2.top)
-						top = r1.top;
-					else
-						top = r2.top;
+					left = std::min(r1.left, r2.left);
+					right = std::max(r1.right, r2.right);
+					top = std::min(r1.top, r2.top);
+					bottom = std::max(r1.bottom, r2.bottom);
 
 					rectangles.push_back(Rect(left, right, top, bottom));
 					rectangles.erase(rectangles.begin()+j);
@@ -156,7 +144,7 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		}
 	}
 
-	// Min and Max checks
+	// min and max checks
 	Rect r;
 	int area;
 	for (i = rectangles.size()-1; i >= 0 ; i--)
