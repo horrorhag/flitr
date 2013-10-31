@@ -139,6 +139,7 @@ void OrthoTextureManipulator::home(double /*currentTime*/)
 
 void OrthoTextureManipulator::home(const GUIEventAdapter& ea, GUIActionAdapter& us)
 {
+	updateOrthoParams(us);
     home(ea.getTime());
     us.requestRedraw();
     us.requestContinuousUpdate(false);
