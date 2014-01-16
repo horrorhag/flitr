@@ -53,7 +53,7 @@ class FLITR_EXPORT TextLabelOverlay : public GeometryOverlay
      * \param center_y The y position of the label center.
      */
     TextLabelOverlay(double centre_x, double centre_y, const std::string &text);
-    ~TextLabelOverlay() {};
+    virtual ~TextLabelOverlay() {};
 
     /** 
      * Adjusts the position of the label.

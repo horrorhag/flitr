@@ -28,9 +28,9 @@ void ImageProcessorThread::run()
 {
     while (true)
     {
-        if (!IP_->trigger())
+        if (!IP_->trigger())//The processor work happens in IP_->trigger()!!!
         {
-            // wait a while for producers and consumers.
+            // wait a while for producers and consumers if trigger() method didn't do anything...
             Thread::microSleep(1000);
         }
 
@@ -70,7 +70,7 @@ bool ImageProcessor::init()
     SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(
                 new SharedImageBuffer(*this, buffer_size_, ImagesPerSlot_));
 
-    SharedImageBuffer_->initWithStorage();
+    SharedImageBuffer_->initWithStorage(true);
 
     return true;
 }

@@ -101,7 +101,7 @@ class FLITR_EXPORT RawVideoFileReader {
   private:
     bool openVideoFile();
 
-    int VideoStreamIndex_;
+    //int VideoStreamIndex_;
     uint32_t FrameRate_;
     ImageFormat ImageFormat_;
     uint32_t BytesPerImage_;

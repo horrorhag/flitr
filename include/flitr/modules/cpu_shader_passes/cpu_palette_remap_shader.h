@@ -23,7 +23,7 @@ public:
 
         parameterTitle_=std::string("Palette Remap");
     }
-    ~CPUPaletteRemap_Shader()
+    virtual ~CPUPaletteRemap_Shader()
     {
         delete [] paletteMap_;
     }

@@ -67,7 +67,7 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
      */ 
     // \todo maybe change this so pix formats can be requested per input file
     MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
-    ~MultiFFmpegProducer();
+    virtual ~MultiFFmpegProducer();
 
     bool setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata);
 

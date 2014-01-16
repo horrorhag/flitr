@@ -39,45 +39,63 @@ namespace flitr {
 
 class FLITR_EXPORT Image {
   public:
-    Image(const ImageFormat& image_format) :
+    /*! Constructor for image from an image format
+     *  @param image_format The image format of the image to allocate.
+     *  @param zero_mem Flag to control zero-ing of memory once allocated.
+     */
+    Image(const ImageFormat& image_format, const bool zero_mem = false) :
         Format_(image_format)
     {
         Data_ = (uint8_t*)av_malloc(Format_.getBytesPerImage());
-        if (!Data_) {
+        if (!Data_)
+        {
             outOfMem();
+        } else
+        {
+            if (zero_mem)
+            {
+                memset(Data_, 0, Format_.getBytesPerImage());
+            }
         }
     };
+    
     ~Image()
     {
         av_free(Data_);
     }
-    /// Copy constructor
+    
+    //! Copy constructor
     Image(const Image& rh)
     {
         Data_ = (uint8_t*)av_malloc(rh.Format_.getBytesPerImage());
-        if (!Data_) {
+        if (!Data_)
+        {
             outOfMem();
         }
         deepCopy(rh);
     }
-    /// Assignment
+    //! Assignment operator
     Image& operator=(const Image& rh)
     {
-        if (this == &rh) {
+        if (this == &rh)
+        {
             return *this;
         }
        
         uint8_t* new_data = (uint8_t*)av_malloc(rh.Format_.getBytesPerImage());
-        if (new_data != 0) {
+        if (new_data != 0)
+        {
             av_free(Data_);
             Data_ = new_data;
-        } else {
+        } else
+        {
             outOfMem();
         }
 
         deepCopy(rh);
         return *this;
     }
+    
     ImageFormat* format() { return &Format_; }
     const std::tr1::shared_ptr<ImageMetadata> metadata() { return Metadata_; }
     void setMetadata(std::tr1::shared_ptr<ImageMetadata> md) { Metadata_ = md; } 
@@ -89,11 +107,13 @@ class FLITR_EXPORT Image {
     void deepCopy(const Image& rh)
     {
         Format_ = rh.Format_;
-        if (rh.Metadata_) {
+        if (rh.Metadata_)
+        {
             // make a copy
             std::tr1::shared_ptr<ImageMetadata> new_meta(rh.Metadata_->clone());
             Metadata_.swap(new_meta);
-        } else {
+        } else
+        {
             // delete ours too
             std::tr1::shared_ptr<ImageMetadata> new_meta;
             Metadata_.swap(new_meta);

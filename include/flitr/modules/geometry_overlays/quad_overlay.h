@@ -55,7 +55,7 @@ class FLITR_EXPORT QuadOverlay : public GeometryOverlay
      *
      */
     QuadOverlay(double center_x, double center_y, double width, double height, bool filled=false);
-    ~QuadOverlay() {};
+    virtual ~QuadOverlay() {};
 
     /** 
      * Adjusts the position of the quad.

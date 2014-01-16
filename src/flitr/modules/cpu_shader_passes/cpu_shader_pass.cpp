@@ -4,24 +4,17 @@ using namespace flitr;
 
 CPUShaderPass::CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex)
 {
-    bool read_back_to_CPU=true;
-
-    RootGroup_ = new osg::Group;
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
 
-    //===
-    InImage_ = in_tex->getImage();
-    InTexture_ = in_tex;
-    //===
+    RootGroup_ = new osg::Group;
 
-    //===
-    if (read_back_to_CPU)
-    {
-        OutImage_ = new osg::Image;
-        OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
-                                 InTexture_->getSourceFormat(), InTexture_->getSourceType());
-    }
+    InTexture_ = in_tex;
+    InImage_ = in_tex->getImage();
+
+    OutImage_ = new osg::Image;
+    OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
+                             InTexture_->getSourceFormat(), InTexture_->getSourceType());
 
     OutTexture_ = new flitr::TextureRectangle();
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
@@ -30,26 +23,23 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex)
     OutTexture_->setSourceType(InTexture_->getSourceType());
     OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::LINEAR);
     OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::LINEAR);
-
-    if (OutImage_)
-        OutTexture_->setImage(OutImage_);//Also sets the texture's source format and type.
-    //===
+    OutTexture_->setImage(OutImage_);//Also sets the texture's source format and type.
 
     Camera_ = new osg::Camera;
     setupCamera();
+
     Camera_->addChild(createTexturedQuad().get());
+
     RootGroup_->addChild(Camera_.get());
 }
 
 CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
 {
-    bool read_back_to_CPU=true;
-
-    RootGroup_ = new osg::Group;
     TextureWidth_ = in_img->s();
     TextureHeight_ = in_img->t();
 
-    //===
+    RootGroup_ = new osg::Group;
+
     InImage_ = in_img;
     InTexture_ = new flitr::TextureRectangle;
     InTexture_->setTextureSize(TextureWidth_, TextureHeight_);
@@ -59,15 +49,10 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
     InTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
     InTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
     InTexture_->setImage(InImage_);//Also sets the texture's source format and type.
-    //===
 
-    //===
-    if (read_back_to_CPU)
-    {
-        OutImage_ = new osg::Image;
-        OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
-                                 InTexture_->getSourceFormat(), InTexture_->getSourceType());
-    }
+    OutImage_ = new osg::Image;
+    OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
+                             InTexture_->getSourceFormat(), InTexture_->getSourceType());
 
     OutTexture_ = new flitr::TextureRectangle();
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
@@ -76,16 +61,17 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<osg::Image> in_img)
     OutTexture_->setSourceType(InTexture_->getSourceType());
     OutTexture_->setFilter(osg::Texture2D::MIN_FILTER,osg::Texture2D::NEAREST);
     OutTexture_->setFilter(osg::Texture2D::MAG_FILTER,osg::Texture2D::NEAREST);
+    OutTexture_->setImage(OutImage_);//Also sets the texture's source format and type.
 
-    if (OutImage_)
-        OutTexture_->setImage(OutImage_);//Also sets the texture's source format and type.
-    //===
 
     Camera_ = new osg::Camera;
     setupCamera();
+
     Camera_->addChild(createTexturedQuad().get());
+
     RootGroup_->addChild(Camera_.get());
 }
+
 
 CPUShaderPass::~CPUShaderPass()
 {
@@ -126,7 +112,8 @@ osg::ref_ptr<osg::Group> CPUShaderPass::createTexturedQuad()
     StateSet_->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
     StateSet_->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
     StateSet_->setTextureAttributeAndModes(0, InTexture_.get(), osg::StateAttribute::ON);
-    
+    StateSet_->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
+
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
     quad_geode->addDrawable(quad_geom.get());
@@ -161,14 +148,13 @@ void CPUShaderPass::setupCamera()
     Camera_->setRenderOrder(osg::Camera::PRE_RENDER);
     Camera_->setRenderTargetImplementation(osg::Camera::FRAME_BUFFER_OBJECT);
 
-
     // attach the texture and use it as the color buffer.
     Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutTexture_.get());
 
     if (OutImage_)
-        {
+    {
         Camera_->attach(osg::Camera::BufferComponent(osg::Camera::COLOR_BUFFER), OutImage_.get());
-        }
+    }
 }
 
 void CPUShaderPass::setPreRenderCPUShader(CPUShader *cpuShader)

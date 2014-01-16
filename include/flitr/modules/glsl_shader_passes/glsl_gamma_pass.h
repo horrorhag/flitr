@@ -46,7 +46,7 @@ class FLITR_EXPORT GLSLGammaPass : public Parameters
 {
   public:
     GLSLGammaPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
-    ~GLSLGammaPass();
+    virtual ~GLSLGammaPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }

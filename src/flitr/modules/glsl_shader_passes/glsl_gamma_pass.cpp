@@ -3,8 +3,8 @@
 using namespace flitr;
 
 GLSLGammaPass::GLSLGammaPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU) :
-    Enabled_(true),
-    GammaBeforeDisable_(1.0)
+    GammaBeforeDisable_(1.0),
+    Enabled_(true)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();

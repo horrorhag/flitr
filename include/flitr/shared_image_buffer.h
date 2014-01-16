@@ -77,7 +77,7 @@ class FLITR_EXPORT SharedImageBuffer {
                       uint32_t num_slots, 
                       uint32_t images_per_slot);
 
-    ~SharedImageBuffer();
+    virtual ~SharedImageBuffer();
 
     /** 
      * Initialise the buffer and allocate storage for the images it
@@ -85,7 +85,7 @@ class FLITR_EXPORT SharedImageBuffer {
      * 
      * \return True on successful initialisation.
      */
-    bool initWithStorage();
+    bool initWithStorage(const bool zero_mem = false);
 
     /** 
      * Initialise the buffer, but do not allocate storage for any

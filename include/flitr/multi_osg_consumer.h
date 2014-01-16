@@ -66,7 +66,7 @@ public:
                       uint32_t images_per_slot,
                       uint32_t images_in_history = 1);
 
-    ~TMultiOSGConsumer();
+    virtual ~TMultiOSGConsumer();
     /**
      * The init method is used after construction to be able to return
      * success or failure of initialisation.

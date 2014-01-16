@@ -108,6 +108,25 @@ bool TestPatternProducer::trigger()
                     }
                 }
             } else
+                if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+                {
+                    for (int32_t y=-halfHeight; y<halfHeight; y++)
+                    {
+                        double fix=-halfWidth*l+y*n+patternOffsetX;
+                        double fiy=-halfWidth*m+y*o+patternOffsetY;
+
+                        for (int32_t x=-halfWidth; x<halfWidth; x++)
+                        {
+                            const uint8_t patternColour=( ( (((int32_t)fix)>>patternScale_)+(((int32_t)fiy)>>patternScale_) ) % 2 ) * 0xFF;
+
+                            *((float*)(data+offset))=(patternColour>127) ? 1.0f : 0.0f;
+
+                            offset+=4;
+                            fix+=l;
+                            fiy+=m;
+                        }
+                    }
+                } else
                 if (ImageFormat_[0].getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
                 {
                     for (int32_t y=-halfHeight; y<halfHeight; y++)

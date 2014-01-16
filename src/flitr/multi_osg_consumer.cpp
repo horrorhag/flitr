@@ -136,6 +136,12 @@ bool TMultiOSGConsumer<T>::init()
                                            1, 
                                            GL_LUMINANCE, GL_UNSIGNED_SHORT);
             break;
+        case ImageFormat::FLITR_PIX_FMT_Y_F32:
+          DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                                         ImageFormat_[i].getHeight(),
+                                         1,
+                                         GL_LUMINANCE, GL_FLOAT);
+          break;
           default:
             // \todo report error
             break;
@@ -154,7 +160,7 @@ bool TMultiOSGConsumer<T>::init()
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1, 
-                                           GL_RGB, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
+                                           GL_LUMINANCE8, GL_RED, GL_UNSIGNED_BYTE,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
@@ -182,8 +188,7 @@ bool TMultiOSGConsumer<T>::init()
 					  DummyImages_[i]->data(),
 					  osg::Image::NO_DELETE);
 				  break;
-              case ImageFormat::FLITR_PIX_FMT_Y_16:
-                
+              case ImageFormat::FLITR_PIX_FMT_Y_16:                
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1, 
@@ -191,6 +196,14 @@ bool TMultiOSGConsumer<T>::init()
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
+            case ImageFormat::FLITR_PIX_FMT_Y_F32:
+              OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                                         ImageFormat_[i].getHeight(),
+                                         1,
+                                         GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
+                                         DummyImages_[i]->data(),
+                                         osg::Image::NO_DELETE);
+              break;
               default:
                 // \todo report error
                 break;
@@ -280,7 +293,7 @@ bool TMultiOSGConsumer<T>::getNext()
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
                                                           1, 
-                                                          GL_RGB, GL_LUMINANCE, GL_UNSIGNED_BYTE, 
+                                                          GL_LUMINANCE8, GL_RED, GL_UNSIGNED_BYTE,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
@@ -316,6 +329,14 @@ bool TMultiOSGConsumer<T>::getNext()
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
+            case ImageFormat::FLITR_PIX_FMT_Y_F32:
+              OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                                                        ImageFormat_[i].getHeight(),
+                                                        1,
+                                                        GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
+                                                        im->data(),
+                                                        osg::Image::NO_DELETE);
+              break;
               default:
                 // \todo report error
                 break;

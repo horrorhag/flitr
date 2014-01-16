@@ -58,7 +58,7 @@ private:
     bool ShouldExit_;
 };
 
-/*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.*/
+/*! A multiplexer class inheriting from ImageProducer, but having a consumer member per each of n upstream producers.*/
 class FLITR_EXPORT ImageMultiplexer : public ImageProducer
 {
     friend class ImageMultiplexerThread;

@@ -35,6 +35,7 @@
 #include <osg/Texture2D>
 #include <osg/TextureRectangle>
 #include <osg/Image>
+#include <osg/TexEnv>
 #include <iostream>
 
 #include <stdint.h>
@@ -82,7 +83,7 @@ public:
 public:
     CPUShaderPass(osg::ref_ptr<osg::Image> in_img);
     CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex);
-    ~CPUShaderPass();
+    virtual ~CPUShaderPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
 
