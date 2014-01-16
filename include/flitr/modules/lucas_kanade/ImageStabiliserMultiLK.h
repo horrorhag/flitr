@@ -241,11 +241,6 @@ public:
         return m_outputTexture.get();
     }
 
-    inline void resetQuadMatrixTransform(const osg::Matrixd &i_rMatrix)
-    {
-        m_rpQuadMatrixTransform->setMatrix(i_rMatrix);
-        filterPairs_[0].first=osg::Vec2f(i_rMatrix(3,0), i_rMatrix(3,2));
-    }
 
     osg::Matrixd getDeltaTransformationMatrix() const;
 
@@ -307,7 +302,6 @@ public:
 private:
     bool m_bAutoSwapCurrentPrevious;
 
-    osg::ref_ptr<osg::MatrixTransform> m_rpQuadMatrixTransform;
     std::vector< std::pair<double,double> > m_TransformedROICentreVec;
     osg::ref_ptr<osg::Geometry>       m_quadGeom;
 
@@ -390,30 +384,12 @@ private:
                 }
     }
 
-    void offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeigt);
+    void offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeigt, double xOff, double yOff);
 
 public:
 
     void updateOutputQuadTransform()
     {
-        osg::Matrixd deltaTransformMatrix=getDeltaTransformationMatrix();
-
-        //=== Older code with transform filter ===
-        for (int filterNum=0; filterNum<(int)(filterPairs_.size()); filterNum++)
-        {
-            filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(deltaTransformMatrix(3,0), deltaTransformMatrix(3,2))*(filterPairs_[filterNum].second);
-        }
-
-        {//Update output quad's transform with the delta transform.
-            osg::Matrixd quadDeltaTransform=deltaTransformMatrix;
-            quadDeltaTransform(3,0)=quadDeltaTransform(3,0)-filterPairs_[0].first._v[0];
-            quadDeltaTransform(3,2)=quadDeltaTransform(3,2)-filterPairs_[0].first._v[1];
-
-            osg::Matrixd quadTransform=m_rpQuadMatrixTransform->getMatrix();
-            quadTransform=quadDeltaTransform*quadTransform;
-            m_rpQuadMatrixTransform->setMatrix(quadTransform);
-        }
-        //===
 
 
         //=== Update transformed ROI centres. ===
@@ -512,7 +488,7 @@ public:
                     m_TransformedROICentreVec[2].second-=m_h[2]._v[0] * ay * scaleBottom + m_h[2]._v[1] * by * scaleRight;
                     //=== ===//
 
-                    //=== ROI 2 ===//
+                    //=== ROI 3 ===//
                     ax=m_TransformedROICentreVec[2].first - m_TransformedROICentreVec[3].first;
                     ay=m_TransformedROICentreVec[2].second - m_TransformedROICentreVec[3].second;
                     ar=sqrt(ax*ax+ay*ay);
@@ -534,7 +510,38 @@ public:
                 }
         //===
 
-        offsetQuadPositionByROICentres(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight());
+        //=== ===//
+        if (m_numPyramids_>0)
+        {
+            double cx=0.0;
+            double cy=0.0;
+
+            for (size_t pyramidNum=0; pyramidNum<m_numPyramids_; pyramidNum++)
+            {
+                cx+=m_TransformedROICentreVec[pyramidNum].first;
+                cy+=m_TransformedROICentreVec[pyramidNum].second;
+            }
+
+            cx/=m_numPyramids_;
+            cy/=m_numPyramids_;
+
+            double dx = cx - previousROICentre_._v[0];
+            double dy = cy - previousROICentre_._v[1];
+
+            for (int filterNum=0; filterNum<(int)(filterPairs_.size()); filterNum++)
+            {
+                filterPairs_[filterNum].first=filterPairs_[filterNum].first*(1.0f-filterPairs_[filterNum].second)+osg::Vec2d(dx, dy)*(filterPairs_[filterNum].second);
+                filteredROICentres_[filterNum]+=filterPairs_[filterNum].first;
+            }
+
+            offsetQuadPositionByROICentres(m_pInputTexture->getTextureWidth(), m_pInputTexture->getTextureHeight(),
+                                           cx - filteredROICentres_[0]._v[0],
+                                           cy - filteredROICentres_[0]._v[1]);
+
+            previousROICentre_._v[0]=cx;
+            previousROICentre_._v[1]=cy;
+        }
+        //=== ===
     }
 
     osg::ref_ptr<osg::Geode> createScreenAlignedQuad(unsigned long i_ulWidth, unsigned long i_ulHeight);
@@ -546,6 +553,8 @@ public:
     static unsigned long m_ulLKBorder;
 
     std::vector<std::pair<osg::Vec2f, float> > filterPairs_;//Filtered speed AND filter history factor.
+    std::vector<osg::Vec2f> filteredROICentres_;//Filtered ROI centres.
+    osg::Vec2f previousROICentre_;//Previous ROI centres.
 };
 }
 #endif

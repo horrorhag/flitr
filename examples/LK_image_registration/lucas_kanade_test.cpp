@@ -50,10 +50,10 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 #else
-    int dsFactor=8;
-    bool jitter=true;
+    int dsFactor=1;
+    bool jitter=false;
 
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -79,11 +79,11 @@ int main(int argc, char *argv[])
 
     //=== GLSL Gaussian filter before downsample ===
     shared_ptr<flitr::GLSLGaussianFilterXPass> gfX(new flitr::GLSLGaussianFilterXPass(translate->getOutputTexture()));
-    gfX->setRadius(0.1*dsFactor);//*dsFactor because it is before downsample pass.
+    gfX->setRadius(8.0*dsFactor);//*dsFactor because it is before downsample pass.
     root_node->addChild(gfX->getRoot().get());
 
     shared_ptr<flitr::GLSLGaussianFilterYPass> gfY(new flitr::GLSLGaussianFilterYPass(gfX->getOutputTexture()));
-    gfY->setRadius(0.1*dsFactor);
+    gfY->setRadius(8.0*dsFactor);
     root_node->addChild(gfY->getRoot().get());
     //===
 
@@ -115,11 +115,13 @@ int main(int argc, char *argv[])
 
 
     //=== GPS+CPU Lucas-Kanade ===
-    unsigned long roi_dim=128;
+    unsigned long roi_dim=256;
     std::vector< std::pair<int,int> > roiVec;
 
-    roiVec.push_back(std::pair<int,int>(5, 5));
-    roiVec.push_back(std::pair<int,int>(noisePass->getOutputTexture()->getTextureWidth()-roi_dim-5, 5));
+    roiVec.push_back(std::pair<int,int>(noisePass->getOutputTexture()->getTextureWidth()/2-roi_dim/2,
+                                        noisePass->getOutputTexture()->getTextureHeight()/2-roi_dim/2));
+    //roiVec.push_back(std::pair<int,int>(5, 5));
+    //roiVec.push_back(std::pair<int,int>(noisePass->getOutputTexture()->getTextureWidth()-roi_dim-5, 5));
     //roiVec.push_back(std::pair<int,int>(noisePass->getOutputTexture()->getTextureWidth()-roi_dim-5, noisePass->getOutputTexture()->getTextureHeight()-roi_dim-5));
     //roiVec.push_back(std::pair<int,int>(5, noisePass->getOutputTexture()->getTextureHeight()-roi_dim-5));
 
@@ -134,7 +136,7 @@ int main(int argc, char *argv[])
                                                              false,//Bilinear output filter.
                                                              1,//Output scale factor.
                                                              1.0f,//Output crop factor.
-                                                             0.3, 1);
+                                                             0.5, 1);
 
     iStab->init(root_node);
     iStab->setAutoSwapCurrentPrevious(true); //Do not compare successive frames with each other. E.g. compare all frames with specific reference frame.

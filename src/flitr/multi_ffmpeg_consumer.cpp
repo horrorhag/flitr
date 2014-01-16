@@ -25,7 +25,7 @@ using namespace flitr;
 
 void MultiFFmpegConsumerThread::run() 
 {
-    uint32_t num_writers = Consumer_->ImagesPerSlot_;
+    size_t num_writers = Consumer_->ImagesPerSlot_;
     std::vector<Image**> imv;
 
     while (true) {
@@ -38,7 +38,7 @@ void MultiFFmpegConsumerThread::run()
                 Consumer_->MultiWriteStats_->tick();
 
                 {
-                int i=0;
+                size_t i=0;
                 #pragma omp parallel for
                 for (i=0; i<num_writers; i++) {
                     if (Consumer_->FFmpegWriters_[i])

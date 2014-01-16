@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -32,50 +32,50 @@ using namespace flitr;
 
 void MultiOSGConsumerDiscardThread::run()
 {
-	uint32_t ims_per_slot = Consumer_->ImagesPerSlot_;
-	
-	std::vector<Image**> imv;
-	
-	while (true) {
-		// check if image available
+    uint32_t ims_per_slot = Consumer_->ImagesPerSlot_;
+
+    std::vector<Image**> imv;
+
+    while (true) {
+        // check if image available
 
         // Note: Reading and popping must be synced for the consumer.
         //       Currently the discard thread seems to be broken, because the reserved and release of images are not synced!
         //       In other words: The read slot reserved here when the osg consumer has already reserved one (which is always when keeping history) is not the same slot as is released here.
 
         {//Note: This scope bracket is for the scoped lock.
-			OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(Consumer_->BufferMutex_);
+            OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(Consumer_->BufferMutex_);
 
-			uint32_t num_avail = Consumer_->getNumReadSlotsAvailable();
+            uint32_t num_avail = Consumer_->getNumReadSlotsAvailable();
 
             // discard slots until only one left.
-			if (num_avail > 1) {
+            if (num_avail > 1) {
                 //for (uint32_t i=0; i<num_avail-1; i++) This for would ensure that ALL extra slots are IMMEDIATELY discarded.
                 {
-					imv = Consumer_->reserveReadSlot();
-					if (imv.size() >= ims_per_slot) {
-						Consumer_->releaseReadSlot();
-					}
-				}
-			}
-		}
+                    imv = Consumer_->reserveReadSlot();
+                    if (imv.size() >= ims_per_slot) {
+                        Consumer_->releaseReadSlot();
+                    }
+                }
+            }
+        }
 
-		// wait a while
+        // wait a while
         Thread::microSleep(1000);
 
-		// check for exit
-		if (ShouldExit_) {
-			break;
-		}
-	}
+        // check for exit
+        if (ShouldExit_) {
+            break;
+        }
+    }
 }
 
 template<class T>
 TMultiOSGConsumer<T>::TMultiOSGConsumer(ImageProducer& producer,
                                         uint32_t images_per_slot,
                                         uint32_t images_in_history) :
-	ImageConsumer(producer),
-	ImagesPerSlot_(images_per_slot),
+    ImageConsumer(producer),
+    ImagesPerSlot_(images_per_slot),
     ImagesInHistory_(images_in_history),
     HistoryWritePos_(0)
 {
@@ -106,43 +106,43 @@ bool TMultiOSGConsumer<T>::init()
     for (uint32_t i=0; i<ImagesPerSlot_; i++) {
         DummyImages_[i] = new osg::Image();
         switch (ImageFormat_[i].getPixelFormat()) {
-          case ImageFormat::FLITR_PIX_FMT_Y_8:
+        case ImageFormat::FLITR_PIX_FMT_Y_8:
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, 
-                                           GL_LUMINANCE, GL_UNSIGNED_BYTE);
+                                           1,
+                                           GL_RGB, GL_UNSIGNED_BYTE);
             break;
-          case ImageFormat::FLITR_PIX_FMT_RGB_8:
+        case ImageFormat::FLITR_PIX_FMT_RGB_8:
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, 
-										   GL_RGB, GL_UNSIGNED_BYTE);
+                                           1,
+                                           GL_RGB, GL_UNSIGNED_BYTE);
             break;
-		  case ImageFormat::FLITR_PIX_FMT_BGR:
-			  DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
-				  ImageFormat_[i].getHeight(),
-				  1, 
-				  GL_BGR, GL_UNSIGNED_BYTE);
-			  break;
-		  case ImageFormat::FLITR_PIX_FMT_BGRA:
-			  DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
-				  ImageFormat_[i].getHeight(),
-				  1, 
-				  GL_BGRA, GL_UNSIGNED_BYTE);
-			  break;
-          case ImageFormat::FLITR_PIX_FMT_Y_16:
+        case ImageFormat::FLITR_PIX_FMT_BGR:
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, 
+                                           1,
+                                           GL_BGR, GL_UNSIGNED_BYTE);
+            break;
+        case ImageFormat::FLITR_PIX_FMT_BGRA:
+            DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1,
+                                           GL_BGRA, GL_UNSIGNED_BYTE);
+            break;
+        case ImageFormat::FLITR_PIX_FMT_Y_16:
+            DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1,
                                            GL_LUMINANCE, GL_UNSIGNED_SHORT);
             break;
         case ImageFormat::FLITR_PIX_FMT_Y_F32:
-          DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
-                                         ImageFormat_[i].getHeight(),
-                                         1,
-                                         GL_LUMINANCE, GL_FLOAT);
-          break;
-          default:
+            DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1,
+                                           GL_LUMINANCE, GL_FLOAT);
+            break;
+        default:
             // \todo report error
             break;
         }
@@ -156,55 +156,55 @@ bool TMultiOSGConsumer<T>::init()
             Metadata_[h].push_back(std::tr1::shared_ptr<flitr::ImageMetadata>((flitr::ImageMetadata *)0));
 
             switch (ImageFormat_[i].getPixelFormat()) {
-              case ImageFormat::FLITR_PIX_FMT_Y_8:
+            case ImageFormat::FLITR_PIX_FMT_Y_8:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, 
-                                           GL_LUMINANCE8, GL_RED, GL_UNSIGNED_BYTE,
+                                           1,
+                                           GL_RGB8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
-              case ImageFormat::FLITR_PIX_FMT_RGB_8:
+            case ImageFormat::FLITR_PIX_FMT_RGB_8:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, 
-                                           GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                           1,
+                                           GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
-			  case ImageFormat::FLITR_PIX_FMT_BGR:
-				  OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
-					  ImageFormat_[i].getHeight(),
-					  1, 
-					  GL_RGB, GL_BGR, GL_UNSIGNED_BYTE, 
-					  DummyImages_[i]->data(),
-					  osg::Image::NO_DELETE);
-				  break;
-			  case ImageFormat::FLITR_PIX_FMT_BGRA:
-				  OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
-					  ImageFormat_[i].getHeight(),
-					  1, 
-					  GL_RGB, GL_BGRA, GL_UNSIGNED_BYTE, 
-					  DummyImages_[i]->data(),
-					  osg::Image::NO_DELETE);
-				  break;
-              case ImageFormat::FLITR_PIX_FMT_Y_16:                
+            case ImageFormat::FLITR_PIX_FMT_BGR:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
-                                           1, 
-                                           GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT, 
+                                           1,
+                                           GL_RGB8, GL_BGR, GL_UNSIGNED_BYTE,
+                                           DummyImages_[i]->data(),
+                                           osg::Image::NO_DELETE);
+                break;
+            case ImageFormat::FLITR_PIX_FMT_BGRA:
+                OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1,
+                                           GL_RGB8, GL_BGRA, GL_UNSIGNED_BYTE,
+                                           DummyImages_[i]->data(),
+                                           osg::Image::NO_DELETE);
+                break;
+            case ImageFormat::FLITR_PIX_FMT_Y_16:
+                OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1,
+                                           GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
             case ImageFormat::FLITR_PIX_FMT_Y_F32:
-              OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
-                                         ImageFormat_[i].getHeight(),
-                                         1,
-                                         GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
-                                         DummyImages_[i]->data(),
-                                         osg::Image::NO_DELETE);
-              break;
-              default:
+                OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                                           ImageFormat_[i].getHeight(),
+                                           1,
+                                           GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
+                                           DummyImages_[i]->data(),
+                                           osg::Image::NO_DELETE);
+                break;
+            default:
                 // \todo report error
                 break;
             }
@@ -223,9 +223,9 @@ bool TMultiOSGConsumer<T>::init()
         }
     }
     DiscardThread_ = std::tr1::shared_ptr<MultiOSGConsumerDiscardThread>(
-        new MultiOSGConsumerDiscardThread(this));
+                new MultiOSGConsumerDiscardThread(this));
 
-	return true;
+    return true;
 }
 
 template<class T>
@@ -249,13 +249,13 @@ std::tr1::shared_ptr<ImageMetadata> TMultiOSGConsumer<T>::getImageMetadata(uint3
 template<class T>
 osg::Image* TMultiOSGConsumer<T>::getOSGImage(uint32_t im_number, uint32_t im_age)
 {
-	// \todo check input num and input age
+    // \todo check input num and input age
 
     int32_t read_pos = (HistoryWritePos_ - 1) - im_age;
     if (read_pos < 0) {
         read_pos += ImagesInHistory_;
     }
-	return OSGImages_[read_pos][im_number].get();
+    return OSGImages_[read_pos][im_number].get();
 }
 
 template<class T>
@@ -272,79 +272,79 @@ bool TMultiOSGConsumer<T>::getNext()
         releaseReadSlot();
     }
 
-	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
 
     std::vector<Image**> imv = reserveReadSlot();
 
-//    std::cout << "TMultiOSGConsumer::getNext()\n";
+    //    std::cout << "TMultiOSGConsumer::getNext()\n";
 
     if (imv.size() >= ImagesPerSlot_) {
         // connect osg images to buffered data
         for (uint32_t i=0; i<ImagesPerSlot_; i++) {
-			Image *im = *(imv[i]);
+            Image *im = *(imv[i]);
 
             Metadata_[HistoryWritePos_][i]=im->metadata();
 
-//            std::cout << "  -" << im->metadata()->getString();
-//            std::cout.flush();
+            //            std::cout << "  -" << im->metadata()->getString();
+            //            std::cout.flush();
 
             switch (ImageFormat_[i].getPixelFormat()) {
-              case ImageFormat::FLITR_PIX_FMT_Y_8:
+            case ImageFormat::FLITR_PIX_FMT_Y_8:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
-                                                          1, 
-                                                          GL_LUMINANCE8, GL_RED, GL_UNSIGNED_BYTE,
+                                                          1,
+                                                          GL_RGB8, GL_LUMINANCE, GL_UNSIGNED_BYTE,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
-              case ImageFormat::FLITR_PIX_FMT_RGB_8:
+            case ImageFormat::FLITR_PIX_FMT_RGB_8:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
-                                                          1, 
-                                                          GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 
+                                                          1,
+                                                          GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
-			  case ImageFormat::FLITR_PIX_FMT_BGR:
-				  OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
-					  ImageFormat_[i].getHeight(),
-					  1, 
-					  GL_RGB, GL_BGR, GL_UNSIGNED_BYTE, 
-					  im->data(),
-					  osg::Image::NO_DELETE);
-				  break;
-			  case ImageFormat::FLITR_PIX_FMT_BGRA:
+            case ImageFormat::FLITR_PIX_FMT_BGR:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
-                                                          1, 
-                                                          GL_RGB, GL_BGRA, GL_UNSIGNED_BYTE, 
+                                                          1,
+                                                          GL_RGB8, GL_BGR, GL_UNSIGNED_BYTE,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
-              case ImageFormat::FLITR_PIX_FMT_Y_16:
+            case ImageFormat::FLITR_PIX_FMT_BGRA:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
-                                                          1, 
-                                                          GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT, 
+                                                          1,
+                                                          GL_RGB8, GL_BGRA, GL_UNSIGNED_BYTE,
+                                                          im->data(),
+                                                          osg::Image::NO_DELETE);
+                break;
+            case ImageFormat::FLITR_PIX_FMT_Y_16:
+                OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                                                          ImageFormat_[i].getHeight(),
+                                                          1,
+                                                          GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
             case ImageFormat::FLITR_PIX_FMT_Y_F32:
-              OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
-                                                        ImageFormat_[i].getHeight(),
-                                                        1,
-                                                        GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
-                                                        im->data(),
-                                                        osg::Image::NO_DELETE);
-              break;
-              default:
+                OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                                                          ImageFormat_[i].getHeight(),
+                                                          1,
+                                                          GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
+                                                          im->data(),
+                                                          osg::Image::NO_DELETE);
+                break;
+            default:
                 // \todo report error
                 break;
             }
-			OSGImages_[HistoryWritePos_][i]->dirty();
-			if (ImageFormat_[i].getFlipVertical()) OSGImages_[HistoryWritePos_][i]->flipVertical();
-			if (ImageFormat_[i].getFlipHorizontal()) OSGImages_[HistoryWritePos_][i]->flipHorizontal();
-		}
+            OSGImages_[HistoryWritePos_][i]->dirty();
+            if (ImageFormat_[i].getFlipVertical()) OSGImages_[HistoryWritePos_][i]->flipVertical();
+            if (ImageFormat_[i].getFlipHorizontal()) OSGImages_[HistoryWritePos_][i]->flipHorizontal();
+        }
 
         // rewire the output textures
         for (uint32_t h=0; h<ImagesInHistory_; h++) {
@@ -358,14 +358,14 @@ bool TMultiOSGConsumer<T>::getNext()
         }
 
         HistoryWritePos_ = (HistoryWritePos_ + 1) % ImagesInHistory_;
-		return true;
-	}
-	return false;
+        return true;
+    }
+    return false;
 }
 
 #ifdef FLITR_WITH_OSGCUDA
-    template class FLITR_EXPORT TMultiOSGConsumer<osgCuda::TextureRectangle>; // explicit instantiation
+template class FLITR_EXPORT TMultiOSGConsumer<osgCuda::TextureRectangle>; // explicit instantiation
 #else
-    template class FLITR_EXPORT TMultiOSGConsumer<osg::TextureRectangle>; // explicit instantiation
+template class FLITR_EXPORT TMultiOSGConsumer<osg::TextureRectangle>; // explicit instantiation
 #endif
 

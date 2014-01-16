@@ -117,7 +117,7 @@ bool FIPGaussianDownsample::trigger()
 #endif
                 
 #ifdef _OPENMP
-#pragma omp parallel default(none) private(y) shared(none)
+#pragma omp parallel private(y)
 #endif
                 {
 #ifdef _OPENMP
@@ -157,7 +157,7 @@ bool FIPGaussianDownsample::trigger()
 #endif
                 
 #ifdef _OPENMP
-#pragma omp parallel default(none) private(y) shared(none)
+#pragma omp parallel private(y)
 #endif
                 {
 #ifdef _OPENMP

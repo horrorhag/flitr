@@ -42,7 +42,6 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const flitr::TextureRectan
     m_pCurrentNPyramid(0),
     m_pPreviousNPyramid(0),
     m_bAutoSwapCurrentPrevious(true),
-    m_rpQuadMatrixTransform(new osg::MatrixTransform(osg::Matrixd::identity())),
     m_quadGeom(0),
     m_outputTexture(0),
     m_outputOSGImage(0),
@@ -74,12 +73,16 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const flitr::TextureRectan
     }
 
     m_ROIVec=i_ROIVec;
+    osg::Vec2f ROICentre(0.0, 0.0);
 
     for (uint32_t i=0; i<m_numPyramids_; i++)
     {
         osg::Vec2f rc=getROI_Centre(i);
         m_TransformedROICentreVec.push_back(std::pair<double, double>((double)rc._v[0], (double)rc._v[1]));
+        ROICentre+=rc;
     }
+
+    ROICentre/=m_numPyramids_;
 
     m_rpHEstimateUniform=new osg::ref_ptr<osg::Uniform>[m_numPyramids_];
     m_h=new osg::Vec2[m_numPyramids_];
@@ -93,7 +96,10 @@ flitr::ImageStabiliserMultiLK::ImageStabiliserMultiLK(const flitr::TextureRectan
     for (int i=0; i<numFilterPairs; i++)
     {
         filterPairs_.push_back(std::pair<osg::Vec2f, float>(osg::Vec2f(0.0,0.0), filterHistory));
+        filteredROICentres_.push_back(ROICentre);
     }
+
+    previousROICentre_=ROICentre;
 
     m_ulLKBorder=16;//logbase(m_ulROIWidth,2)-1;
 
@@ -649,7 +655,7 @@ osg::Matrixd flitr::ImageStabiliserMultiLK::getDeltaTransformationMatrix() const
 }
 
 
-void flitr::ImageStabiliserMultiLK::offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeight)
+void flitr::ImageStabiliserMultiLK::offsetQuadPositionByROICentres(uint32_t i_ulWidth, uint32_t i_ulHeight, double xOff, double yOff)
 {
     osg::ref_ptr<osg::Vec3Array> vcoords = new osg::Vec3Array; // vertex coords
 
@@ -663,10 +669,10 @@ void flitr::ImageStabiliserMultiLK::offsetQuadPositionByROICentres(uint32_t i_ul
             osg::Vec2 v3=transformLRCoordByROICentres(osg::Vec2f(x+((double)(i_ulWidth-2))/NUM_OUTPUT_QUAD_STEPS, y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
             osg::Vec2 v4=transformLRCoordByROICentres(osg::Vec2f(x,                                               y+((double)(i_ulHeight-2)/NUM_OUTPUT_QUAD_STEPS)));
 
-            vcoords->push_back(osg::Vec3(v1._v[0]-((double)i_ulWidth)*0.5, v1._v[1]-((double)i_ulHeight)*0.5, -1.0));
-            vcoords->push_back(osg::Vec3(v2._v[0]-((double)i_ulWidth)*0.5, v2._v[1]-((double)i_ulHeight)*0.5, -1.0));
-            vcoords->push_back(osg::Vec3(v3._v[0]-((double)i_ulWidth)*0.5, v3._v[1]-((double)i_ulHeight)*0.5, -1.0));
-            vcoords->push_back(osg::Vec3(v4._v[0]-((double)i_ulWidth)*0.5, v4._v[1]-((double)i_ulHeight)*0.5, -1.0));
+            vcoords->push_back(osg::Vec3(v1._v[0]-((double)i_ulWidth)*0.5-xOff, v1._v[1]-((double)i_ulHeight)*0.5-yOff, -1.0));
+            vcoords->push_back(osg::Vec3(v2._v[0]-((double)i_ulWidth)*0.5-xOff, v2._v[1]-((double)i_ulHeight)*0.5-yOff, -1.0));
+            vcoords->push_back(osg::Vec3(v3._v[0]-((double)i_ulWidth)*0.5-xOff, v3._v[1]-((double)i_ulHeight)*0.5-yOff, -1.0));
+            vcoords->push_back(osg::Vec3(v4._v[0]-((double)i_ulWidth)*0.5-xOff, v4._v[1]-((double)i_ulHeight)*0.5-yOff, -1.0));
         }
     }
 

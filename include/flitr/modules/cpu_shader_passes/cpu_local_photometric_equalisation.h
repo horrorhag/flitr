@@ -43,7 +43,7 @@ public:
 
 
             const uint32_t numElements=numPixels*numComponents;
-            const uint32_t numElementsDiv2=numElements>>1;
+            //const uint32_t numElementsDiv2=numElements>>1;
 
             uint64_t sum=0;
             /*

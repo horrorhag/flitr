@@ -90,7 +90,7 @@ bool FIPConvertToF32::trigger()
 #endif
                 
 #ifdef _OPENMP
-#pragma omp parallel default(none) private(y) shared(none)
+#pragma omp parallel private(y)
 #endif
                 {
 #ifdef _OPENMP

@@ -12,8 +12,9 @@ class FLITR_EXPORT CPUPaletteRemap_Shader : public flitr::CPUShaderPass::CPUShad
 {
 public:
     CPUPaletteRemap_Shader(osg::Image* image) :
-        Image_(image), enabled_(true),
-        ignoreBelow_(0.02), ignoreAbove_(0.98)
+        Image_(image),
+        ignoreBelow_(0.02), ignoreAbove_(0.98),
+        enabled_(true)
     {
         paletteMap_=new uint32_t[256];
         for (uint32_t i=0; i<256; i++)
