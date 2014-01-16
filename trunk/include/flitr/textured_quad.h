@@ -34,7 +34,8 @@
 
 namespace flitr {
 
-class FLITR_EXPORT TexturedQuad {
+class FLITR_EXPORT TexturedQuad
+{
   public:
     TexturedQuad(osg::Image* in_image);
     TexturedQuad(osg::TextureRectangle* in_tex);
@@ -67,7 +68,8 @@ class FLITR_EXPORT TexturedQuad {
 };
 
 /*! Textured quad similar to TexturedQuad, but with two textures which may be masked/combined with the user applied shader.*/
-class FLITR_EXPORT TexturedQuadAB {
+class FLITR_EXPORT TexturedQuadAB
+{
   public:
     TexturedQuadAB(osg::Image* in_image_A, osg::Image* in_image_B);
     TexturedQuadAB(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B);

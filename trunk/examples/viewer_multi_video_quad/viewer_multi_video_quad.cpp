@@ -82,7 +82,8 @@ int main(int argc, char *argv[])
 #endif
 
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*mffp, num_videos));
-    if (!osgc->init()) {
+    if (!osgc->init())
+    {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
@@ -95,6 +96,7 @@ int main(int argc, char *argv[])
         osg::Matrixd m;
         m.makeTranslate(osg::Vec3d(xoffset,0,0));
         quad->setTransform(m);
+        quad->setShader("/home/bduvenhage/myWork/dev/IPFramework/trunk/apps/tula/test.frag");
         root_node->addChild(quad->getRoot().get());
         xoffset += mffp->getFormat(i).getWidth();
     }
