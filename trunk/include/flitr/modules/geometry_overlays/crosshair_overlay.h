@@ -53,7 +53,7 @@ class FLITR_EXPORT CrosshairOverlay : public GeometryOverlay
      * \param height The height of the crosshair.
      */
     CrosshairOverlay(double center_x, double center_y, double width, double height);
-    ~CrosshairOverlay() {};
+    virtual ~CrosshairOverlay() {};
 
     /** 
      * Adjusts the position of the crosshair.

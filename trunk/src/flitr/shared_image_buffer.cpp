@@ -37,26 +37,31 @@ SharedImageBuffer::SharedImageBuffer(ImageProducer& my_producer, uint32_t num_sl
 
 SharedImageBuffer::~SharedImageBuffer()
 {
-	if (HasStorage_) {
-		for (uint32_t i=0; i<NumSlots_; i++) {
-			for (uint32_t j=0; j<ImagesPerSlot_; j++) {
+	if (HasStorage_)
+    {
+		for (uint32_t i=0; i<NumSlots_; i++)
+        {
+			for (uint32_t j=0; j<ImagesPerSlot_; j++)
+            {
 				delete Buffer_[i][j];
 			}
 		}
 	}
 }
 
-bool SharedImageBuffer::initWithStorage()
+bool SharedImageBuffer::initWithStorage(const bool zero_mem)
 {
     // assert producer has all formats
 
 	// create images
 	Buffer_.clear();
 	Buffer_.resize(NumSlots_);
-	for (uint32_t i=0; i<NumSlots_; i++) {
+	for (uint32_t i=0; i<NumSlots_; i++)
+    {
 		Buffer_[i].reserve(ImagesPerSlot_);
-		for (uint32_t j=0; j<ImagesPerSlot_; j++) {
-			Buffer_[i].push_back(new Image(ImageProducer_->getFormat(j)));
+		for (uint32_t j=0; j<ImagesPerSlot_; j++)
+        {
+			Buffer_[i].push_back(new Image(ImageProducer_->getFormat(j), zero_mem));
 		}
 	}
 	HasStorage_=true;
@@ -67,7 +72,8 @@ bool SharedImageBuffer::initWithoutStorage()
 {
 	Buffer_.clear();
 	Buffer_.resize(NumSlots_);
-	for (uint32_t i=0; i<NumSlots_; i++) {
+	for (uint32_t i=0; i<NumSlots_; i++)
+    {
 		Buffer_[i].resize(ImagesPerSlot_);
 	}
 	return true;
@@ -85,16 +91,19 @@ uint32_t SharedImageBuffer::getFill() const
     typedef std::map< const ImageConsumer*, uint32_t >::const_iterator map_it;
     uint32_t max_fill=0;
 
-    for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i) {
+    for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i)
+    {
         uint32_t read_tail = i->second;
         uint32_t fill = (WriteHead_ + NumSlots_ - read_tail) % NumSlots_;
-        if (fill > max_fill) {
+        if (fill > max_fill)
+        {
             max_fill = fill;
         }
     }
     // also check writer
     uint32_t fill = (WriteHead_ + NumSlots_ - WriteTail_) % NumSlots_;
-    if (fill > max_fill) {
+    if (fill > max_fill)
+    {
         max_fill = fill;
     }
 
@@ -111,10 +120,12 @@ bool SharedImageBuffer::tailPopped(const ImageConsumer& consumer)
 
     // if there is a larger gap, this slot is still busy
     typedef std::map< const ImageConsumer*, uint32_t >::iterator map_it;
-	for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i) {
+	for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i)
+    {
 		uint32_t read_tail = i->second;
 		uint32_t gap = (WriteTail_ + NumSlots_ - read_tail) % NumSlots_;
-		if (gap > popped_gap) {
+		if (gap > popped_gap)
+        {
             return false;
 		}
 	}
@@ -154,12 +165,14 @@ std::vector<Image**> SharedImageBuffer::reserveWriteSlot()
 	
 	std::vector<Image**> v;
 	
-	if (isFull()) {
+	if (isFull())
+    {
 		// we cannot write more, dropping images
 		return v;
 	}
 	
-	for (uint32_t i=0; i<ImagesPerSlot_; i++) {
+	for (uint32_t i=0; i<ImagesPerSlot_; i++)
+    {
 		v.push_back(&(Buffer_[WriteHead_][i]));
 	}
 	
@@ -183,10 +196,12 @@ uint32_t SharedImageBuffer::getLeastNumReadSlotsAvailable()
     OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
     typedef std::map< const ImageConsumer*, uint32_t >::iterator map_it;
 	uint32_t least_num = NumSlots_;
-    for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i) {
+    for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i)
+    {
         const ImageConsumer* c = i->first;
         uint32_t num_avail = numAvailable(*c); 
-        if (num_avail < least_num) {
+        if (num_avail < least_num)
+        {
             least_num = num_avail;
         }
     }
@@ -211,12 +226,14 @@ std::vector<Image**> SharedImageBuffer::reserveReadSlot(const ImageConsumer& con
 	
 	std::vector<Image**> v;
 
-	if (numAvailable(consumer) == 0) {
+	if (numAvailable(consumer) == 0)
+    {
 		return v;
 	}
 	
 	uint32_t read_head = ReadHeads_[&consumer];
-	for (uint32_t i=0; i<ImagesPerSlot_; i++) {
+	for (uint32_t i=0; i<ImagesPerSlot_; i++)
+    {
 		v.push_back(&(Buffer_[read_head][i]));
 	}
 	
@@ -237,7 +254,9 @@ void SharedImageBuffer::releaseReadSlot(const ImageConsumer& consumer)
 		NumReadReserved_[&consumer]--;
 		do_notify = tailPopped(consumer);
 	}
-	if (do_notify) {
+    
+	if (do_notify)
+    {
 		ImageProducer_->releaseReadSlotCallback();
 	}
 }

@@ -51,7 +51,7 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
 
     MultiCPUHistogramConsumer(ImageProducer& producer, uint32_t images_per_slot, uint32_t pixel_stride=1, uint32_t image_stride=1);
 
-    ~MultiCPUHistogramConsumer();
+    virtual ~MultiCPUHistogramConsumer();
 
     bool init();
 

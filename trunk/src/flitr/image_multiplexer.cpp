@@ -145,7 +145,7 @@ bool ImageMultiplexer::trigger()
                             Image * const imWrite = *(imvWrite[i]);
 
                             const ImageFormat imReadFormat=getUpstreamFormat(ConsumerIndex_, i);
-                            const ImageFormat::PixelFormat pixelReadFormat=imReadFormat.getPixelFormat();
+                            //const ImageFormat::PixelFormat pixelReadFormat=imReadFormat.getPixelFormat();
 
                             const ImageFormat imWriteFormat=getDownstreamFormat(i);
                             const ImageFormat::PixelFormat pixelWriteFormat=imWriteFormat.getPixelFormat();

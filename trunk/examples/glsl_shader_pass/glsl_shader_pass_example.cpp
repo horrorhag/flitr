@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
     
-    shared_ptr<GLSLShaderPass> ssp(new GLSLShaderPass(osgc->getOutputTexture()));
+    shared_ptr<GLSLShaderPass> ssp(new GLSLShaderPass(osgc->getOutputTexture(), true));
     ssp->setShader(argv[2]);
     root_node->addChild(ssp->getRoot().get());
 

@@ -32,7 +32,7 @@ int32_t startup_viewport_height=0;
 class PickHandler : public osgGA::GUIEventHandler {
   public: 
     PickHandler() { _pick_available = false; }
-    ~PickHandler() {}
+    virtual ~PickHandler() {}
     
     bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
     virtual void pick(osgViewer::View* view, const osgGA::GUIEventAdapter& ea);

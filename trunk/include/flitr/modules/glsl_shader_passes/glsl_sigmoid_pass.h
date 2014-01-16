@@ -47,7 +47,7 @@ class FLITR_EXPORT GLSLSigmoidPass : public Parameters
 {
   public:
     GLSLSigmoidPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
-    ~GLSLSigmoidPass();
+    virtual ~GLSLSigmoidPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }

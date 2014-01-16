@@ -16,7 +16,7 @@ public:
     {
     }
 
-    ~CPUUniformNoise_Shader()
+    virtual ~CPUUniformNoise_Shader()
     {
     }
 

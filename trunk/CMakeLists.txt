@@ -91,12 +91,13 @@ LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_
 OPTION(FLITR_USE_OPENMP "Enable the compiler's OpenMP directives if available." ON)
 IF(FLITR_USE_OPENMP)
 # === find OpenMP ===
-INCLUDE(FindOpenMP)
-IF(OPENMP_FOUND)
- SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
- SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
- SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-ENDIF()
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    ADD_DEFINITIONS(-DUSE_OPENMP)
+endif()
 # ===================
 ENDIF(FLITR_USE_OPENMP)
 
@@ -171,6 +172,13 @@ SET(LIB_SOURCES
 
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
+
+  src/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.cpp
+  src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
+  src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
+  src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
+  src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
+  src/flitr/modules/flitr_image_processors/dewarp/fip_dewarp.cpp
 
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_gamma_pass.cpp
@@ -254,6 +262,14 @@ SET(LIB_SOURCES
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h
 
+
+  include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h
+  include/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h
+  include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
+  include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
+  include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
+  include/flitr/modules/flitr_image_processors/dewarp/fip_dewarp.h
+
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gamma_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_sigmoid_pass.h
@@ -331,6 +347,7 @@ ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 
+ADD_SUBDIRECTORY(examples/average_image)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)
 ADD_SUBDIRECTORY(examples/LK_image_registration)

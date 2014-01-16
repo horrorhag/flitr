@@ -50,7 +50,7 @@ class FLITR_EXPORT GLSLThresholdPass : public Parameters
 {
   public:
     GLSLThresholdPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
-    ~GLSLThresholdPass();
+    virtual ~GLSLThresholdPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }

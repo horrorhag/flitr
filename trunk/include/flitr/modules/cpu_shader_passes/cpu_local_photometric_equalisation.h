@@ -23,7 +23,7 @@ public:
         stats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector("CPUPhotometricEqualisation_Shader"));
     }
 
-    ~CPULocalPhotometricEqualisation_Shader()
+    virtual ~CPULocalPhotometricEqualisation_Shader()
     {
         delete TargetAverage_;
     }

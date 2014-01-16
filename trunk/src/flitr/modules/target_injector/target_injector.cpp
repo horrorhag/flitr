@@ -25,16 +25,16 @@ using std::tr1::shared_ptr;
 
 TargetInjector::TargetInjector(ImageProducer& upStreamProducer,
                                uint32_t images_per_slot, uint32_t buffer_size) :
-    ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-    targetBrightness_(255.0f)
+ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+targetBrightness_(255.0f)
 {
 	timer_.restart();
-
+    
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.
     }
-
+    
 }
 
 TargetInjector::~TargetInjector()
@@ -45,7 +45,7 @@ bool TargetInjector::init()
 {
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
-
+    
     return rValue;
 }
 
@@ -55,118 +55,141 @@ bool TargetInjector::trigger()
     {//There are images to consume and the downstream producer has space to produce.
         std::vector<Image**> imvRead=reserveReadSlot();
         std::vector<Image**> imvWrite=reserveWriteSlot();
-
+        
         //Start stats measurement event.
         
 		// Update timer
 		float dT = (float)timer_.elapsed();
 		timer_.restart();
-
+        
         //Update the synthetic targets.
         std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();
         for (; iter!=targetVector_.end(); iter++)
         {
             iter->update(dT);
         }
-
+        
         unsigned int i=0;
         for (i=0; i<ImagesPerSlot_; i++)
         {
             Image const * const imRead = *(imvRead[i]);
             Image * const imWrite = *(imvWrite[i]);
-
+            
             const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
             const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
-
-
+            
+            
             const uint32_t width=imFormat.getWidth();
             const uint32_t height=imFormat.getHeight();
             const uint32_t bytesPerPixel=imFormat.getBytesPerPixel();
             uint8_t const * const dataRead=imRead->data();
             uint8_t * const dataWrite=imWrite->data();
-
+            
             //Copy the read/upstream image to the write/downstream image.
             // The read and write images have the same format.
             memcpy(dataWrite, dataRead, imFormat.getBytesPerImage());
-
+            
             //Do image processing here...
             int32_t y=0;
-
+            
             {
-            #pragma omp parallel for
-            for (y=0; y<(int32_t)height; y++)
-            {
-                uint32_t offset=0;
-
-                switch (pixelFormat)
+#pragma omp parallel for
+                for (y=0; y<(int32_t)height; y++)
                 {
-                case ImageFormat::FLITR_PIX_FMT_Y_8 :
-                    offset=y*width*1;
-                    break;
-                case ImageFormat::FLITR_PIX_FMT_RGB_8 :
-                    offset=y*width*3;
-                    break;
-                case ImageFormat::FLITR_PIX_FMT_Y_16 :
-                    offset=y*width*2;
-                    break;
-
-                case ImageFormat::FLITR_PIX_FMT_UNDF:
-                    //Should not happen.
-                    break;
-                case ImageFormat::FLITR_PIX_FMT_ANY :
-                    //Should not happen.
-                    break;
-                }
-
-                for (uint32_t x=0; x<width; x++)
-                {
-                    float targetSupportDensity=0.0;
-
-                    std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();
-                    for (; iter!=targetVector_.end(); iter++)
-                    {
-                        targetSupportDensity=1.0f - (1.0f-targetSupportDensity)*(1.0f-iter->getSupportDensity(x+0.5f, y+0.5f));
-                    }
-
+                    uint32_t offset=0;
+                    
                     switch (pixelFormat)
                     {
-                    case ImageFormat::FLITR_PIX_FMT_Y_8 :
-                        dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
-                        break;
-                    case ImageFormat::FLITR_PIX_FMT_RGB_8 :
-                        dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
-                        dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
-                        dataWrite[offset+2]=(uint8_t)(dataRead[offset+2]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
-                        break;
-                    case ImageFormat::FLITR_PIX_FMT_Y_16 :
-                        dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
-                        dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
-                        break;
-
-                    case ImageFormat::FLITR_PIX_FMT_UNDF:
-                        //Should not happen.
-                        break;
-                    case ImageFormat::FLITR_PIX_FMT_ANY :
-                        //Should not happen.
-                        break;
+                        case ImageFormat::FLITR_PIX_FMT_Y_8 :
+                            offset=y*width*1;
+                            break;
+                        case ImageFormat::FLITR_PIX_FMT_RGB_8 :
+                            offset=y*width*3;
+                            break;
+                        case ImageFormat::FLITR_PIX_FMT_Y_16 :
+                            offset=y*width*2;
+                            break;
+                        case ImageFormat::FLITR_PIX_FMT_BGR :
+                            offset=y*width*3;
+                            break;
+                        case ImageFormat::FLITR_PIX_FMT_BGRA :
+                            offset=y*width*4;
+                            break;
+                        case ImageFormat::FLITR_PIX_FMT_Y_F32 :
+                            offset=y*width*4;
+                            break;
+                            
+                            
+                        case ImageFormat::FLITR_PIX_FMT_UNDF:
+                            //Should not happen.
+                            break;
+                        case ImageFormat::FLITR_PIX_FMT_ANY :
+                            //Should not happen.
+                            break;
                     }
-
-                    offset+=bytesPerPixel;
+                    
+                    for (uint32_t x=0; x<width; x++)
+                    {
+                        float targetSupportDensity=0.0;
+                        
+                        std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();
+                        for (; iter!=targetVector_.end(); iter++)
+                        {
+                            targetSupportDensity=1.0f - (1.0f-targetSupportDensity)*(1.0f-iter->getSupportDensity(x+0.5f, y+0.5f));
+                        }
+                        
+                        switch (pixelFormat)
+                        {
+                            case ImageFormat::FLITR_PIX_FMT_Y_8 :
+                                dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                break;
+                            case ImageFormat::FLITR_PIX_FMT_RGB_8 :
+                                dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                dataWrite[offset+2]=(uint8_t)(dataRead[offset+2]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                break;
+                            case ImageFormat::FLITR_PIX_FMT_Y_16 :
+                                dataWrite[offset]=0;
+                                dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                break;
+                            case ImageFormat::FLITR_PIX_FMT_BGR :
+                                dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                dataWrite[offset+2]=(uint8_t)(dataRead[offset+2]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                break;
+                            case ImageFormat::FLITR_PIX_FMT_BGRA :
+                                dataWrite[offset]=(uint8_t)(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                dataWrite[offset+2]=(uint8_t)(dataRead[offset+2]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f);
+                                break;                                
+                            case ImageFormat::FLITR_PIX_FMT_Y_F32 :
+                                *((float *)(dataWrite+offset))=(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f)/256.0f;
+                                break;
+                                
+                            case ImageFormat::FLITR_PIX_FMT_UNDF:
+                                //Should not happen.
+                                break;
+                            case ImageFormat::FLITR_PIX_FMT_ANY :
+                                //Should not happen.
+                                break;
+                        }
+                        
+                        offset+=bytesPerPixel;
+                    }
                 }
             }
-            }
-
+            
         }
-
+        
         //Stop stats measurement event.
         ProcessorStats_->tock();
-
+        
         releaseWriteSlot();
         releaseReadSlot();
-
+        
         return true;
     }
-
+    
     return false;
 }
 

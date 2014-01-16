@@ -76,38 +76,8 @@ bool DeMotionBlur::trigger()
 
 
             //Do image processing here...
-
-            for (uint32_t y=0; y<height; y++)
-            {
-                for (uint32_t x=0; x<width; x++)
-                {
-                    switch (pixelFormat)
-                    {
-                    case ImageFormat::FLITR_PIX_FMT_Y_8 :
-                        dataWrite[offset]=(uint8_t)(dataRead[offset] * 128);
-                        break;
-                    case ImageFormat::FLITR_PIX_FMT_RGB_8 :
-                        dataWrite[offset]=(uint8_t)(dataRead[offset]);
-                        dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]);
-                        dataWrite[offset+2]=(uint8_t)(dataRead[offset+2]);
-                        break;
-                    case ImageFormat::FLITR_PIX_FMT_Y_16 :
-                        dataWrite[offset]=(uint8_t)(dataRead[offset]);
-                        dataWrite[offset+1]=(uint8_t)(dataRead[offset+1]);
-                        break;
-
-                    case ImageFormat::FLITR_PIX_FMT_UNDF:
-                        //Should not happen.
-                        break;
-                    case ImageFormat::FLITR_PIX_FMT_ANY :
-                        //Should not happen.
-                        break;
-                    }
-
-                    offset+=bytesPerPixel;
-                }
-            }
-
+            // De-motion blur not implemented yet.
+            // Currently a student-task...
 
         }
 

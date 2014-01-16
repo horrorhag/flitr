@@ -29,83 +29,82 @@
 #include <OpenThreads/Mutex>
 
 namespace flitr {
-
-class ImageProcessor;
-
-/*! Helper/Service thread class for ImageProcessor that consumes and produces images as they become available from the upstream producer.*/
-class ImageProcessorThread : public OpenThreads::Thread
-{
-public:
-
-    /*! Constructor given a pointer to the ImageProcessor object.*/
-    ImageProcessorThread(ImageProcessor *ip) :
+    
+    class ImageProcessor;
+    
+    /*! Helper/Service thread class for ImageProcessor that consumes and produces images as they become available from the upstream producer.*/
+    class ImageProcessorThread : public OpenThreads::Thread
+    {
+    public:
+        
+        /*! Constructor given a pointer to the ImageProcessor object.*/
+        ImageProcessorThread(ImageProcessor *ip) :
         IP_(ip),
         ShouldExit_(false) {}
-
-    /*! The thread's run method.*/
-    void run();
-
-    /*! Method to notify the thread to exit.*/
-    void setExit() { ShouldExit_ = true; }
-
-private:
-    /*! A pointer to the ImageProcessor object being serviced.*/
-    ImageProcessor *IP_;
-
-    /*! Boolean flag set to true by ImageProcessorThread::setExit.
-     *@sa ImageProcessorThread::setExit */
-    bool ShouldExit_;
-};
-
-/*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.*/
-class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer
-{
-    friend class ImageProcessorThread;
-public:
-
-    /*! Constructor given the upstream producer.
-     *@param upStreamProducer The upstream image producer.
-     *@param images_per_slot The number of images per image slot from the upstream producer and that is produced down stream.
-     *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-    ImageProcessor(ImageProducer& upStreamProducer,
-                   uint32_t images_per_slot,
-                   uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
-
-    /*! Virtual destructor */
-    virtual ~ImageProcessor();
-
-    /*! Method to initialise the object.
-     *@return Boolean result flag. True indicates successful initialisation.*/
-    virtual bool init();
-
-    /*!Method to start the asynchronous trigger thread. trigger() has to be called synchronously/manually if thread not started.
-     *@sa ImageProcessor::trigger*/
-    virtual bool startTriggerThread();
-    virtual bool isTriggerThreadStarted() const {return Thread_!=0;}
-
-    /*!Synchronous trigger method. Called automatically by the trigger thread if started.
-     *@sa ImageProcessor::startTriggerThread*/
-    virtual bool trigger() = 0;
-
-    /*! Get the image format being consumed from the upstream producer.*/
-    virtual ImageFormat getUpstreamFormat(const uint32_t img_index = 0) const {return ImageConsumer::getFormat(img_index);}
-
-
-    /*! Get the image format being produced to the downstream consumers.*/
-    virtual ImageFormat getDownstreamFormat(const uint32_t img_index = 0) const {return ImageProducer::getFormat(img_index);}
-
-protected:
-    const uint32_t ImagesPerSlot_;
-    const uint32_t buffer_size_;
-
-    /*! StatsCollector member to measure the time taken by the processor.*/
-    std::tr1::shared_ptr<StatsCollector> ProcessorStats_;
-
-private:
-    ImageProcessorThread *Thread_;
-};
-
-
+        
+        /*! The thread's run method.*/
+        void run();
+        
+        /*! Method to notify the thread to exit.*/
+        void setExit() { ShouldExit_ = true; }
+        
+    private:
+        /*! A pointer to the ImageProcessor object being serviced.*/
+        ImageProcessor *IP_;
+        
+        /*! Boolean flag set to true by ImageProcessorThread::setExit.
+         *@sa ImageProcessorThread::setExit */
+        bool ShouldExit_;
+    };
+    
+    /*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.*/
+    class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer
+    {
+        friend class ImageProcessorThread;
+    public:
+        
+        /*! Constructor given the upstream producer.
+         *@param upStreamProducer The upstream image producer.
+         *@param images_per_slot The number of images per image slot from the upstream producer and that is produced down stream.
+         *@param buffer_size The size of the shared image buffer of the downstream producer.*/
+        ImageProcessor(ImageProducer& upStreamProducer,
+                       uint32_t images_per_slot,
+                       uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+        
+        /*! Virtual destructor */
+        virtual ~ImageProcessor();
+        
+        /*! Method to initialise the object.
+         *@return Boolean result flag. True indicates successful initialisation.*/
+        virtual bool init();
+        
+        /*!Method to start the asynchronous trigger thread. trigger() has to be called synchronously/manually if thread not started.
+         *@sa ImageProcessor::trigger*/
+        virtual bool startTriggerThread();
+        virtual bool isTriggerThreadStarted() const {return Thread_!=0;}
+        
+        /*!Synchronous trigger method. Called automatically by the trigger thread if started.
+         *@sa ImageProcessor::startTriggerThread*/
+        virtual bool trigger() = 0;
+        
+        /*! Get the image format being consumed from the upstream producer.*/
+        virtual ImageFormat getUpstreamFormat(const uint32_t img_index = 0) const { return ImageConsumer::getFormat(img_index);}
+        
+        /*! Get the image format being produced to the downstream consumers.*/
+        virtual ImageFormat getDownstreamFormat(const uint32_t img_index = 0) const {return ImageProducer::getFormat(img_index);}
+        
+    protected:
+        const uint32_t ImagesPerSlot_;
+        const uint32_t buffer_size_;
+        
+        /*! StatsCollector member to measure the time taken by the processor.*/
+        std::tr1::shared_ptr<StatsCollector> ProcessorStats_;
+        
+    private:
+        ImageProcessorThread *Thread_;
+    };
+    
+    
 }
 
 #endif //IMAGE_PROCESSOR_H

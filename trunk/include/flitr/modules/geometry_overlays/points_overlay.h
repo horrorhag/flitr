@@ -45,7 +45,7 @@ class FLITR_EXPORT PointsOverlay : public GeometryOverlay
 {
   public:
     PointsOverlay();
-    ~PointsOverlay() {};
+    virtual ~PointsOverlay() {};
 
     /** 
      * Draw points at all locations given.

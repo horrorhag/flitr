@@ -23,6 +23,81 @@ using std::tr1::shared_ptr;
 using namespace flitr;
 
 
+//=== Example CPU shader: Average Image ===//
+class CPUAVRGIMG_Shader : public CPUShaderPass::CPUShader
+{
+public:
+    CPUAVRGIMG_Shader(osg::Image* image, const uint8_t base2NumImages) :
+        Image_(image),
+        base2NumImages_(base2NumImages),
+        numImagesInWindow_(powf(2.0f, base2NumImages_)+0.5f),
+        oldestImageInWindow_(0)
+    {
+        const size_t width=Image_->s();
+        const size_t height=Image_->t();
+        const size_t numPixels=width*height;
+        const size_t componentsPerPixel=osg::Image::computeNumComponents(Image_->getPixelFormat());
+        const size_t bytesPerPixel=componentsPerPixel;
+        const size_t numValues=numPixels * componentsPerPixel;
+
+        sumData_=new uint32_t[numValues];
+        memset(sumData_, 0, numValues * sizeof(uint32_t));
+        
+        for (size_t imageInWindowNum=0; imageInWindowNum<numImagesInWindow_; imageInWindowNum++)
+        {
+            imageDataVec_.push_back(new unsigned char[numPixels * bytesPerPixel]);
+        }
+    }
+
+    virtual ~CPUAVRGIMG_Shader()
+    {
+        for (size_t imageInWindowNum=0; imageInWindowNum<numImagesInWindow_; imageInWindowNum++)
+        {
+            delete [] imageDataVec_[imageInWindowNum];
+        }
+
+        imageDataVec_.clear();
+        
+        delete [] sumData_;
+    }
+
+    virtual void operator () (osg::RenderInfo& renderInfo) const
+    {//Reduce the image.
+        const size_t width=Image_->s();
+        const size_t height=Image_->t();
+        const size_t numPixels=width*height;
+        const size_t componentsPerPixel=osg::Image::computeNumComponents(Image_->getPixelFormat());
+        const size_t numValues=numPixels * componentsPerPixel;
+
+        unsigned char * const data=(unsigned char *)Image_->data();
+
+        //Assume data type uint8...
+        for (size_t i=0; i<numValues; i++)
+        {
+            sumData_[i]+=data[i];
+            sumData_[i]-=imageDataVec_[oldestImageInWindow_][i];
+            imageDataVec_[oldestImageInWindow_][i]=data[i];
+            data[i]=sumData_[i]>>base2NumImages_;
+        }
+
+        oldestImageInWindow_=(oldestImageInWindow_+1)%numImagesInWindow_;
+        
+        Image_->dirty();
+    }
+
+    osg::Image* Image_;
+
+    const uint8_t base2NumImages_;
+    const size_t numImagesInWindow_;
+
+    mutable size_t oldestImageInWindow_;
+    std::vector<unsigned char *> imageDataVec_;
+    
+    uint32_t *sumData_;
+};
+//=== ===
+
+
 //=== Example CPU shader: Image SUM ===//
 class CPUSUM_Shader : public CPUShaderPass::CPUShader
 {
@@ -102,11 +177,11 @@ public:
                 for ( unsigned long x=(filtKernelDim-1)*numComponents; x<=((width-filtKernelDim+1)*numComponents-1); x++)
                 {
                     filtFiltX[offset]=(data[offset+indexTimesNumComponents[0]]*filtKernel[0l]+
-                                       (data[offset+indexTimesNumComponents[1]]+data[offset-indexTimesNumComponents[1]])*filtKernel[1l]+
-                                       (data[offset+indexTimesNumComponents[2]]+data[offset-indexTimesNumComponents[2]])*filtKernel[2l]+
-                                       (data[offset+indexTimesNumComponents[3]]+data[offset-indexTimesNumComponents[3]])*filtKernel[3l]+
-                                       (data[offset+indexTimesNumComponents[4]]+data[offset-indexTimesNumComponents[4]])*filtKernel[4l]
-                                       )+0.5;
+                            (data[offset+indexTimesNumComponents[1]]+data[offset-indexTimesNumComponents[1]])*filtKernel[1l]+
+                            (data[offset+indexTimesNumComponents[2]]+data[offset-indexTimesNumComponents[2]])*filtKernel[2l]+
+                            (data[offset+indexTimesNumComponents[3]]+data[offset-indexTimesNumComponents[3]])*filtKernel[3l]+
+                            (data[offset+indexTimesNumComponents[4]]+data[offset-indexTimesNumComponents[4]])*filtKernel[4l]
+                            )+0.5;
 
                     offset++;
                 }
@@ -120,11 +195,11 @@ public:
                 for ( unsigned long x=0l; x<width*numComponents; x++)
                 {
                     data[offset]=(filtFiltX[offset]*filtKernel[0l]+
-                                  (filtFiltX[offset+indexTimesWidthTimesNumComponents[1l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[1l]])*filtKernel[1l]+
-                                  (filtFiltX[offset+indexTimesWidthTimesNumComponents[2l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[2l]])*filtKernel[2l]+
-                                  (filtFiltX[offset+indexTimesWidthTimesNumComponents[3l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[3l]])*filtKernel[3l]+
-                                  (filtFiltX[offset+indexTimesWidthTimesNumComponents[4l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[4l]])*filtKernel[4l]
-                                  )+0.5;
+                            (filtFiltX[offset+indexTimesWidthTimesNumComponents[1l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[1l]])*filtKernel[1l]+
+                            (filtFiltX[offset+indexTimesWidthTimesNumComponents[2l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[2l]])*filtKernel[2l]+
+                            (filtFiltX[offset+indexTimesWidthTimesNumComponents[3l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[3l]])*filtKernel[3l]+
+                            (filtFiltX[offset+indexTimesWidthTimesNumComponents[4l]]+filtFiltX[offset-indexTimesWidthTimesNumComponents[4l]])*filtKernel[4l]
+                            )+0.5;
 
                     offset++;
                 }
@@ -162,33 +237,29 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
 
-
+/*
     MultiCPUHistogramConsumer mhc(*ffp, 1);
     if (!mhc.init()) {
         std::cerr << "Could not init histogram consumer.\n";
         exit(-1);
     }
-
+*/
 
     //===
     shared_ptr<flitr::CPUShaderPass> cpuShaderPass(new flitr::CPUShaderPass(osgc->getOutputTexture()));
-    //OR
-    //shared_ptr<SimpleCPUShaderPass> gfp(new SimpleCPUShader(osgc->getOSGImage(), true));
+    cpuShaderPass->setGPUShader(argv[2]);
     //===
 
+    //osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
+    //prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(cpuShaderPass->getOutImage()));
+    //cpuShaderPass->setPostRenderCPUShader(prmCPUShader);
 
-    cpuShaderPass->setGPUShader(argv[2]);
-        osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
-        //prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(cpuShaderPass->getOutImage()));
-        //cpuShaderPass->setPostRenderCPUShader(prmCPUShader);
+    cpuShaderPass->setPostRenderCPUShader(new CPUAVRGIMG_Shader(cpuShaderPass->getOutImage(), 4));
 
-        //cpuShaderPass->setPostRenderCPUShader(new CPUGAUSFILT_Shader(cpuShaderPass->getOutImage()));
-        cpuShaderPass->setPostRenderCPUShader(new CPULocalPhotometricEqualisation_Shader(cpuShaderPass->getOutImage(), 0.1, 0.5, 0.025));
-
-        //cpuShaderPass->setPostRenderCPUShader(new CPUSUM_Shader(cpuShaderPass->getOutImage()));
     root_node->addChild(cpuShaderPass->getRoot().get());
 
 
+    //shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
     shared_ptr<TexturedQuad> quad(new TexturedQuad(cpuShaderPass->getOutputTexture()));
     //shared_ptr<TexturedQuad> quad(new TexturedQuad(cpuShaderPass->getOutImage()));
 
@@ -199,7 +270,7 @@ int main(int argc, char *argv[])
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
 
-    //viewer.setUpViewInWindow(480+40, 40, 640, 480);
+    viewer.setUpViewInWindow(480+40, 40, 640, 480);
 
     viewer.realize();
     osgGA::TrackballManipulator* tb = new osgGA::TrackballManipulator;
@@ -209,7 +280,7 @@ int main(int argc, char *argv[])
     while(!viewer.done()) {
 
         ffp->trigger();
-/*
+        /*
         if (mhc.isHistogramUpdated(0))
         {
             std::vector<int32_t> histogram=mhc.getHistogram(0);

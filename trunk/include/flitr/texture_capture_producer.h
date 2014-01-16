@@ -140,6 +140,10 @@ class FLITR_EXPORT TextureCaptureProducer : public ImageProducer {
                     pixelFormat=GL_LUMINANCE;
                     pixelType=GL_UNSIGNED_SHORT;
                     break;
+                case ImageFormat::FLITR_PIX_FMT_Y_F32:
+                    pixelFormat=GL_RED;
+                    pixelType=GL_FLOAT;
+                    break;
                 default:
                     std::cerr << "Pixel format " << producer_->OutputFormat_.getPixelFormat() << " not yet implemented in TextureCaptureProducer.\n";
                     exit(-1);
