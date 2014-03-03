@@ -48,6 +48,7 @@ public:
 		int height;
 
 		Rect() {};
+
 		Rect(int l, int r, int t, int b)
 			: left(l), right(r), top(t), bottom(b)	
 		{
@@ -84,8 +85,36 @@ public:
 	//! The max height considered as a object
 	void SetMaxHeight(int height) { maxHeight_ = height; }
 
+    //! The Region of Interest (ROI) for locating objects
+    void SetROI(int l, int r, int t, int b)
+    {
+        int width = Image_->s();
+        int height = Image_->t();
+
+        if (l < 0) l = 0;
+        if (r >= width) r = width - 1 ;
+        if (t < 0) t = 0;
+        if (b >= height) b = height - 1;
+
+        theROI_ = Rect(l,r,t,b);
+    }
+
+    //! The Region of Interest (ROI) for locating objects
+    void SetROI(Rect roi)
+    {
+        int l = roi.left;
+        int r = roi.right;
+        int t = roi.top;
+        int b = roi.bottom;
+
+        SetROI(l,r,t,b);
+    }
+
 	//! Call each frame to retrieve the bounding rectangles of discreet objects
 	void GetBoundingRects(std::vector<Rect>& rects);
+
+    //! Retrieve the current ROI being processed
+    Rect GetROI() { return theROI_; }
 
 private:
 	void FindEdges();
@@ -99,6 +128,7 @@ private:
 	int minHeight_;
 	int maxWidth_;
 	int maxHeight_;
+    Rect theROI_;
 };
 
 }
