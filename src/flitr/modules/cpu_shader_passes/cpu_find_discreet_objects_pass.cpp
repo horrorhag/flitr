@@ -32,6 +32,7 @@ CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image)
 {
 	temp = 0;
     ucounter = 0;
+    theROI_ = Rect(0, image->s()-1, 0, image->t()-1);
 }
 	
 CPUFindDiscreetObjectsPass::~CPUFindDiscreetObjectsPass()
@@ -57,24 +58,31 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		temp = new unsigned char[width*height];
 
 	// find edges
-    int i = 0;
-    for (i=0;i<size;i++)
-	{
-        if (data[i] == 0)
+    int i = -1;
+    for (int y=0; y<height; y++)
+    {
+        for(int x=0; x<width; x++)
         {
-            temp[i] = 0;
-            continue;
+            i++;
+            if (data[i] == 0)
+            {
+                temp[i] = 0;
+                continue;
+            }
+            if(x>=theROI_.left && x<=theROI_.right && y>=theROI_.top  && y<=theROI_.bottom)
+            {
+                if (data[i+1] == 0 || data[i-1] == 0 || ( (i+width)<size && data[i+width] == 0 ) || ( ((i-width)>0) && data[i-width] == 0 ))
+                {
+                    edgelist.push_back(i);
+                    temp[i] = 255;
+                }
+                else
+                {
+                    temp[i] = 0;
+                }
+            }
         }
-        if (data[i+1] == 0 || data[i-1] == 0 || ( (i+width)<size && data[i+width] == 0 ) || ( ((i-width)>0) && data[i-width] == 0 ))
-        {
-            edgelist.push_back(i);
-            temp[i] = 255;
-        }
-        else
-        {
-            temp[i] = 0;
-        }
-	}
+    }
 
 	int idx = 0;
     for (size_t j=0;j<edgelist.size();j++)
