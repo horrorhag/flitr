@@ -38,9 +38,9 @@ void MultiRawVideoFileConsumerThread::run()
                 Consumer_->MultiWriteStats_->tick();
 
                 {
-                size_t i=0;
+                int i=0;
                 #pragma omp parallel for
-                for (i=0; i<num_writers; i++) {
+                for (i=0; i<(int)num_writers; i++) {
                     if (Consumer_->RawVideoFileWriters_[i])
                     {
                         Image* im = *(imv[i]);

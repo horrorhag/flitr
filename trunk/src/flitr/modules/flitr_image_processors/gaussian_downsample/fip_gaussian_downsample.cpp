@@ -110,7 +110,7 @@ bool FIPGaussianDownsample::trigger()
             const size_t componentsPerLineDS=componentsPerPixel * widthDS;
             const size_t componentsPerLineUS=componentsPerPixel * widthUS;
             
-            size_t y=0;
+            int y=0;
             {
 #ifdef _OPENMP
                 //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.

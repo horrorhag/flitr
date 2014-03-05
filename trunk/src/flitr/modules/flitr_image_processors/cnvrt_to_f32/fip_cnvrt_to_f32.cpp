@@ -83,7 +83,7 @@ bool FIPConvertToF32::trigger()
             const size_t componentsPerLine=componentsPerPixel * width;
             
             
-            size_t y=0;
+            int y=0;
             {
 #ifdef _OPENMP
                 //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
@@ -96,7 +96,7 @@ bool FIPConvertToF32::trigger()
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif
-                    for (y=0; y<height; y++)
+                    for (y=0; y<(int)height; y++)
                     {
                         const size_t lineOffset=y * componentsPerLine;
                         
