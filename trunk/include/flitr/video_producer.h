@@ -34,7 +34,7 @@
 #endif
 
 #ifdef __APPLE__
-#  include <flitr/video_mac_osx.h>
+//#  include <flitr/video_mac_osx.h>
 #endif
 
 namespace flitr 
@@ -46,11 +46,10 @@ namespace flitr
  * This class provides cross-platform video input. Supported platforms:
  *  - Windows: with Microsoft DirectShow.
  *  - Linux: with Video4Linux.
- *  - Macintosh: with QuickTime.
  */
 class FLITR_EXPORT VideoProducer : public ImageProducer 
 {
-	/*!
+    /*!
     *   Updates of the producer image buffer
     */
     class VideoProducerThread : public OpenThreads::Thread
@@ -66,12 +65,14 @@ class FLITR_EXPORT VideoProducer : public ImageProducer
     };
 
 public:
-	VideoProducer();
+    VideoProducer();
     ~VideoProducer();
     bool init();
 
+    unsigned char* GetPixelBuffer();
+
 private:
-	VideoProducerThread* thread;
+    VideoProducerThread* thread;
     uint32_t imageSlots;
 
 };
