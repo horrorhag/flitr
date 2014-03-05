@@ -107,7 +107,7 @@ bool FIPDewarp::trigger()
             
             float *refImgData = refImgDataVec_[imgNum];
             
-            size_t y=0;
+            int y=0;
             {
 #ifdef _OPENMP
                 //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.

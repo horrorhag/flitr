@@ -39,11 +39,11 @@ void MultiCPUHistogramConsumerThread::run()
 
             if ((imageCount % imageStride)==0)
             {
-                size_t imNum=0;
+                int imNum=0;
 
                 {
                 #pragma omp parallel for
-                for (imNum=0; imNum<Consumer_->ImagesPerSlot_; imNum++)
+                for (imNum=0; imNum<(int)Consumer_->ImagesPerSlot_; imNum++)
                 {// Calculate the histogram.
                     Image* im = *(imv[imNum]);
 
