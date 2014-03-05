@@ -46,6 +46,7 @@ public:
 
 		int width;
 		int height;
+		int area;
 
 		Rect() {};
 
@@ -56,6 +57,7 @@ public:
 			height = bottom - top;
 			centerX = left + width/2;
 			centerY = top + height/2;
+			area=width*height;
 		}
 	};
 
