@@ -18,7 +18,7 @@ namespace
 }
 
 void FollowBorder(int idx, int width, int size, int w, int h, int &left, int &right, int &bottom, int &top);
-bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::Rect r2);
+bool Intersect(const CPUFindDiscreetObjectsPass::Rect& r1, const CPUFindDiscreetObjectsPass::Rect& r2);
 
 CPUFindDiscreetObjectsPass::CPUFindDiscreetObjectsPass(osg::Image* image) 
 	: Image_(image)
@@ -108,15 +108,20 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
         if (top < 0) top = 0;
         if (bottom >= (int)height) bottom = height-1;
 
-        rectangles.push_back(Rect(left, right, top, bottom));
-
+		Rect r = Rect(left, right, top, bottom);			
+		// max checks
+		if (r.area <= maxArea_ && r.width <= maxWidth_ && r.height <= maxHeight_)
+		{
+			rectangles.push_back(r);
+		}
+        
         idx++;
 	}
 
 	// intersections
 	bool intersect = true;
 	
-	Rect r1,r2;
+	Rect *r1, *r2;
 	int left, top, bottom, right;
 	while (intersect)
 	{
@@ -126,17 +131,23 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
             redo:
 			for (int j = i+1; j < (int)rectangles.size(); j++)
 			{
-				r1 = rectangles[i];
-				r2 = rectangles[j];
-				intersect = (Intersect(r1, r2));
+				r1 = &rectangles[i];
+				r2 = &rectangles[j];
+				intersect = (Intersect(*r1, *r2));
 				if (intersect)
 				{
-					left = std::min(r1.left, r2.left);
-					right = std::max(r1.right, r2.right);
-					top = std::min(r1.top, r2.top);
-					bottom = std::max(r1.bottom, r2.bottom);
+					left = std::min(r1->left, r2->left);
+					right = std::max(r1->right, r2->right);
+					top = std::min(r1->top, r2->top);
+					bottom = std::max(r1->bottom, r2->bottom);
 
-					rectangles.push_back(Rect(left, right, top, bottom));
+					Rect r = Rect(left, right, top, bottom);
+					
+					// max checks
+					if (r.area <= maxArea_ && r.width <= maxWidth_ && r.height <= maxHeight_)
+					{
+						rectangles.push_back(r);
+					}
 					rectangles.erase(rectangles.begin()+j);
 					rectangles.erase(rectangles.begin()+i);
                     std::swap(rectangles[0], rectangles[rectangles.size()-1]);
@@ -152,15 +163,12 @@ void CPUFindDiscreetObjectsPass::operator()(osg::RenderInfo& renderInfo) const
 		}
 	}
 
-	// min and max checks
-	Rect r;
-	int area;
+	// min checks
 	for (i = rectangles.size()-1; i >= 0 ; i--)
 	{
-		r = rectangles[i];
-		area = r.width * r.height;
+		r1 = &rectangles[i];
 
-		if (area < minArea_ || r.width < minWidth_ || r.height < minHeight_ || area > maxArea_ || r.width > maxWidth_ || r.height > maxHeight_)
+		if (r1->area < minArea_ || r1->width < minWidth_ || r1->height < minHeight_)
 		{
 			rectangles.erase(rectangles.begin()+i);
 		}
@@ -196,7 +204,7 @@ void FollowBorder(int idx, int width, int size, int w, int h, int &left, int &ri
 	}
 }
 
-bool Intersect(CPUFindDiscreetObjectsPass::Rect r1, CPUFindDiscreetObjectsPass::Rect r2)
+bool Intersect(const CPUFindDiscreetObjectsPass::Rect& r1, const CPUFindDiscreetObjectsPass::Rect& r2)
 {
 	return ( (abs(r1.centerX - r2.centerX) <= (r1.width/2 + r2.width/2) )
 		&& ( abs(r1.centerY - r2.centerY) <= (r1.height/2 + r2.height/2)) );
