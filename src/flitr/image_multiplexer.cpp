@@ -67,11 +67,7 @@ ImageMultiplexer::ImageMultiplexer(uint32_t w, uint32_t h, ImageFormat::PixelFor
 
 ImageMultiplexer::~ImageMultiplexer()
 {
-    if (Thread_)
-    {
-        Thread_->setExit();
-        Thread_->join();
-    }
+    stopTriggerThread();
 }
 
 void ImageMultiplexer::addUpstreamProducer(ImageProducer& upStreamProducer)
@@ -88,6 +84,19 @@ bool ImageMultiplexer::init()
     SharedImageBuffer_->initWithStorage();
 
     return true;
+}
+
+bool ImageMultiplexer::stopTriggerThread()
+{
+    if (Thread_)
+    {
+        Thread_->setExit();
+        Thread_->join();
+        
+        return true;
+    }
+    
+    return false;
 }
 
 bool ImageMultiplexer::startTriggerThread()
@@ -130,6 +139,7 @@ bool ImageMultiplexer::trigger()
             ProcessorStats_->tick();
 
             imvRead=ImageConsumerVec_[ConsumerIndex_]->reserveReadSlot();
+            
             if (imvRead.size()==ImagesPerSlot_)
             {
 
