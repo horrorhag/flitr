@@ -81,6 +81,7 @@ namespace flitr {
         /*!Method to start the asynchronous trigger thread. trigger() has to be called synchronously/manually if thread not started.
          *@sa ImageProcessor::trigger*/
         virtual bool startTriggerThread();
+        virtual bool stopTriggerThread();
         virtual bool isTriggerThreadStarted() const {return Thread_!=0;}
         
         /*!Synchronous trigger method. Called automatically by the trigger thread if started.

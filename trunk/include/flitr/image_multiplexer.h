@@ -33,7 +33,7 @@ namespace flitr {
 
 class ImageMultiplexer;
 
-/*! Helper/Service thread class for ImageProcessor that consumes and produces images as they become available from the upstream producer.*/
+/*! Helper/Service thread class for ImageMultiplexer that consumes and produces images as they become available from the upstream producers.*/
 class ImageMultiplexerThread : public OpenThreads::Thread
 {
 public:
@@ -50,10 +50,10 @@ public:
     void setExit() { ShouldExit_ = true; }
 
 private:
-    /*! A pointer to the ImageProcessor object being serviced.*/
+    /*! A pointer to the ImageMultiplexer object being serviced.*/
     ImageMultiplexer *IM_;
 
-    /*! Boolean flag set to true by ImageProcessorThread::setExit.
+    /*! Boolean flag set to true by ImageMultiplexerThread::setExit.
      *@sa ImageMultiplexerThread::setExit */
     bool ShouldExit_;
 };
@@ -64,17 +64,20 @@ class FLITR_EXPORT ImageMultiplexer : public ImageProducer
     friend class ImageMultiplexerThread;
 public:
 
-    /*! Constructor given the upstream producer.
+    /*! Constructor.
+     *@param w Width of images produced downstream.
+     *@param h Height of images produced downstream.
+     *@param pix_fmt Pixel format of images produced downstream.
      *@param images_per_slot The number of images per image slot from the upstream producer and that is produced down stream.
      *@param buffer_size The size of the shared image buffer of the downstream producer.*/
     ImageMultiplexer(uint32_t w, uint32_t h, ImageFormat::PixelFormat pix_fmt,
                      uint32_t images_per_slot,
-                   uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+                     uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
     /*! Virtual destructor */
     virtual ~ImageMultiplexer();
 
-    /*! Method to add multiplexer to upstream image producer.
+    /*! Method to add upstream image producer to multiplexer.
      *@param upStreamProducer The upstream image producer.*/
     void addUpstreamProducer(ImageProducer& upStreamProducer);
 
@@ -85,6 +88,7 @@ public:
     /*!Method to start the asynchronous trigger thread. trigger() has to be called synchronously/manually if thread not started.
      *@sa ImageProcessor::trigger*/
     virtual bool startTriggerThread();
+    virtual bool stopTriggerThread();
     virtual bool isTriggerThreadStarted() const {return Thread_!=0;}
 
     /*!Synchronous trigger method. Called automatically by the trigger thread if started.

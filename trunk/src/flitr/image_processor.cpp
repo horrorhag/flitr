@@ -57,11 +57,7 @@ ImageProcessor::ImageProcessor(ImageProducer& upStreamProducer,
 
 ImageProcessor::~ImageProcessor()
 {
-    if (Thread_)
-    {
-        Thread_->setExit();
-        Thread_->join();
-    }
+    stopTriggerThread();
 }
 
 bool ImageProcessor::init()
@@ -75,16 +71,29 @@ bool ImageProcessor::init()
     return true;
 }
 
+bool ImageProcessor::stopTriggerThread()
+{
+    if (Thread_)
+    {
+        Thread_->setExit();
+        Thread_->join();
+        
+        return true;
+    }
+
+    return false;
+}
+
 bool ImageProcessor::startTriggerThread()
 {
     if (Thread_==0)
     {//If thread not already started.
         Thread_ = new ImageProcessorThread(this);
         Thread_->startThread();
-
+        
         return true;
     }
-
+    
     return false;
 }
 
