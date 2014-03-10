@@ -315,8 +315,10 @@ if(WIN32)
 	ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)
     add_definitions(-DTIXML_USE_STL)
 endif(WIN32)
-if(UNIX AND NOT APPLE)
-	ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
+if(UNIX)
+    IF(NOT APPLE)
+        ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
+    ENDIF()
 endif(UNIX)
 
 INCLUDE_DIRECTORIES(
