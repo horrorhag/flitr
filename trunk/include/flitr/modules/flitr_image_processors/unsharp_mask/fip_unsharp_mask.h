@@ -18,15 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_AVERAGE_IMAGE_H
-#define FIP_AVERAGE_IMAGE_H 1
+#ifndef FIP_UNSHARP_MASK_H
+#define FIP_UNSHARP_MASK_H 1
 
 #include <flitr/image_processor.h>
 
 namespace flitr {
     
-    /*! Calculates the average image on the CPU. The performance is independent of the number of frames. */
-    class FLITR_EXPORT FIPAverageImage : public ImageProcessor
+    /* Applies an unsharp mask (using 5 pixel radius Gaussian blur) to the image. */
+    class FLITR_EXPORT FIPUnsharpMask : public ImageProcessor
     {
     public:
         
@@ -34,12 +34,12 @@ namespace flitr {
          *@param producer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPAverageImage(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                        uint8_t base2WindowLength,
-                        uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+        FIPUnsharpMask(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                       const float gain,
+                       uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPAverageImage();
+        virtual ~FIPUnsharpMask();
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -50,19 +50,11 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        const uint8_t base2WindowLength_;
-        const size_t windowLength_;
-        const float recipWindowLength_;
-        
-        /*! The sum images per slot. */
-        std::vector<float *> sumImageVec_;
-        
-        /*! The history ring buffer/vector for each image in the slot. */
-        std::vector<std::vector<float * > > historyImageVecVec_;
-        
-        size_t oldestHistorySlot_;
+        /*! The result of the first pass of the seperable Gaussian filter. */
+        const float gain_;
+        float *xFiltData_;
     };
     
 }
 
-#endif //FIP_AVERAGE_IMAGE_H
+#endif //FIP_UNSHARP_MASK_H

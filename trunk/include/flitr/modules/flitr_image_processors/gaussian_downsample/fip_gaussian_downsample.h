@@ -25,7 +25,7 @@
 
 namespace flitr {
     
-    
+    /* Applies Gaussian filter of radius approx 5 pixels and down samples image by 2. */
     class FLITR_EXPORT FIPGaussianDownsample : public ImageProcessor
     {
     public:

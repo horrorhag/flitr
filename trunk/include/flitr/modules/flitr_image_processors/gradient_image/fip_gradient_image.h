@@ -25,7 +25,7 @@
 
 namespace flitr {
     
-    
+    /*! Calculates the image gradient in the x direction using the Shcarr rotationally symmetric operator. */
     class FLITR_EXPORT FIPGradientXImage : public ImageProcessor
     {
     public:
@@ -51,6 +51,7 @@ namespace flitr {
     private:
     };
     
+    /*! Calculates the image gradient in the y direction using the Shcarr rotationally symmetric operator. */
     class FLITR_EXPORT FIPGradientYImage : public ImageProcessor
     {
     public:

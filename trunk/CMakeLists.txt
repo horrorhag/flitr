@@ -173,12 +173,16 @@ SET(LIB_SOURCES
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
+  src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
   src/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.cpp
+  src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
   src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
-  src/flitr/modules/flitr_image_processors/dewarp/fip_dewarp.cpp
+  src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
+  src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
 
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_gamma_pass.cpp
@@ -264,11 +268,14 @@ SET(LIB_SOURCES
 
 
   include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h
+  include/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h
   include/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
-  include/flitr/modules/flitr_image_processors/dewarp/fip_dewarp.h
+  include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
+  include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
 
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gamma_pass.h

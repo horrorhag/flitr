@@ -303,6 +303,13 @@ namespace flitr {
             Height_=(uint32_t)(Height_ * 0.5f + 0.5f);
         }
         
+        //!Up sample the image format by a factor 2.
+        void upSampleByTwo()
+        {
+            Width_=(uint32_t)(Width_ * 2.0f + 0.5f);//+0.5 is simple positive round instead of trunc.
+            Height_=(uint32_t)(Height_ * 2.0f + 0.5f);
+        }
+        
     private:
         inline void setBytesPerPixel()
         {

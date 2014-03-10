@@ -7,14 +7,11 @@
 #include <osg/io_utils>
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h>
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
-#include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
-#include <flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h>
-#include <flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h>
-
-#include <flitr/modules/flitr_image_processors/dewarp/fip_dewarp.h>
 
 #include <flitr/ffmpeg_producer.h>
+#include <flitr/test_pattern_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
@@ -62,137 +59,97 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    shared_ptr<FFmpegProducer> ffp(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
-    if (!ffp->init()) {
+    
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
-        
     }
     
-    
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
-    shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ffp.get()));
+    shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();
 #endif
     
-    
-    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*ffp, 1));
+    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*ip, 1, 2));
     if (!cnvrtToF32->init()) {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
     }
     cnvrtToF32->startTriggerThread();
     
-    
-    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToF32, 1, 0.25f));
-    if (!photometricEqualise->init()) {
-        std::cerr << "Could not initialise the photometric equalise processor.\n";
+
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToF32, 1, 5, 2));
+    if (!averageImage->init()) {
+        std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
     }
-    photometricEqualise->startTriggerThread();
+    averageImage->startTriggerThread();
     
-    
-    std::vector< shared_ptr<FIPGaussianDownsample> > gaussianDownSampleVec;
-    std::vector< shared_ptr<FIPGradientXImage> > gaussianDownSampleDDXVec;
-    std::vector< shared_ptr<FIPGradientXImage> > gaussianDownSampleDDX2Vec;
-    std::vector< shared_ptr<FIPGradientYImage> > gaussianDownSampleDDYVec;
-    std::vector< shared_ptr<FIPGradientYImage> > gaussianDownSampleDDY2Vec;
-    
-    ImageProducer *upstreamProducer=photometricEqualise.get();
-    
-    //===
-    const size_t numLevels=2;
-    for (size_t levelNum=0; levelNum<numLevels; levelNum++)
-    {
-        gaussianDownSampleVec.push_back(shared_ptr<FIPGaussianDownsample>(new FIPGaussianDownsample(*upstreamProducer, 1)));
-        if (!gaussianDownSampleVec.back()->init()) {
-            std::cerr << "Could not initialise the gaussian downsample processor.\n";
-            exit(-1);
-        }
-        gaussianDownSampleVec.back()->startTriggerThread();
-        
-        gaussianDownSampleDDXVec.push_back(shared_ptr<FIPGradientXImage>(new FIPGradientXImage(*(gaussianDownSampleVec.back()), 1)));
-        if (!gaussianDownSampleDDXVec.back()->init()) {
-            std::cerr << "Could not initialise the gaussian downsample ddx processor.\n";
-            exit(-1);
-        }
-        gaussianDownSampleDDXVec.back()->startTriggerThread();
-        
-        gaussianDownSampleDDX2Vec.push_back(shared_ptr<FIPGradientXImage>(new FIPGradientXImage(*(gaussianDownSampleDDXVec.back()), 1)));
-        if (!gaussianDownSampleDDX2Vec.back()->init()) {
-            std::cerr << "Could not initialise the gaussian downsample ddx2 processor.\n";
-            exit(-1);
-        }
-        gaussianDownSampleDDX2Vec.back()->startTriggerThread();
-
-        gaussianDownSampleDDYVec.push_back(shared_ptr<FIPGradientYImage>(new FIPGradientYImage(*(gaussianDownSampleVec.back()), 1)));
-        if (!gaussianDownSampleDDYVec.back()->init()) {
-            std::cerr << "Could not initialise the gaussian downsample ddy processor.\n";
-            exit(-1);
-        }
-        gaussianDownSampleDDYVec.back()->startTriggerThread();
-        
-        gaussianDownSampleDDY2Vec.push_back(shared_ptr<FIPGradientYImage>(new FIPGradientYImage(*(gaussianDownSampleDDYVec.back()), 1)));
-        if (!gaussianDownSampleDDY2Vec.back()->init()) {
-            std::cerr << "Could not initialise the gaussian downsample ddy2 processor.\n";
-            exit(-1);
-        }
-        gaussianDownSampleDDY2Vec.back()->startTriggerThread();
-        
-        upstreamProducer=gaussianDownSampleVec.back().get();
+    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*averageImage, 1, 0.95f, 2));
+    if (!cnvrtToM8->init()) {
+        std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
+        exit(-1);
     }
-    //===
+    cnvrtToM8->startTriggerThread();
     
     
     
-    
-    /*
-     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*(gaussianDownSampleVec.back()), 1, 4));
-     if (!averageImage->init()) {
-     std::cerr << "Could not initialise the average image processor.\n";
-     exit(-1);
-     }
-     averageImage->startTriggerThread();
-     
-     
-     shared_ptr<FIPDewarp> dewarp(new FIPDewarp(*averageImage, 1));
-     if (!dewarp->init()) {
-     std::cerr << "Could not initialise the dewarp processor.\n";
-     exit(-1);
-     }
-     dewarp->startTriggerThread();
-     */
-    
-    //shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1));
-    //shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*dewarp, 1));
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*(gaussianDownSampleVec.back()), 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1, 2));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
+    
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*cnvrtToM8, 1));
+    if (!osgcOrig->init()) {
+        std::cerr << "Could not init osgcOrig consumer\n";
+        exit(-1);
+    }
+    
+    
     /*
-     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*averageImage,1));
+    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
      if (!mffc->init()) {
      std::cerr << "Could not init FFmpeg consumer\n";
      exit(-1);
      }
      std::stringstream filenameStringStream;
-     filenameStringStream << argv[1] << "_ti";
+     filenameStringStream << argv[1] << "_improved";
      mffc->openFiles(filenameStringStream.str());
-     mffc->startWriting();
-     */
+    */
+    
+    
     osg::Group *root_node = new osg::Group;
     
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
+    {
+        osg::Matrix translate;
+        translate.makeTranslate(osg::Vec3d(+osgcOrig->getOutputTexture()->getTextureWidth()/2,
+                                           0.0,
+                                           0.0));
+        quad->setTransform(translate);
+    }
+    
+    shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
+    root_node->addChild(quadOrig->getRoot().get());
+    {
+        osg::Matrix translate;
+        translate.makeTranslate(osg::Vec3d(-osgcOrig->getOutputTexture()->getTextureWidth()/2,
+                                           0.0,
+                                           0.0));
+        quadOrig->setTransform(translate);
+    }
+    
     
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
     
-    //viewer.setUpViewInWindow(100, 100, 640, 480);
+    viewer.setUpViewInWindow(100, 100, 640, 480);
     viewer.realize();
     
     const int use_trackball = 0;
@@ -203,35 +160,52 @@ int main(int argc, char *argv[])
         adjustCameraManipulatorHomeForYUp(tb);
     } else
     {
-        ImageFormat imf = ffp->getFormat();
         OrthoTextureManipulator* om = new OrthoTextureManipulator(osgc->getOutputTexture()->getTextureWidth(), osgc->getOutputTexture()->getTextureHeight());
         viewer.setCameraManipulator(om);
     }
     
+    size_t numFrames=0;
+    
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
+        
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
-        //Read from the video, but don't get more than 10 frames ahead.
-        if (ffp->getLeastNumReadSlotsAvailable()<10)
+        //Read from the video, but don't get more than n frames ahead.
+        if (ip->getLeastNumReadSlotsAvailable()<5)
         {
-            ffp->trigger();
+            ip->trigger();
         }
 #endif
         
-        if (osgc->getNext()) {
+        if ((osgc->getNext())||(osgcOrig->getNext()))
+        {
             viewer.frame();
-            //OpenThreads::Thread::microSleep(500000);
+            
+            /*
+            if (numFrames==15)
+            {
+                mffc->startWriting();
+            }
+             */
+            
+            numFrames++;
         }
+        
+        OpenThreads::Thread::microSleep(1000);
     }
-    /*
-     mffc->stopWriting();
-     mffc->closeFiles();
-     */
+    
+//     mffc->stopWriting();
+//     mffc->closeFiles();
+    
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     btt->setExit();
     btt->join();
-#endif   
+#endif
+    
+    cnvrtToF32->stopTriggerThread();
+    averageImage->stopTriggerThread();
+    cnvrtToM8->stopTriggerThread();
     
     return 0;
 }

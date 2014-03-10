@@ -128,10 +128,10 @@ bool FIPGaussianDownsample::trigger()
                         const size_t lineOffsetDS=y * componentsPerLineDS;
                         const size_t lineOffsetUS=y * componentsPerLineUS;
                         
-                        for (size_t compNumDS=4; compNumDS<(componentsPerLineDS-4); compNumDS++)
+                        for (size_t compNumDS=5; compNumDS<(componentsPerLineDS-5); compNumDS++)
                         {
                             float xFiltValue=( dataReadUS[lineOffsetUS + (compNumDS<<1)] +
-                                              dataReadUS[lineOffsetUS + (compNumDS<<1) + 1] ) * (462.0f/2048.0f);
+                                              dataReadUS[lineOffsetUS + (compNumDS<<1) + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
                             
                             xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-1] +
                                          dataReadUS[lineOffsetUS + (compNumDS<<1) + 2] ) * (330.0f/2048.0f);
@@ -143,7 +143,10 @@ bool FIPGaussianDownsample::trigger()
                                          dataReadUS[lineOffsetUS + (compNumDS<<1) + 4] ) * (55.0f/2048.0f);
                             
                             xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-4] +
-                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 5] ) * (1.0f/2048.0f);
+                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 5] ) * (11.0f/2048.0f);
+                            
+                            xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-5] +
+                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 6] ) * (1.0f/2048.0f);
                             
                             xFiltData_[lineOffsetDS + compNumDS]=xFiltValue;
                         }
@@ -163,7 +166,7 @@ bool FIPGaussianDownsample::trigger()
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif
-                    for (y=4; y<(heightDS-4); y++)
+                    for (y=5; y<(heightDS-5); y++)
                     {
                         const size_t lineOffsetDS=y * componentsPerLineDS;
                         const size_t lineOffsetUS=(y<<1) * componentsPerLineDS;
@@ -171,7 +174,7 @@ bool FIPGaussianDownsample::trigger()
                         for (size_t compNum=0; compNum<componentsPerLineDS; compNum++)
                         {
                             float filtValue=( xFiltData_[lineOffsetUS + compNum]+
-                                             xFiltData_[lineOffsetUS + componentsPerLineDS + compNum] ) * (462.0f/2048.0f);
+                                             xFiltData_[lineOffsetUS + componentsPerLineDS + compNum] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
                             
                             filtValue+=( xFiltData_[lineOffsetUS + compNum - componentsPerLineDS]+
                                         xFiltData_[lineOffsetUS + (componentsPerLineDS<<1) + compNum] ) * (330.0f/2048.0f);
@@ -183,7 +186,10 @@ bool FIPGaussianDownsample::trigger()
                                         xFiltData_[lineOffsetUS + (componentsPerLineDS<<2) + compNum] ) * (55.0f/2048.0f);
                             
                             filtValue+=( xFiltData_[lineOffsetUS + compNum - (componentsPerLineDS<<2)]+
-                                        xFiltData_[lineOffsetUS + ((componentsPerLineDS<<2)+componentsPerLineDS) + compNum] ) * (1.0f/2048.0f);
+                                        xFiltData_[lineOffsetUS + ((componentsPerLineDS<<2)+componentsPerLineDS) + compNum] ) * (11.0f/2048.0f);
+                            
+                            filtValue+=( xFiltData_[lineOffsetUS + compNum - ((componentsPerLineDS<<2)+componentsPerLineDS)]+
+                                        xFiltData_[lineOffsetUS + ((componentsPerLineDS<<2)+(componentsPerLineDS<<1)) + compNum] ) * (1.0f/2048.0f);
                             
                             dataWriteDS[lineOffsetDS+compNum]=filtValue;
                         }
