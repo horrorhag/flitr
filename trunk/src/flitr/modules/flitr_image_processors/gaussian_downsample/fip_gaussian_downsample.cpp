@@ -20,10 +20,6 @@
 
 #include <flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 using namespace flitr;
 using std::tr1::shared_ptr;
 
@@ -112,17 +108,7 @@ bool FIPGaussianDownsample::trigger()
             
             int y=0;
             {
-#ifdef _OPENMP
-                //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
-#endif
-                
-#ifdef _OPENMP
-#pragma omp parallel private(y)
-#endif
                 {
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
                     for (y=0; y<heightUS; y++)
                     {
                         const size_t lineOffsetDS=y * componentsPerLineDS;
@@ -155,17 +141,7 @@ bool FIPGaussianDownsample::trigger()
             }
             
             {
-#ifdef _OPENMP
-                //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
-#endif
-                
-#ifdef _OPENMP
-#pragma omp parallel private(y)
-#endif
                 {
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
                     for (y=5; y<(heightDS-5); y++)
                     {
                         const size_t lineOffsetDS=y * componentsPerLineDS;
