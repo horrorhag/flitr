@@ -90,10 +90,10 @@ bool FIPGradientXImage::trigger()
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
             
-            const size_t width=imFormat.getWidth();
-            const size_t height=imFormat.getHeight();
+            const ssize_t width=imFormat.getWidth();
+            const ssize_t height=imFormat.getHeight();
             
-            int y=0;
+            ssize_t y=0;
             {
 #ifdef _OPENMP
                 //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
@@ -106,13 +106,23 @@ bool FIPGradientXImage::trigger()
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif
-                    for (y=0; y<(int)height; y++)
+                    for (y=0; y<height; y++)
                     {
-                        const size_t lineOffset=y * width;
+                        const ssize_t lineOffset=y * width;
                         
-                        for (size_t x=1; x<width; x++)
+                        for (ssize_t x=1; x<width; x++)
                         {
-                            dataWrite[lineOffset + x]=(dataRead[lineOffset + x] - dataRead[lineOffset - 1 + x])*2.0f + 0.5f;
+                            const ssize_t offset=lineOffset + x;
+                            
+                            const float v1=dataRead[offset-width-1];
+                            const float v3=dataRead[offset-width+1];
+                            const float v4=dataRead[offset-1];
+                            const float v6=dataRead[offset+1];
+                            const float v7=dataRead[offset+width-1];
+                            const float v9=dataRead[offset+width+1];
+                            
+                            //Use Scharr operator for image gradient.
+                            dataWrite[offset]=(v3-v1)*(3.0f/32.0f) + (v6-v4)*(10.0f/32.0f) + (v9-v7)*(3.0f/32.0f);
                         }
                     }
                 }
@@ -197,10 +207,10 @@ bool FIPGradientYImage::trigger()
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
             
-            const size_t width=imFormat.getWidth();
-            const size_t height=imFormat.getHeight();
+            const ssize_t width=imFormat.getWidth();
+            const ssize_t height=imFormat.getHeight();
             
-            int y=0;
+            ssize_t y=0;
             {
 #ifdef _OPENMP
                 //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
@@ -213,13 +223,23 @@ bool FIPGradientYImage::trigger()
 #ifdef _OPENMP
 #pragma omp for nowait
 #endif
-                    for (y=1; y<(int)height; y++)
+                    for (y=1; y<height; y++)
                     {
-                        const size_t lineOffset=y * width;
+                        const ssize_t lineOffset=y * width;
                         
                         for (size_t x=0; x<width; x++)
                         {
-                            dataWrite[lineOffset + x]=dataRead[lineOffset + x] - dataRead[lineOffset - width + x] + 0.5f;
+                            const ssize_t offset=lineOffset + x;
+                            
+                            const float v1=dataRead[offset-width-1];
+                            const float v2=dataRead[offset-width];
+                            const float v3=dataRead[offset-width+1];
+                            const float v7=dataRead[offset+width-1];
+                            const float v8=dataRead[offset+width];
+                            const float v9=dataRead[offset+width+1];
+                            
+                            //Use Scharr operator for image gradient.
+                            dataWrite[offset]=(v7-v1)*(3.0f/32.0f) + (v8-v2)*(10.0f/32.0f) + (v9-v3)*(3.0f/32.0f);
                         }
                     }
                 }

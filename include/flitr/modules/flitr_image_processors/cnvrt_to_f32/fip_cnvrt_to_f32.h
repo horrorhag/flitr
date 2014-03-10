@@ -25,7 +25,7 @@
 
 namespace flitr {
     
-    
+    /*! Converts image to float F32 format. Currently assumes 8-bit mono input! */
     class FLITR_EXPORT FIPConvertToF32 : public ImageProcessor
     {
     public:

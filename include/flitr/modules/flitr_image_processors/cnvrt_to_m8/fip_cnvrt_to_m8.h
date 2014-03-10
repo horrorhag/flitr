@@ -18,15 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_AVERAGE_IMAGE_H
-#define FIP_AVERAGE_IMAGE_H 1
+#ifndef FIP_CNVRT_TO_M8_H
+#define FIP_CNVRT_TO_M8_H 1
 
 #include <flitr/image_processor.h>
 
 namespace flitr {
     
-    /*! Calculates the average image on the CPU. The performance is independent of the number of frames. */
-    class FLITR_EXPORT FIPAverageImage : public ImageProcessor
+    /*! Converts image to uint8 with a pre-scale. Currently assumes float F32 input! */
+    class FLITR_EXPORT FIPConvertToM8 : public ImageProcessor
     {
     public:
         
@@ -34,12 +34,12 @@ namespace flitr {
          *@param producer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPAverageImage(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                        uint8_t base2WindowLength,
+        FIPConvertToM8(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                       float scale_factor,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPAverageImage();
+        virtual ~FIPConvertToM8();
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -50,19 +50,9 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        const uint8_t base2WindowLength_;
-        const size_t windowLength_;
-        const float recipWindowLength_;
-        
-        /*! The sum images per slot. */
-        std::vector<float *> sumImageVec_;
-        
-        /*! The history ring buffer/vector for each image in the slot. */
-        std::vector<std::vector<float * > > historyImageVecVec_;
-        
-        size_t oldestHistorySlot_;
+        const float scaleFactor_;
     };
     
 }
 
-#endif //FIP_AVERAGE_IMAGE_H
+#endif //FIP_CNVRT_TO_F32_H

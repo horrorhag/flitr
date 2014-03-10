@@ -25,7 +25,7 @@
 
 namespace flitr {
     
-    
+    /*! Applies photometric equalisation to the image stream. */
     class FLITR_EXPORT FIPPhotometricEqualise : public ImageProcessor
     {
     public:
