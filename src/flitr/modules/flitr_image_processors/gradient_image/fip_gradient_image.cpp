@@ -20,10 +20,6 @@
 
 #include <flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 using namespace flitr;
 using std::tr1::shared_ptr;
 
@@ -90,29 +86,19 @@ bool FIPGradientXImage::trigger()
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
             
-            const ssize_t width=imFormat.getWidth();
-            const ssize_t height=imFormat.getHeight();
+            const ptrdiff_t width=imFormat.getWidth();
+            const ptrdiff_t height=imFormat.getHeight();
             
-            ssize_t y=0;
+            ptrdiff_t y=0;
             {
-#ifdef _OPENMP
-                //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
-#endif
-                
-#ifdef _OPENMP
-#pragma omp parallel private(y)
-#endif
                 {
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
                     for (y=0; y<height; y++)
                     {
-                        const ssize_t lineOffset=y * width;
+                        const ptrdiff_t lineOffset=y * width;
                         
-                        for (ssize_t x=1; x<width; x++)
+                        for (ptrdiff_t x=1; x<width; x++)
                         {
-                            const ssize_t offset=lineOffset + x;
+                            const ptrdiff_t offset=lineOffset + x;
                             
                             const float v1=dataRead[offset-width-1];
                             const float v3=dataRead[offset-width+1];
@@ -207,29 +193,19 @@ bool FIPGradientYImage::trigger()
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
             
-            const ssize_t width=imFormat.getWidth();
-            const ssize_t height=imFormat.getHeight();
+            const ptrdiff_t width=imFormat.getWidth();
+            const ptrdiff_t height=imFormat.getHeight();
             
-            ssize_t y=0;
+            ptrdiff_t y=0;
             {
-#ifdef _OPENMP
-                //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
-#endif
-                
-#ifdef _OPENMP
-#pragma omp parallel private(y)
-#endif
                 {
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
                     for (y=1; y<height; y++)
                     {
-                        const ssize_t lineOffset=y * width;
+                        const ptrdiff_t lineOffset=y * width;
                         
                         for (size_t x=0; x<width; x++)
                         {
-                            const ssize_t offset=lineOffset + x;
+                            const ptrdiff_t offset=lineOffset + x;
                             
                             const float v1=dataRead[offset-width-1];
                             const float v2=dataRead[offset-width];

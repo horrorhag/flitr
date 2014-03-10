@@ -20,9 +20,6 @@
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h>
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 using namespace flitr;
 using std::tr1::shared_ptr;
@@ -87,17 +84,7 @@ bool FIPConvertToM8::trigger()
             
             size_t y=0;
             {
-#ifdef _OPENMP
-                //omp_set_num_threads(4);//There might be some blocking operation or mem bandwidth limited code??? because the parallel for seems to work best with much more threads than CPU cores.
-#endif
-                
-#ifdef _OPENMP
-#pragma omp parallel private(y)
-#endif
                 {
-#ifdef _OPENMP
-#pragma omp for nowait
-#endif
                     for (y=0; y<height; y++)
                     {
                         const size_t lineOffset=y * componentsPerLine;
