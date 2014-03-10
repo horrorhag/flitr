@@ -86,7 +86,7 @@ bool FFmpegProducer::seek(uint32_t position)
 
     uint32_t seek_to = position % NumImages_;
 
-    bool seek_result = Reader_->getImage(*image, seek_to);
+    /*bool seek_result = */Reader_->getImage(*image, seek_to);
     //The seek result should be true because were only seeking within the video.
     //ToDo: Add an assert to flag if seek_result is not true.
 
