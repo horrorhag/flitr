@@ -65,16 +65,18 @@ class FLITR_EXPORT VideoProducer : public ImageProducer
     };
 
 public:
-    VideoProducer();
+    VideoProducer(flitr::ImageFormat::PixelFormat pixelFormat = flitr::ImageFormat::FLITR_PIX_FMT_Y_8, unsigned int imageSlots = FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS, const std::string& deviceName = "", int frameWidth = 1280, int frameHeight = 720);
+    VideoProducer(const std::string& config, flitr::ImageFormat::PixelFormat pixelFormat = flitr::ImageFormat::FLITR_PIX_FMT_Y_8, unsigned int imageSlots = FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
     ~VideoProducer();
     bool init();
 
-    unsigned char* GetPixelBuffer();
+    //unsigned char* GetPixelBuffer();
 
 private:
-    VideoProducerThread* thread;
-    uint32_t imageSlots;
-
+    VideoProducerThread* thread_;
+    flitr::ImageFormat::PixelFormat pixelFormat_;
+    unsigned int imageSlots_;  
+    std::string config_;
 };
 }
 #endif // VIDEO_PRODUCER_H

@@ -247,7 +247,7 @@ SET(LIB_SOURCES
   include/flitr/textured_quad.h
 
   # Video
-  # include/flitr/video_producer.h
+  include/flitr/video_producer.h
   # include/flitr/video_linux_v4l.h
   include/flitr/video_win32_directshow.h
 
@@ -311,10 +311,11 @@ ADD_SUBDIRECTORY(src/flitr/tinyxml)
 # Video
 if(WIN32)
 	ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)
+    add_definitions(-DTIXML_USE_STL)
 endif(WIN32)
-# if(UNIX)
-	# ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
-# endif(UNIX)
+if(UNIX)
+	ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
+endif(UNIX)
 
 INCLUDE_DIRECTORIES(
 	${LIB_INCL_DIRS}
@@ -367,7 +368,7 @@ ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
-# ADD_SUBDIRECTORY(examples/video_producer)
+ADD_SUBDIRECTORY(examples/video_producer)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
