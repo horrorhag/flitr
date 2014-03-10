@@ -39,37 +39,37 @@
 #include <osg/Image>
 
 namespace flitr {
-
-class FLITR_EXPORT GLSLCropPass
-{
-  public:
-    GLSLCropPass(flitr::TextureRectangle *in_tex,
-                 int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU = false);
-
-    ~GLSLCropPass();
-
-    osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
-    osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
-    osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
-	
-  private:
-    void setShader();
-
-    osg::ref_ptr<osg::Group> createTexturedQuad(int xmin, int ymin, int xmax, int ymax);
-    void createOutputTexture(bool read_back_to_CPU);
-    void setupCamera();
-
-    osg::ref_ptr<osg::Group> RootGroup_;
-    osg::ref_ptr<osg::Camera> Camera_;
-    osg::ref_ptr<flitr::TextureRectangle> InTexture_;
-    osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
-    osg::ref_ptr<osg::Image> OutImage_;
-
-    int TextureWidth_;
-    int TextureHeight_;
-
-	osg::ref_ptr<osg::Program> FragmentProgram_;
-    osg::ref_ptr<osg::StateSet> StateSet_;
-};
+    
+    class FLITR_EXPORT GLSLCropPass
+    {
+    public:
+        GLSLCropPass(flitr::TextureRectangle *in_tex,
+                     int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU = false);
+        
+        ~GLSLCropPass();
+        
+        osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
+        osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
+        osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
+        
+    private:
+        void setShader();
+        
+        osg::ref_ptr<osg::Group> createTexturedQuad(int xmin, int ymin, int xmax, int ymax);
+        void createOutputTexture(bool read_back_to_CPU);
+        void setupCamera();
+        
+        osg::ref_ptr<osg::Group> RootGroup_;
+        osg::ref_ptr<osg::Camera> Camera_;
+        osg::ref_ptr<flitr::TextureRectangle> InTexture_;
+        osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
+        osg::ref_ptr<osg::Image> OutImage_;
+        
+        int TextureWidth_;
+        int TextureHeight_;
+        
+        osg::ref_ptr<osg::Program> FragmentProgram_;
+        osg::ref_ptr<osg::StateSet> StateSet_;
+    };
 }
 #endif //GLSL_CROP_PASS_H
