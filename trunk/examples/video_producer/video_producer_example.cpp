@@ -26,14 +26,14 @@ using namespace std;
 
 class KeyPressedHandler : public osgGA::GUIEventHandler 
 {
-	public: 
+    public: 
 
     KeyPressedHandler(shared_ptr<MultiOSGConsumer> osgc) : osgc_(osgc), count_(0) {}
     ~KeyPressedHandler() {}
 
     bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
     {
-		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
+        osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
         if (!viewer) return false;
 
         switch(ea.getEventType())
@@ -42,31 +42,32 @@ class KeyPressedHandler : public osgGA::GUIEventHandler
             {
                 if (ea.getKey()=='c')
                 {
-					osg::Image *theImage;
-					theImage = osgc_->getOutputTexture()->getImage();
-					theImage->flipHorizontal();
-					theImage->flipVertical();
-					
-					std::string s = "frame_cap_" + boost::lexical_cast<std::string>(count_) + ".rgb";
-					osgDB::writeImageFile(*theImage, s);
+                    osg::Image *theImage;
+                    theImage = osgc_->getOutputTexture()->getImage();
+                    theImage->flipVertical();
+                    
+                    std::string s = "frame_cap_" + boost::lexical_cast<std::string>(count_) + ".png";
+                    osgDB::writeImageFile(*theImage, s);
 
-					count_++;
+                    count_++;
                 }
-			}
+            }
             default:
                 return false;
         }
 
-		return true;
-	}
+        return true;
+    }
 
-	shared_ptr<MultiOSGConsumer> osgc_;
-	int count_;
+    shared_ptr<MultiOSGConsumer> osgc_;
+    int count_;
 };
 
 int main(int argc, char *argv[])
 {
-    shared_ptr<VideoProducer> producer(new VideoProducer());
+    int width = 1280;
+    int height = 720;
+    shared_ptr<VideoProducer> producer(new VideoProducer(flitr::ImageFormat::FLITR_PIX_FMT_Y_8, 32, "", width, height));
     if (!producer->init())
     {
         std::cerr << "Failed to init producer\n";
@@ -87,13 +88,13 @@ int main(int argc, char *argv[])
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
-	viewer.addEventHandler(new KeyPressedHandler(consumer));
+    viewer.addEventHandler(new KeyPressedHandler(consumer));
     viewer.setSceneData(root_node);
 
-    viewer.setUpViewInWindow(50, 50, 1024, 768);
+    viewer.setUpViewInWindow(50, 50, width, height);
     viewer.realize();
   
-    viewer.setCameraManipulator(new OrthoTextureManipulator(640, 480));
+    viewer.setCameraManipulator(new OrthoTextureManipulator(width, height));
     
     while(!viewer.done())
     {

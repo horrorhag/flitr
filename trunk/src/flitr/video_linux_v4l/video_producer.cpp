@@ -20,116 +20,162 @@
 
 #include <flitr/video_producer.h>
 
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
+#define IPF_USE_SWSCALE 1
+extern "C" {
+#if defined IPF_USE_SWSCALE
+# include <libavformat/avformat.h>
+# include <libswscale/swscale.h>
+#else
+# include <avformat.h>
+#endif
+}
+
+#undef PixelFormat
+
+// V4L stuff
 #include <fcntl.h>
 #include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <linux/types.h>
-#include <linux/videodev.h>
-#include "ccvt.h"
-#ifdef USE_EYETOY
-#include "jpegtorgb.h"
-#endif
+#include <errno.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/mman.h>
+#include <sys/ioctl.h>
+#include <asm/types.h>
+#include <linux/videodev2.h>
 
+#include <flitr/ffmpeg_utils.h>
+#include <flitr/image_format.h>
+#include <flitr/image_producer.h>
+#include <flitr/log_message.h>
+#include <flitr/high_resolution_time.h>
+
+using std::tr1::shared_ptr;
 using namespace flitr;
+
+#define CLEAR(x) memset (&(x), 0, sizeof (x))
+
 
 namespace flitr
 {
+struct vc_buffer {
+    void * start;
+    size_t length;
+};
+
 struct VideoParam
 {
-  //device controls
-    char                dev[256];
-    int                 channel;
-    int                 width;
-    int                 height;
-    int                 palette;
-  //image controls
-    double              brightness;
-    double              contrast;
-    double              saturation;
-    double              hue;
-    double              whiteness;
+    flitr::ImageFormat::PixelFormat OutputPixelFormat_;
+    AVPixelFormat InputFFmpegPixelFormat_;
+    AVPixelFormat FinalFFmpegPixelFormat_;
 
-  //options controls
-    int                 mode;
+    std::string DeviceFile_;
+    int DeviceFD_;
+    int32_t DeviceWidth_;
+    int32_t DeviceHeight_;
+    int32_t DeviceChannel_;
+    struct vc_buffer *DeviceBuffers_;
+    int DeviceNumBuffers_;
 
-    int                 debug;
+    /// The frame as received from the device.
+    AVFrame* InputV42LFrame_;
+    
+    /// The frame in the format the user requested.
+    AVFrame* FinalFrame_;
+    
+    /// Convert from the input format to the final.
+    struct SwsContext *ConvertInToFinalCtx_;
 
-    int                 fd;
-    int                 video_cont_num;
-    ARUint8             *map;
-    ARUint8             *videoBuffer;
-    struct video_mbuf   vm;
-    struct video_mmap   vmm;
+    uint32_t buffer_size_;
 };
 }
 
 namespace
 {
-    const int MAXCHANNEL = 10;
     static flitr::VideoParam* gVid = 0;
+
     const std::string DEFAULT_VIDEO_DEVICE = "/dev/video0";
-    const int DEFAULT_VIDEO_WIDTH = 640;
-    const int DEFAULT_VIDEO_HEIGHT = 480;
-    const int DEFAULT_VIDEO_CHANNEL= 1;
-    const int DEFAULT_VIDEO_MODE= VIDEO_MODE_NTSC;
+    const uint32_t DEFAULT_BUFFER_SIZE = FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS;
+    const int32_t DEFAULT_CHANNEL = -1;
 }
 
-VideoParam* VideoOpen( char *config_in );
-int VideoClose( void );
-int VideoCapStart( VideoParam *vid );
-int VideoCapStop( VideoParam *vid );
-int VideoCapNext( VideoParam *vid );
-unsigned char *VideoGetImage( VideoParam *vid );
+int xioctl(int fd, int request, void * arg);
+bool open_device();
+bool init_device();
+bool vc_init_mmap();
+bool start_capture();
 
 /**************************************************************
 * Thread
 ***************************************************************/
 void VideoProducer::VideoProducerThread::run()
 {
-    std::vector<Image**> aImages;
-    
     while (!shouldExit)
     {
-        // grab a vide frame
-        unsigned char* pixelBuffer;
-        if( (pixelBuffer = VideoGetImage(gVid)) == NULL ) 
-        {
-            Thread::microSleep(1000);
+        struct v4l2_buffer buf;
+        CLEAR(buf);
+        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+        
+        if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_DQBUF, &buf)) {
+            switch (errno) {
+              case EAGAIN:
+                continue;
+              case EIO:
+                /* Could ignore EIO, see spec. */
+                /* fall through */
+              default:
+                continue;
+            }
+        }
+
+        // we have a frame
+        
+        // create an input picture from the buffer
+        avpicture_fill((AVPicture *)gVid->InputV42LFrame_, 
+                       (uint8_t *)gVid->DeviceBuffers_[buf.index].start, 
+                       gVid->InputFFmpegPixelFormat_,
+                       gVid->DeviceWidth_,
+                       gVid->DeviceHeight_);
+        
+        // convert to the final format
+        // \todo deinterlace here
+        
+        // Get address of memory to write image to.
+        std::vector<Image**> imvec = producer->reserveWriteSlot(); 
+        if (imvec.size() == 0) {
+            // no storage available
+            logMessage(LOG_CRITICAL) 
+                << ": dropping frames - no space in buffer\n";
+            xioctl (gVid->DeviceFD_, VIDIOC_QBUF, &buf);
             continue;
         }
 
-        std::vector<uint8_t> rgb(producer->ImageFormat_.back().getBytesPerImage());
-        uint8_t* buffer_vid = static_cast<uint8_t*>(pixelBuffer);
-        std::copy(buffer_vid, buffer_vid + producer->ImageFormat_.back().getBytesPerImage(), rgb.begin());
+        Image& out_image = *(*(imvec[0]));
+        // Point final frame to sharedImageBuffer data
+        gVid->FinalFrame_->data[0] = out_image.data();
 
-        // wait until there is space in the write buffer so that we can get a valid image pointer
-        do
-        {
-            aImages = producer->reserveWriteSlot();
-            if (aImages.size() != 1)
-            {
-                Thread::microSleep(1000);
-            }
-        } while ((aImages.size() != 1) && !shouldExit);
+        //Convert image to final format
+        sws_scale(gVid->ConvertInToFinalCtx_, 
+                  gVid->InputV42LFrame_->data, gVid->InputV42LFrame_->linesize, 0, gVid->DeviceHeight_,
+                  gVid->FinalFrame_->data, gVid->FinalFrame_->linesize);
 
-        if (!shouldExit)
-        {
-            Image* img = *(aImages[0]);
-            uint8_t* buffer = img->data();
-            std::copy(rgb.begin(), rgb.end(), buffer);
-        }
+        // timestamp
+         //if (CreateMetadataFunction_) {
+            //out_image.setMetadata(CreateMetadataFunction_());
+        //} else {
+            ////shared_ptr<DefaultMetadata> meta(new DefaultMetadata());
+            ////meta->PCTimeStamp_ = currentTimeNanoSec();
+            ////out_image.setMetadata(meta);
+        //}
 
+        // Notify that new data has been written to buffer.
         producer->releaseWriteSlot();
 
-        Thread::microSleep(1000);
-
-        VideoCapNext(gVid);
+        // enqueue again
+        if (-1 == xioctl (gVid->DeviceFD_, VIDIOC_QBUF, &buf)) {
+            continue;
+        }  
     }   
 }
 
@@ -137,353 +183,319 @@ void VideoProducer::VideoProducerThread::run()
 * Producer
 ***************************************************************/
 
-VideoProducer::VideoProducer()
-    : thread(0)
-    , imageSlots(10)
+VideoProducer::VideoProducer(flitr::ImageFormat::PixelFormat pixelFormat /*= flitr::ImageFormat::FLITR_PIX_FMT_Y_8*/, unsigned int imageSlots /*= FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS*/, const std::string& deviceName /*= ""*/, int frameWidth /*= 1280*/, int frameHeight /*= 720*/)
+    : thread_(0)
+    , imageSlots_(imageSlots)
+    , pixelFormat_(pixelFormat)
+    , config_()
 {
+    av_register_all();
+    // \todo match v4l and ffmpeg pix formats
+
+    gVid = new flitr::VideoParam;
+
+    gVid->InputFFmpegPixelFormat_ = PIX_FMT_YUYV422;
+    gVid->FinalFFmpegPixelFormat_ = PixelFormatFLITrToFFmpeg(pixelFormat_);
+    gVid->OutputPixelFormat_ = pixelFormat_;
+    gVid->DeviceFile_ = DEFAULT_VIDEO_DEVICE;
+    if (!deviceName.empty())
+    {
+        gVid->DeviceFile_ = deviceName;
+    }
+    gVid->DeviceWidth_ = frameWidth;
+    gVid->DeviceHeight_ = frameHeight;
+    gVid->DeviceChannel_ = DEFAULT_CHANNEL;
+    gVid->buffer_size_ = DEFAULT_BUFFER_SIZE;
+}
+
+VideoProducer::VideoProducer(const std::string& config, flitr::ImageFormat::PixelFormat pixelFormat /*= flitr::ImageFormat::FLITR_PIX_FMT_Y_8*/, unsigned int imageSlots /*= FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS*/)
+    : thread_(0)
+    , imageSlots_(imageSlots)
+    , pixelFormat_(pixelFormat)
+    , config_()
+{
+    assert(0);
+    // not implemented
 }
 
 VideoProducer::~VideoProducer()
 {
-    VideoCapStop(gVid);
-    VideoClose();
+    thread_->setExit();
+    thread_->join();
+
+    delete gVid;
+    gVid = 0;
 }
 
 bool VideoProducer::init()
 {
-    gVid = VideoOpen();
+    if (!open_device()) {
+        return false;
+    }
+    if (!init_device()) {
+        return false;
+    }
 
-    VideoCapStart(gVid);
+    int w(gVid->DeviceWidth_);
+    int h(gVid->DeviceHeight_);
+
+    // now we know the format
+    ImageFormat_.push_back(ImageFormat(w, h, gVid->OutputPixelFormat_));
+
+    // Allocate storage
+    SharedImageBuffer_ = std::tr1::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, gVid->buffer_size_, 1));
+    SharedImageBuffer_->initWithStorage();
+
+    gVid->InputV42LFrame_ = allocFFmpegFrame(gVid->InputFFmpegPixelFormat_, w, h);
+    gVid->FinalFrame_ = allocFFmpegFrame(gVid->FinalFFmpegPixelFormat_, w, h);
+    if (!gVid->FinalFrame_ || !gVid->InputV42LFrame_) {
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": cannot allocate memory for video storage buffers.\n";
+        return false;
+    }
+    
+    gVid->ConvertInToFinalCtx_ = sws_getContext(
+        ImageFormat_[0].getWidth(), ImageFormat_[0].getHeight(), gVid->InputFFmpegPixelFormat_, 
+        ImageFormat_[0].getWidth(), ImageFormat_[0].getHeight(), gVid->FinalFFmpegPixelFormat_,
+        SWS_BILINEAR, NULL, NULL, NULL);
+
+    if (!start_capture())
+    {
+        return false;
+    }
+    // start thread
+    thread_ = new VideoProducerThread(this);
+    thread_->startThread();
 
     return true;
 }
 
-VideoParam* VideoOpen( char *config_in )
+int xioctl(int fd, int request, void * arg)
 {
-    VideoParam*				  vid;
-    struct video_capability   vd;
-    struct video_channel      vc[MAXCHANNEL];
-    struct video_picture      vp;
-    char                      *config, *a, line[256];
-    int                       i;
-    int                       adjust = 1;
+    int r;
+    do {
+        r = ioctl (fd, request, arg);
+    } while (-1 == r && EINTR == errno);
+    
+    return r;
+}
 
+bool open_device()
+{
+    struct v4l2_capability cap;
 
-    /* If no config string is supplied, we should use the environment variable, otherwise set a sane default */
-    if (!config_in || !(config_in[0])) {
-        config = NULL;
-        printf ("No video config string supplied, using defaults.\n");
-        
-    } else {
-        config = config_in;
-        printf ("Using supplied video config string [%s].\n", config_in);
+    gVid->DeviceFD_ = open(gVid->DeviceFile_.c_str(), O_RDWR, 0);
+    //DeviceFD_ = open(dev_name, O_RDWR | O_NONBLOCK, 0);
+
+    if (-1 == gVid->DeviceFD_) {
+        logMessage(LOG_CRITICAL) 
+            << "Cannot open video device " 
+            << gVid->DeviceFile_
+            << ": error " << errno << ", "
+            << std::string(strerror(errno)) << "\n";
+        return false;
     }
     
-    vid = new flitr::VideoParam;
-    strcpy( vid->dev, DEFAULT_VIDEO_DEVICE );
-    vid->channel    = DEFAULT_VIDEO_CHANNEL; 
-    vid->width      = DEFAULT_VIDEO_WIDTH;
-    vid->height     = DEFAULT_VIDEO_HEIGHT;
-    vid->palette = VIDEO_PALETTE_RGB24;
-    vid->contrast   = -1.;
-    vid->brightness = -1.;
-    vid->saturation = -1.;
-    vid->hue        = -1.;
-    vid->whiteness  = -1.;
-    vid->mode       = DEFAULT_VIDEO_MODE;
-    vid->debug      = 0;
-    vid->videoBuffer=NULL;
-
-    vid->fd = open(vid->dev, O_RDWR);// O_RDONLY ?
-    if(vid->fd < 0){
-        printf("video device (%s) open failed\n",vid->dev); 
-        free( vid );
-        return 0;
-    }
-
-    if(ioctl(vid->fd,VIDIOCGCAP,&vd) < 0){
-        printf("ioctl failed\n");
-        free( vid );
-        return 0;
-    }
-
-    if( vid->debug ) {
-        printf("=== debug info ===\n");
-        printf("  vd.name      =   %s\n",vd.name);
-        printf("  vd.channels  =   %d\n",vd.channels);
-        printf("  vd.maxwidth  =   %d\n",vd.maxwidth);
-        printf("  vd.maxheight =   %d\n",vd.maxheight);
-        printf("  vd.minwidth  =   %d\n",vd.minwidth);
-        printf("  vd.minheight =   %d\n",vd.minheight);
-    }
-    
-    /* adjust capture size if needed */
-    if (adjust)
-      {
-    if (vid->width >= vd.maxwidth)
-      vid->width = vd.maxwidth;
-    if (vid->height >= vd.maxheight)
-      vid->height = vd.maxheight;
-    if (vid->debug)
-      printf ("VideoOpen: width/height adjusted to (%d, %d)\n", vid->width, vid->height);
-      }
-    
-    /* check capture size */
-    if(vd.maxwidth  < vid->width  || vid->width  < vd.minwidth ||
-       vd.maxheight < vid->height || vid->height < vd.minheight ) {
-        printf("VideoOpen: width or height oversize \n");
-        free( vid );
-        return 0;
-    }
-    
-    /* adjust channel if needed */
-    if (adjust)
-      {
-    if (vid->channel >= vd.channels)
-      vid->channel = 0;
-    if (vid->debug)
-      printf ("VideoOpen: channel adjusted to 0\n");
-      }
-    
-    /* check channel */
-    if(vid->channel < 0 || vid->channel >= vd.channels){
-        printf("VideoOpen: channel# is not valid. \n");
-        free( vid );
-        return 0;
-    }
-
-    if( vid->debug ) {
-        printf("==== capture device channel info ===\n");
-    }
-
-    for(i = 0;i < vd.channels && i < MAXCHANNEL; i++){
-        vc[i].channel = i;
-        if(ioctl(vid->fd,VIDIOCGCHAN,&vc[i]) < 0){
-            printf("error: acquireing channel(%d) info\n",i);
-            free( vid );
-            return 0;
-        }
-
-        if( vid->debug ) {
-            printf("    channel = %d\n",  vc[i].channel);
-            printf("       name = %s\n",  vc[i].name);
-            printf("     tuners = %d",    vc[i].tuners);
-
-            printf("       flag = 0x%08x",vc[i].flags);
-            if(vc[i].flags & VIDEO_VC_TUNER) 
-                printf(" TUNER");
-            if(vc[i].flags & VIDEO_VC_AUDIO) 
-                printf(" AUDIO");
-            printf("\n");
-
-            printf("     vc[%d].type = 0x%08x", i, vc[i].type);
-            if(vc[i].type & VIDEO_TYPE_TV) 
-                printf(" TV");
-            if(vc[i].type & VIDEO_TYPE_CAMERA) 
-                printf(" CAMERA");
-            printf("\n");       
+    if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_QUERYCAP, &cap)) {
+        if (EINVAL == errno) {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": is not a V4L2 device\n";
+            close(gVid->DeviceFD_);
+            return false;
+        } else {
+            close(gVid->DeviceFD_);
+            return false;
         }
     }
 
-    /* select channel */
-    vc[vid->channel].norm = vid->mode;       /* 0: PAL 1: NTSC 2:SECAM 3:AUTO */
-    if(ioctl(vid->fd, VIDIOCSCHAN, &vc[vid->channel]) < 0){
-        printf("error: selecting channel %d\n", vid->channel);
-        free( vid );
-        return 0;
+    if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": is not a capture device\n";
+        close(gVid->DeviceFD_);
+        return false;
+    }
+    
+    if (!(cap.capabilities & V4L2_CAP_STREAMING)) {
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": does not support streaming I/O\n";
+        close(gVid->DeviceFD_);
+        return false;
     }
 
-    if(ioctl(vid->fd, VIDIOCGPICT, &vp)) {
-        printf("error: getting palette\n");
-       free( vid );
-       return 0;
-    }
+    return true;
+}
 
-    if( vid->debug ) {
-        printf("=== debug info ===\n");
-        printf("  vp.brightness=   %d\n",vp.brightness);
-        printf("  vp.hue       =   %d\n",vp.hue);
-        printf("  vp.colour    =   %d\n",vp.colour);
-        printf("  vp.contrast  =   %d\n",vp.contrast);
-        printf("  vp.whiteness =   %d\n",vp.whiteness);
-        printf("  vp.depth     =   %d\n",vp.depth);
-        printf("  vp.palette   =   %d\n",vp.palette);
-    }
-
-    /* set video picture */
-    if ((vid->brightness+1.)>0.001)
-    vp.brightness   = 32767 * 2.0 *vid->brightness;
-    if ((vid->contrast+1.)>0.001)
-    vp.contrast   = 32767 * 2.0 *vid->contrast;
-    if ((vid->hue+1.)>0.001)
-    vp.hue   = 32767 * 2.0 *vid->hue;
-    if ((vid->whiteness+1.)>0.001)
-    vp.whiteness   = 32767 * 2.0 *vid->whiteness;
-    if ((vid->saturation+1.)>0.001)
-    vp.colour   = 32767 * 2.0 *vid->saturation;
-    vp.depth      = 24;    
-    vp.palette    = vid->palette;
-
-    if(ioctl(vid->fd, VIDIOCSPICT, &vp)) {
-        printf("error: setting configuration !! bad palette mode..\n");
-        free( vid );
-        return 0;
-    }
-    if (vid->palette==VIDEO_PALETTE_YUV420P)
-        arMalloc( vid->videoBuffer, ARUint8, vid->width*vid->height*3 );
-
-    if( vid->debug ) { 
-        if(ioctl(vid->fd, VIDIOCGPICT, &vp)) {
-            printf("error: getting palette\n");
-            free( vid );
-            return 0;
+bool init_device()
+{
+    struct v4l2_format cap_fmt;
+    CLEAR(cap_fmt);
+    cap_fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (gVid->DeviceWidth_ == -1 || gVid->DeviceHeight_ == -1) {
+        // query current settings
+        if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_G_FMT, &cap_fmt))
+        {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": failure in VIDIOC_G_FMT\n";
+            close(gVid->DeviceFD_);
+            return false;
         }
-        printf("=== debug info ===\n");
-        printf("  vp.brightness=   %d\n",vp.brightness);
-        printf("  vp.hue       =   %d\n",vp.hue);
-        printf("  vp.colour    =   %d\n",vp.colour);
-        printf("  vp.contrast  =   %d\n",vp.contrast);
-        printf("  vp.whiteness =   %d\n",vp.whiteness);
-        printf("  vp.depth     =   %d\n",vp.depth);
-        printf("  vp.palette   =   %d\n",vp.palette);
+        gVid->DeviceWidth_ = cap_fmt.fmt.pix.width;
+        gVid->DeviceHeight_ = cap_fmt.fmt.pix.height;
     }
 
-    /* get mmap info */
-    if(ioctl(vid->fd,VIDIOCGMBUF,&vid->vm) < 0){
-        printf("error: videocgmbuf\n");
-        free( vid );
-        return 0;
-    }
+    // Set image format.
+    CLEAR(cap_fmt);
+    cap_fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    cap_fmt.fmt.pix.width = gVid->DeviceWidth_;
+    cap_fmt.fmt.pix.height = gVid->DeviceHeight_;
+    // \todo query formats
+    cap_fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
 
-    if( vid->debug ) {
-        printf("===== Image Buffer Info =====\n");
-        printf("   size   =  %d[bytes]\n", vid->vm.size);
-        printf("   frames =  %d\n", vid->vm.frames);
-    }
-    if(vid->vm.frames < 2){
-        printf("this device can not be supported by libARvideo.\n");
-        printf("(vm.frames < 2)\n");
-        free( vid );
-        return 0;
-    }
-
-
-    /* get memory mapped io */
-    if((vid->map = (ARUint8 *)mmap(0, vid->vm.size, PROT_READ|PROT_WRITE, MAP_SHARED, vid->fd, 0)) < 0){
-        printf("error: mmap\n");
-        free( vid );
-        return 0;
-    }
-
-    /* setup for vmm */ 
-    vid->vmm.frame  = 0;
-    vid->vmm.width  = vid->width;
-    vid->vmm.height = vid->height;
-    vid->vmm.format= vid->palette;
-
-    vid->video_cont_num = -1;
-
-#ifdef USE_EYETOY
-    JPEGToRGBInit(vid->width,vid->height);
-#endif
-    return vid;
-}
-
-int VideoClose( void )
-{
-    int result;
-    
-    if( gVid == NULL ) return -1;
-
-    result = ar2VideoClose(gVid);
-    gVid = NULL;
-    return (result);
-}
-
-int VideoCapStart( VideoParam *vid )
-{
-    if(vid->video_cont_num >= 0){
-        printf("arVideoCapStart has already been called.\n");
-        return -1;
-    }
-
-    vid->video_cont_num = 0;
-    vid->vmm.frame      = vid->video_cont_num;
-    if(ioctl(vid->fd, VIDIOCMCAPTURE, &vid->vmm) < 0) {
-        return -1;
-    }
-    vid->vmm.frame = 1 - vid->vmm.frame;
-    if( ioctl(vid->fd, VIDIOCMCAPTURE, &vid->vmm) < 0) {
-        return -1;
-    }
-
-    return 0;
-}
-
-int VideoCapStop( VideoParam *vid )
-{
-    if(vid->video_cont_num < 0){
-        printf("arVideoCapStart has never been called.\n");
-        return -1;
-    }
-    if(ioctl(vid->fd, VIDIOCSYNC, &vid->video_cont_num) < 0){
-        printf("error: videosync\n");
-        return -1;
-    }
-    vid->video_cont_num = -1;
-
-    return 0;
-}
-
-int VideoCapNext( VideoParam *vid )
-{
-    if(vid->video_cont_num < 0){
-        printf("arVideoCapStart has never been called.\n");
-        return -1;
-    }
-
-    vid->vmm.frame = 1 - vid->vmm.frame;
-    ioctl(vid->fd, VIDIOCMCAPTURE, &vid->vmm);
-
-    return 0;
-}
-
-unsigned char *VideoGetImage( VideoParam *vid )
-{
-    ARUint8 *buf;
-
-    if(vid->video_cont_num < 0){
-        printf("arVideoCapStart has never been called.\n");
-        return NULL;
-    }
-
-    if(ioctl(vid->fd, VIDIOCSYNC, &vid->video_cont_num) < 0){
-        printf("error: videosync\n");
-        return NULL;
-    }
-    vid->video_cont_num = 1 - vid->video_cont_num;
-
-    if(vid->video_cont_num == 0)
-        buf=(vid->map + vid->vm.offsets[1]); 
-    else
-        buf=(vid->map + vid->vm.offsets[0]);
-    
-    if(vid->palette == VIDEO_PALETTE_YUV420P)
+    if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_S_FMT, &cap_fmt))
     {
-
-        /* ccvt_420p_bgr24(vid->width, vid->height, buf, buf+(vid->width*vid->height),
-                buf+(vid->width*vid->height)+(vid->width*vid->height)/4,
-                vid->videoBuffer);
-        */
-
-        ccvt_420p_bgr24(vid->width, vid->height, buf, vid->videoBuffer);
-
-        return vid->videoBuffer;
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": failure in VIDIOC_S_FMT\n";
+        close(gVid->DeviceFD_);
+        return false;
     }
-#ifdef USE_EYETOY
-    buf=JPEGToRGB(buf,vid->width, vid->height);
-#endif
 
-    return buf;
+    // use the dimensions as received back
+    gVid->DeviceWidth_ = cap_fmt.fmt.pix.width;
+    gVid->DeviceHeight_ = cap_fmt.fmt.pix.height;
 
+    // set channel
+    if (gVid->DeviceChannel_ != -1) {
+        if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_S_INPUT, &gVid->DeviceChannel_)) {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": cannot set channel\n";
+            close(gVid->DeviceFD_);
+            return false;
+        }
+        v4l2_std_id pal_std = V4L2_STD_PAL;
+        if(-1 == xioctl(gVid->DeviceFD_, VIDIOC_S_STD, &pal_std)) {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": cannot set video standard to PAL\n";
+            close(gVid->DeviceFD_);
+            return false;
+        }
+    }
+    
+    //initlaize memory map.
+    if (!vc_init_mmap()) {
+        close(gVid->DeviceFD_);
+        return false;
+    }
+
+    return true;
+}
+
+bool vc_init_mmap()
+{
+    struct v4l2_requestbuffers req;
+    CLEAR (req);
+    gVid->DeviceNumBuffers_ = 4;
+    req.count = gVid->DeviceNumBuffers_;
+    req.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    req.memory = V4L2_MEMORY_MMAP;
+
+    if (-1 == xioctl (gVid->DeviceFD_, VIDIOC_REQBUFS, &req)) {
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": failure in VIDIOC_REQBUFS\n";
+        close(gVid->DeviceFD_);
+        return false;
+    }
+    
+    //printf("req count = %d\n", req.count);
+    if (req.count < 2) {
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": insufficient buffer memory\n";
+        close(gVid->DeviceFD_);
+        return false;
+    }
+
+    gVid->DeviceNumBuffers_ = req.count;
+
+    //fprintf(stderr,"sizeof %d", sizeof(*DeviceBuffers_));
+
+    gVid->DeviceBuffers_ = (vc_buffer *)calloc(req.count, sizeof(struct vc_buffer));
+    if (!gVid->DeviceBuffers_) {
+        logMessage(LOG_CRITICAL)
+            << gVid->DeviceFile_
+            << ": insufficient buffer memory\n";
+        return false;
+    }
+
+    for (int n = 0; n < (int)(req.count); n++) {
+        struct v4l2_buffer buf;
+        CLEAR(buf);
+        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index = n;
+    
+        if (-1 == xioctl (gVid->DeviceFD_, VIDIOC_QUERYBUF, &buf)) {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": failure in VIDIOC_QUERYBUF\n";
+            close(gVid->DeviceFD_);
+            return false;
+        }
+        
+        gVid->DeviceBuffers_[n].length = buf.length;
+        gVid->DeviceBuffers_[n].start = mmap (NULL /* start anywhere */,
+                                        buf.length,
+                                        PROT_READ | PROT_WRITE /* required */,
+                                        MAP_SHARED /* recommended */,
+                                        gVid->DeviceFD_, buf.m.offset);
+        
+        if (MAP_FAILED == gVid->DeviceBuffers_[n].start) {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": failure in mmap\n";
+            close(gVid->DeviceFD_);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool start_capture()
+{
+    
+    for (int n = 0; n < gVid->DeviceNumBuffers_; n++) {
+        struct v4l2_buffer buf;
+        CLEAR (buf);
+        buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        buf.memory = V4L2_MEMORY_MMAP;
+        buf.index = n;
+        
+        if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_QBUF, &buf)) {
+            logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": failure in VIDIOC_QBUF\n";
+            return false;
+        }
+    }
+
+    enum v4l2_buf_type type;
+    type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+    if (-1 == xioctl(gVid->DeviceFD_, VIDIOC_STREAMON, &type)) {
+        logMessage(LOG_CRITICAL)
+                << gVid->DeviceFile_
+                << ": failure in VIDIOC_STREAMON\n";
+            return false;
+    }
+
+    //fprintf(stderr,"started\n");
+    return true;
 }
