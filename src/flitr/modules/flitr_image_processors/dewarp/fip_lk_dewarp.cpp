@@ -23,6 +23,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <cmath>
+
 
 
 using namespace flitr;
@@ -434,8 +436,8 @@ bool FIPLKDewarp::trigger()
                                             //=== calc bilinear filter fractions ===//
                                             const float floor_hx=floorf(hx);
                                             const float floor_hy=floorf(hy);
-                                            const ptrdiff_t int_hx=lroundf(floor_hx);
-                                            const ptrdiff_t int_hy=lroundf(floor_hy);
+                                            const ptrdiff_t int_hx=std::lroundf(floor_hx);
+                                            const ptrdiff_t int_hy=std::lroundf(floor_hy);
                                             const float frac_hx=hx - floor_hx;
                                             const float frac_hy=hy - floor_hy;
                                             //=== ===//
@@ -655,8 +657,8 @@ bool FIPLKDewarp::trigger()
                                 
                                 const float floor_hx=floorf(hx);
                                 const float floor_hy=floorf(hy);
-                                const ptrdiff_t int_hx=lroundf(floor_hx);
-                                const ptrdiff_t int_hy=lroundf(floor_hy);
+                                const ptrdiff_t int_hx=std::lroundf(floor_hx);
+                                const ptrdiff_t int_hy=std::lroundf(floor_hy);
                                 
                                 if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
                                 {
