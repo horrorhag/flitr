@@ -125,6 +125,7 @@ bool FIPGradientXImage::trigger()
         return true;
     }
     
+    OpenThreads::Thread::YieldCurrentThread();
     return false;
 }
 

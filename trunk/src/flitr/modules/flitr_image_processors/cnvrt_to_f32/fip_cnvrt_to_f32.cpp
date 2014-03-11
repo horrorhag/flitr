@@ -104,6 +104,7 @@ bool FIPConvertToF32::trigger()
         return true;
     }
     
+    OpenThreads::Thread::YieldCurrentThread();
     return false;
 }
 

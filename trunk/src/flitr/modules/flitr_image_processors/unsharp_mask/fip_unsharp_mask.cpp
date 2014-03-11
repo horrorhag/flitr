@@ -180,6 +180,7 @@ bool FIPUnsharpMask::trigger()
         return true;
     }
     
+    OpenThreads::Thread::YieldCurrentThread();
     return false;
 }
 
