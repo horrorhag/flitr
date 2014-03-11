@@ -108,7 +108,6 @@ bool FIPConvertToM8::trigger()
         return true;
     }
     
-    OpenThreads::Thread::YieldCurrentThread();
     return false;
 }
 

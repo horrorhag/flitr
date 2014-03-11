@@ -36,9 +36,7 @@ public:
                 Producer_->trigger();
                 triggerred = true;
             }
-            if (!triggerred) {
-                Thread::microSleep(5000);
-            }
+            Thread::microSleep(5000);
         }
     }
     
@@ -78,7 +76,7 @@ int main(int argc, char *argv[])
     }
     cnvrtToF32->startTriggerThread();
     
-
+    
     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToF32, 1, 5, 2));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
@@ -110,7 +108,7 @@ int main(int argc, char *argv[])
     
     
     /*
-    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
+     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
      if (!mffc->init()) {
      std::cerr << "Could not init FFmpeg consumer\n";
      exit(-1);
@@ -118,7 +116,7 @@ int main(int argc, char *argv[])
      std::stringstream filenameStringStream;
      filenameStringStream << argv[1] << "_improved";
      mffc->openFiles(filenameStringStream.str());
-    */
+     */
     
     
     osg::Group *root_node = new osg::Group;
@@ -182,10 +180,10 @@ int main(int argc, char *argv[])
             viewer.frame();
             
             /*
-            if (numFrames==15)
-            {
-                mffc->startWriting();
-            }
+             if (numFrames==15)
+             {
+             mffc->startWriting();
+             }
              */
             
             numFrames++;
@@ -194,8 +192,8 @@ int main(int argc, char *argv[])
         OpenThreads::Thread::microSleep(1000);
     }
     
-//     mffc->stopWriting();
-//     mffc->closeFiles();
+    //     mffc->stopWriting();
+    //     mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD

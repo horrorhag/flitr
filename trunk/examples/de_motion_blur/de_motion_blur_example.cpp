@@ -32,9 +32,8 @@ public:
                 Producer_->trigger();
                 triggerred = true;
             }
-            if (!triggerred) {
-                Thread::microSleep(5000);
-            }
+            
+            Thread::microSleep(5000);
         }
     }
 
