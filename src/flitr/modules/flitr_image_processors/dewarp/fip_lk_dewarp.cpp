@@ -110,8 +110,8 @@ bool FIPLKDewarp::init()
         //const ptrdiff_t croppedHeight=1 << ((int)log2f(height));
         //=== ===
         
-        scratchData_=new float[width*height];
-        memset(scratchData_, 0, width*height*sizeof(float));
+        scratchData_=new float[(width*height)<<1];
+        memset(scratchData_, 0, ((width*height)<<1)*sizeof(float));
         
         finalImgData_=new float[croppedWidth*croppedHeight];
         memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
@@ -697,7 +697,6 @@ bool FIPLKDewarp::trigger()
         return true;
     }
     
-    OpenThreads::Thread::YieldCurrentThread();
     return false;
 }
 

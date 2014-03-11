@@ -31,7 +31,8 @@ void ImageProcessorThread::run()
         if (!IP_->trigger())//The processor work happens in IP_->trigger()!!!
         {
             // wait a while for producers and consumers if trigger() method didn't do anything...
-            Thread::microSleep(1000);
+            //Thread::microSleep(1000);
+            Thread::YieldCurrentThread();
         }
 
         // check for exit

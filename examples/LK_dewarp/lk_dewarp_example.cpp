@@ -46,9 +46,7 @@ public:
                 Producer_->trigger();
                 triggerred = true;
             }
-            if (!triggerred) {
-                Thread::microSleep(5000);
-            }
+            Thread::microSleep(5000);
         }
     }
     
@@ -255,27 +253,33 @@ int main(int argc, char *argv[])
             
             numFrames++;
             
-            if ((numFrames%100)==0)
-            {
-                lkdewarp->saveHVectVariance("dewarp.f32");
-            }
             
-            if (numFrames>10)
-            {
-                float dhx=0.0f,dhy=0.0f;
-                lkdewarp->getLatestHVect(dhx, dhy);
-                
-                hx*=0.99f;
-                hy*=0.99f;
-                
-                hx+=dhx;
-                hy+=dhy;
-                
-                pov->clearVertices();
-                pov->addVertex(osg::Vec3d(-hx,
-                                          hy+osgc->getOutputTexture()->getTextureHeight()*0.5f, +0.1f));
-                
-            }
+            //=== ===//
+            /*
+             if ((numFrames%100)==0)
+             {
+             lkdewarp->saveHVectVariance("dewarp.f32");
+             }
+             
+             if (numFrames>10)
+             {
+             float dhx=0.0f,dhy=0.0f;
+             lkdewarp->getLatestHVect(dhx, dhy);
+             
+             hx*=0.99f;
+             hy*=0.99f;
+             
+             hx+=dhx;
+             hy+=dhy;
+             
+             pov->clearVertices();
+             pov->addVertex(osg::Vec3d(-hx,
+             hy+osgc->getOutputTexture()->getTextureHeight()*0.5f, +0.1f));
+             
+             }
+             */
+            //=== ===//
+            
         }
         
         OpenThreads::Thread::microSleep(1000);
