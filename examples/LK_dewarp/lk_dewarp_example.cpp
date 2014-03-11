@@ -7,6 +7,7 @@
 #include <osg/io_utils>
 
 #include <flitr/modules/geometry_overlays/points_overlay.h>
+#include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h>
@@ -87,23 +88,35 @@ int main(int argc, char *argv[])
     }
     cnvrtToF32->startTriggerThread();
     
-    /*
-    shared_ptr<FIPGaussianFilter> gaussianFilter(new FIPGaussianFilter(*cnvrtToF32, 1, 2));
-    if (!gaussianFilter->init()) {
-        std::cerr << "Could not initialise the gaussianFilter processor.\n";
+    shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
+                                         ip->getFormat().getWidth()/4,
+                                         ip->getFormat().getHeight()/4,
+                                         ip->getFormat().getWidth()/2,
+                                         ip->getFormat().getHeight()/2,
+                                         2));
+    if (!crop->init()) {
+        std::cerr << "Could not initialise the crop processor.\n";
         exit(-1);
     }
-    gaussianFilter->startTriggerThread();
-    */
+    crop->startTriggerThread();
     
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*cnvrtToF32, 1, 2));
+    /*
+     shared_ptr<FIPGaussianFilter> gaussianFilter(new FIPGaussianFilter(*crop, 1, 2));
+     if (!gaussianFilter->init()) {
+     std::cerr << "Could not initialise the gaussianFilter processor.\n";
+     exit(-1);
+     }
+     gaussianFilter->startTriggerThread();
+     */
+    
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1, false, 0.025f, 2));
     if (!lkdewarp->init()) {
         std::cerr << "Could not initialise the lkdewarp processor.\n";
         exit(-1);
     }
     lkdewarp->startTriggerThread();
-
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 2, 2));
+    
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 1, 2));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
@@ -117,7 +130,7 @@ int main(int argc, char *argv[])
     }
     unsharpMask->startTriggerThread();
     
-    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 1.0f, 2));
+    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 1.25f, 2));
     if (!tonemap->init()) {
         std::cerr << "Could not initialise the tonemap processor.\n";
         exit(-1);
@@ -138,7 +151,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*crop, 1));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
@@ -146,7 +159,7 @@ int main(int argc, char *argv[])
     
     
     /*
-    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
+     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
      if (!mffc->init()) {
      std::cerr << "Could not init FFmpeg consumer\n";
      exit(-1);
@@ -154,7 +167,7 @@ int main(int argc, char *argv[])
      std::stringstream filenameStringStream;
      filenameStringStream << argv[1] << "_improved";
      mffc->openFiles(filenameStringStream.str());
-    */
+     */
     
     
     osg::Group *root_node = new osg::Group;
@@ -163,7 +176,7 @@ int main(int argc, char *argv[])
     root_node->addChild(quad->getRoot().get());
     {
         osg::Matrix translate;
-        translate.makeTranslate(osg::Vec3d(+osgcOrig->getOutputTexture()->getTextureWidth()/2,
+        translate.makeTranslate(osg::Vec3d(osgcOrig->getOutputTexture()->getTextureWidth()/2,
                                            0.0,
                                            0.0));
         quad->setTransform(translate);
@@ -208,7 +221,7 @@ int main(int argc, char *argv[])
     }
     
     size_t numFrames=0;
-    
+    float hx=0.0f,hy=0.0f;
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
         
@@ -222,11 +235,6 @@ int main(int argc, char *argv[])
         
         if ((osgc->getNext())||(osgcOrig->getNext()))
         {
-            /*
-             pov->clearVertices();
-             pov->addVertex(osg::Vec3d(-dewarp->getRigidHx(2)*8.0+osgc->getOutputTexture()->getTextureWidth()*0.5,
-             dewarp->getRigidHy(2)*8.0+osgc->getOutputTexture()->getTextureHeight()*0.5, +0.1));
-             */
             
             /*
              osg::Matrix translate;
@@ -239,20 +247,42 @@ int main(int argc, char *argv[])
             viewer.frame();
             
             /*
-            if (numFrames==15)
-            {
-                mffc->startWriting();
-            }
+             if (numFrames==15)
+             {
+             mffc->startWriting();
+             }
              */
             
             numFrames++;
+            
+            if ((numFrames%100)==0)
+            {
+                lkdewarp->saveHVectVariance("dewarp.f32");
+            }
+            
+            if (numFrames>10)
+            {
+                float dhx=0.0f,dhy=0.0f;
+                lkdewarp->getLatestHVect(dhx, dhy);
+                
+                hx*=0.99f;
+                hy*=0.99f;
+                
+                hx+=dhx;
+                hy+=dhy;
+                
+                pov->clearVertices();
+                pov->addVertex(osg::Vec3d(-hx,
+                                          hy+osgc->getOutputTexture()->getTextureHeight()*0.5f, +0.1f));
+                
+            }
         }
         
         OpenThreads::Thread::microSleep(1000);
     }
     
-//     mffc->stopWriting();
-//     mffc->closeFiles();
+    //     mffc->stopWriting();
+    //     mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD

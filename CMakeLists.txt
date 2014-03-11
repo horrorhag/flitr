@@ -173,10 +173,10 @@ SET(LIB_SOURCES
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
+  src/flitr/modules/flitr_image_processors/crop/fip_crop.cpp
   src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
   src/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.cpp
   src/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.cpp
-  src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
   src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
@@ -271,6 +271,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h
   include/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h
+  include/flitr/modules/flitr_image_processors/crop/fip_crop.h
   include/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h

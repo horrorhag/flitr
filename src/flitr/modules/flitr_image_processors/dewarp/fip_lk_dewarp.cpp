@@ -31,17 +31,23 @@ using namespace flitr;
 using std::tr1::shared_ptr;
 
 FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                     uint32_t buffer_size) :
+                         const bool useLevelZero,
+                         const float refImageFilter,
+                         uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+useLevelZero_(useLevelZero),
+refImageFilter_(refImageFilter),
 frameNum_(0),
 numLevels_(4),
 scratchData_(0),
 //finalHxData_(0),
 //finalHyData_(0),
-finalImgData_(0)
-//m2Data_(0),
-//avrgData_(0),
-//n_(0.0)
+finalImgData_(0),
+latestHx_(0.0f),
+latestHy_(0.0f),
+m2Data_(0),
+avrgData_(0),
+n_(0.0)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i) {
@@ -57,8 +63,8 @@ FIPLKDewarp::~FIPLKDewarp()
     //delete [] finalHyData_;
     delete [] finalImgData_;
     
-    //delete [] m2Data_;
-    //delete [] avrgData_;
+    delete [] m2Data_;
+    delete [] avrgData_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
     {
@@ -104,11 +110,17 @@ bool FIPLKDewarp::init()
         //const ptrdiff_t croppedHeight=1 << ((int)log2f(height));
         //=== ===
         
-        scratchData_=new float[(croppedWidth*croppedHeight)<<1];
-        memset(scratchData_, 0, ((croppedWidth*croppedHeight)<<1)*sizeof(float));
+        scratchData_=new float[width*height];
+        memset(scratchData_, 0, width*height*sizeof(float));
         
         finalImgData_=new float[croppedWidth*croppedHeight];
         memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
+        
+        m2Data_=new float[width*height];
+        memset(m2Data_, 0, width*height*sizeof(float));
+        
+        avrgData_=new float[width*height];
+        memset(avrgData_, 0, width*height*sizeof(float));        
         
         //finalHxData_=new float[croppedWidth*croppedHeight];
         //memset(finalHxData_, 0, croppedWidth*croppedHeight*sizeof(float));
@@ -150,17 +162,10 @@ bool FIPLKDewarp::init()
     return rValue;
 }
 
-
-inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
-{
-    return
-    (data[offsetLT] * (1.0f-fx) + data[offsetLT+((ptrdiff_t)1)] * fx) * (1.0f-fy) +
-    (data[offsetLT+width] * (1.0f-fx) + data[offsetLT+((ptrdiff_t)1)+width] * fx) * fy;
-}
-
-
 bool FIPLKDewarp::trigger()
 {
+    OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
+    
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {//There are images to consume and the downstream producer has space to produce. BUG: Sometime we get in here and then the reserve write failes later on!!!
         
@@ -200,10 +205,11 @@ bool FIPLKDewarp::trigger()
                     const ptrdiff_t endCroppedY=startCroppedY + croppedHeight - 1;
                     
                     //****************
-                    const float refImgFiltConst=(frameNum_<3) ? 1.0f : 0.05f;
+                    const float refImgFiltConst=(frameNum_<3) ? 1.0f : refImageFilter_;
                     //****************
                     
                     {//=== Copy cropped input to level 0 of scale space ===
+                        if (useLevelZero_)
                         {//Update ref/avrg img before new data arrives.
                             float * const imgData=imgVec_[0];
                             float * const refImgData=refImgVec_[0];
@@ -331,6 +337,7 @@ bool FIPLKDewarp::trigger()
                                 //=== ===
                             }//=== ===
                             
+                            
                             {//=== Calculate scale space gradient images ===
                                 float * const dxData=dxVec_[levelNum];
                                 float * const dyData=dyVec_[levelNum];
@@ -414,9 +421,9 @@ bool FIPLKDewarp::trigger()
                         }
                         //=== ===//
                         
-                        if (levelNum>0)//No need to refine h-vectors at level 0 if super res is not attempted!
+                        if (useLevelZero_ || (levelNum > 0) )//No need to refine h-vectors at level 0 if super res is not attempted!
                         {
-                            for (size_t newtonRaphsonI=0; newtonRaphsonI<4; ++newtonRaphsonI)
+                            for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
                             {
                                 for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
                                 {
@@ -573,48 +580,35 @@ bool FIPLKDewarp::trigger()
                     //===========================
                     //===========================
                     
-                    //Update the standard deviation's M2.
-                    /*
-                     {
-                     size_t levelNum=1;
-                     
-                     float * const hxDataGF=hxDataVec_[levelNum];
-                     float * const hyDataGF=hyDataVec_[levelNum];
-                     
-                     for (ptrdiff_t y=startCroppedY; y<=endCroppedY; ++y)
-                     {
-                     const ptrdiff_t lineOffset=y*uncroppedWidth + startCroppedX;
-                     const ptrdiff_t levelLineOffset=((y-startCroppedY)>>levelNum) * (croppedWidth>>levelNum);
-                     
-                     for (ptrdiff_t x=0; x<croppedWidth; ++x)
-                     {
-                     const ptrdiff_t offset=lineOffset + x;
-                     const ptrdiff_t levelOffset=levelLineOffset + (x>>levelNum);
-                     
-                     double h=hxDataGF[levelOffset]*hxDataGF[levelOffset];
-                     
-                     n_+=1.0;
-                     const double delta=h - avrgData_[offset];
-                     avrgData_[offset]+=delta/n_;
-                     m2Data_[offset]+=delta*(h)-avrgData_[offset];
-                     
-                     double variance=m2Data_[offset]/(n_ - 1.0);
-                     dataWrite[offset]=sqrt(variance)*100.0;
-                     }
-                     }
-                     
-                     FILE *fp=fopen("dewarp.ieee", "wb");
-                     
-                     uint32_t ui32Width=uncroppedWidth;
-                     uint32_t ui32Height=uncroppedHeight;
-                     fwrite((unsigned char *)(&ui32Width), sizeof(uint32_t), 1, fp);
-                     fwrite((unsigned char *)(&ui32Height), sizeof(uint32_t), 1, fp);
-                     fwrite((unsigned char *)dataWrite, sizeof(float), uncroppedWidth*uncroppedHeight, fp);
-                     
-                     fclose(fp);
-                     
-                     }
-                     */
+                    //=== Update the standard deviation's M2 ===
+                    if (frameNum_>=10)
+                    {
+                        float * const hxDataGF=hxVec_[0];
+                        float * const hyDataGF=hyVec_[0];
+                        
+                        for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
+                        {
+                            const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
+                            const ptrdiff_t croppedLineOffset=(uncroppedY-startCroppedY) * croppedWidth;
+                            
+                            for (ptrdiff_t croppedX=0; croppedX<croppedWidth; ++croppedX)
+                            {
+                                const ptrdiff_t uncroppedOffset=uncroppedLineOffset + croppedX;
+                                const ptrdiff_t croppedOffset=croppedLineOffset + croppedX;
+                                
+                                float hx=hxDataGF[croppedOffset];
+                                float hy=hyDataGF[croppedOffset];
+                                
+                                float h=sqrtf(hx*hx + hy*hy);
+                                
+                                n_+=1.0;
+                                const float delta=h - avrgData_[uncroppedOffset];
+                                avrgData_[uncroppedOffset]+=delta/n_;
+                                m2Data_[uncroppedOffset]+=delta*h - avrgData_[uncroppedOffset];
+                            }
+                        }
+                    }
+                    //=== ===
                     
                     //=== Final results ===
                     //if (frameNum_>=2)
@@ -641,6 +635,9 @@ bool FIPLKDewarp::trigger()
                          }
                          */
                         
+                        latestHx_=0.0f;
+                        latestHy_=0.0f;
+                        
                         for (ptrdiff_t y=0; y<=croppedHeight; ++y)
                         {
                             const ptrdiff_t lineOffset=y*croppedWidth;
@@ -649,9 +646,12 @@ bool FIPLKDewarp::trigger()
                             {
                                 const ptrdiff_t offset=lineOffset + x;
                                 
-                                //=== calc bilinear filter fractions ===//
                                 const float hx=-hxDataGF[offset];
                                 const float hy=-hyDataGF[offset];
+                                
+                                latestHx_-=hx;
+                                latestHy_-=hy;
+                                
                                 const float dx=dxDataGF[offset];
                                 const float dy=dyDataGF[offset];
                                 
@@ -671,12 +671,14 @@ bool FIPLKDewarp::trigger()
                                     
                                     finalImgData_[offset]+=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy)*(1.0f-blend);
                                 }
-                                //=== ===//
                                 
                                 //Some testing code goes here:
                                 //finalImgData_[offset]=fabsf(refImgDataGF[offset]);
                             }
                         }
+                        
+                        latestHx_/=croppedWidth*croppedHeight;
+                        latestHy_/=croppedWidth*croppedHeight;
                         
                         //Copy finalImgData_ result to uncropped output image slot.
                         //  The data is copied because of the lucky region accumulation that needs to happen in the result buffer.
@@ -705,3 +707,39 @@ bool FIPLKDewarp::trigger()
     return true;
 }
 
+
+void FIPLKDewarp::saveHVectVariance(std::string filename)
+{
+    const ImageFormat imFormat=getUpstreamFormat(0);
+    const size_t uncroppedWidth=imFormat.getWidth();
+    const size_t uncroppedHeight=imFormat.getHeight();
+    
+    float *varianceData=new float[uncroppedWidth*uncroppedHeight];
+    
+    {//Lock/block trigger thread while retrieving variance.
+        OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
+        
+        for (size_t y=0; y<uncroppedHeight; ++y)
+        {
+            const size_t lineoffset=y*uncroppedWidth;
+            
+            for (size_t x=0; x<uncroppedWidth; ++x)
+            {
+                const size_t offset=lineoffset+x;
+                varianceData[offset]=m2Data_[offset]/(n_ - 1.0);
+            }
+        }
+    }
+    
+    FILE *fp=fopen(filename.c_str(), "wb");
+    
+    uint32_t ui32Width=uncroppedWidth;
+    uint32_t ui32Height=uncroppedHeight;
+    fwrite((unsigned char *)(&ui32Width), sizeof(uint32_t), 1, fp);
+    fwrite((unsigned char *)(&ui32Height), sizeof(uint32_t), 1, fp);
+    fwrite((unsigned char *)varianceData, sizeof(float), uncroppedWidth*uncroppedHeight, fp);
+    
+    fclose(fp);
+    
+    delete [] varianceData;
+}

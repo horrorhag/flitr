@@ -35,6 +35,8 @@ namespace flitr {
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                    const bool useLevelZero,
+                    const float refImageFilter,
                     uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -44,11 +46,35 @@ namespace flitr {
          *@return Boolean result flag. True indicates successful initialisation.*/
         virtual bool init();
         
-        /*!Synchronous trigger method. Called automatically by the trigger thread if started.
+        /*! Synchronous trigger method. Called automatically by the trigger thread if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
+        virtual void saveHVectVariance(std::string filename);
+        
+        /*! Get the latest h-vector calculated between the input and reference frame. Should be called after trigger().
+         *@sa ImageProcessor::trigger*/
+        virtual void getLatestHVect(float &hx, float &hy)
+        {
+            OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
+            
+            hx=latestHx_;
+            hy=latestHy_;
+        }
+        
     private:
+        inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
+        {
+            return
+            data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) + data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
+            data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
+        }
+        
+        OpenThreads::Mutex triggerMutex_;
+        
+        const bool useLevelZero_;
+        const float refImageFilter_;
+        
         size_t frameNum_;
         
         const size_t numLevels_;
@@ -63,15 +89,18 @@ namespace flitr {
         std::vector<float *> hxVec_;
         std::vector<float *> hyVec_;
         
+        float latestHx_;
+        float latestHy_;
+        
         float *scratchData_;
         
         //float *finalHxData_;
         //float *finalHyData_;
         float *finalImgData_; //With lucky regions, super res, etc.
         
-        //double *m2Data_;//for online standard deviation.
-        //double *avrgData_;//for online standard deviation.
-        //double n_;
+        float *m2Data_;//for online standard deviation.
+        float *avrgData_;//for online standard deviation.
+        float n_;
     };
     
 }
