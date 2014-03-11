@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
      gaussianFilter->startTriggerThread();
      */
     
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1, false, 0.025f, 2));
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1, true, 0.025f, 2));
     if (!lkdewarp->init()) {
         std::cerr << "Could not initialise the lkdewarp processor.\n";
         exit(-1);
