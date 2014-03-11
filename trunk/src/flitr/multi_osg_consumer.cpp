@@ -140,7 +140,7 @@ bool TMultiOSGConsumer<T>::init()
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1,
-                                           GL_LUMINANCE, GL_FLOAT);
+                                           GL_RGB, GL_FLOAT);
             break;
         default:
             // \todo report error
@@ -200,7 +200,7 @@ bool TMultiOSGConsumer<T>::init()
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1,
-                                           GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
+                                           GL_RGB32F_ARB, GL_LUMINANCE, GL_FLOAT,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
