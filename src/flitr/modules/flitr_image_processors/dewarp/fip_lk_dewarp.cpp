@@ -251,7 +251,6 @@ bool FIPLKDewarp::trigger()
                                 for (ptrdiff_t x=0; x<levelWidth; ++x)
                                 {
                                     const ptrdiff_t offset=lineOffset + x;
-                                    
                                     refImgData[offset]*=1.0f-refImgFiltConst;
                                     refImgData[offset]+=imgData[offset] * refImgFiltConst;
                                 }
@@ -357,11 +356,10 @@ bool FIPLKDewarp::trigger()
                                 //Use Scharr operator for image gradient.
                                 const float dx=(v3-v1)*(3.0f/32.0f) + (v6-v4)*(10.0f/32.0f) + (v9-v7)*(3.0f/32.0f);
                                 const float dy=(v7-v1)*(3.0f/32.0f) + (v8-v2)*(10.0f/32.0f) + (v9-v3)*(3.0f/32.0f);
-                                const float dSq=dx*dx+dy*dy;
                                 
                                 dxData[offset]=dx;
                                 dyData[offset]=dy;
-                                dSqRecipData[offset]=1.0f/dSq;
+                                dSqRecipData[offset]=1.0f/(dx*dx+dy*dy);
                             }
                         }
                     }//=== ===
@@ -404,19 +402,16 @@ bool FIPLKDewarp::trigger()
                         const float fx=(x&((ptrdiff_t)1))*(-0.5f)+0.75f;
                         const float fy=(y&((ptrdiff_t)1))*(-0.5f)+0.75f;
                         
-                        const float hx=/*hxDataLR[offsetLR]*2.0f;*/bilinear(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
-                        const float hy=/*hyDataLR[offsetLR]*2.0f;*/bilinear(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
-                        
                         const ptrdiff_t offset=lineOffset + x;
-                        hxData[offset]=hx;
-                        hyData[offset]=hy;
+                        hxData[offset]=/*hxDataLR[offsetLR]*2.0f;*/bilinear(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
+                        hyData[offset]=/*hyDataLR[offsetLR]*2.0f;*/bilinear(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
                     }
                 }
                 //=== ===//
                 
                 if (useLevelZero_ || (levelNum > 0) )//No need to refine h-vectors at level 0 if super res is not attempted!
                 {
-                    for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
+                    for (size_t newtonRaphsonI=0; newtonRaphsonI<6; ++newtonRaphsonI)
                     {
                         for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
                         {
