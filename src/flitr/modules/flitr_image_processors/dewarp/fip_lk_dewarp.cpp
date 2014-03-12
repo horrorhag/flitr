@@ -411,7 +411,7 @@ bool FIPLKDewarp::trigger()
                 
                 if (useLevelZero_ || (levelNum > 0) )//No need to refine h-vectors at level 0 if super res is not attempted!
                 {
-                    for (size_t newtonRaphsonI=0; newtonRaphsonI<6; ++newtonRaphsonI)
+                    for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
                     {
                         for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
                         {
