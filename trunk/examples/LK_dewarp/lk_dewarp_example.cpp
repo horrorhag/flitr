@@ -87,10 +87,10 @@ int main(int argc, char *argv[])
     cnvrtToF32->startTriggerThread();
     
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
-                                         ip->getFormat().getWidth()/4,
-                                         ip->getFormat().getHeight()/4,
-                                         ip->getFormat().getWidth()/2,
-                                         ip->getFormat().getHeight()/2,
+                                         0,
+                                         0,
+                                         ip->getFormat().getWidth(),
+                                         ip->getFormat().getHeight(),
                                          2));
     if (!crop->init()) {
         std::cerr << "Could not initialise the crop processor.\n";
@@ -114,14 +114,14 @@ int main(int argc, char *argv[])
     }
     lkdewarp->startTriggerThread();
     
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 1, 2));
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 0, 2));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
     }
     averageImage->startTriggerThread();
     
-    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 10.0f, 2));
+    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 15.0f, 2));
     if (!unsharpMask->init()) {
         std::cerr << "Could not initialise the unsharp mask processor.\n";
         exit(-1);
