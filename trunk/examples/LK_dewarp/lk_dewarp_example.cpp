@@ -87,10 +87,10 @@ int main(int argc, char *argv[])
     cnvrtToF32->startTriggerThread();
     
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
-                                         0,
-                                         0,
-                                         ip->getFormat().getWidth(),
-                                         ip->getFormat().getHeight(),
+                                         ip->getFormat().getWidth()/2-1,
+                                         ip->getFormat().getHeight()/4-1,
+                                         ip->getFormat().getWidth()/2,
+                                         ip->getFormat().getHeight()/2,
                                          2));
     if (!crop->init()) {
         std::cerr << "Could not initialise the crop processor.\n";
@@ -107,14 +107,14 @@ int main(int argc, char *argv[])
      gaussianFilter->startTriggerThread();
      */
     
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1, false, 0.025f, 2));
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1, true, 0.025f, 2));
     if (!lkdewarp->init()) {
         std::cerr << "Could not initialise the lkdewarp processor.\n";
         exit(-1);
     }
     lkdewarp->startTriggerThread();
     
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 0, 2));
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 4, 2));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
             
             
             //=== ===//
-            /*
+            /* Jason, remember to uncomment this code and also call 'lkdewarp->enableHVectVariance(...)' somewhere before the while loop starts!!!
              if ((numFrames%100)==0)
              {
              lkdewarp->saveHVectVariance("dewarp.f32");

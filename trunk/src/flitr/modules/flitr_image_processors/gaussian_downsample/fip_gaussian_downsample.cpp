@@ -114,25 +114,27 @@ bool FIPGaussianDownsample::trigger()
                         const size_t lineOffsetDS=y * componentsPerLineDS;
                         const size_t lineOffsetUS=y * componentsPerLineUS;
                         
-                        for (size_t compNumDS=5; compNumDS<(componentsPerLineDS-5); compNumDS++)
+                        for (size_t compNumDS=((size_t)3); compNumDS<(componentsPerLineDS-((size_t)3)); compNumDS++)
                         {
-                            float xFiltValue=( dataReadUS[lineOffsetUS + (compNumDS<<1)] +
-                                              dataReadUS[lineOffsetUS + (compNumDS<<1) + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
+                            const size_t offsetUS=lineOffsetUS + (compNumDS<<1);
                             
-                            xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-1] +
-                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 2] ) * (330.0f/2048.0f);
+                            float xFiltValue=( dataReadUS[offsetUS] +
+                                              dataReadUS[offsetUS + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
                             
-                            xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-2] +
-                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 3] ) * (165.0f/2048.0f);
+                            xFiltValue+=( dataReadUS[offsetUS-1] +
+                                         dataReadUS[offsetUS + 2] ) * (330.0f/2048.0f);
                             
-                            xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-3] +
-                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 4] ) * (55.0f/2048.0f);
+                            xFiltValue+=( dataReadUS[offsetUS-2] +
+                                         dataReadUS[offsetUS + 3] ) * (165.0f/2048.0f);
                             
-                            xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-4] +
-                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 5] ) * (11.0f/2048.0f);
+                            xFiltValue+=( dataReadUS[offsetUS-3] +
+                                         dataReadUS[offsetUS + 4] ) * (55.0f/2048.0f);
                             
-                            xFiltValue+=( dataReadUS[lineOffsetUS + (compNumDS<<1)-5] +
-                                         dataReadUS[lineOffsetUS + (compNumDS<<1) + 6] ) * (1.0f/2048.0f);
+                            xFiltValue+=( dataReadUS[offsetUS-4] +
+                                         dataReadUS[offsetUS + 5] ) * (11.0f/2048.0f);
+                            
+                            xFiltValue+=( dataReadUS[offsetUS-5] +
+                                         dataReadUS[offsetUS + 6] ) * (1.0f/2048.0f);
                             
                             xFiltData_[lineOffsetDS + compNumDS]=xFiltValue;
                         }
@@ -142,32 +144,34 @@ bool FIPGaussianDownsample::trigger()
             
             {
                 {
-                    for (y=5; y<(heightDS-5); y++)
+                    for (y=3; y<(heightDS-3); y++)
                     {
                         const size_t lineOffsetDS=y * componentsPerLineDS;
-                        const size_t lineOffsetUS=(y<<1) * componentsPerLineDS;
+                        const size_t lineOffsetFS=(y<<1) * componentsPerLineDS;
                         
-                        for (size_t compNum=0; compNum<componentsPerLineDS; compNum++)
+                        for (size_t compNumDS=((size_t)3); compNumDS<componentsPerLineDS-((size_t)3); compNumDS++)
                         {
-                            float filtValue=( xFiltData_[lineOffsetUS + compNum]+
-                                             xFiltData_[lineOffsetUS + componentsPerLineDS + compNum] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
+                            const size_t offsetFS=lineOffsetFS + compNumDS;
                             
-                            filtValue+=( xFiltData_[lineOffsetUS + compNum - componentsPerLineDS]+
-                                        xFiltData_[lineOffsetUS + (componentsPerLineDS<<1) + compNum] ) * (330.0f/2048.0f);
+                            float filtValue=( xFiltData_[offsetFS]+
+                                             xFiltData_[offsetFS + componentsPerLineDS] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
                             
-                            filtValue+=( xFiltData_[lineOffsetUS + compNum - (componentsPerLineDS<<1)]+
-                                        xFiltData_[lineOffsetUS + ((componentsPerLineDS<<1)+componentsPerLineDS) + compNum] ) * (165.0f/2048.0f);
+                            filtValue+=( xFiltData_[offsetFS - componentsPerLineDS]+
+                                        xFiltData_[offsetFS + (componentsPerLineDS<<1)] ) * (330.0f/2048.0f);
                             
-                            filtValue+=( xFiltData_[lineOffsetUS + compNum - ((componentsPerLineDS<<1)+componentsPerLineDS)]+
-                                        xFiltData_[lineOffsetUS + (componentsPerLineDS<<2) + compNum] ) * (55.0f/2048.0f);
+                            filtValue+=( xFiltData_[offsetFS - (componentsPerLineDS<<1)]+
+                                        xFiltData_[offsetFS + ((componentsPerLineDS<<1)+componentsPerLineDS)] ) * (165.0f/2048.0f);
                             
-                            filtValue+=( xFiltData_[lineOffsetUS + compNum - (componentsPerLineDS<<2)]+
-                                        xFiltData_[lineOffsetUS + ((componentsPerLineDS<<2)+componentsPerLineDS) + compNum] ) * (11.0f/2048.0f);
+                            filtValue+=( xFiltData_[offsetFS - ((componentsPerLineDS<<1)+componentsPerLineDS)]+
+                                        xFiltData_[offsetFS + (componentsPerLineDS<<2)] ) * (55.0f/2048.0f);
                             
-                            filtValue+=( xFiltData_[lineOffsetUS + compNum - ((componentsPerLineDS<<2)+componentsPerLineDS)]+
-                                        xFiltData_[lineOffsetUS + ((componentsPerLineDS<<2)+(componentsPerLineDS<<1)) + compNum] ) * (1.0f/2048.0f);
+                            filtValue+=( xFiltData_[offsetFS - (componentsPerLineDS<<2)]+
+                                        xFiltData_[offsetFS + ((componentsPerLineDS<<2)+componentsPerLineDS)] ) * (11.0f/2048.0f);
                             
-                            dataWriteDS[lineOffsetDS+compNum]=filtValue;
+                            filtValue+=( xFiltData_[offsetFS - ((componentsPerLineDS<<2)+componentsPerLineDS)]+
+                                        xFiltData_[offsetFS + ((componentsPerLineDS<<2)+(componentsPerLineDS<<1))] ) * (1.0f/2048.0f);
+                            
+                            dataWriteDS[lineOffsetDS+compNumDS]=filtValue;
                         }
                     }
                 }

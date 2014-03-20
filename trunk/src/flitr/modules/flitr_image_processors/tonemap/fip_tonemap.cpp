@@ -94,11 +94,11 @@ bool FIPTonemap::trigger()
             size_t y=0;
             {
                 {
-                    for (y=0; y<height; y++)
+                    for (y=0; y<height; ++y)
                     {
                         const size_t lineOffset=y * width;
                         
-                        for (size_t x=1; x<width; x++)
+                        for (size_t x=1; x<width; ++x)
                         {
                             dataWrite[lineOffset + x]=powf(dataRead[lineOffset + x], power_);
                         }
