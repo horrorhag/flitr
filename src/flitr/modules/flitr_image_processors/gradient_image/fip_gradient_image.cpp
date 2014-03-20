@@ -88,15 +88,18 @@ bool FIPGradientXImage::trigger()
             
             const ptrdiff_t width=imFormat.getWidth();
             const ptrdiff_t height=imFormat.getHeight();
+            const ptrdiff_t widthMinus1=width-((ptrdiff_t)1);
+            const ptrdiff_t heightMinus1=height-((ptrdiff_t)1);
+            
             
             ptrdiff_t y=0;
             {
                 {
-                    for (y=0; y<height; y++)
+                    for (y=((ptrdiff_t)1); y<heightMinus1; ++y)
                     {
                         const ptrdiff_t lineOffset=y * width;
                         
-                        for (ptrdiff_t x=1; x<width; x++)
+                        for (ptrdiff_t x=((ptrdiff_t)1); x<widthMinus1; ++x)
                         {
                             const ptrdiff_t offset=lineOffset + x;
                             
@@ -195,15 +198,17 @@ bool FIPGradientYImage::trigger()
             
             const ptrdiff_t width=imFormat.getWidth();
             const ptrdiff_t height=imFormat.getHeight();
+            const ptrdiff_t widthMinus1=width-((ptrdiff_t)1);
+            const ptrdiff_t heightMinus1=height-((ptrdiff_t)1);
             
             ptrdiff_t y=0;
             {
                 {
-                    for (y=1; y<height; y++)
+                    for (y=((ptrdiff_t)1); y<heightMinus1; y++)
                     {
                         const ptrdiff_t lineOffset=y * width;
                         
-                        for (size_t x=0; x<width; x++)
+                        for (size_t x=((ptrdiff_t)1); x<widthMinus1; x++)
                         {
                             const ptrdiff_t offset=lineOffset + x;
                             

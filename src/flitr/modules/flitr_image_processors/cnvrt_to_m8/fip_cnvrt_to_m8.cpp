@@ -64,7 +64,7 @@ bool FIPConvertToM8::trigger()
         //Start stats measurement event.
         ProcessorStats_->tick();
         
-        for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
+        for (size_t imgNum=0; imgNum<ImagesPerSlot_; ++imgNum)
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
@@ -85,13 +85,13 @@ bool FIPConvertToM8::trigger()
             size_t y=0;
             {
                 {
-                    for (y=0; y<height; y++)
+                    for (y=0; y<height; ++y)
                     {
                         const size_t lineOffset=y * componentsPerLine;
                         
-                        for (size_t compNum=0; compNum<componentsPerLine; compNum++)
+                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
                         {
-                            float writeValue=powf(dataRead[lineOffset + compNum],0.9f)*(256.0f*scaleFactor_);
+                            float writeValue=dataRead[lineOffset + compNum]*(256.0f*scaleFactor_);
                             dataWrite[lineOffset + compNum]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):writeValue);
                         }
                     }

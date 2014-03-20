@@ -50,7 +50,8 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
-        virtual void saveHVectVariance(std::string filename);
+        virtual void enableHVectVariance(const bool state);
+        virtual void saveHVectVariance(const std::string &filename);
         
         /*! Get the latest h-vector calculated between the input and reference frame. Should be called after trigger().
          *@sa ImageProcessor::trigger*/
@@ -96,8 +97,10 @@ namespace flitr {
         
         //float *finalHxData_;
         //float *finalHyData_;
-        float *finalImgData_; //With lucky regions, super res, etc.
+        float *finalImgData_; //With lucky regions, etc.
+        float *finalSRImgData_; //With lucky regions, super res, etc.
         
+        bool hVectVarianceEnabled_;
         float *m2Data_;//for online standard deviation.
         float *avrgData_;//for online standard deviation.
         float n_;

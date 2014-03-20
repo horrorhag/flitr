@@ -71,7 +71,7 @@ bool FIPCrop::trigger()
         //Start stats measurement event.
         ProcessorStats_->tick();
         
-        for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
+        for (size_t imgNum=0; imgNum<ImagesPerSlot_; ++imgNum)
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
@@ -87,7 +87,7 @@ bool FIPCrop::trigger()
             const size_t widthDS=imFormatDS.getWidth();
             const size_t heightDS=imFormatDS.getHeight();
             
-            for (size_t yDS=0; yDS<heightDS; yDS++)
+            for (size_t yDS=0; yDS<heightDS; ++yDS)
             {
                 const size_t lineOffsetUS=(yDS+startY_) * widthUS + startX_;
                 const size_t lineOffsetDS=yDS * widthDS;

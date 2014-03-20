@@ -94,7 +94,7 @@ bool FIPAverageImage::trigger()
         //Start stats measurement event.
         ProcessorStats_->tick();
         
-        for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
+        for (size_t imgNum=0; imgNum<ImagesPerSlot_; ++imgNum)
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
@@ -115,11 +115,11 @@ bool FIPAverageImage::trigger()
             int y=0;
             {
                 {
-                    for (y=0; y<(int)height; y++)
+                    for (y=0; y<(int)height; ++y)
                     {
                         const size_t lineOffset=y * componentsPerLine;
                         
-                        for (size_t compNum=0; compNum<componentsPerLine; compNum++)
+                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
                         {
                             sumImage[lineOffset + compNum]+=dataRead[lineOffset + compNum];
                             sumImage[lineOffset + compNum]-=oldestHistoryImage[lineOffset + compNum];

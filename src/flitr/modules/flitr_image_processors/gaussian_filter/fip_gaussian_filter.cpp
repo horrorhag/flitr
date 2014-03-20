@@ -96,6 +96,8 @@ bool FIPGaussianFilter::trigger()
             
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
+            const size_t widthMinus5=width-((size_t)5);
+            const size_t heightMinus5=height-((size_t)5);
             
             size_t y=0;
             {
@@ -104,7 +106,7 @@ bool FIPGaussianFilter::trigger()
                     {
                         const size_t lineOffset=y * width;
                         
-                        for (size_t x=5; x<(width-5); x++)
+                        for (size_t x=((size_t)5); x<widthMinus5; x++)
                         {
                             float xFiltValue=( dataReadUS[lineOffset + x] ) * (252.0f/1024.0f);
                             
@@ -131,11 +133,11 @@ bool FIPGaussianFilter::trigger()
             
             {
                 {
-                    for (y=5; y<(height-5); y++)
+                    for (y=((size_t)5); y<heightMinus5; y++)
                     {
                         const size_t lineOffset=y * width;
                         
-                        for (size_t x=0; x<width; x++)
+                        for (size_t x=((size_t)5); x<widthMinus5; x++)
                         {
                             float filtValue=( xFiltData_[lineOffset + x] ) * (252.0f/1024.0f);
                             

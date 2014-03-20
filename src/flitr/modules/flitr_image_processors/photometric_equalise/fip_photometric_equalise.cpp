@@ -132,11 +132,11 @@ bool FIPPhotometricEqualise::trigger()
             
             {
                 {
-                    for (y=0; y<(int)height; y++)
+                    for (y=0; y<(int)height; ++y)
                     {
                         const size_t lineOffset=y * componentsPerLine;
                         
-                        for (size_t compNum=0; compNum<componentsPerLine; compNum++)
+                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
                         {
                             dataWrite[lineOffset + compNum]=dataRead[lineOffset + compNum] * eScale;
                         }
