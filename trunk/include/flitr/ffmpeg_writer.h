@@ -99,6 +99,13 @@ public:
 
     bool writeVideoFrame(uint8_t *in_buf);
 
+    /** 
+     * Returns the number of frames written in the file.
+     * 
+     * \return Number of frames.
+     */
+    uint64_t getNumImages() const { return WrittenFrameCount_; }
+
 private:
 
     VideoContainer Container_;
@@ -109,13 +116,13 @@ private:
     AVCodec *AVCodec_;
     AVCodecContext *AVCodecContext_;
 
-	/// Open video file and prepare codec.
+    /// Open video file and prepare codec.
     bool openVideoFile();
 
     /// Close video file.
     bool closeVideoFile();
 
-	/// Holds the input frame.
+    /// Holds the input frame.
     AVFrame *InputFrame_;
     AVPixelFormat InputFrameFormat_;
 
@@ -130,7 +137,7 @@ private:
     struct SwsContext *ConvertToSaveCtx_;
 #endif
 
-	ImageFormat ImageFormat_;
+    ImageFormat ImageFormat_;
     std::string SaveFileName_;
     AVRational FrameRate_;
     /// Holds the number of frames written to disk.
