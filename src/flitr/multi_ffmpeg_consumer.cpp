@@ -200,12 +200,15 @@ bool MultiFFmpegConsumer::stopWriting()
     return true;
 }
 
-bool MultiFFmpegConsumer::closeFiles()
+uint32_t MultiFFmpegConsumer::closeFiles()
 {
     stopWriting();
     
+    uint32_t numFrames = 0;
     for (unsigned int i=0; i<ImagesPerSlot_; i++) {
         if (FFmpegWriters_[i] != 0) {
+            uint32_t f = static_cast<uint32_t>(FFmpegWriters_[i]->getNumImages());
+            if (f > numFrames) numFrames = f;
             delete FFmpegWriters_[i];
             FFmpegWriters_[i] = 0;
         }
@@ -214,5 +217,19 @@ bool MultiFFmpegConsumer::closeFiles()
             MetadataWriters_[i] = 0;
         }
     }
-    return true;
+    return numFrames;
+}
+
+uint32_t MultiFFmpegConsumer::getNumImages() const
+{
+    uint32_t numFrames = 0;
+    for (unsigned int i=0; i<ImagesPerSlot_; i++) 
+    {
+        if (FFmpegWriters_[i] != 0) 
+        {
+            uint32_t f = static_cast<uint32_t>(FFmpegWriters_[i]->getNumImages());
+            if (f > numFrames) numFrames = f;
+        }
+    }
+    return numFrames;
 }

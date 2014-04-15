@@ -62,8 +62,15 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
 
     bool startWriting();
     bool stopWriting();
-    bool closeFiles();
-		
+    uint32_t closeFiles();
+    
+    /** 
+    * Returns the number of frames written in the file.
+    * 
+    * \return Number of frames.
+    */
+    uint32_t getNumImages() const;
+
   protected:
     std::vector<ImageFormat> ImageFormat_;
     uint32_t ImagesPerSlot_;
@@ -71,9 +78,9 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     VideoCodec Codec_;
     int32_t BitRate_;
     VideoContainer Container_;
-		
+        
     MultiFFmpegConsumerThread *Thread_;
-		
+        
     std::vector<FFmpegWriter *> FFmpegWriters_;
     std::vector<MetadataWriter *> MetadataWriters_;
 
