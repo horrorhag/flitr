@@ -34,58 +34,58 @@ namespace flitr
 class FLITR_EXPORT CPUFindDiscreetObjectsPass : public flitr::CPUShaderPass::CPUShader
 {
 public:
-	struct Rect
-	{
-		int left;
-		int right;
-		int top;
-		int bottom;
+    struct Rect
+    {
+        int left;
+        int right;
+        int top;
+        int bottom;
 
-		float centerX;
-		float centerY;
+        float centerX;
+        float centerY;
 
-		int width;
-		int height;
-		int area;
+        int width;
+        int height;
+        int area;
 
-		Rect() {};
+        Rect() {};
 
-		Rect(int l, int r, int t, int b)
-			: left(l), right(r), top(t), bottom(b)	
-		{
-			width = right - left;
-			height = bottom - top;
-			centerX = left + width/2;
-			centerY = top + height/2;
-			area=width*height;
-		}
-	};
+        Rect(int l, int r, int t, int b)
+            : left(l), right(r), top(t), bottom(b)	
+        {
+            width = right - left;
+            height = bottom - top;
+            centerX = left + width/2;
+            centerY = top + height/2;
+            area=width*height;
+        }
+    };
 
     CPUFindDiscreetObjectsPass(osg::Image* image);
     ~CPUFindDiscreetObjectsPass();
 
     virtual void operator () (osg::RenderInfo& renderInfo) const;
 
-	//! Expand bounding rectangles by the given percentage, intersecting rectangles are combined [0,1]
-	void ExpandRects(float percentage) { expandRects_ = percentage; }
+    //! Expand bounding rectangles by the given percentage, intersecting rectangles are combined [0,1]
+    void ExpandRects(float percentage) { expandRects_ = percentage; }
 
-	//! The minimum area considered as a object
-	void SetMinArea(int area) { minArea_ = area; }
+    //! The minimum area considered as a object
+    void SetMinArea(int area) { minArea_ = area; }
 
-	//! The maximum area considered as a object
-	void SetMaxArea(int area) { maxArea_ = area; }
+    //! The maximum area considered as a object
+    void SetMaxArea(int area) { maxArea_ = area; }
 
-	//! The minimum width considered as a object
-	void SetMinWidth(int width) { minWidth_ = width; }
+    //! The minimum width considered as a object
+    void SetMinWidth(int width) { minWidth_ = width; }
 
-	//! The minimum height considered as a object
-	void SetMinHeight(int height) { minHeight_ = height; }
+    //! The minimum height considered as a object
+    void SetMinHeight(int height) { minHeight_ = height; }
 
-	//! The maximum width considered as a object
-	void SetMaxWidth(int width) { maxWidth_ = width; }
+    //! The maximum width considered as a object
+    void SetMaxWidth(int width) { maxWidth_ = width; }
 
-	//! The max height considered as a object
-	void SetMaxHeight(int height) { maxHeight_ = height; }
+    //! The max height considered as a object
+    void SetMaxHeight(int height) { maxHeight_ = height; }
 
     //! The Region of Interest (ROI) for locating objects
     void SetROI(int l, int r, int t, int b)
@@ -99,6 +99,7 @@ public:
         if (b >= height) b = height - 1;
 
         theROI_ = Rect(l,r,t,b);
+        useROI_ = true;
     }
 
     //! The Region of Interest (ROI) for locating objects
@@ -112,25 +113,26 @@ public:
         SetROI(l,r,t,b);
     }
 
-	//! Call each frame to retrieve the bounding rectangles of discreet objects
-	void GetBoundingRects(std::vector<Rect>& rects);
+    //! Call each frame to retrieve the bounding rectangles of discreet objects
+    void GetBoundingRects(std::vector<Rect>& rects);
 
     //! Retrieve the current ROI being processed
     Rect GetROI() { return theROI_; }
 
 private:
-	void FindEdges();
+    void FindEdges();
 
 private:
-	osg::Image* Image_;
-	float expandRects_;
-	int minArea_;
-	int maxArea_;
-	int minWidth_;
-	int minHeight_;
-	int maxWidth_;
-	int maxHeight_;
+    osg::Image* Image_;
+    float expandRects_;
+    int minArea_;
+    int maxArea_;
+    int minWidth_;
+    int minHeight_;
+    int maxWidth_;
+    int maxHeight_;
     Rect theROI_;
+    bool useROI_;
 };
 
 }
