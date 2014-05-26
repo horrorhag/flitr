@@ -1,6 +1,12 @@
 PROJECT(FLITr)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3)
 
+IF(UNIX AND NOT WIN32 AND NOT APPLE)
+IF(EXISTS "${CMAKE_INSTALL_PREFIX}/lib64/" AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
+set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+ENDIF()
+ENDIF(UNIX AND NOT WIN32 AND NOT APPLE)
+
 
 # Set a default build type for single-configuration
 # CMake generators if no build type is set.
@@ -60,9 +66,8 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     ENDIF(NOT Boost_FOUND)
 # ==================
 
-
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
-  FIND_PACKAGE(OpenSceneGraph 3.0.1 REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
+  FIND_PACKAGE(OpenSceneGraph REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
 INCLUDE_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIR})
 LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_DIRS})
 
