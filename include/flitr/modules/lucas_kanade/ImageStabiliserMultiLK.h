@@ -6,9 +6,6 @@
 #endif
 
 #include <iostream>
-#include <boost/tr1/memory.hpp>
-
-using std::tr1::shared_ptr;
 
 #include <flitr/flitr_export.h>
 #include <flitr/image_format.h>

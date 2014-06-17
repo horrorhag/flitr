@@ -21,8 +21,6 @@
 #ifndef TEST_PATTERN_PRODUCER_H
 #define TEST_PATTERN_PRODUCER_H 1
 
-#include <boost/tr1/memory.hpp>
-
 #include <flitr/metadata_reader.h>
 #include <flitr/image_producer.h>
 

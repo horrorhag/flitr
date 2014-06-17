@@ -14,6 +14,8 @@ ToDo: Implement a RESET for the stabaliser!
 #include <osg/Geode>
 #include <osg/Switch>
 #include <osg/AlphaFunc>
+
+#include <algorithm>
 #include <sstream>
 
 #include <flitr/modules/lucas_kanade/postRenderCallback.h>
