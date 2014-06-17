@@ -30,7 +30,7 @@
 
 
 #include "DSVL_Helpers.h"
-
+#include "DSVL_Defines.h"
 
 #include <cstring>
 #include <cstdlib>
@@ -423,40 +423,40 @@ HRESULT FindCaptureDevice(IBaseFilter ** ppSrcFilter,
 				    if(SUCCEEDED(name_hr) && wcsstr(varName.bstrVal, filterNameSubstring) != NULL)
 				    {
 					    // check for matching IEEE-1394 identifier
-					    if(ieee1394id_str != NULL)
-					    {
-						    IAMExtDevice *pExtDev = NULL;
-						    hr = pSrc->QueryInterface(IID_IAMExtDevice, (void**)&pExtDev);
-						    if(SUCCEEDED(hr))
-						    {
-							    LPOLESTR ole_str = NULL;
-							    bool matching_id = false;
-							    hr = pExtDev->get_ExternalDeviceID(&ole_str);
+					    //if(ieee1394id_str != NULL)
+					    //{
+						   // IAMExtDevice *pExtDev = NULL;
+						   // hr = pSrc->QueryInterface(IID_IAMExtDevice, (void**)&pExtDev);
+						   // if(SUCCEEDED(hr))
+						   // {
+							  //  LPOLESTR ole_str = NULL;
+							  //  bool matching_id = false;
+							  //  hr = pExtDev->get_ExternalDeviceID(&ole_str);
 
-							    unsigned __int64 msdv_id = *((unsigned __int64*) ole_str);
-							    if(ole_str != NULL) CoTaskMemFree(ole_str);
+							  //  unsigned __int64 msdv_id = *((unsigned __int64*) ole_str);
+							  //  if(ole_str != NULL) CoTaskMemFree(ole_str);
 
-							    char* temp_str = (char*) CoTaskMemAlloc(sizeof(char) * MAX_PATH);
-							    _ui64toa(msdv_id,temp_str,16);
-							    if(strcmp(ieee1394id_str,temp_str) == 0) matching_id = true;
-							    CoTaskMemFree(temp_str);
+							  //  char* temp_str = (char*) CoTaskMemAlloc(sizeof(char) * MAX_PATH);
+							  //  _ui64toa(msdv_id,temp_str,16);
+							  //  if(strcmp(ieee1394id_str,temp_str) == 0) matching_id = true;
+							  //  CoTaskMemFree(temp_str);
 
-							    if(SUCCEEDED(hr) && matching_id)
-							    {
-								    *ppSrcFilter = pSrc;
-								    return(S_OK);
-							    }
-							    else // pExtDev->get_ExternalDeviceID() failed || identifier mismatch
-							    {
-								    pSrc->Release();
-							    }
-						    }
-						    else
-						    {
-							    pSrc->Release();
-						    }
-					    }
-					    else // (ieee1394id == 0)
+							  //  if(SUCCEEDED(hr) && matching_id)
+							  //  {
+								 //   *ppSrcFilter = pSrc;
+								 //   return(S_OK);
+							  //  }
+							  //  else // pExtDev->get_ExternalDeviceID() failed || identifier mismatch
+							  //  {
+								 //   pSrc->Release();
+							  //  }
+						   // }
+						   // else
+						   // {
+							  //  pSrc->Release();
+						   // }
+					    //}
+					    //else // (ieee1394id == 0)
 					    {
 						    *ppSrcFilter = pSrc;
 						    return(S_OK);
@@ -562,7 +562,8 @@ FOURCC	GUID				Data Rate	Description
 HRESULT AMErrorMessage(HRESULT hr, char* error_title)
 {
 	TCHAR buffer[MAX_PATH];
-	DWORD cRet = AMGetErrorText(hr,buffer,MAX_PATH);
+	//DWORD cRet = AMGetErrorText(hr,buffer,MAX_PATH);
+    DWORD cRet = 0;
 	if(cRet > 0) MessageBox(NULL,_T(buffer),error_title,MB_OK);
 	else return(E_FAIL);
 	return(S_OK);

@@ -39,7 +39,7 @@
 #define __IDxtJpeg_INTERFACE_DEFINED__
 #define __IDxtKey_INTERFACE_DEFINED__
 
-#include <qedit.h>
+//#include <qedit.h>
 #include <atlbase.h>
 #include <comutil.h>
 #include <stdio.h>
@@ -125,7 +125,8 @@ HRESULT Enumerate()
 
 			// -----------------------------------------------------------------------
 			IAMExtDevice *pExtDev = NULL;
-			hr = pSrc->QueryInterface(IID_IAMExtDevice, (void**)&pExtDev);
+			//hr = pSrc->QueryInterface(IID_IAMExtDevice, (void**)&pExtDev);
+            hr = 0;
 			if(SUCCEEDED(hr)) 
 			{
 				printf("  IAMExtDevice properties:\n");
