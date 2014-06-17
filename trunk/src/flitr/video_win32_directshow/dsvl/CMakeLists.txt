@@ -18,6 +18,7 @@ set(SRCS
 	DSVL_Helpers.h
 	DSVL_PixelFormat.h
 	DSVL_PixelFormatTypes.h
+	DSVL_Defines.h
 )
 
 include_directories(
