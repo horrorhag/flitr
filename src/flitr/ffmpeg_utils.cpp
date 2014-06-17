@@ -34,6 +34,9 @@ AVPixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in
       case ImageFormat::FLITR_PIX_FMT_Y_16:
         return PIX_FMT_GRAY16LE;
         break;
+      case ImageFormat::FLITR_PIX_FMT_BGRA:
+          return PIX_FMT_BGRA;
+          break;
       default:
         // \todo maybe return error
         return PIX_FMT_GRAY8;
