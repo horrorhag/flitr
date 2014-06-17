@@ -27,6 +27,7 @@ SET(CMAKE_DEBUG_POSTFIX "d")
 
 # compiler flags
 IF(MSVC)
+  add_definitions(-DWIN32)
   # VS automatically defines NDEBUG in Release builds 
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_NO_DEPRECATE /D _WIN32_WINNT=0x0501")
 ELSEIF(APPLE)
