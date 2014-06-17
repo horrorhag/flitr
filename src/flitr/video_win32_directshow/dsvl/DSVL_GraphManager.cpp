@@ -31,7 +31,7 @@
 
 #include "DSVL_GraphManager.h"
 
-#include "dshow.h"
+#include <control.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -44,6 +44,7 @@
 
 #include "tinyxml.h"
 #include "DSVL_Helpers.h"
+
 
 //HANDLE g_ESync = CreateEvent(NULL,0,0,_T("global sync event"));
 //CCritSec g_CSec;
@@ -1063,7 +1064,7 @@ HRESULT DSVL_GraphManager::BuildGraphFromXMLHandle(TiXmlHandle xml_h)
 				//	 DVDECODERRESOLUTION_88x60   (PAL: 88x72)	 = DVRESOLUTION_DC
 
 			{
-				if(FAILED(pVideoDecoder->QueryInterface(IID_IIPDVDec,(void**)&pDVDec))) return(hr);
+				//if(FAILED(pVideoDecoder->QueryInterface(IID_IIPDVDec,(void**)&pDVDec))) return(hr);
 
 				int dvRes;
 				if(FAILED(hr = pDVDec->get_IPDisplay(&dvRes))) return(hr); // get default resolution
@@ -1118,11 +1119,11 @@ HRESULT DSVL_GraphManager::BuildGraphFromXMLHandle(TiXmlHandle xml_h)
 		if(FAILED(pVideoSource->QueryInterface(IID_IAMCameraControl,(void**)&cameraControl)))
 			cameraControl = NULL; // will be NULL anyway (replace with something intelligent)
 
-		if(FAILED(pVideoSource->QueryInterface(IID_IAMDroppedFrames,(void**)&droppedFrames)))
-			droppedFrames = NULL; // will be NULL anyway (replace with something intelligent)
+		//if(FAILED(pVideoSource->QueryInterface(IID_IAMDroppedFrames,(void**)&droppedFrames)))
+			//droppedFrames = NULL; // will be NULL anyway (replace with something intelligent)
 
-		if(FAILED(pVideoSource->QueryInterface(IID_IAMVideoControl,(void**)&videoControl)))
-			videoControl = NULL; // will be NULL anyway (replace with something intelligent)
+		//if(FAILED(pVideoSource->QueryInterface(IID_IAMVideoControl,(void**)&videoControl)))
+			//videoControl = NULL; // will be NULL anyway (replace with something intelligent)
 
 		if(FAILED(pVideoSource->QueryInterface(IID_IAMVideoProcAmp,(void**)&videoProcAmp)))
 			videoProcAmp = NULL; // will be NULL anyway (replace with something intelligent)
@@ -1288,22 +1289,22 @@ HRESULT DSVL_GraphManager::BuildGraphFromXMLHandle(TiXmlHandle xml_h)
 	FreeMediaType(mediaType);
 	// -------------
 
-	long _num_alloc = (MIN_ALLOCATOR_BUFFERS_PER_CLIENT * DEF_CONCURRENT_CLIENTS);
-	CComPtr<IPin> sgPin = NULL;
-	if(FAILED(hr=getPin(pSampleGrabber,PINDIR_INPUT,1,sgPin))) return(hr); 
-	CComPtr<IMemAllocator> pAllocator = NULL;
+	//long _num_alloc = (MIN_ALLOCATOR_BUFFERS_PER_CLIENT * DEF_CONCURRENT_CLIENTS);
+	//CComPtr<IPin> sgPin = NULL;
+	//if(FAILED(hr=getPin(pSampleGrabber,PINDIR_INPUT,1,sgPin))) return(hr); 
+	//CComPtr<IMemAllocator> pAllocator = NULL;
 
-	CComPtr<IMemInputPin> sgmiPin = NULL; 
-	hr = sgPin->QueryInterface(IID_IMemInputPin, (void**)&sgmiPin);
-	if (FAILED(hr)) return(hr);
+	//CComPtr<IMemInputPin> sgmiPin = NULL; 
+	//hr = sgPin->QueryInterface(IID_IMemInputPin, (void**)&sgmiPin);
+	//if (FAILED(hr)) return(hr);
 
-	if(FAILED(hr = sgmiPin->GetAllocator(&pAllocator))) return(hr);
-	if(FAILED(hr = pAllocator->Decommit())) return(hr);
-	ALLOCATOR_PROPERTIES requestedProperties;
-	ALLOCATOR_PROPERTIES actualProperties;
-	pAllocator->GetProperties(&requestedProperties);
-	if(requestedProperties.cBuffers != _num_alloc) requestedProperties.cBuffers = _num_alloc;
-	hr = pAllocator->SetProperties(&requestedProperties,&actualProperties);
+	//if(FAILED(hr = sgmiPin->GetAllocator(&pAllocator))) return(hr);
+	//if(FAILED(hr = pAllocator->Decommit())) return(hr);
+	//ALLOCATOR_PROPERTIES requestedProperties;
+	//ALLOCATOR_PROPERTIES actualProperties;
+	//pAllocator->GetProperties(&requestedProperties);
+	//if(requestedProperties.cBuffers != _num_alloc) requestedProperties.cBuffers = _num_alloc;
+	//hr = pAllocator->SetProperties(&requestedProperties,&actualProperties);
 
 	// -------------
 	m_bGraphIsInitialized = true;

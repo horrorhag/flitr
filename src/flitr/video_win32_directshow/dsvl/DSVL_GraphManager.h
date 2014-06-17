@@ -28,13 +28,29 @@
 *  Vienna, Austria.
 * ========================================================================*/
 
-#include <atlbase.h>
-#include <dshow.h>
-#define __IDxtCompositor_INTERFACE_DEFINED__
-#define __IDxtAlphaSetter_INTERFACE_DEFINED__
-#define __IDxtJpeg_INTERFACE_DEFINED__
-#define __IDxtKey_INTERFACE_DEFINED__
-#include <qedit.h>
+//#include <atlbase.h>
+//#include <dshow.h>
+//#define __IDxtCompositor_INTERFACE_DEFINED__
+//#define __IDxtAlphaSetter_INTERFACE_DEFINED__
+//#define __IDxtJpeg_INTERFACE_DEFINED__
+//#define __IDxtKey_INTERFACE_DEFINED__
+//#include <qedit.h>
+
+#if defined _MSC_VER && _MSC_VER >= 100
+//'sprintf': name was marked as #pragma deprecated
+#pragma warning(disable: 4995)
+#endif
+
+#include <tchar.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <wchar.h>
+
+#include <vector>
+
+#include "DSVL_Defines.h"
 #include <stllock.h>	// CCritSec - Platform SDK
 
 #include <atlcomcli.h>	// CComPtr

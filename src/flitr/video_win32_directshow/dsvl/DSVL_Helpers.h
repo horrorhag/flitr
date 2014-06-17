@@ -40,7 +40,7 @@
 #define __IDxtJpeg_INTERFACE_DEFINED__
 #define __IDxtKey_INTERFACE_DEFINED__
 
-#include <qedit.h>
+//#include <qedit.h>
 #include <stllock.h>	// CCritSec - Platform SDK
 #include <assert.h>
 #include <comutil.h>
