@@ -22,6 +22,8 @@
 #include <flitr/image_consumer.h>
 #include <flitr/image_producer.h>
 
+#include <algorithm>
+
 using namespace flitr;
 
 SharedImageBuffer::SharedImageBuffer(ImageProducer& my_producer, uint32_t num_slots, uint32_t images_per_slot) :
