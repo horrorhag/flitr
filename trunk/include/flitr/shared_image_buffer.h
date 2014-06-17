@@ -29,8 +29,6 @@
 #include <OpenThreads/ScopedLock>
 #include <OpenThreads/Mutex>
 
-#include <boost/tr1/memory.hpp>
-
 namespace flitr {
 
 class ImageConsumer;

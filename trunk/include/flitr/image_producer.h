@@ -27,8 +27,6 @@ namespace flitr {
 }
 
 
-#include <boost/tr1/memory.hpp>
-
 #include <flitr/image.h>
 #include <flitr/shared_image_buffer.h>
 

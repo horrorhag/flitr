@@ -21,8 +21,6 @@
 #ifndef SMULTI_FFMPEG_PRODUCER_H
 #define SMULTI_FFMPEG_PRODUCER_H 1
 
-#include <boost/tr1/memory.hpp>
-
 #include <flitr/ffmpeg_reader.h>
 #include <flitr/image_producer.h>
 

@@ -25,8 +25,6 @@
 #include <flitr/log_message.h>
 #include <flitr/stats_collector.h>
 
-#include <boost/tr1/memory.hpp>
-
 #include <iostream>
 #include <sstream>
 

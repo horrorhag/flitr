@@ -21,8 +21,6 @@
 #ifndef FFMPEG_PRODUCER_H
 #define FFMPEG_PRODUCER_H 1
 
-#include <boost/tr1/memory.hpp>
-
 #include <flitr/ffmpeg_reader.h>
 #include <flitr/metadata_reader.h>
 #include <flitr/image_producer.h>

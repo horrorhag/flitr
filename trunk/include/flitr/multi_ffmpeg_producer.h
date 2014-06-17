@@ -21,8 +21,6 @@
 #ifndef MULTI_FFMPEG_PRODUCER_H
 #define MULTI_FFMPEG_PRODUCER_H 1
 
-#include <boost/tr1/memory.hpp>
-
 #include <OpenThreads/Thread>
 #include <OpenThreads/Mutex>
 #include <OpenThreads/Barrier>

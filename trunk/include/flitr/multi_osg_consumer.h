@@ -21,7 +21,6 @@
 #ifndef MULTI_OSG_CONSUMER_H
 #define MULTI_OSG_CONSUMER_H 1
 
-#include <boost/tr1/memory.hpp>
 
 #include <OpenThreads/Thread>
 #include <OpenThreads/Mutex>

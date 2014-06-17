@@ -22,9 +22,8 @@
 #define FLITR_IMAGE_METADATA_H 1
 
 #include <flitr/flitr_export.h>
-
-#include <boost/tr1/functional.hpp>
-#include <boost/tr1/memory.hpp>
+#include <functional>
+#include <memory>
 
 #include <ostream>
 
@@ -44,7 +43,7 @@ class FLITR_EXPORT ImageMetadata {
     virtual std::string getString() const = 0; // used for printing when debugging, etc.
 };
     
-typedef std::tr1::function < std::tr1::shared_ptr<ImageMetadata> () > CreateMetadataFunction;
+typedef std::function < std::shared_ptr<ImageMetadata> () > CreateMetadataFunction;
 
 }
 

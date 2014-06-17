@@ -31,7 +31,6 @@ extern "C" {
 
 #undef PixelFormat
 
-#include <boost/tr1/memory.hpp>
 
 #include <cstdlib>
 

@@ -22,6 +22,9 @@
 #define TARGET_INJECTOR_H 1
 
 #include <flitr/image_processor.h>
+
+#include <algorithm>
+
 #include <boost/timer.hpp>
 
 namespace flitr {
@@ -81,7 +84,7 @@ public:
 				elapsedTime_ += dT;
 				int index = (int)(elapsedTime_ / interval_);
 				
-				if (index >= samples_.size() - 1) 
+				if (index >= (int)samples_.size() - 1) 
 				{
 					px_ = samples_.back().first;
 					py_ = samples_.back().second;

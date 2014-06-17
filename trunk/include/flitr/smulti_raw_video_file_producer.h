@@ -21,8 +21,6 @@
 #ifndef SMULTI_RAW_VIDEO_FILE_PRODUCER_H
 #define SMULTI_RAW_VIDEO_FILE_PRODUCER_H 1
 
-#include <boost/tr1/memory.hpp>
-
 #include <flitr/raw_video_file_reader.h>
 #include <flitr/image_producer.h>
 
