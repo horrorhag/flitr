@@ -1,6 +1,11 @@
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <fstream>
 
+#include <boost/lexical_cast.hpp>
+
+#include <osgDB/WriteFile>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
@@ -8,6 +13,7 @@
 
 #include <flitr/modules/target_injector/target_injector.h>
 #include <flitr/ffmpeg_producer.h>
+#include <flitr/image_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
@@ -16,6 +22,7 @@
 
 using std::tr1::shared_ptr;
 using namespace flitr;
+using namespace std;
 
 class BackgroundTriggerThread : public OpenThreads::Thread {
 public:
@@ -48,9 +55,47 @@ private:
 
 //#define USE_BACKGROUND_TRIGGER_THREAD 1
 
+class KeyPressedHandler : public osgGA::GUIEventHandler 
+{
+	public: 
+
+    KeyPressedHandler(shared_ptr<MultiOSGConsumer> osgc) : osgc_(osgc), count_(0) {}
+    ~KeyPressedHandler() {}
+
+    bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+    {
+		osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
+        if (!viewer) return false;
+
+        switch(ea.getEventType())
+        {
+            case(osgGA::GUIEventAdapter::KEYUP):
+            {
+                if (ea.getKey()=='c')
+                {
+					osg::Image *theImage;
+					theImage = osgc_->getOSGImage(0, 0);
+					theImage->flipHorizontal();
+					theImage->flipVertical();
+					std::string s = "frame_cap_" + boost::lexical_cast<std::string>(count_) + ".png";
+					osgDB::writeImageFile(*theImage, s);
+					count_++;
+                }
+			}
+            default:
+                return false;
+        }
+
+		return true;
+	}
+
+	shared_ptr<MultiOSGConsumer> osgc_;
+	int count_;
+};
+
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
+    if (argc < 2) {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
@@ -72,18 +117,13 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-
-    targetInjector->setTargetBrightness(10.0f);
+    targetInjector->setTargetBrightness(255.0f);
 
     targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getDownstreamFormat(0).getWidth()*0.5f-targetInjector->getDownstreamFormat(0).getHeight()*0.5f, 0.5f,
                                                               1.0f, 1.0f, 0.1f,
                                                               0.8f, 0.4f,
                                                               0.0f, 0.0f));
 
-    targetInjector->addTarget(TargetInjector::SyntheticTarget(targetInjector->getDownstreamFormat(0).getWidth()*0.5f-targetInjector->getDownstreamFormat(0).getHeight()*0.5f, targetInjector->getDownstreamFormat(0).getHeight()*0.45f,
-                                                              1.0f, 0.0f, 0.1f,
-                                                              0.8f, 0.4f,
-                                                              0.0f, 0.0f));
     targetInjector->startTriggerThread();
 
 
@@ -112,6 +152,9 @@ int main(int argc, char *argv[])
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
+
+	// add the pick handler
+    viewer.addEventHandler(new KeyPressedHandler(osgc));
 
     //viewer.setUpViewInWindow(480+40, 40, 640, 480);
     viewer.realize();
