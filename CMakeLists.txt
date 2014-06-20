@@ -205,6 +205,7 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_threshold_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/raw_video_file_utils.h
@@ -300,6 +301,7 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_threshold_pass.h
+  include/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.h
   
 )
 
