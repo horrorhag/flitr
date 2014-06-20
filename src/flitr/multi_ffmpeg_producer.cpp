@@ -21,7 +21,7 @@
 #include <flitr/multi_ffmpeg_producer.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 void MultiFFmpegProducerThread::run()
 {
@@ -85,7 +85,7 @@ MultiFFmpegProducer::MultiFFmpegProducer(std::vector<std::string> filenames, Ima
     SeekOK_.resize(ImagesPerSlot_);    
 }
 
-bool MultiFFmpegProducer::setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata)
+bool MultiFFmpegProducer::setAutoLoadMetaData(std::shared_ptr<ImageMetadata> defaultMetadata)
 {
     bool success=true;
 

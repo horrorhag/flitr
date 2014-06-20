@@ -21,7 +21,7 @@
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 FIPTonemap::FIPTonemap(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                        float power,

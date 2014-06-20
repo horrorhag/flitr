@@ -23,7 +23,7 @@
 #include <sstream>
 #include <cstdlib>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 void updatePoints(PointsOverlay* po, int width, int height, int num)

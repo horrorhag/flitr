@@ -21,7 +21,7 @@
 #include <flitr/modules/de_motion_blur/de_motion_blur.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 DeMotionBlur::DeMotionBlur(ImageProducer& upStreamProducer,
                                uint32_t images_per_slot, uint32_t buffer_size) :

@@ -19,7 +19,7 @@
 
 #include <flitr/modules/glsl_shader_passes/glsl_shader_pass.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 

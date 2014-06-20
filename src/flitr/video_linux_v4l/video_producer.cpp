@@ -50,7 +50,7 @@ extern "C" {
 #include <flitr/log_message.h>
 #include <flitr/high_resolution_time.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
@@ -243,7 +243,7 @@ bool VideoProducer::init()
     ImageFormat_.push_back(ImageFormat(w, h, gVid->OutputPixelFormat_));
 
     // Allocate storage
-    SharedImageBuffer_ = std::tr1::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, gVid->buffer_size_, 1));
+    SharedImageBuffer_ = std::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, gVid->buffer_size_, 1));
     SharedImageBuffer_->initWithStorage();
 
     gVid->InputV42LFrame_ = allocFFmpegFrame(gVid->InputFFmpegPixelFormat_, w, h);

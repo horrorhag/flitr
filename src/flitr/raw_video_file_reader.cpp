@@ -24,7 +24,7 @@
 #include <sstream>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 RawVideoFileReader::RawVideoFileReader(std::string filename) :
     FrameRate_(FLITR_DEFAULT_VIDEO_FRAME_RATE),

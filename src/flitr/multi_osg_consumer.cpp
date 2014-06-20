@@ -153,7 +153,7 @@ bool TMultiOSGConsumer<T>::init()
             OSGImages_[h].push_back(new osg::Image());
             OSGImages_[h][i]->setPixelBufferObject(new osg::PixelBufferObject(OSGImages_[h][i].get()));
 
-            Metadata_[h].push_back(std::tr1::shared_ptr<flitr::ImageMetadata>((flitr::ImageMetadata *)0));
+            Metadata_[h].push_back(std::shared_ptr<flitr::ImageMetadata>((flitr::ImageMetadata *)0));
 
             switch (ImageFormat_[i].getPixelFormat()) {
             case ImageFormat::FLITR_PIX_FMT_Y_8:
@@ -222,7 +222,7 @@ bool TMultiOSGConsumer<T>::init()
             OutputTextures_[h][i]->setImage(OSGImages_[h][i].get());
         }
     }
-    DiscardThread_ = std::tr1::shared_ptr<MultiOSGConsumerDiscardThread>(
+    DiscardThread_ = std::shared_ptr<MultiOSGConsumerDiscardThread>(
                 new MultiOSGConsumerDiscardThread(this));
 
     return true;
@@ -235,7 +235,7 @@ void TMultiOSGConsumer<T>::startDiscardThread()
 }
 
 template<class T>
-std::tr1::shared_ptr<ImageMetadata> TMultiOSGConsumer<T>::getImageMetadata(uint32_t im_number, uint32_t im_age)
+std::shared_ptr<ImageMetadata> TMultiOSGConsumer<T>::getImageMetadata(uint32_t im_number, uint32_t im_age)
 {
     // \todo check input num and input age
 

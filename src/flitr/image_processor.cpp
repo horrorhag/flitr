@@ -22,7 +22,7 @@
 #include <sstream>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 void ImageProcessorThread::run()
 {
@@ -52,7 +52,7 @@ ImageProcessor::ImageProcessor(ImageProducer& upStreamProducer,
 {
     std::stringstream stats_name;
     stats_name << " ImageProcessor::process";
-    ProcessorStats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector(stats_name.str()));
+    ProcessorStats_ = std::shared_ptr<StatsCollector>(new StatsCollector(stats_name.str()));
 
 }
 

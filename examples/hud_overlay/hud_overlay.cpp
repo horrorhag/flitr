@@ -24,7 +24,7 @@
 #include <iostream>
 #include <sstream>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 // Adapted from osgpick example

@@ -79,7 +79,7 @@ bool ScreenCaptureProducer::init()
     ImageFormat imf(w, h, ImageFormat::FLITR_PIX_FMT_RGB_8);
     ImageFormat_.push_back(imf);
         
-    SharedImageBuffer_ = std::tr1::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, 1));
+    SharedImageBuffer_ = std::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, 1));
     SharedImageBuffer_->initWithStorage();
 
     cb_ = new ScreenCaptureCallback(this);

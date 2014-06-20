@@ -67,7 +67,7 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
     MultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
     virtual ~MultiFFmpegProducer();
 
-    bool setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata);
+    bool setAutoLoadMetaData(std::shared_ptr<ImageMetadata> defaultMetadata);
 
     /** 
      * Perform initialisation that might fail on file opens.
@@ -125,9 +125,9 @@ class FLITR_EXPORT MultiFFmpegProducer : public ImageProducer {
 
   private:
     /// Child producers
-    std::vector< std::tr1::shared_ptr<FFmpegProducer> > Producers_;
+    std::vector< std::shared_ptr<FFmpegProducer> > Producers_;
     /// Child consumers
-    std::vector< std::tr1::shared_ptr<ImageConsumer> > Consumers_;
+    std::vector< std::shared_ptr<ImageConsumer> > Consumers_;
     /// Threads for triggering the producers in parallel.
     std::vector< MultiFFmpegProducerThread* > ProducerThreads_;
     /// Sync creation of the threads.

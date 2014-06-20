@@ -225,9 +225,9 @@ MultiCPUHistogramConsumer::MultiCPUHistogramConsumer(ImageProducer& producer,
     {
         ImageFormat_.push_back(producer.getFormat(i));
 
-        CalcMutexes_.push_back(std::tr1::shared_ptr<OpenThreads::Mutex>(new OpenThreads::Mutex()));
+        CalcMutexes_.push_back(std::shared_ptr<OpenThreads::Mutex>(new OpenThreads::Mutex()));
 
-        Histograms_.push_back(std::tr1::shared_ptr< std::vector<int32_t> >(new std::vector<int32_t>));
+        Histograms_.push_back(std::shared_ptr< std::vector<int32_t> >(new std::vector<int32_t>));
         Histograms_[i]->resize(256);
 
         HistogramUpdatedVect_.push_back(false);

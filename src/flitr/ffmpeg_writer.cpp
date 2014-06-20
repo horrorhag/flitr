@@ -22,7 +22,7 @@
 #include <flitr/ffmpeg_utils.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 
 //"The output format is automatically guessed according to the file extension and bit depth.\n"

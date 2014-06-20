@@ -89,9 +89,9 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     const uint32_t ImageStride_;
 
     MultiCPUHistogramConsumerThread *Thread_;
-    std::vector< std::tr1::shared_ptr<OpenThreads::Mutex> > CalcMutexes_;
+    std::vector< std::shared_ptr<OpenThreads::Mutex> > CalcMutexes_;
 
-    std::vector< std::tr1::shared_ptr< std::vector<int32_t> > > Histograms_;
+    std::vector< std::shared_ptr< std::vector<int32_t> > > Histograms_;
     std::vector<bool> HistogramUpdatedVect_;
 
 };

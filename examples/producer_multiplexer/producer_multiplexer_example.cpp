@@ -15,7 +15,7 @@
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 

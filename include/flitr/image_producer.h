@@ -158,7 +158,7 @@ class FLITR_EXPORT ImageProducer {
     std::vector<ImageFormat> ImageFormat_;
     
     /// The shared buffer used for this producer and all consumers.
-    std::tr1::shared_ptr<SharedImageBuffer> SharedImageBuffer_;
+    std::shared_ptr<SharedImageBuffer> SharedImageBuffer_;
 
     /// An optional function that gets called as soon as an image is
     /// produced. Used to create the image metadata.

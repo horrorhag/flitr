@@ -107,10 +107,10 @@ class FLITR_EXPORT RawVideoFileReader {
     int32_t CurrentImage_;
     std::string FileName_;
     uint32_t FirstFramePos_;
-    std::tr1::shared_ptr<Image> SingleImage_;
+    std::shared_ptr<Image> SingleImage_;
     FILE* File_;
 
-    std::tr1::shared_ptr<StatsCollector> GetImageStats_;
+    std::shared_ptr<StatsCollector> GetImageStats_;
 };
 
 }

@@ -25,7 +25,7 @@
 #include <flitr/image_multiplexer.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 void ImageMultiplexerThread::run()
 {
@@ -56,7 +56,7 @@ ImageMultiplexer::ImageMultiplexer(uint32_t w, uint32_t h, ImageFormat::PixelFor
 {
     std::stringstream stats_name;
     stats_name << " ImageMultiplexer::process";
-    ProcessorStats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector(stats_name.str()));
+    ProcessorStats_ = std::shared_ptr<StatsCollector>(new StatsCollector(stats_name.str()));
 
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -72,7 +72,7 @@ ImageMultiplexer::~ImageMultiplexer()
 
 void ImageMultiplexer::addUpstreamProducer(ImageProducer& upStreamProducer)
 {
-    ImageConsumerVec_.push_back(std::tr1::shared_ptr<ImageConsumer>(new ImageConsumer(upStreamProducer)));
+    ImageConsumerVec_.push_back(std::shared_ptr<ImageConsumer>(new ImageConsumer(upStreamProducer)));
 }
 
 bool ImageMultiplexer::init()

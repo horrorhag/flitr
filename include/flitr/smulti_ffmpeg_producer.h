@@ -88,7 +88,7 @@ class FLITR_EXPORT SMultiFFmpegProducer : public ImageProducer {
 
   private:
     /// The readers to do the actual reading.
-    std::vector<std::tr1::shared_ptr<FFmpegReader> > Readers_;
+    std::vector<std::shared_ptr<FFmpegReader> > Readers_;
     uint32_t ImagesPerSlot_;
     std::vector<std::string> Filenames_;
 

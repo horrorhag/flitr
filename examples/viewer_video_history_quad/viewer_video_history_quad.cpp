@@ -11,7 +11,7 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 class BackgroundTriggerThread : public OpenThreads::Thread {

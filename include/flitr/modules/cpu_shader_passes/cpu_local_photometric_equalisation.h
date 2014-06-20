@@ -20,7 +20,7 @@ public:
     {
         *TargetAverage_=initialTargetAverage;
 
-        stats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector("CPUPhotometricEqualisation_Shader"));
+        stats_ = std::shared_ptr<StatsCollector>(new StatsCollector("CPUPhotometricEqualisation_Shader"));
     }
 
     virtual ~CPULocalPhotometricEqualisation_Shader()
@@ -284,7 +284,7 @@ protected:
     double *TargetAverage_;
     double TargetAverageUpdateSpeed_;
 
-    std::tr1::shared_ptr<StatsCollector> stats_;
+    std::shared_ptr<StatsCollector> stats_;
 
     bool enabled_;
 };

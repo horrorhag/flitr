@@ -21,7 +21,7 @@
 #include <flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 FIPGaussianDownsample::FIPGaussianDownsample(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                              uint32_t buffer_size) :

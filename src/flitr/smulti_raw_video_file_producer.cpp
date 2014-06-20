@@ -21,7 +21,7 @@
 #include <flitr/smulti_raw_video_file_producer.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 SMultiRawVideoFileProducer::SMultiRawVideoFileProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
     buffer_size_(buffer_size)

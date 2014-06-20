@@ -141,10 +141,10 @@ class FLITR_EXPORT FFmpegReader {
     /// True if e.g. reading from jpg or png files.
     bool SingleFrameSource_;
     bool SingleFrameDone_;
-    std::tr1::shared_ptr<Image> SingleImage_;
+    std::shared_ptr<Image> SingleImage_;
 
-    std::tr1::shared_ptr<StatsCollector> SwscaleStats_;
-    std::tr1::shared_ptr<StatsCollector> GetImageStats_;
+    std::shared_ptr<StatsCollector> SwscaleStats_;
+    std::shared_ptr<StatsCollector> GetImageStats_;
 
 
 #if defined FLITR_USE_SWSCALE

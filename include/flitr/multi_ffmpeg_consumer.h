@@ -87,7 +87,7 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     OpenThreads::Mutex WritingMutex_;
     bool Writing_;
 
-    std::tr1::shared_ptr<StatsCollector> MultiWriteStats_;
+    std::shared_ptr<StatsCollector> MultiWriteStats_;
 
 };
 

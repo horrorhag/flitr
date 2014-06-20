@@ -164,7 +164,7 @@ class FLITR_EXPORT TextureCaptureProducer : public ImageProducer {
                     //}
                 } else
                 {
-                    std::tr1::shared_ptr<DefaultTextureCaptureMetadata> meta(new DefaultTextureCaptureMetadata());
+                    std::shared_ptr<DefaultTextureCaptureMetadata> meta(new DefaultTextureCaptureMetadata());
                     meta->PCTimeStamp_ = currentTimeNanoSec();
                     im->setMetadata(meta);
                 }

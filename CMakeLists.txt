@@ -35,9 +35,9 @@ ELSEIF(APPLE)
 ELSE()
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -Wall")
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -Wall")
-  SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -Wall -std=c++11")
+  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -Wall -std=c++11")
+  SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -std=c++11")
 ENDIF()
 
 
