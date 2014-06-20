@@ -29,7 +29,7 @@
 #include <flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.h>
 #include <flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 int main(int argc, char *argv[])

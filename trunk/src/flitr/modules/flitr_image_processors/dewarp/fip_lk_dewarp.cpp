@@ -28,7 +28,7 @@
 
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                          const bool useLevelZero,

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <boost/tr1/memory.hpp>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 #include <flitr/image_format.h>
 #include <flitr/image.h>

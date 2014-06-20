@@ -35,7 +35,7 @@
 #include "cuda_auto_contrast_pass.h"
 #include "simple_shader_pass.h"
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 int main(int argc, char *argv[])

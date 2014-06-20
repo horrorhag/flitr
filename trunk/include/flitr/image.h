@@ -96,8 +96,8 @@ class FLITR_EXPORT Image {
     }
     
     ImageFormat* format() { return &Format_; }
-    const std::tr1::shared_ptr<ImageMetadata> metadata() { return Metadata_; }
-    void setMetadata(std::tr1::shared_ptr<ImageMetadata> md) { Metadata_ = md; } 
+    const std::shared_ptr<ImageMetadata> metadata() { return Metadata_; }
+    void setMetadata(std::shared_ptr<ImageMetadata> md) { Metadata_ = md; } 
 
     uint8_t * const data() { return &(Data_[0]); }
     uint8_t const * const data() const { return &(Data_[0]); }
@@ -109,12 +109,12 @@ class FLITR_EXPORT Image {
         if (rh.Metadata_)
         {
             // make a copy
-            std::tr1::shared_ptr<ImageMetadata> new_meta(rh.Metadata_->clone());
+            std::shared_ptr<ImageMetadata> new_meta(rh.Metadata_->clone());
             Metadata_.swap(new_meta);
         } else
         {
             // delete ours too
-            std::tr1::shared_ptr<ImageMetadata> new_meta;
+            std::shared_ptr<ImageMetadata> new_meta;
             Metadata_.swap(new_meta);
         }
         // assume allocation was done
@@ -127,7 +127,7 @@ class FLITR_EXPORT Image {
     }
 
     ImageFormat Format_;
-    std::tr1::shared_ptr<ImageMetadata> Metadata_;
+    std::shared_ptr<ImageMetadata> Metadata_;
     uint8_t* Data_;
 };
 

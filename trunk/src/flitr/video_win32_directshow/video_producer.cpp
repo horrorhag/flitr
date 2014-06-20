@@ -287,7 +287,7 @@ bool VideoProducer::init()
 
     ImageFormat_.push_back(ImageFormat(frame_width, frame_height, pixelFormat_));
 
-    SharedImageBuffer_ = std::tr1::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, imageSlots_, 1));
+    SharedImageBuffer_ = std::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, imageSlots_, 1));
     SharedImageBuffer_->initWithStorage();
 
 

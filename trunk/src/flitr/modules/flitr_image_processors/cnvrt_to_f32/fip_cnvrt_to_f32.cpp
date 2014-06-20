@@ -21,7 +21,7 @@
 #include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 FIPConvertToF32::FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                  uint32_t buffer_size) :

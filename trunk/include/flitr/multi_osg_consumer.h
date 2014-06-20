@@ -84,7 +84,7 @@ public:
      */
      void startDiscardThread();
     
-    std::tr1::shared_ptr<ImageMetadata> getImageMetadata(uint32_t im_number = 0, uint32_t im_age = 0);
+    std::shared_ptr<ImageMetadata> getImageMetadata(uint32_t im_number = 0, uint32_t im_age = 0);
 
     /**
      * Gets access to an osg::Image in the buffer.
@@ -135,7 +135,7 @@ private:
     /// Buffer of OSG images that just wrap our producer's data.
     std::vector< std::vector< osg::ref_ptr <osg::Image> > > OSGImages_;
 
-    std::vector< std::vector< std::tr1::shared_ptr <flitr::ImageMetadata> > > Metadata_;
+    std::vector< std::vector< std::shared_ptr <flitr::ImageMetadata> > > Metadata_;
 
     /// Textures that can be used in OSG.
     std::vector< std::vector< osg::ref_ptr <T> > > OutputTextures_;
@@ -148,7 +148,7 @@ private:
     OpenThreads::Mutex BufferMutex_;
     /// Background thread to discard images if getNext() cannot be
     /// called fast enough.
-    std::tr1::shared_ptr<MultiOSGConsumerDiscardThread> DiscardThread_;
+    std::shared_ptr<MultiOSGConsumerDiscardThread> DiscardThread_;
 };
 
 #ifdef FLITR_WITH_OSGCUDA
@@ -183,7 +183,7 @@ public:
     {
     }
 
-    std::tr1::shared_ptr<ImageMetadata> getCurrentMetadata()
+    std::shared_ptr<ImageMetadata> getCurrentMetadata()
     {
         return mosgc_->getImageMetadata(image_in_slot_, slot_in_history_);
     }

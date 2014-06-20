@@ -10,7 +10,7 @@
 #include <flitr/screen_capture_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 int main(int argc, char *argv[])

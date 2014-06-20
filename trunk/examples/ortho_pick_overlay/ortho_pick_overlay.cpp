@@ -23,7 +23,7 @@
 #include <iostream>
 #include <sstream>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 int32_t startup_viewport_width=0;
 int32_t startup_viewport_height=0;

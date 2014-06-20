@@ -21,7 +21,7 @@
 #include <flitr/raw_video_file_writer.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 RawVideoFileWriter::RawVideoFileWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate) :
     ImageFormat_(image_format),

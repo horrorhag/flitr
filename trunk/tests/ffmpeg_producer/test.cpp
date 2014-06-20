@@ -4,7 +4,7 @@
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/image_consumer.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 class TestConsumer : public ImageConsumer {

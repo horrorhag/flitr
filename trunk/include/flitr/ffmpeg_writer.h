@@ -141,7 +141,7 @@ private:
     /// Holds the number of frames written to disk.
     uint64_t WrittenFrameCount_;
 
-    std::tr1::shared_ptr<StatsCollector> WriteFrameStats_;
+    std::shared_ptr<StatsCollector> WriteFrameStats_;
 
     uint8_t* VideoEncodeBuffer_;
     uint32_t VideoEncodeBufferSize_;

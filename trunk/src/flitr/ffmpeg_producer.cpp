@@ -21,7 +21,7 @@
 #include <flitr/ffmpeg_producer.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 
 FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
@@ -34,9 +34,9 @@ FFmpegProducer::FFmpegProducer(std::string filename, ImageFormat::PixelFormat ou
     ImageFormat_.push_back(Reader_->getFormat());
 }
 
-bool FFmpegProducer::setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> defaultMetadata)
+bool FFmpegProducer::setAutoLoadMetaData(std::shared_ptr<ImageMetadata> defaultMetadata)
 {
-    DefaultMetadata_=std::tr1::shared_ptr<ImageMetadata>(defaultMetadata->clone());
+    DefaultMetadata_=std::shared_ptr<ImageMetadata>(defaultMetadata->clone());
 
     size_t posOfDot=filename_.find_last_of('.');
     if (posOfDot!=std::string::npos)
@@ -44,7 +44,7 @@ bool FFmpegProducer::setAutoLoadMetaData(std::tr1::shared_ptr<ImageMetadata> def
         std::string metadataFilename=".meta";
         metadataFilename.insert(0,filename_,0,posOfDot);
 
-        MetadataReader_=std::tr1::shared_ptr<MetadataReader>(new MetadataReader(metadataFilename));
+        MetadataReader_=std::shared_ptr<MetadataReader>(new MetadataReader(metadataFilename));
 
         return true;
     }
@@ -101,7 +101,7 @@ bool FFmpegProducer::seek(uint32_t position)
         if ((MetadataReader_)&&(DefaultMetadata_))
         {
             // set default meta data which also gives access to the desired metadata class' readFromStream method.
-            image->setMetadata(std::tr1::shared_ptr<ImageMetadata>(DefaultMetadata_->clone()));
+            image->setMetadata(std::shared_ptr<ImageMetadata>(DefaultMetadata_->clone()));
 
             // update with the meta data's virtual readFromStream() method via the meta data reader.
             MetadataReader_->readFrame(*image, seek_to);

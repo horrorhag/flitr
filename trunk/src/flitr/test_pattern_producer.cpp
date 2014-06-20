@@ -22,7 +22,7 @@
 #include <cassert>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 
 TestPatternProducer::TestPatternProducer(const uint32_t width, const uint32_t height, const ImageFormat::PixelFormat out_pix_fmt,

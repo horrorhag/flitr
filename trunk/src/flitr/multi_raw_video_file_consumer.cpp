@@ -76,7 +76,7 @@ MultiRawVideoFileConsumer::MultiRawVideoFileConsumer(ImageProducer& producer,
 {
     std::stringstream write_stats_name;
     write_stats_name << " MultiRawVideoFileConsumer::write";
-    MultiWriteStats_ = std::tr1::shared_ptr<StatsCollector>(new StatsCollector(write_stats_name.str()));
+    MultiWriteStats_ = std::shared_ptr<StatsCollector>(new StatsCollector(write_stats_name.str()));
 
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(producer.getFormat(i));

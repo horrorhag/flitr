@@ -21,7 +21,7 @@
 #include <flitr/modules/target_injector/target_injector.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 TargetInjector::TargetInjector(ImageProducer& upStreamProducer,
                                uint32_t images_per_slot, uint32_t buffer_size) :

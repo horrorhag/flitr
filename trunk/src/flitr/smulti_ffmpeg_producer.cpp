@@ -21,7 +21,7 @@
 #include <flitr/smulti_ffmpeg_producer.h>
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 SMultiFFmpegProducer::SMultiFFmpegProducer(std::vector<std::string> filenames, ImageFormat::PixelFormat out_pix_fmt, uint32_t buffer_size) :
     buffer_size_(buffer_size)

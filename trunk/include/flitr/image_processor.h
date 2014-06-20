@@ -99,7 +99,7 @@ namespace flitr {
         const uint32_t buffer_size_;
         
         /*! StatsCollector member to measure the time taken by the processor.*/
-        std::tr1::shared_ptr<StatsCollector> ProcessorStats_;
+        std::shared_ptr<StatsCollector> ProcessorStats_;
         
     private:
         ImageProcessorThread *Thread_;

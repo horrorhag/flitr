@@ -4,7 +4,7 @@
 #include <flitr/image_consumer.h>
 #include <flitr/image_producer.h>
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using namespace flitr;
 
 void checkCondition(bool condition, std::string message)

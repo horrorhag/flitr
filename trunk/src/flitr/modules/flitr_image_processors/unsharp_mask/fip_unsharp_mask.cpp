@@ -22,7 +22,7 @@
 
 
 using namespace flitr;
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 
 FIPUnsharpMask::FIPUnsharpMask(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                const float gain,
