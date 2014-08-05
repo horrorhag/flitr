@@ -22,12 +22,15 @@
 
 using namespace flitr;
 
-ScreenCaptureProducer::ScreenCaptureCallback::ScreenCaptureCallback(ScreenCaptureProducer* p) :
-    producer_(p)
+ScreenCaptureProducer::ScreenCaptureCallback::ScreenCaptureCallback(ScreenCaptureProducer* p)
+    : flipV_(false)
+    , flipH_(false)
+    , producer_(p)
 {
     width_orig_ = producer_->getFormat().getWidth();
     height_orig_ = producer_->getFormat().getHeight();
     osg_image_ = new osg::Image();
+
 }
 
 void ScreenCaptureProducer::ScreenCaptureCallback::operator()(osg::RenderInfo& ri) const
@@ -59,6 +62,10 @@ void ScreenCaptureProducer::ScreenCaptureCallback::readPixels() const
                          osg::Image::NO_DELETE);
     osg_image_->readPixels(0, 0, width_orig_, height_orig_,
                            GL_RGB, GL_UNSIGNED_BYTE);
+
+    if (flipV_) osg_image_->flipVertical();
+    if (flipH_) osg_image_->flipHorizontal();
+
     producer_->releaseWriteSlot();
 }
 
