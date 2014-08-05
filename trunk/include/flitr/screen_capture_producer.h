@@ -40,6 +40,12 @@ class FLITR_EXPORT ScreenCaptureProducer : public ImageProducer {
       public:
         ScreenCaptureCallback(ScreenCaptureProducer* p);
         virtual void operator()(osg::RenderInfo& ri) const;
+
+
+      public:
+        bool flipV_;
+        bool flipH_;
+
       private:
         void readPixels() const;
 
@@ -47,6 +53,7 @@ class FLITR_EXPORT ScreenCaptureProducer : public ImageProducer {
         osg::ref_ptr<osg::Image> osg_image_;
         int32_t width_orig_;
         int32_t height_orig_;
+
     };
 
     ScreenCaptureProducer(osgViewer::View& view, uint32_t buffer_size, uint32_t capture_every_nth);
@@ -60,6 +67,9 @@ class FLITR_EXPORT ScreenCaptureProducer : public ImageProducer {
     bool shouldCaptureNow();
     void startCapture();
     void stopCapture();
+
+    void FlipVertical(bool flip) { cb_->flipV_ = flip; }
+    void FlipHorizontal(bool flip) { cb_->flipH_ = flip; }
 
   private:
     osgViewer::View& view_;
