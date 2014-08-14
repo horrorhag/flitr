@@ -60,6 +60,7 @@ void ScreenCaptureProducer::ScreenCaptureCallback::readPixels() const
                          1, GL_RGB, GL_RGB,  GL_UNSIGNED_BYTE,
                          im->data(),
                          osg::Image::NO_DELETE);
+
     osg_image_->readPixels(0, 0, width_orig_, height_orig_,
                            GL_RGB, GL_UNSIGNED_BYTE);
 
