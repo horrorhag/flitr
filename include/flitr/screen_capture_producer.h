@@ -68,8 +68,21 @@ class FLITR_EXPORT ScreenCaptureProducer : public ImageProducer {
     void startCapture();
     void stopCapture();
 
-    void FlipVertical(bool flip) { cb_->flipV_ = flip; }
-    void FlipHorizontal(bool flip) { cb_->flipH_ = flip; }
+    void FlipVertical(bool flip)
+    {
+        if (cb_)
+        {
+            cb_->flipV_ = flip;
+        }
+    }
+
+    void FlipHorizontal(bool flip)
+    {
+        if (cb_)
+        {
+            cb_->flipH_ = flip;
+        }
+    }
 
   private:
     osgViewer::View& view_;
