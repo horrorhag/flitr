@@ -32,6 +32,12 @@ IF(MSVC)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_NO_DEPRECATE /D _WIN32_WINNT=0x0501")
 ELSEIF(APPLE)
   SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures" FORCE)
+  set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
+  set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+  set(CMAKE_XCODE_ATTRIBUTE_CLANG_C_LANGUAGE_STANDARD "c11")
+  set(CMAKE_XCODE_ATTRIBUTE_CLANG_C_LIBRARY "libc")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -g -Wall")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -g -Wall")
 ELSE()
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
@@ -179,6 +185,7 @@ SET(LIB_SOURCES
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
+  src/flitr/modules/flitr_image_processors/dpt/fip_dpt.cpp
   src/flitr/modules/flitr_image_processors/crop/fip_crop.cpp
   src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
   src/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.cpp
@@ -274,7 +281,7 @@ SET(LIB_SOURCES
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h
 
-
+  include/flitr/modules/flitr_image_processors/dpt/fip_dpt.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h
   include/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h
@@ -371,7 +378,10 @@ ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 ADD_SUBDIRECTORY(examples/average_image)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)
+
 ADD_SUBDIRECTORY(examples/LK_dewarp)
+ADD_SUBDIRECTORY(examples/DPT)
+
 ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
