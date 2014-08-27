@@ -50,8 +50,7 @@ filterPulseSize_(filterPulseSize)
 }
 
 FIPDPT::~FIPDPT()
-{
-}
+{}
 
 bool FIPDPT::init()
 {
@@ -64,21 +63,18 @@ bool FIPDPT::init()
 size_t FIPDPT::mergeArc(const uint32_t arcIndex)
 {
     size_t numPulsesMerged=0;
-    
     Arc &arc=arcVect_[arcIndex];
     
     if (arc.active_)
     {
-        const auto index0=arc.nodeIndices_[0];
-        const auto index1=arc.nodeIndices_[1];
-        
-        Node &node0=nodeVect_[index0];
-        Node &node1=nodeVect_[index1];
+        const auto index0 = arc.nodeIndices_[0];
+        const auto index1 = arc.nodeIndices_[1];
+        Node &node0       = nodeVect_[index0];
+        Node &node1       = nodeVect_[index1];
         
         if (node0.value_ == node1.value_)
         {
             node0.size_+=node1.size_;
-            
             node0.pixelIndices_.insert(node0.pixelIndices_.end(),
                                        node1.pixelIndices_.begin(),
                                        node1.pixelIndices_.end());
@@ -91,7 +87,7 @@ size_t FIPDPT::mergeArc(const uint32_t arcIndex)
                 
                 if (arcFromNode1.active_)
                 {
-                    const size_t neighbourOfNode1Index=(arcFromNode1.nodeIndices_[0]==index1) ? arcFromNode1.nodeIndices_[1] : arcFromNode1.nodeIndices_[0];
+                    const size_t neighbourOfNode1Index=retrieveNeighbourNodeIndex(arcFromNode1, index1);
                     
                     if (neighbourOfNode1Index!=index0)
                     {
@@ -101,10 +97,10 @@ size_t FIPDPT::mergeArc(const uint32_t arcIndex)
                         {
                             Arc &arcFromNode0=arcVect_[arcFromNode0Index];
                             
-                            const size_t neighbourOfNode0Index=(arcFromNode0.nodeIndices_[0]==index0) ? arcFromNode0.nodeIndices_[1] : arcFromNode0.nodeIndices_[0];
+                            const size_t neighbourOfNode0Index=retrieveNeighbourNodeIndex(arcFromNode0, index0);
                             
                             if (neighbourOfNode0Index==neighbourOfNode1Index)
-                            {
+                            {//Node0 and node1 already neighbours.
                                 neighbourOfNode1AlreadyNeighbourOfNode0=true;
                                 break;
                             }
@@ -122,16 +118,6 @@ size_t FIPDPT::mergeArc(const uint32_t arcIndex)
                                 {
                                     arcFromNode1.nodeIndices_[1]=index0;
                                 }
-                            
-                            /*
-                             //Ensure that arcs point from low to high node indices so that we always merge high nodes into low nodes.
-                             if (arcFromNode1.nodeIndices_[0] > arcFromNode1.nodeIndices_[1])
-                             {
-                             const auto temp=arcFromNode1.nodeIndices_[0];
-                             arcFromNode1.nodeIndices_[0]=arcFromNode1.nodeIndices_[1];
-                             arcFromNode1.nodeIndices_[1]=temp;
-                             }
-                             */
                         } else
                         {//De-activate redundent arcs.
                             arcFromNode1.active_=false;
@@ -279,7 +265,6 @@ bool FIPDPT::trigger()
             //=== ===
             
             size_t policyCounter=0;
-            size_t previousSmallestPulse=0;
             
             size_t numBumpsRemoved=0;
             size_t numPitsRemoved=0;
@@ -291,7 +276,9 @@ bool FIPDPT::trigger()
             std::vector<uint32_t> nodeIndicesToMerge;
             
             size_t loopCounter = 0;
-            while (previousSmallestPulse<filterPulseSize_)
+            uint32_t previousSmallestPulse = 0;
+            
+            while ((previousSmallestPulse<filterPulseSize_)&&(potentiallyActiveNodeIndexVect_.size()>1))
             {
                 nodeIndicesToMerge.clear();
                 
@@ -307,6 +294,7 @@ bool FIPDPT::trigger()
                         if ((smallestPulse==0)||(node.size_<smallestPulse))
                         {
                             //if (isBump(node.index_)||isPit(node.index_))
+                            //if (node.size_>previousSmallestPulse)
                             {
                                 smallestPulse=node.size_;
                             }
@@ -339,6 +327,7 @@ bool FIPDPT::trigger()
                             {
                                 //=== Remove pits ===//
                                 flattenToNearestNeighbour(node.index_);
+                                //flattenToFirstNeighbour(node.index_);
                                 nodeIndicesToMerge.push_back(node.index_);
                                 ++numPitsRemoved;
                             }
@@ -348,6 +337,7 @@ bool FIPDPT::trigger()
                             {
                                 //=== Remove bumps ===//
                                 flattenToNearestNeighbour(node.index_);
+                                //flattenToFirstNeighbour(node.index_);
                                 nodeIndicesToMerge.push_back(node.index_);
                                 ++numBumpsRemoved;
                             }
@@ -421,19 +411,6 @@ bool FIPDPT::trigger()
                 //std::cout.flush();
                 //=== ===
             }
-            /*
-             for (y=0; y<height; ++y)
-             {
-             const size_t lineOffset=y * width;
-             
-             for (size_t x=0; x<width; ++x)
-             {
-             const uint8_t writeValue=dataRead[lineOffset + x]>>1;
-             
-             dataWrite[lineOffset + x]=writeValue;
-             }
-             }
-             */
         }
         
         //Stop stats measurement event.

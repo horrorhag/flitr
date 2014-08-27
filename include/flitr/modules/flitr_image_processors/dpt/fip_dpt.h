@@ -69,7 +69,12 @@ namespace flitr {
         
     private:
         
-        bool isBump(const size_t nodeIndex)
+        inline uint32_t retrieveNeighbourNodeIndex(const Arc &arc, const uint32_t nodeIndex)
+        {
+            return (arc.nodeIndices_[0]==nodeIndex) ? arc.nodeIndices_[1] : arc.nodeIndices_[0];
+        }
+        
+        inline bool isBump(const size_t nodeIndex)
         {
             const Node &node=nodeVect_[nodeIndex];
             
@@ -79,7 +84,7 @@ namespace flitr {
                 
                 if (arc.active_)
                 {
-                    const auto neighbourIndex=(arc.nodeIndices_[0]==nodeIndex) ? arc.nodeIndices_[1] : arc.nodeIndices_[0];
+                    const auto neighbourIndex=retrieveNeighbourNodeIndex(arc, nodeIndex);
                     
                     if (nodeVect_[neighbourIndex].value_ >= node.value_)
                     {
@@ -91,7 +96,7 @@ namespace flitr {
             return true;
         }
         
-        bool isPit(const size_t nodeIndex)
+        inline bool isPit(const size_t nodeIndex)
         {
             const Node &node=nodeVect_[nodeIndex];
             
@@ -101,7 +106,7 @@ namespace flitr {
                 
                 if (arc.active_)
                 {
-                    const auto neighbourIndex=(arc.nodeIndices_[0]==nodeIndex) ? arc.nodeIndices_[1] : arc.nodeIndices_[0];
+                    const auto neighbourIndex=retrieveNeighbourNodeIndex(arc, nodeIndex);
                     
                     if (nodeVect_[neighbourIndex].value_ <= node.value_)
                     {
@@ -117,7 +122,7 @@ namespace flitr {
         {
             Node &node=nodeVect_[nodeIndex];
             
-            size_t firtsNeighbourIndex=nodeIndex;
+            size_t firstNeighbourIndex=nodeIndex;
             
             for (const auto arcIndex : node.arcIndices_)
             {
@@ -125,12 +130,12 @@ namespace flitr {
                 
                 if (arc.active_)
                 {
-                    firtsNeighbourIndex=(arc.nodeIndices_[0]==nodeIndex) ? arc.nodeIndices_[1] : arc.nodeIndices_[0];
+                    firstNeighbourIndex=retrieveNeighbourNodeIndex(arc, nodeIndex);
                     break;
                 }
             }
             
-            node.value_=nodeVect_[firtsNeighbourIndex].value_;
+            node.value_=nodeVect_[firstNeighbourIndex].value_;
             
             return node.value_;
         }
@@ -147,7 +152,7 @@ namespace flitr {
                 
                 if (arc.active_)
                 {
-                    const auto neighbourIndex=(arc.nodeIndices_[0]==nodeIndex) ? arc.nodeIndices_[1] : arc.nodeIndices_[0];
+                    const auto neighbourIndex=retrieveNeighbourNodeIndex(arc, nodeIndex);
                     
                     if (( nearestNeighbourIndex==nodeIndex ) ||
                         ( abs(int(nodeVect_[neighbourIndex].value_)-int(node.value_)) <= abs(int(nodeVect_[nearestNeighbourIndex].value_)-int(node.value_)) ))
