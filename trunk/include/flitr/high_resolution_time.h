@@ -21,6 +21,8 @@
 #ifndef HIGHRES_TIME_H
 #define HIGHRES_TIME_H 1 
 
+#include <flitr/flitr_export.h>
+#include <cstdint>
 /// Sole purpose is to provide currentTimeNanoSec() for a platform
 
 
@@ -84,7 +86,7 @@ inline uint64_t clockResNanoSec()
 
 // \todo how do we connect OSG time to real wall clock time?
 /// Returns nanoseconds since epoch.
-extern uint64_t currentTimeNanoSec();
+extern FLITR_EXPORT uint64_t currentTimeNanoSec();
 
 
 #endif // HIGHRES_TIME_H
