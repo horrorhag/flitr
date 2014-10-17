@@ -32,6 +32,8 @@ extern "C" {
 
 #undef PixelFormat
 
+#include <cassert>
+
 // V4L stuff
 #include <fcntl.h>
 #include <unistd.h>
