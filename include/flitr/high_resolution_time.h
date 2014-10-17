@@ -23,20 +23,23 @@
 
 /// Sole purpose is to provide currentTimeNanoSec() for a platform
 
-#include <flitr/flitr_stdint.h>
 
 #if defined(linux) || defined(__linux) || defined(__linux__)
 
+#include <flitr/flitr_stdint.h>
+#include <string>
 #include <time.h>
-#include <boost/date_time.hpp>
+//#include <boost/date_time.hpp>
 
 #define NSEC_PER_SEC 1000000000LL
 #define NSEC_PER_MSEC 1000000LL
 
+/*
 inline uint64_t timespec_to_ns(const struct timespec *ts)
 {
     return ((uint64_t) ts->tv_sec * NSEC_PER_SEC) + ts->tv_nsec;
 }
+*/
 
 inline struct timespec ns_to_timespec(const uint64_t ns)
 {
@@ -46,16 +49,6 @@ inline struct timespec ns_to_timespec(const uint64_t ns)
 
     return timestamp_ts;
 }
-
-/// Returns nanoseconds since epoch.  UTC time_t epoch 1970-01-01 00:00:00.
-inline uint64_t currentTimeNanoSec()
-{
-    struct timespec timestamp_ts;
-    //clock_gettime(CLOCK_MONOTONIC, &timestamp_ts);
-    clock_gettime(CLOCK_REALTIME, &timestamp_ts);
-    return timespec_to_ns(&timestamp_ts);
-}
-
 
 /**
    \brief Get the date and time of the nanosec since epoch as a string.
@@ -77,6 +70,7 @@ inline std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
     return s;
 }
 
+/*
 inline uint64_t clockResNanoSec()
 {
     struct timespec timestamp_ts;
@@ -84,36 +78,13 @@ inline uint64_t clockResNanoSec()
     clock_getres(CLOCK_REALTIME, &timestamp_ts);
     return timespec_to_ns(&timestamp_ts);
 }
-
-//!Sleep or block execution for specified microseconds. Do not return early like usleep(...) might.
-inline void ublock(uint64_t blockTimeUS)
-{
-    const uint64_t currentTimeNS=currentTimeNanoSec();
-    const uint64_t blockUntilTimeNS=currentTimeNS+blockTimeUS*1000;
-
-    do {
-        usleep(0);
-    } while (currentTimeNanoSec()<blockUntilTimeNS);
-}
-
-#if 0
-int main(void)
-{
-    printf("%lld, %lld\n", currentTimeNanoSec(), clockResNanoSec());
-    printf("%lld, %lld\n", currentTimeNanoSec(), clockResNanoSec());
-}
+*/
 #endif
 
-#else // NOT LINUX
 
-// fall back on OSG
 // \todo how do we connect OSG time to real wall clock time?
-#include <osg/ref_ptr>
-#include <osg/Timer>
 /// Returns nanoseconds since epoch.
 extern uint64_t currentTimeNanoSec();
-
-#endif
 
 
 #endif // HIGHRES_TIME_H

@@ -20,9 +20,8 @@
 
 #include <flitr/high_resolution_time.h>
 
-#if defined(linux) || defined(__linux) || defined(__linux__)
-
-#else
+#include <osg/ref_ptr>
+#include <osg/Timer>
 
 osg::Timer *gHighResTimer = osg::Timer::instance();
 
@@ -33,4 +32,3 @@ uint64_t currentTimeNanoSec()
     return (uint64_t)(timer_t * gHighResTimer->getSecondsPerTick() * NSEC_PER_SEC);
 }
 
-#endif
