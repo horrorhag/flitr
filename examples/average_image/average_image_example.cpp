@@ -72,14 +72,14 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    shared_ptr<FIPFlip> flip(new FIPFlip(*ip, 1, false, false, 2));
+    shared_ptr<FIPFlip> flip(new FIPFlip(*ip, 1, {false}, {false}, 2));
     if (!flip->init()) {
         std::cerr << "Could not initialise the flip processor.\n";
         exit(-1);
     }
     flip->startTriggerThread();
 
-    shared_ptr<FIPRotate> rotate(new FIPRotate(*flip, 1, 3, 2));
+    shared_ptr<FIPRotate> rotate(new FIPRotate(*flip, 1, {3}, 2));
     if (!rotate->init()) {
         std::cerr << "Could not initialise the rotate processor.\n";
         exit(-1);
