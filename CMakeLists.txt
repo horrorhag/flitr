@@ -185,6 +185,8 @@ SET(LIB_SOURCES
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
+  src/flitr/modules/flitr_image_processors/flip/fip_flip.cpp
+  src/flitr/modules/flitr_image_processors/rotate/fip_rotate.cpp
   src/flitr/modules/flitr_image_processors/dpt/fip_dpt.cpp
   src/flitr/modules/flitr_image_processors/crop/fip_crop.cpp
   src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
@@ -281,6 +283,8 @@ SET(LIB_SOURCES
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h
 
+  include/flitr/modules/flitr_image_processors/flip/fip_flip.h
+  include/flitr/modules/flitr_image_processors/rotate/fip_rotate.h
   include/flitr/modules/flitr_image_processors/dpt/fip_dpt.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h
@@ -349,12 +353,14 @@ ADD_LIBRARY(flitr SHARED
 
 
 IF(WIN32) 
-  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES} va)
 ELSEIF(APPLE)
-  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES} va)
 ELSE()
 TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} m rt)
-TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES})
+TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES} va)
+
+#message(${FFmpeg_LIBRARIES})
 
 TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
 #TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)

@@ -31,7 +31,7 @@ namespace flitr {
     public:
         
         /*! Constructor given the upstream producer.
-         *@param producer The upstream image producer.
+         *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPGaussianDownsample(ImageProducer& upStreamProducer, uint32_t images_per_slot,

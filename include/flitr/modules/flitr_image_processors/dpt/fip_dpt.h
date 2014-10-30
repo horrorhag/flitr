@@ -43,13 +43,13 @@ namespace flitr {
         uint32_t nodeIndices_[2];
     };
     
-    /*! Compute DPT of image. Currently assumes 8-bit mono input! */
+    /*! Compute the DPT of image. Currently assumes 8-bit mono input! */
     class FLITR_EXPORT FIPDPT : public ImageProcessor
     {
     public:
         
         /*! Constructor given the upstream producer.
-         *@param producer The upstream image producer.
+         *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPDPT(ImageProducer& upStreamProducer, uint32_t filterPulseSize,

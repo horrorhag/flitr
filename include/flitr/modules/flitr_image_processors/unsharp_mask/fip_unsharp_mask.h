@@ -25,13 +25,13 @@
 
 namespace flitr {
     
-    /* Applies an unsharp mask (using 5 pixel radius Gaussian blur) to the image. */
+    /*! Applies an unsharp mask (using 5 pixel radius Gaussian blur) to the image. */
     class FLITR_EXPORT FIPUnsharpMask : public ImageProcessor
     {
     public:
         
         /*! Constructor given the upstream producer.
-         *@param producer The upstream image producer.
+         *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPUnsharpMask(ImageProducer& upStreamProducer, uint32_t images_per_slot,

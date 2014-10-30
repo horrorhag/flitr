@@ -25,13 +25,13 @@
 
 namespace flitr {
     
-    /* Applies a power law tone mapping to the image. */
+    /*! Crops the image. */
     class FLITR_EXPORT FIPCrop : public ImageProcessor
     {
     public:
         
         /*! Constructor given the upstream producer.
-         *@param producer The upstream image producer.
+         *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPCrop(ImageProducer& upStreamProducer, uint32_t images_per_slot,

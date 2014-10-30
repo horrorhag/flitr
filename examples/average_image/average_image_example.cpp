@@ -6,6 +6,9 @@
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
 
+#include <flitr/modules/flitr_image_processors/flip/fip_flip.h>
+#include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
+
 #include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h>
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
@@ -69,7 +72,21 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*ip, 1, 2));
+    shared_ptr<FIPFlip> flip(new FIPFlip(*ip, 1, false, false, 2));
+    if (!flip->init()) {
+        std::cerr << "Could not initialise the flip processor.\n";
+        exit(-1);
+    }
+    flip->startTriggerThread();
+
+    shared_ptr<FIPRotate> rotate(new FIPRotate(*flip, 1, 3, 2));
+    if (!rotate->init()) {
+        std::cerr << "Could not initialise the rotate processor.\n";
+        exit(-1);
+    }
+    rotate->startTriggerThread();
+
+    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*rotate, 1, 2));
     if (!cnvrtToF32->init()) {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
@@ -100,7 +117,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*cnvrtToM8, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*rotate, 1));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
