@@ -24,12 +24,12 @@ using namespace flitr;
 using std::shared_ptr;
 
 FIPFlip::FIPFlip(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                 const bool flipLeftRight,
-                 const bool flipTopBottom,
+                 const std::vector<bool> flipLeftRightVect,
+                 const std::vector<bool> flipTopBottomVect,
                  uint32_t buffer_size) :
     ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-    flipLeftRight_(flipLeftRight),
-    flipTopBottom_(flipTopBottom)
+    flipLeftRightVect_(flipLeftRightVect),
+    flipTopBottomVect_(flipTopBottomVect)
 {
     
     //Setup image format being produced to downstream.
@@ -78,11 +78,11 @@ bool FIPFlip::trigger()
             const int bytesPerPixel=imFormat.getBytesPerPixel();
 
 
-            if ((!flipLeftRight_) && (!flipTopBottom_))
+            if ((!flipLeftRightVect_[imgNum]) && (!flipTopBottomVect_[imgNum]))
             {
                 memcpy(dataWrite, dataRead, width*height*bytesPerPixel);
             } else
-                if ((flipLeftRight_) && (!flipTopBottom_))
+                if ((flipLeftRightVect_[imgNum]) && (!flipTopBottomVect_[imgNum]))
                 {
                     int readOffset=0;
                     int writeOffset=0;
@@ -101,7 +101,7 @@ bool FIPFlip::trigger()
                     }
                     //=======================//
                 } else
-                    if ((!flipLeftRight_) && (flipTopBottom_))
+                    if ((!flipLeftRightVect_[imgNum]) && (flipTopBottomVect_[imgNum]))
                     {
                         int readOffset=0;
                         int writeOffset=0;
@@ -120,7 +120,7 @@ bool FIPFlip::trigger()
                         }
                         //=======================//
                     } else
-                        if ((flipLeftRight_) && (flipTopBottom_))
+                        if ((flipLeftRightVect_[imgNum]) && (flipTopBottomVect_[imgNum]))
                         {
                             int readOffset=0;
                             int writeOffset=0;

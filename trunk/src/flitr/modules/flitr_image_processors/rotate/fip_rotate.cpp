@@ -24,23 +24,23 @@ using namespace flitr;
 using std::shared_ptr;
 
 FIPRotate::FIPRotate(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                     const int multipleOf90,
+                     const std::vector<int> rotate90CountVect,
                      uint32_t buffer_size) :
     ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-    multipleOf90_(multipleOf90)
+    rotate90CountVect_(rotate90CountVect)
 {
-    while (multipleOf90_<0) multipleOf90_+=4;
-    while (multipleOf90_>=4) multipleOf90_-=4;
-
 
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++)
     {
+        while (rotate90CountVect_[i]<0) rotate90CountVect_[i]+=4;
+        while (rotate90CountVect_[i]>=4) rotate90CountVect_[i]-=4;
+
         const size_t widthUS=upStreamProducer.getFormat(i).getWidth();
         const size_t heightUS=upStreamProducer.getFormat(i).getHeight();
 
-        const size_t widthDS=((multipleOf90_%2) == 0) ? widthUS : heightUS;
-        const size_t heightDS=((multipleOf90_%2) == 0) ? heightUS : widthUS;
+        const size_t widthDS=((rotate90CountVect_[i]%2) == 0) ? widthUS : heightUS;
+        const size_t heightDS=((rotate90CountVect_[i]%2) == 0) ? heightUS : widthUS;
 
         ImageFormat dsFormat=upStreamProducer.getFormat(i);
         dsFormat.setWidth(widthDS);
@@ -92,11 +92,11 @@ bool FIPRotate::trigger()
 
             const size_t bytesPerPixel=imFormatUS.getBytesPerPixel();
 
-            if (multipleOf90_ == 0)
+            if (rotate90CountVect_[imgNum] == 0)
             {
                 memcpy(dataWrite, dataRead, widthUS*heightUS*bytesPerPixel);
             } else
-                if (multipleOf90_ == 1)
+                if (rotate90CountVect_[imgNum] == 1)
                 {
                     int readOffset=0;
                     int writeOffset=0;
@@ -115,7 +115,7 @@ bool FIPRotate::trigger()
                     }
                     //=======================//
                 } else
-                    if (multipleOf90_ == 2)
+                    if (rotate90CountVect_[imgNum] == 2)
                     {
                         int readOffset=0;
                         int writeOffset=0;
@@ -134,7 +134,7 @@ bool FIPRotate::trigger()
                         }
                         //=======================//
                     } else
-                        if (multipleOf90_ == 3)
+                        if (rotate90CountVect_[imgNum] == 3)
                         {
                             int readOffset=0;
                             int writeOffset=0;

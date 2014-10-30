@@ -33,9 +33,10 @@ namespace flitr {
         /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
+         *@param rotate90Count The number of quarter revolutions to rotate. Positive is clockwise.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPRotate(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                const int multipleOf90,
+                const std::vector<int> rotate90CountVect,
                 uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -50,7 +51,7 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        int multipleOf90_;
+        std::vector<int> rotate90CountVect_;
     };
 }
 

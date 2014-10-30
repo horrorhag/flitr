@@ -35,8 +35,8 @@ namespace flitr {
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPFlip(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                const bool flipLeftRight,
-                const bool flipTopBottom,
+                const std::vector<bool> flipLeftRightVect,
+                const std::vector<bool> flipTopBottomVect,
                 uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -51,8 +51,8 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        bool flipLeftRight_;
-        bool flipTopBottom_;
+        std::vector<bool> flipLeftRightVect_;
+        std::vector<bool> flipTopBottomVect_;
     };
 }
 
