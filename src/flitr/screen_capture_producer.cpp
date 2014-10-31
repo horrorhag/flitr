@@ -1,18 +1,18 @@
 /* Framework for Live Image Transformation (FLITr) 
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -36,14 +36,16 @@ ScreenCaptureProducer::ScreenCaptureCallback::ScreenCaptureCallback(ScreenCaptur
 void ScreenCaptureProducer::ScreenCaptureCallback::operator()(osg::RenderInfo& ri) const
 {
     if (!producer_->shouldCaptureNow()) return;
+
     glReadBuffer(GL_BACK);
     osg::GraphicsContext* gc = ri.getState()->getGraphicsContext();
     if (!gc->getTraits()) return;
     if ((gc->getTraits()->width != width_orig_) ||
-        (gc->getTraits()->height != height_orig_)) {
+            (gc->getTraits()->height != height_orig_)) {
         logMessage(LOG_DEBUG) << "ScreenCaptureProducer: context size has changed since construction.\n";
         return;
     }
+
     readPixels();
 }
 
@@ -67,6 +69,17 @@ void ScreenCaptureProducer::ScreenCaptureCallback::readPixels() const
     if (flipV_) osg_image_->flipVertical();
     if (flipH_) osg_image_->flipHorizontal();
 
+    std::string snapFileName=producer_->getNextSnapFileName();
+
+    if (snapFileName!="")
+    {
+        osg_image_->flipVertical();//Flip image because image is upside down from video. Hopefully the snap is not done too often!
+        osgDB::writeImageFile(*osg_image_, snapFileName);
+        producer_->resetSnapFileName();
+        osg_image_->flipVertical();//Flip back.
+    }
+
+
     producer_->releaseWriteSlot();
 }
 
@@ -75,7 +88,8 @@ ScreenCaptureProducer::ScreenCaptureProducer(osgViewer::View& view, uint32_t buf
     buffer_size_(buffer_size),
     capture_every_nth_(capture_every_nth),
     trigger_count_(0),
-    do_capture_(false)
+    do_capture_(false),
+    nextSnapFileName_("")
 {}
 
 bool ScreenCaptureProducer::init()
@@ -83,17 +97,17 @@ bool ScreenCaptureProducer::init()
     osg::Viewport* vp = view_.getCamera()->getViewport();
     double w = vp->width();
     double h = vp->height();
-        
+
     ImageFormat imf(w, h, ImageFormat::FLITR_PIX_FMT_RGB_8);
     ImageFormat_.push_back(imf);
-        
+
     SharedImageBuffer_ = std::shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, 1));
     SharedImageBuffer_->initWithStorage();
 
     cb_ = new ScreenCaptureCallback(this);
     view_.getCamera()->setFinalDrawCallback(cb_.get());
 
-	return true;
+    return true;
 }
 
 bool ScreenCaptureProducer::shouldCaptureNow()
