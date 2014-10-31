@@ -25,10 +25,15 @@
 
 osg::Timer *gHighResTimer = osg::Timer::instance();
 
+/// Returns nanoseconds since some reference time. Might not be since the epoch!
 uint64_t currentTimeNanoSec()
 {
     osg::Timer_t timer_t = gHighResTimer->tick();
     #define NSEC_PER_SEC 1000000000LL
     return (uint64_t)(timer_t * gHighResTimer->getSecondsPerTick() * NSEC_PER_SEC);
+
+    //BD: Below is the std::chrono code to be used beyond VS 2013!
+    //std::chrono::time_point<std::chrono::system_clock> tp=std::chrono::system_clock::now();
+    //return std::chrono::duration_cast<std::chrono::nanoseconds>(tp.time_since_epoch()).count();
 }
 

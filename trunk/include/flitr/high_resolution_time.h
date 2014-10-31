@@ -84,8 +84,8 @@ inline uint64_t clockResNanoSec()
 #endif
 
 
-// \todo how do we connect OSG time to real wall clock time?
-/// Returns nanoseconds since epoch.
+// How does one connect OSG time to real wall clock time. Use std::chrono...
+/// Returns nanoseconds since some reference time. Might not be since the epoch!
 extern FLITR_EXPORT uint64_t currentTimeNanoSec();
 
 

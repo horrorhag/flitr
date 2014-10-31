@@ -23,6 +23,10 @@
 
 #include <osgViewer/ViewerBase>
 #include <osgViewer/View>
+#include <osgDB/FileUtils>
+#include <osgDB/Registry>
+#include <osgDB/ReadFile>
+#include <osgDB/WriteFile>
 
 #include <flitr/image_producer.h>
 #include <flitr/image_format.h>
@@ -64,9 +68,13 @@ class FLITR_EXPORT ScreenCaptureProducer : public ImageProducer {
      * \return True if successful.
      */
     bool init();
-    bool shouldCaptureNow();
     void startCapture();
     void stopCapture();
+
+    void snapNextImage(std::string nextSnapFileName)
+    {
+        nextSnapFileName_=nextSnapFileName;
+    }
 
     void FlipVertical(bool flip)
     {
@@ -85,12 +93,25 @@ class FLITR_EXPORT ScreenCaptureProducer : public ImageProducer {
     }
 
   private:
+    bool shouldCaptureNow();
+
+    const std::string getNextSnapFileName() const
+    {
+        return nextSnapFileName_;
+    }
+
+    void resetSnapFileName()
+    {
+        nextSnapFileName_="";
+    }
+
     osgViewer::View& view_;
     osg::ref_ptr<ScreenCaptureCallback> cb_;
     uint32_t buffer_size_;
     uint32_t capture_every_nth_;
     uint32_t trigger_count_;
     bool do_capture_;
+    std::string nextSnapFileName_;
 };
 
 }
