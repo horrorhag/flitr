@@ -8,6 +8,7 @@
 
 #include <flitr/modules/geometry_overlays/points_overlay.h>
 #include <flitr/modules/flitr_image_processors/dpt/fip_dpt.h>
+//#include <flitr/modules/flitr_image_processors/median/fip_median.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
@@ -68,21 +69,43 @@ int main(int argc, char *argv[])
     shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();
 #endif
+
+/*
+    shared_ptr<FIPMedian> median(new FIPMedian(*ip, 8, 1, 5));
+    if (!median->init()) {
+        std::cerr << "Could not initialise the median processor.\n";
+        exit(-1);
+    }
+    median->startTriggerThread();
+*/
     
-    shared_ptr<FIPDPT> dpt(new FIPDPT(*ip, atoi(argv[2]), 1, 2));
-    if (!dpt->init()) {
+    /*
+    const uint32_t firstStagePulseSize=10;
+    
+    shared_ptr<FIPDPT> dpt0(new FIPDPT(*ip, firstStagePulseSize, 1, 4));
+    if (!dpt0->init()) {
         std::cerr << "Could not initialise the dpt processor.\n";
         exit(-1);
     }
-    dpt->startTriggerThread();
+    dpt0->startTriggerThread();
+    */
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*dpt, 1, 2));
+    //shared_ptr<FIPDPT> dpt1(new FIPDPT(*dpt0, std::max<uint32_t>(atoi(argv[2]), firstStagePulseSize), 1, 4));
+    shared_ptr<FIPDPT> dpt1(new FIPDPT(*ip, atoi(argv[2]), 1, 4));
+    if (!dpt1->init()) {
+        std::cerr << "Could not initialise the dpt processor.\n";
+        exit(-1);
+    }
+    dpt1->startTriggerThread();
+    
+    
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*dpt1, 1, 4));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }    
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 4));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
@@ -165,7 +188,8 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    dpt->stopTriggerThread();
+    //dpt0->stopTriggerThread();
+    dpt1->stopTriggerThread();
     
     return 0;
 }
