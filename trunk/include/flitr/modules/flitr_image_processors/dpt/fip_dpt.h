@@ -25,23 +25,33 @@
 
 namespace flitr {
     
+    #define RUN_ARCS 1
+    
     struct Node
     {
     public:
-        uint32_t index_;
+        int32_t index_;
         uint8_t value_;
-        uint32_t size_;
-        std::vector<uint32_t> arcIndices_;
-        std::vector<uint32_t> pixelIndices_;
+        int32_t size_;
+        
+#ifdef RUN_ARCS
+        std::vector<int32_t> arcIndices_;
+#else
+        std::vector<int32_t> neighbourIndices_;
+#endif
+        
+        std::vector<int32_t> pixelIndices_;
     };
     
+#ifdef RUN_ARCS
     struct Arc
     {
     public:
-        uint32_t index_;
+        int32_t index_;
         bool active_;
-        uint32_t nodeIndices_[2];
+        int32_t nodeIndices_[2];
     };
+#endif
     
     /*! Compute the DPT of image. Currently assumes 8-bit mono input! */
     class FLITR_EXPORT FIPDPT : public ImageProcessor
@@ -52,7 +62,7 @@ namespace flitr {
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPDPT(ImageProducer& upStreamProducer, uint32_t filterPulseSize,
+        FIPDPT(ImageProducer& upStreamProducer, int32_t filterPulseSize,
                uint32_t images_per_slot,
                uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
@@ -69,15 +79,18 @@ namespace flitr {
         
     private:
         
-        inline uint32_t retrieveNeighbourNodeIndex(const Arc &arc, const uint32_t nodeIndex)
+#ifdef RUN_ARCS
+        inline int32_t retrieveNeighbourNodeIndex(const Arc &arc, const int32_t nodeIndex)
         {
             return (arc.nodeIndices_[0]==nodeIndex) ? arc.nodeIndices_[1] : arc.nodeIndices_[0];
         }
+#endif
         
         inline bool isBump(const size_t nodeIndex)
         {
             const Node &node=nodeVect_[nodeIndex];
             
+#ifdef RUN_ARCS
             for (const auto arcIndex : node.arcIndices_)
             {
                 const auto &arc=arcVect_[arcIndex];
@@ -92,7 +105,18 @@ namespace flitr {
                     }
                 }
             }
-            
+#else
+            for (const auto neighbourIndex : node.neighbourIndices_)
+            {
+                if (nodeVect_[neighbourIndex].size_)
+                {
+                    if (nodeVect_[neighbourIndex].value_ >= node.value_)
+                    {
+                        return false;
+                    }
+                }
+            }
+#endif
             return true;
         }
         
@@ -100,6 +124,7 @@ namespace flitr {
         {
             const Node &node=nodeVect_[nodeIndex];
             
+#ifdef RUN_ARCS
             for (const auto arcIndex : node.arcIndices_)
             {
                 const auto &arc=arcVect_[arcIndex];
@@ -114,6 +139,18 @@ namespace flitr {
                     }
                 }
             }
+#else
+            for (const auto neighbourIndex : node.neighbourIndices_)
+            {
+                if (nodeVect_[neighbourIndex].size_)
+                {
+                    if (nodeVect_[neighbourIndex].value_ <= node.value_)
+                    {
+                        return false;
+                    }
+                }
+            }
+#endif
             
             return true;
         }
@@ -122,6 +159,7 @@ namespace flitr {
         {
             Node &node=nodeVect_[nodeIndex];
             
+#ifdef RUN_ARCS
             size_t firstNeighbourIndex=nodeIndex;
             
             for (const auto arcIndex : node.arcIndices_)
@@ -134,6 +172,18 @@ namespace flitr {
                     break;
                 }
             }
+#else
+            size_t firstNeighbourIndex=nodeIndex;
+            
+            for (const auto neighbourIndex : node.neighbourIndices_)
+            {
+                if (nodeVect_[neighbourIndex].size_>0)
+                {
+                    firstNeighbourIndex=neighbourIndex;
+                    break;
+                }
+            }
+#endif
             
             node.value_=nodeVect_[firstNeighbourIndex].value_;
             
@@ -146,6 +196,7 @@ namespace flitr {
             
             size_t nearestNeighbourIndex=nodeIndex;
             
+#ifdef RUN_ARCS
             for (const auto arcIndex : node.arcIndices_)
             {
                 const auto &arc=arcVect_[arcIndex];
@@ -161,6 +212,19 @@ namespace flitr {
                     }
                 }
             }
+#else
+            for (const auto neighbourIndex : node.neighbourIndices_)
+            {
+                if (nodeVect_[neighbourIndex].size_>0)
+                {
+                    if (( nearestNeighbourIndex==nodeIndex ) ||
+                        ( abs(int(nodeVect_[neighbourIndex].value_)-int(node.value_)) <= abs(int(nodeVect_[nearestNeighbourIndex].value_)-int(node.value_)) ))
+                    {
+                        nearestNeighbourIndex=neighbourIndex;
+                    }
+                }
+            }
+#endif
             
             node.value_=nodeVect_[nearestNeighbourIndex].value_;
             
@@ -180,18 +244,27 @@ namespace flitr {
             }
         }
         
-        size_t mergeArc(const uint32_t arcIndex);
+#ifdef RUN_ARCS
+        size_t mergeArc(const int32_t arcIndex);
+#else
+        size_t mergeNode(const int32_t nodeIndex);
+#endif
+        
         size_t mergeFromAll();
-        size_t mergeFromList(const std::vector<uint32_t> nodeIndicesToMerge);
+        size_t mergeFromList(const std::vector<int32_t> nodeIndicesToMerge);
         
         
     private:
-        uint32_t filterPulseSize_;
+        int32_t filterPulseSize_;
         
         std::vector<Node> nodeVect_;
         std::vector<size_t> potentiallyActiveNodeIndexVect_;
         
+#ifdef RUN_ARCS
         std::vector<Arc> arcVect_;
+#else
+        std::vector<int32_t> neighbourIndicesToAdd_;
+#endif
     };
     
 }
