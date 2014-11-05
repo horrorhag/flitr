@@ -185,6 +185,7 @@ SET(LIB_SOURCES
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
 
+  src/flitr/modules/flitr_image_processors/transform2D/fip_transform2D.cpp
   src/flitr/modules/flitr_image_processors/flip/fip_flip.cpp
   src/flitr/modules/flitr_image_processors/rotate/fip_rotate.cpp
   src/flitr/modules/flitr_image_processors/dpt/fip_dpt.cpp
@@ -283,6 +284,7 @@ SET(LIB_SOURCES
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h
 
+  include/flitr/modules/flitr_image_processors/transform2D/fip_transform2D.h
   include/flitr/modules/flitr_image_processors/flip/fip_flip.h
   include/flitr/modules/flitr_image_processors/rotate/fip_rotate.h
   include/flitr/modules/flitr_image_processors/dpt/fip_dpt.h
