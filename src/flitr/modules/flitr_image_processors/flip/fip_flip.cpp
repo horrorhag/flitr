@@ -84,13 +84,11 @@ bool FIPFlip::trigger()
             } else
                 if ((flipLeftRightVect_[imgNum]) && (!flipTopBottomVect_[imgNum]))
                 {
-                    int readOffset=0;
-                    int writeOffset=0;
                     //=== Flip left-right ===//
                     for (int y=0; y<height; ++y)
                     {
-                        readOffset=(y*width+0)*bytesPerPixel;
-                        writeOffset=(y*width+width-1)*bytesPerPixel;
+                        int readOffset=(y*width)*bytesPerPixel;
+                        int writeOffset=(y*width+width-1)*bytesPerPixel;
 
                         for (int x=0; x<width; ++x)
                         {
@@ -103,13 +101,11 @@ bool FIPFlip::trigger()
                 } else
                     if ((!flipLeftRightVect_[imgNum]) && (flipTopBottomVect_[imgNum]))
                     {
-                        int readOffset=0;
-                        int writeOffset=0;
                         //=== Flip top-bottom ===//
                         for (int y=0; y<height; ++y)
                         {
-                            readOffset=(y*width+0)*bytesPerPixel;
-                            writeOffset=((height-y-1)*width+0)*bytesPerPixel;
+                            int readOffset=(y*width)*bytesPerPixel;
+                            int writeOffset=((height-y-1)*width)*bytesPerPixel;
 
                             for (int x=0; x<width; ++x)
                             {
@@ -122,13 +118,11 @@ bool FIPFlip::trigger()
                     } else
                         if ((flipLeftRightVect_[imgNum]) && (flipTopBottomVect_[imgNum]))
                         {
-                            int readOffset=0;
-                            int writeOffset=0;
                             //=== Flip left-right and top-bottom===//
                             for (int y=0; y<height; ++y)
                             {
-                                readOffset=(y*width+0)*bytesPerPixel;
-                                writeOffset=((height-y-1)*width+width-1)*bytesPerPixel;
+                                int readOffset=(y*width)*bytesPerPixel;
+                                int writeOffset=((height-y-1)*width+width-1)*bytesPerPixel;
 
                                 for (int x=0; x<width; ++x)
                                 {
