@@ -364,8 +364,8 @@ bool TMultiOSGConsumer<T>::getNext()
 }
 
 #ifdef FLITR_WITH_OSGCUDA
-template class FLITR_EXPORT TMultiOSGConsumer<osgCuda::TextureRectangle>; // explicit instantiation
+template class FLITR_EXPORT flitr::TMultiOSGConsumer<osgCuda::TextureRectangle>; // explicit instantiation
 #else
-template class FLITR_EXPORT TMultiOSGConsumer<osg::TextureRectangle>; // explicit instantiation
+template class FLITR_EXPORT flitr::TMultiOSGConsumer<osg::TextureRectangle>; // explicit instantiation
 #endif
 
