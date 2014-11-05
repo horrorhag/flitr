@@ -91,6 +91,8 @@ bool FIPRotate::trigger()
             const size_t heightDS=imFormatDS.getHeight();
 
             const size_t bytesPerPixel=imFormatUS.getBytesPerPixel();
+            
+            const size_t bytesPerPixelTimesWidthDS=bytesPerPixel * widthDS;
 
             if (rotate90CountVect_[imgNum] == 0)
             {
@@ -98,13 +100,11 @@ bool FIPRotate::trigger()
             } else
                 if (rotate90CountVect_[imgNum] == 1)
                 {
-                    int readOffset=0;
-                    int writeOffset=0;
                     //=== Rotate by 90 deg ===//
                     for (int y=0; y<heightUS; ++y)
                     {
-                        readOffset=(y*widthUS+0)*bytesPerPixel;
-                        writeOffset=(widthDS-y-1)*bytesPerPixel;
+                        int readOffset=(y*widthUS)*bytesPerPixel;
+                        int writeOffset=(widthDS-y-1)*bytesPerPixel;
 
                         for (int x=0; x<widthUS; ++x)
                         {
@@ -117,13 +117,11 @@ bool FIPRotate::trigger()
                 } else
                     if (rotate90CountVect_[imgNum] == 2)
                     {
-                        int readOffset=0;
-                        int writeOffset=0;
                         //=== Rotate by 180 deg ===//
                         for (int y=0; y<heightUS; ++y)
                         {
-                            readOffset=(y*widthUS+0)*bytesPerPixel;
-                            writeOffset=((heightDS-y-1)*widthDS + widthDS-1)*bytesPerPixel;
+                            int readOffset=(y*widthUS)*bytesPerPixel;
+                            int writeOffset=((heightDS-y-1)*widthDS + widthDS-1)*bytesPerPixel;
 
                             for (int x=0; x<widthUS; ++x)
                             {
@@ -136,19 +134,17 @@ bool FIPRotate::trigger()
                     } else
                         if (rotate90CountVect_[imgNum] == 3)
                         {
-                            int readOffset=0;
-                            int writeOffset=0;
                             //=== Rotate by 270 deg ===//
                             for (int y=0; y<heightUS; ++y)
                             {
-                                readOffset=(y*widthUS+0)*bytesPerPixel;
-                                writeOffset=((heightDS-1)*widthDS + y)*bytesPerPixel;
+                                int readOffset=(y*widthUS)*bytesPerPixel;
+                                int writeOffset=((heightDS-1)*widthDS + y)*bytesPerPixel;
 
                                 for (int x=0; x<widthUS; ++x)
                                 {
                                     memcpy(dataWrite+writeOffset, dataRead+readOffset, bytesPerPixel);
                                     readOffset+=bytesPerPixel;
-                                    writeOffset-=bytesPerPixel*widthDS;
+                                    writeOffset-=bytesPerPixelTimesWidthDS;
                                 }
                             }
                             //=======================//
