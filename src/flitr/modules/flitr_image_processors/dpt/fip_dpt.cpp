@@ -25,7 +25,7 @@
 using namespace flitr;
 using std::shared_ptr;
 
-FIPDPT::FIPDPT(ImageProducer& upStreamProducer, uint32_t filterPulseSize,
+FIPDPT::FIPDPT(ImageProducer& upStreamProducer, int32_t filterPulseSize,
                uint32_t images_per_slot,
                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
@@ -41,10 +41,12 @@ filterPulseSize_(filterPulseSize)
     }
     
     nodeVect_.reserve(upStreamProducer.getFormat().getWidth() * upStreamProducer.getFormat().getHeight());
-    arcVect_.reserve(upStreamProducer.getFormat().getWidth() * upStreamProducer.getFormat().getHeight() * 4);
-    
     nodeVect_.resize(upStreamProducer.getFormat().getWidth() * upStreamProducer.getFormat().getHeight());
+    
+#ifdef RUN_ARCS
+    arcVect_.reserve(upStreamProducer.getFormat().getWidth() * upStreamProducer.getFormat().getHeight() * 4);
     arcVect_.resize(upStreamProducer.getFormat().getWidth() * upStreamProducer.getFormat().getHeight() * 4);
+#endif
     
     potentiallyActiveNodeIndexVect_.reserve(upStreamProducer.getFormat().getWidth() * upStreamProducer.getFormat().getHeight());
 }
@@ -60,7 +62,8 @@ bool FIPDPT::init()
     return rValue;
 }
 
-size_t FIPDPT::mergeArc(const uint32_t arcIndex)
+#ifdef RUN_ARCS
+size_t FIPDPT::mergeArc(const int32_t arcIndex)
 {
     size_t numPulsesMerged=0;
     Arc &arc=arcVect_[arcIndex];
@@ -136,6 +139,105 @@ size_t FIPDPT::mergeArc(const uint32_t arcIndex)
     
     return numPulsesMerged;
 }
+#else
+size_t FIPDPT::mergeNode(const int32_t index0)
+{
+    size_t numPulsesMerged=0;
+    Node &node0 = nodeVect_[index0];
+    
+    neighbourIndicesToAdd_.clear();
+    
+    for (int32_t &index1 : node0.neighbourIndices_)
+    {
+        Node &node1 = nodeVect_[index1];
+        
+        if (node1.size_>0)
+        {
+            if (node0.value_ == node1.value_)
+            {//Merge node0 and node1.
+                node0.size_+=node1.size_;
+                node0.pixelIndices_.insert(node0.pixelIndices_.end(),
+                                           node1.pixelIndices_.begin(),
+                                           node1.pixelIndices_.end());
+                
+                
+                for (const int32_t neighbourOfNode1Index : node1.neighbourIndices_)
+                {
+                    Node &neighbourOfNode1 = nodeVect_[neighbourOfNode1Index];
+                    
+                    if (neighbourOfNode1.size_>0)
+                    {
+                        if (neighbourOfNode1Index!=index0)
+                        {
+                            bool neighbourOfNode1AlreadyNeighbourOfNode0=false;
+                            
+                            for (const int32_t neighbourOfNode0Index : node0.neighbourIndices_)
+                            {
+                                if (nodeVect_[neighbourOfNode0Index].size_>0)
+                                {
+                                    if (neighbourOfNode0Index==neighbourOfNode1Index)
+                                    {//Node0 and node1 already neighbours.
+                                        neighbourOfNode1AlreadyNeighbourOfNode0=true;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (!neighbourOfNode1AlreadyNeighbourOfNode0)
+                            {
+                                //node0.neighbourIndices_.push_back(neighbourOfNode1Index);
+                                neighbourIndicesToAdd_.push_back(neighbourOfNode1Index);
+                            }
+                            
+                            std::vector<int32_t>::iterator it=neighbourOfNode1.neighbourIndices_.begin();
+                            while ( it != neighbourOfNode1.neighbourIndices_.end() )
+                            {
+                                int32_t & neighbourOfNeighbourOfNode1Index=*it;
+                                
+                                if (neighbourOfNeighbourOfNode1Index==index1)
+                                {
+                                    if (neighbourOfNode1AlreadyNeighbourOfNode0)
+                                    {//Remove neighbourOfNode1's neighbour.
+                                        neighbourOfNode1.neighbourIndices_.erase(it);
+                                    } else
+                                    {//Update neighbourOfNode1's neighbour.
+                                        neighbourOfNeighbourOfNode1Index=index0;
+                                        ++it;
+                                    }
+                                } else
+                                {
+                                    ++it;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                node1.size_=0;
+                index1=-1;
+                ++numPulsesMerged;
+            }
+        }
+    }
+    
+    //Remove all neighbour index entries of -1.
+    std::vector<int32_t>::iterator it=node0.neighbourIndices_.begin();
+    while (it!=node0.neighbourIndices_.end())
+    {
+        if ((*it) == -1)
+        {
+            node0.neighbourIndices_.erase(it);
+        } else
+        {
+            ++it;
+        }
+    }
+    
+    node0.neighbourIndices_.insert(node0.neighbourIndices_.end(), neighbourIndicesToAdd_.begin(), neighbourIndicesToAdd_.end());
+    
+    return numPulsesMerged;
+}
+#endif
 
 size_t FIPDPT::mergeFromAll()
 {
@@ -146,30 +248,48 @@ size_t FIPDPT::mergeFromAll()
     while (busyMerging)
     {
         busyMerging=false;
+#ifdef RUN_ARCS
         const size_t numArcs=arcVect_.size();
         
         for (size_t arcIndex=0; arcIndex<numArcs; ++arcIndex)
         {
             numPulsesMerged+=mergeArc(arcIndex);
         }
+#else
+        //Don't use the potential list here. It might not be updated.
+        for (const auto & node : nodeVect_)
+        {
+            if (node.size_>0)
+            {
+                numPulsesMerged+=mergeNode(node.index_);
+            }
+        }
+#endif
     }
     //=== ===//
     
     return numPulsesMerged;
 }
 
-size_t FIPDPT::mergeFromList(const std::vector<uint32_t> nodeIndicesToMerge)
+size_t FIPDPT::mergeFromList(const std::vector<int32_t> nodeIndicesToMerge)
 {
     size_t numPulsesMerged=0;
     
-    for (auto nodeIndex : nodeIndicesToMerge)
+    for (const int32_t nodeIndex : nodeIndicesToMerge)
     {
         Node &node=nodeVect_[nodeIndex];
         
+#ifdef RUN_ARCS
         for (auto arcIndexNum=0; arcIndexNum<node.arcIndices_.size(); ++arcIndexNum)
         {
             numPulsesMerged+=mergeArc(node.arcIndices_[arcIndexNum]);
         }
+#else
+        if (node.size_>0)
+        {
+            numPulsesMerged+=mergeNode(nodeIndex);
+        }
+#endif
     }
     
     return numPulsesMerged;
@@ -202,7 +322,6 @@ bool FIPDPT::trigger()
             
             
             //=== Setup the initial nodes ===//
-            
             for (size_t y=0; y<height; ++y)
             {
                 const size_t lineOffset=y * width;
@@ -216,7 +335,12 @@ bool FIPDPT::trigger()
                     node.value_=writeValue;
                     node.size_=1;
                     
+#ifdef RUN_ARCS
                     node.arcIndices_.clear();
+#else
+                    node.neighbourIndices_.clear();
+#endif
+                    
                     node.pixelIndices_.clear();
                     node.pixelIndices_.push_back(lineOffset + x);
                 }
@@ -224,9 +348,11 @@ bool FIPDPT::trigger()
             //===  ==//
             
             
-            //=== Setup the initial arcs ===//
+            //=== Setup the initial arcs or node neighbours ===//
             {
+#ifdef RUN_ARCS
                 size_t arcIndex=0;
+#endif
                 
                 for (size_t y=0; y<height; ++y)
                 {
@@ -234,6 +360,7 @@ bool FIPDPT::trigger()
                     
                     for (size_t x=1; x<width; ++x)
                     {
+#ifdef RUN_ARCS
                         Arc &arc=arcVect_[arcIndex];
                         arc.index_=arcIndex;
                         arc.active_=true;
@@ -244,20 +371,31 @@ bool FIPDPT::trigger()
                         nodeVect_[arc.nodeIndices_[0]].arcIndices_.push_back(arcIndex);
                         nodeVect_[arc.nodeIndices_[1]].arcIndices_.push_back(arcIndex);
                         arcIndex++;
+#else
+                        nodeVect_[lineOffset+x-1].neighbourIndices_.push_back(lineOffset+x);
+                        nodeVect_[lineOffset+x].neighbourIndices_.push_back(lineOffset+x-1);
+#endif
                     }
                     
                     if (y<(height-1))
                     {
                         for (size_t x=0; x<width; ++x)
                         {
+#ifdef RUN_ARCS
                             Arc &arc=arcVect_[arcIndex];
                             arc.index_=arcIndex;
                             arc.active_=true;
+                            
                             arc.nodeIndices_[0]=lineOffset+x;
                             arc.nodeIndices_[1]=lineOffset+x+width;
+                            
                             nodeVect_[arc.nodeIndices_[0]].arcIndices_.push_back(arcIndex);
                             nodeVect_[arc.nodeIndices_[1]].arcIndices_.push_back(arcIndex);
                             arcIndex++;
+#else
+                            nodeVect_[lineOffset+x].neighbourIndices_.push_back(lineOffset+x+width);
+                            nodeVect_[lineOffset+x+width].neighbourIndices_.push_back(lineOffset+x);
+#endif
                         }
                     }
                 }
@@ -273,17 +411,17 @@ bool FIPDPT::trigger()
             
             updatePotentiallyActiveNodeIndexVect();
             
-            std::vector<uint32_t> nodeIndicesToMerge;
+            std::vector<int32_t> nodeIndicesToMerge;
             
             size_t loopCounter = 0;
-            uint32_t previousSmallestPulse = 0;
+            int32_t previousSmallestPulse = 0;
             
             while ((previousSmallestPulse<filterPulseSize_)&&(potentiallyActiveNodeIndexVect_.size()>1))
             {
                 nodeIndicesToMerge.clear();
                 
                 //=== Find smallest pulse ===//
-                uint32_t smallestPulse=0;
+                int32_t smallestPulse=0;
                 
                 for (const auto & potentiallyActiveNodeIndex : potentiallyActiveNodeIndexVect_)
                 {
@@ -373,7 +511,7 @@ bool FIPDPT::trigger()
             
             {
                 //=== Find smallest pulse ==
-                uint32_t smallestPulse=0;
+                int32_t smallestPulse=0;
                 for (const auto & node : nodeVect_)
                 {
                     if (node.size_>0)
