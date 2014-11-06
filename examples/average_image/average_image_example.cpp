@@ -73,15 +73,19 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    shared_ptr<FIPTransform2D> transform(new FIPTransform2D(*ip, 1, {{0.0f, 1.0f, 1.0f, 0.0f}}, 2));
-    if (!transform->init()) {
+    const float theta=(60.0f / 180.0f) * float(M_PI);
+    const float scale=0.5f;
+    
+    shared_ptr<FIPTransform2D> transform(new FIPTransform2D(*ip, 1, {{scale*cosf(theta), scale*sinf(theta), -scale*sinf(theta), scale*cosf(theta)}}, 10));
+    if (!transform->init())
+    {
         std::cerr << "Could not initialise the transform2D processor.\n";
         exit(-1);
     }
     transform->startTriggerThread();
 
-
-    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*transform, 1, 2));
+/*
+    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*transform, 1, 10));
     if (!cnvrtToF32->init()) {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
@@ -89,30 +93,30 @@ int main(int argc, char *argv[])
     cnvrtToF32->startTriggerThread();
     
     
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToF32, 1, 5, 2));
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToF32, 1, 5, 10));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
     }
     averageImage->startTriggerThread();
     
-    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*averageImage, 1, 0.95f, 2));
+    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*averageImage, 1, 0.95f, 10));
     if (!cnvrtToM8->init()) {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
         exit(-1);
     }
     cnvrtToM8->startTriggerThread();
     
+*/
     
-    
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1, 2));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*transform, 1, 10));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*transform, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 10));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
@@ -213,9 +217,10 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    cnvrtToF32->stopTriggerThread();
-    averageImage->stopTriggerThread();
-    cnvrtToM8->stopTriggerThread();
+    transform->stopTriggerThread();
+    //cnvrtToF32->stopTriggerThread();
+    //averageImage->stopTriggerThread();
+    //cnvrtToM8->stopTriggerThread();
     
     return 0;
 }
