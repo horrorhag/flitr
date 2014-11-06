@@ -92,10 +92,10 @@ bool FIPTransform2D::trigger()
                     const float cx = x-halfWidthDS;
                     const float cy = y-halfHeightDS;
                     
-                    float s=cx*transform.a_ + cy*transform.b_ + halfWidthDS;
-                    float t=cx*transform.c_ + cy*transform.d_ + halfHeightDS;
+                    const float s=(cx*transform.a_) + (cy*transform.b_) + halfWidthDS;
+                    const float t=(cx*transform.c_) + (cy*transform.d_) + halfHeightDS;
                     
-                    int readOffset=(int(s+0.5f) + int(t+0.5f)*widthUS)*bytesPerPixel;
+                    const int readOffset=(int(s+0.5f) + int(t+0.5f)*widthUS)*bytesPerPixel;
                     
                     memcpy(dataWrite+writeOffset, dataRead+readOffset, bytesPerPixel);
                     writeOffset+=bytesPerPixel;
