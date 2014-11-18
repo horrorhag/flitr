@@ -37,70 +37,70 @@ public:
             const unsigned long width=Image_->s();
             const unsigned long height=Image_->t();
             const unsigned long numPixels=width*height;
-            const unsigned long numComponents=1;//osg::Image::computeNumComponents(Image_->getPixelFormat());
+            const unsigned long numComponents=osg::Image::computeNumComponents(Image_->getPixelFormat());
+            const unsigned long widthTimesNumComponents=width*numComponents;
 
             unsigned char * const data=(unsigned char *)Image_->data();
 
 
             const uint32_t numElements=numPixels*numComponents;
-            //const uint32_t numElementsDiv2=numElements>>1;
 
             uint64_t sum=0;
-            /*
-        uint64_t sum1=0;
-        //CPU out of order optimisation to calculate image sum.
-        for (uint32_t i=0; i<numElements; i+=2)
-        {
-            sum+=data[i];
-            sum1+=data[i+1];
-        }
-        sum+=sum1;
-        */
 
             //=== Calc integral image ===
             int64_t * const integralImageData=new int64_t[numElements];
             {
-                unsigned long offset=0;
+                unsigned long integralImageOffset=0;
+                unsigned long imageOffset=0;
 
                 integralImageData[0]=data[0];
 
-                offset=1;
+                imageOffset=numComponents;
+                integralImageOffset=1;
+
                 for (unsigned long x=1; x<width; x++)
                 {
-                    integralImageData[offset]=((int64_t)data[offset])
-                            + integralImageData[offset-1];
+                    integralImageData[integralImageOffset]=((int64_t)data[imageOffset])
+                            + integralImageData[integralImageOffset-1];
 
-                    offset++;
+                    integralImageOffset++;
+                    imageOffset+=numComponents;
                 }
 
-                offset=width;
+                imageOffset=widthTimesNumComponents;
+                integralImageOffset=width;
                 for (unsigned long y=1; y<height; y++)
                 {
-                    integralImageData[offset]=((int64_t)data[offset])
-                            + integralImageData[offset-width];
+                    integralImageData[integralImageOffset]=((int64_t)data[imageOffset])
+                            + integralImageData[integralImageOffset-width];
 
-                    offset+=width;
+                    integralImageOffset+=width;
+                    imageOffset+=widthTimesNumComponents;
                 }
 
-                offset=width;
+                imageOffset=widthTimesNumComponents;
+                integralImageOffset=width;
                 for (unsigned long y=1; y<height; y++)
                 {
-                    offset++;
-                    unsigned long offsetMinusOne=offset-1;
-                    unsigned long offsetMinusWidth=offset-width;
-                    unsigned long offsetMinusWidthMinusOne=offset-width-1;
+                    integralImageOffset++;
+                    unsigned long integralImageOffsetMinusOne=integralImageOffset-1;
+                    unsigned long integralImageOffsetMinusWidth=integralImageOffset-width;
+                    unsigned long integralImageOffsetMinusWidthMinusOne=integralImageOffset-width-1;
+
+                    imageOffset+=numComponents;
 
                     for (unsigned long x=1; x<width; x++)
                     {
-                        integralImageData[offset]=((int64_t)data[offset])
-                                + integralImageData[offsetMinusOne]
-                                + integralImageData[offsetMinusWidth]
-                                - integralImageData[offsetMinusWidthMinusOne];
+                        integralImageData[integralImageOffset]=((int64_t)data[imageOffset])
+                                + integralImageData[integralImageOffsetMinusOne]
+                                + integralImageData[integralImageOffsetMinusWidth]
+                                - integralImageData[integralImageOffsetMinusWidthMinusOne];
 
-                        offset++;
-                        offsetMinusOne++;
-                        offsetMinusWidth++;
-                        offsetMinusWidthMinusOne++;
+                        integralImageOffset++;
+                        integralImageOffsetMinusOne++;
+                        integralImageOffsetMinusWidth++;
+                        integralImageOffsetMinusWidthMinusOne++;
+                        imageOffset+=numComponents;
                     }
                 }
             }
@@ -122,32 +122,39 @@ public:
                 const long widthMinusBorder=width - border;
                 const long heightMinusBorder=height - border;
 
-                long offset=startOffset;
+                long integralImageOffset=startOffset;
                 for (long y=border; y<heightMinusBorder; y++)
                 {
-                    offset+=border;
-                    unsigned long offsetMinusBorderMinusStartOffset=offset-border-startOffset;
-                    unsigned long offsetPlusBorderPlusStartOffset=offset+border+startOffset;
-                    unsigned long offsetPlusBorderMinusStartOffset=offset+border-startOffset;
-                    unsigned long offsetMinusBorderPlusStartOffset=offset-border+startOffset;
+                    integralImageOffset+=border;
+                    unsigned long integralImageOffsetMinusBorderMinusStartOffset=integralImageOffset-border-startOffset;
+                    unsigned long integralImageOffsetPlusBorderPlusStartOffset=integralImageOffset+border+startOffset;
+                    unsigned long integralImageOffsetPlusBorderMinusStartOffset=integralImageOffset+border-startOffset;
+                    unsigned long integralImageOffsetMinusBorderPlusStartOffset=integralImageOffset-border+startOffset;
+
+                    long imageOffset=integralImageOffset*numComponents;
 
                     for (long x=border; x<widthMinusBorder; x++)
                     {
-                        float average=(integralImageData[offsetPlusBorderPlusStartOffset]
-                                       + integralImageData[offsetMinusBorderMinusStartOffset]
-                                       - integralImageData[offsetPlusBorderMinusStartOffset]
-                                       - integralImageData[offsetMinusBorderPlusStartOffset]
+                        float average=(integralImageData[integralImageOffsetPlusBorderPlusStartOffset]
+                                       + integralImageData[integralImageOffsetMinusBorderMinusStartOffset]
+                                       - integralImageData[integralImageOffsetPlusBorderMinusStartOffset]
+                                       - integralImageData[integralImageOffsetMinusBorderPlusStartOffset]
                                        );
 
-                        data[offset]=data[offset] * (floatTargetAverage / average) + 0.5f;
+                        for (long i=0; i<numComponents; ++i)
+                        {
+                            data[imageOffset+i]=data[imageOffset+i] * (floatTargetAverage / average) + 0.5f;
+                        }
 
-                        offset++;
-                        offsetMinusBorderMinusStartOffset++;
-                        offsetPlusBorderPlusStartOffset++;
-                        offsetPlusBorderMinusStartOffset++;
-                        offsetMinusBorderPlusStartOffset++;
+                        integralImageOffset++;
+                        integralImageOffsetMinusBorderMinusStartOffset++;
+                        integralImageOffsetPlusBorderPlusStartOffset++;
+                        integralImageOffsetPlusBorderMinusStartOffset++;
+                        integralImageOffsetMinusBorderPlusStartOffset++;
+
+                        imageOffset+=numComponents;
                     }
-                    offset+=border;
+                    integralImageOffset+=border;
                 }
             }
             //=== ===
