@@ -11,8 +11,9 @@ namespace flitr {
 class FLITR_EXPORT CPUPaletteRemap_Shader : public flitr::CPUShaderPass::CPUShader
 {
 public:
-    CPUPaletteRemap_Shader(osg::Image* image) :
+    CPUPaletteRemap_Shader(osg::Image* image, bool exposeParameters=true) :
         Image_(image),
+        exposeParameters_(exposeParameters),
         ignoreBelow_(0.02), ignoreAbove_(0.98),
         enabled_(true)
     {
@@ -74,9 +75,15 @@ public:
             setPaletteMap(histogramMap);
     }
 
+    void setHistogramEqualisationMap(const std::vector<int32_t> &histogram, uint32_t numPixels)
+    {
+            std::vector<uint8_t> histogramMap=MultiCPUHistogramConsumer::calcHistogramMatchMap(histogram, MultiCPUHistogramConsumer::calcRefHistogramForEqualisation(numPixels));
+            setPaletteMap(histogramMap);
+    }
+
     virtual int getNumberOfParms()
     {
-        return 2;
+        return exposeParameters_ ? 2 : 0;
     }
 
     virtual EParmType getParmType(int id)
@@ -111,7 +118,7 @@ public:
         low=0.00;
         high=1.0;
 
-        return true;
+        return exposeParameters_;
     }
 
     virtual bool setFloat(int id, float v)
@@ -146,6 +153,7 @@ private:
 
     std::string parameterTitle_;
 
+    bool exposeParameters_;
     float ignoreBelow_;
     float ignoreAbove_;
 
