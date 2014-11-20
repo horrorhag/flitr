@@ -25,7 +25,7 @@ using std::shared_ptr;
 
 FIPConvertToF32::FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                  uint32_t buffer_size) :
-ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
+    ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
 {
     
     //Setup image format being produced to downstream.
@@ -70,29 +70,37 @@ bool FIPConvertToF32::trigger()
             
             float * const dataWrite=(float *)imWrite->data();
             
-            const ImageFormat imFormat=getDownstreamFormat(imgNum);
+            const ImageFormat imFormatUS=getUpstreamFormat(imgNum);
             
-            const size_t width=imFormat.getWidth();
-            const size_t height=imFormat.getHeight();
-            const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
-            
-            const size_t componentsPerLine=componentsPerPixel * width;
-            
-            
-            int y=0;
+            const size_t width=imFormatUS.getWidth();
+            const size_t height=imFormatUS.getHeight();
+
+            if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_8)
             {
+                for (size_t y=0; y<height; ++y)
                 {
-                    for (y=0; y<(int)height; ++y)
+                    const size_t lineOffset=y * width;
+
+                    for (size_t x=0; x<width; ++x)
                     {
-                        const size_t lineOffset=y * componentsPerLine;
-                        
-                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
+                        dataWrite[lineOffset + x]=((float)dataRead[lineOffset + x]) * 0.00390625f; // /256.0
+                    }
+                }
+            } else
+                if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_8)
+                {
+                    for (size_t y=0; y<height; ++y)
+                    {
+                        const size_t lineOffset=y * width;
+                        size_t readOffset=lineOffset*3+1;
+
+                        for (size_t x=0; x<width; ++x)
                         {
-                            dataWrite[lineOffset + compNum]=((float)dataRead[lineOffset + compNum]) * 0.00390625f; // /256.0
+                            dataWrite[lineOffset + x]=((float)dataRead[readOffset]) * 0.00390625f; // /256.0
+                            readOffset+=3;
                         }
                     }
                 }
-            }
         }
         
         //Stop stats measurement event.
