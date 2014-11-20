@@ -22,7 +22,7 @@ GLSLSigmoidPass::GLSLSigmoidPass(flitr::TextureRectangle *in_tex, bool read_back
     setupCamera();
 
     UniformCentre_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("centre", (float)0.5f) );
-    UniformSlope_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("slope", (float)1.0f) );
+    UniformSlope_=osg::ref_ptr<osg::Uniform>( new osg::Uniform("slope", (float)5.0f) ); //Almost linear response at a slope of 5.0.
 
     Camera_->addChild(createTexturedQuad().get());
 
