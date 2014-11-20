@@ -14,7 +14,7 @@ CPUShaderPass::CPUShaderPass(osg::ref_ptr<flitr::TextureRectangle> in_tex)
 
     OutImage_ = new osg::Image;
     OutImage_->allocateImage(TextureWidth_, TextureHeight_, 1,
-                             InTexture_->getSourceFormat(), InTexture_->getSourceType());
+                             InTexture_->getInternalFormat(), InTexture_->getInternalFormatType());
 
     OutTexture_ = new flitr::TextureRectangle();
     OutTexture_->setTextureSize(TextureWidth_, TextureHeight_);
