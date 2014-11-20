@@ -1,16 +1,19 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.h>
+#include <flitr/modules/glsl_shader_passes/glsl_copy_pass.h>
 
 
 using namespace flitr;
 
-GLSLGaussianFilterXPass::GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
+GLSLGaussianFilterXPass::GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU) :
+    Title_("GaussianFilterX")
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();
 
     RootGroup_ = new osg::Group;
+    SwitchNode_ = new osg::Switch;
     InTexture_ = in_tex;
     OutTexture_=0;
     OutImage_=0;
@@ -44,7 +47,14 @@ GLSLGaussianFilterXPass::GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex
 
     Camera_->addChild(createTexturedQuad().get());
 
-    RootGroup_->addChild(Camera_.get());
+    //RootGroup_->addChild(Camera_.get());
+    SwitchNode_->addChild( Camera_.get() );
+
+    GLSLCopyPass* copyPass = new flitr::GLSLCopyPass(in_tex, OutTexture_);
+    SwitchNode_->addChild( copyPass->getRoot() );
+    RootGroup_->addChild(SwitchNode_);
+
+    SwitchNode_->setSingleChildOn(0);
 
     setShader();
 }

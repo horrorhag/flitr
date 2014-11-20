@@ -29,6 +29,7 @@
 
 #include <osg/ref_ptr>
 #include <osg/Group>
+#include <osg/Switch>
 #include <osg/Camera>
 #include <osg/MatrixTransform>
 #include <osg/Projection>
@@ -40,15 +41,20 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLGaussianFilterXPass
+class FLITR_EXPORT GLSLGaussianFilterXPass  : public Parameters
 {
-  public:
+public:
     GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
     ~GLSLGaussianFilterXPass();
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
     osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
+
+    void setTitle(const std::string &title)
+    {
+        Title_=title;
+    }
 
     void setStandardDeviation(float sd);
 
@@ -67,14 +73,83 @@ class FLITR_EXPORT GLSLGaussianFilterXPass
         return getStandardDeviation()*2.0f;
     }
 
-  private:
+    virtual int getNumberOfParms()
+    {
+        return 1;
+    }
+
+    virtual EParmType getParmType(int id)
+    {
+        return PARM_FLOAT;
+    }
+
+    virtual std::string getParmName(int id)
+    {
+        switch (id)
+        {
+        case 0 :return std::string("Radius");
+        }
+        return std::string("???");
+    }
+
+    virtual std::string getTitle()
+    {
+        return Title_;
+    }
+
+    virtual float getFloat(int id)
+    {
+        switch (id)
+        {
+        case 0 : return getRadius();
+        }
+
+        return 0.0f;
+    }
+
+    virtual bool getFloatRange(int id, float &low, float &high)
+    {
+        if (id==0)
+        {
+            low=1.0; high=100.0;
+            return true;
+        }
+
+        return false;
+    }
+
+    virtual bool setFloat(int id, float v)
+    {
+        switch (id)
+        {
+        case 0 : setRadius(v); return true;
+        }
+
+        return false;
+    }
+
+    virtual void enable(bool state=true)
+    {
+        Enabled_ = state;
+        SwitchNode_->setSingleChildOn(Enabled_ ? 0 : 1);
+    }
+
+    virtual bool isEnabled()
+    {
+        return Enabled_;
+    }
+
+private:
     void setShader();
 
     osg::ref_ptr<osg::Group> createTexturedQuad();
     void createOutputTexture(bool read_back_to_CPU);
     void setupCamera();
 
+    std::string Title_;
+
     osg::ref_ptr<osg::Group> RootGroup_;
+    osg::ref_ptr<osg::Switch> SwitchNode_;
     osg::ref_ptr<osg::Camera> Camera_;
     osg::ref_ptr<flitr::TextureRectangle> InTexture_;
     osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
@@ -83,7 +158,7 @@ class FLITR_EXPORT GLSLGaussianFilterXPass
     int TextureWidth_;
     int TextureHeight_;
 
-	osg::ref_ptr<osg::Program> FragmentProgram_;
+    osg::ref_ptr<osg::Program> FragmentProgram_;
     osg::ref_ptr<osg::StateSet> StateSet_;
 
     float StandardDeviation_;
@@ -91,6 +166,8 @@ class FLITR_EXPORT GLSLGaussianFilterXPass
     osg::ref_ptr<flitr::TextureRectangle> Kernel1DTexture_;
     osg::ref_ptr<osg::Image> Kernel1DImage_;
     osg::ref_ptr<osg::Uniform> KernelSizeUniform_;
+
+    bool Enabled_;
 };
 }
 #endif //GLSL_GAUSSIAN_FILTER_X_PASS_H
