@@ -505,7 +505,7 @@ osg::Node* flitr::ImageStabiliserMultiLK::createNLKIteration(ImageNPyramid *i_pC
 
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createLKIteration");
+    textureShader->setName("ImageStabiliserMultiLK::createLKIteration");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -575,6 +575,7 @@ osg::Node* flitr::ImageStabiliserMultiLK::createHVectorReductionLevel(unsigned l
     //create and add the shaders to the state set
     //*******************************************
     std::stringstream ss;
+    
     for (int i=0; i<(int)m_numPyramids_; i++)
     {
         ss << "uniform sampler2DRect highResLKResultTexture_"<<i<<";\n";
@@ -595,7 +596,7 @@ osg::Node* flitr::ImageStabiliserMultiLK::createHVectorReductionLevel(unsigned l
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createHVectorReductionLevel");
+    textureShader->setName("ImageStabiliserMultiLK::createHVectorReductionLevel");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -828,6 +829,7 @@ osg::Node* flitr::ImageStabiliserMultiLK::createOutputPass()
           "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
+    textureShader->setName("ImageStabiliserMultiLK::createOutputPass");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 

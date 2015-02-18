@@ -146,7 +146,7 @@ void GLSLTranslatePass::setShader()
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
-
+    FragmentProgram_->setName("glsl_translate");
     FragmentProgram_->addShader(fshader.get());
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );

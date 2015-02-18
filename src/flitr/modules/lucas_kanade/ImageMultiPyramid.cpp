@@ -371,7 +371,7 @@ osg::Node* flitr::ImageNPyramid::createDerivLevel(unsigned long i_ulLevel, unsig
 
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createDerivLevel");
+    textureShader->setName("ImageNPyramid::createDerivLevel");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -469,7 +469,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel0(unsigned long i_ulWidth, u
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createGausFiltLevel0");
+    textureShader->setName("ImageNPyramid::createGausFiltLevel0");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -562,7 +562,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel0(unsigned long i_ulWidth, 
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createGausXFiltLevel0");
+    textureShader->setName("ImageNPyramid::createGausXFiltLevel0");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -612,6 +612,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel0(unsigned long i_ulWidth, 
     //create and add the shaders to the state set
     //*******************************************
     std::stringstream ss;
+    
     for (int i=0; i<m_numPyramids_; i++)
     {
         ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
@@ -652,7 +653,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel0(unsigned long i_ulWidth, 
 
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createGausYFiltLevel0");
+    textureShader->setName("ImageNPyramid::createGausYFiltLevel0");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -704,6 +705,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel1toN(unsigned long i_ulLevel
     //create and add the shaders to the state set
     //*******************************************
     std::stringstream ss;
+
     for (int i=0; i<m_numPyramids_; i++)
     {
         ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
@@ -746,7 +748,7 @@ osg::Node* flitr::ImageNPyramid::createGausFiltLevel1toN(unsigned long i_ulLevel
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createGausFiltLevel1toN");
+    textureShader->setName("ImageNPyramid::createGausFiltLevel1toN");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
 
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
@@ -799,6 +801,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel1toN(unsigned long i_ulLeve
     //create and add the shaders to the state set
     //*******************************************
     std::stringstream ss;
+    
     for (int i=0; i<m_numPyramids_; i++)
     {
     ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
@@ -837,7 +840,7 @@ osg::Node* flitr::ImageNPyramid::createGausXFiltLevel1toN(unsigned long i_ulLeve
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createGausXFiltLevel1toN");
+    textureShader->setName("ImageNPyramid::createGausXFiltLevel1toN");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
@@ -888,6 +891,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel1toN(unsigned long i_ulLeve
     //create and add the shaders to the state set
     //*******************************************
     std::stringstream ss;
+    
     for (int i=0; i<m_numPyramids_; i++)
     {
     ss << "uniform sampler2DRect inputTexture_"<<i<<";\n";
@@ -926,7 +930,7 @@ osg::Node* flitr::ImageNPyramid::createGausYFiltLevel1toN(unsigned long i_ulLeve
     ss << "}\n";
 
     osg::ref_ptr<osg::Program> textureShader = new osg::Program;
-    textureShader->setName("createGausYFiltLevel1toN");
+    textureShader->setName("ImageNPyramid::createGausYFiltLevel1toN");
     textureShader->addShader(new osg::Shader(osg::Shader::FRAGMENT, ss.str()));
     geomss->setAttributeAndModes(textureShader.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 
