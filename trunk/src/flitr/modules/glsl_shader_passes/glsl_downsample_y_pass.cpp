@@ -140,22 +140,22 @@ void GLSLDownsampleYPass::setShader()
                                                          "void main(void)\n"
                                                          "{\n"
                                                          "    vec2 texCoord = floor(gl_TexCoord[0].xy);\n"
-                                                         "    texCoord.y*=dsfactor;\n"
+                                                         "    texCoord.y*=float(dsfactor);\n"
                                                          "    texCoord+=vec2(0.5, 0.5);\n"
 
                                                          "    vec4 c=vec4(0,0,0,0);\n"
 
                                                          "    for (int j=0; j<dsfactor; j++)\n"
                                                          "    {\n"
-                                                         "       c  += texture2DRect(textureID0, texCoord+vec2(0,j));\n"
+                                                         "       c  += texture2DRect(textureID0, texCoord+vec2(0,float(j)));\n"
                                                          "    }\n"
-                                                         "    gl_FragColor = c/dsfactor;\n"
+                                                         "    gl_FragColor = c/float(dsfactor);\n"
                                                          "}\n"
                                                          );
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
-
+    FragmentProgram_->setName("glsl_downsample_y");
     FragmentProgram_->addShader(fshader.get());
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );

@@ -174,7 +174,7 @@ void CPUShaderPass::setGPUShader(std::string filename)
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
-
+    FragmentProgram_->setName(filename);
     FragmentProgram_->addShader(fshader.get());
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );

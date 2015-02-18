@@ -166,6 +166,7 @@ void GLSLKeepHistoryPass::setShader(std::string filename)
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT );
     if (filename != "") {
         fshader->loadShaderSourceFromFile(filename);
+        FragmentProgram_->setName(filename);
         FragmentProgram_->addShader(fshader.get());
     }
 

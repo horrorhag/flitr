@@ -183,10 +183,10 @@ void GLSLGaussianFilterYPass::setShader()
 
                                                          "    for (int r=1; r<kernelSize; r++)\n"
                                                          "    {\n"
-                                                         "      kernelValue=texture2DRect(kernel1DTexture, vec2(0.5, r+0.5));\n"
+                                                         "      kernelValue=texture2DRect(kernel1DTexture, vec2(0.5, float(r)+0.5)).r;\n"
                                                          "      kernelValueSum+=kernelValue*2.0;\n"
 
-                                                         "      filteredPixel+=(texture2DRect(textureID0, texCoord-vec2(0,r))+texture2DRect(textureID0, texCoord+vec2(0,r)))*kernelValue;\n"
+                                                         "      filteredPixel+=(texture2DRect(textureID0, texCoord-vec2(0,float(r)))+texture2DRect(textureID0, texCoord+vec2(0,float(r))))*kernelValue;\n"
                                                          "    }\n"
 
                                                          "    gl_FragColor = filteredPixel/kernelValueSum;\n"
@@ -195,7 +195,7 @@ void GLSLGaussianFilterYPass::setShader()
 
     FragmentProgram_ = 0;
     FragmentProgram_ = new osg::Program;
-
+    FragmentProgram_->setName("glsl_gaussfilter_y");
     FragmentProgram_->addShader(fshader.get());
 
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
