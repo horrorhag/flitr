@@ -36,7 +36,7 @@ public:
     {
         while(!ShouldExit_) {
             bool triggerred = false;
-            while (Producer_->getLeastNumReadSlotsAvailable() < ReadableTarget_) {
+            while ((Producer_->getLeastNumReadSlotsAvailable() < ReadableTarget_)&&(!ShouldExit_)) {
                 Producer_->trigger();
                 triggerred = true;
             }
@@ -73,10 +73,10 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    const float theta=(60.0f / 180.0f) * float(M_PI);
-    const float scale=0.5f;
+    const float theta=(45.0f / 180.0f) * float(M_PI);
+    const float scale=0.35f;
     
-    shared_ptr<FIPTransform2D> transform(new FIPTransform2D(*ip, 1, {{scale*cosf(theta), scale*sinf(theta), -scale*sinf(theta), scale*cosf(theta)}}, 10));
+    shared_ptr<FIPTransform2D> transform(new FIPTransform2D(*ip, 1, {{scale*cosf(theta), scale*sinf(theta), -scale*sinf(theta), scale*cosf(theta)}}, 1));
     if (!transform->init())
     {
         std::cerr << "Could not initialise the transform2D processor.\n";
@@ -84,8 +84,8 @@ int main(int argc, char *argv[])
     }
     transform->startTriggerThread();
 
-/*
-    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*transform, 1, 10));
+
+    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*transform, 1, 1));
     if (!cnvrtToF32->init()) {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
@@ -93,30 +93,29 @@ int main(int argc, char *argv[])
     cnvrtToF32->startTriggerThread();
     
     
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToF32, 1, 5, 10));
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToF32, 1, 4, 1));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
     }
     averageImage->startTriggerThread();
     
-    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*averageImage, 1, 0.95f, 10));
+    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*averageImage, 1, 0.95f, 1));
     if (!cnvrtToM8->init()) {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
         exit(-1);
     }
     cnvrtToM8->startTriggerThread();
     
-*/
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*transform, 1, 10));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToM8, 1, 1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 10));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
@@ -191,7 +190,12 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        if ((osgc->getNext())||(osgcOrig->getNext()))
+        bool renderFrame=false;
+        
+        if (osgc->getNext()) renderFrame=true;
+        if (osgcOrig->getNext()) renderFrame=true;
+
+        if (renderFrame)
         {
             viewer.frame();
             
@@ -205,7 +209,7 @@ int main(int argc, char *argv[])
             numFrames++;
         }
         
-        OpenThreads::Thread::microSleep(1000);
+        OpenThreads::Thread::microSleep(0);
     }
     
     //     mffc->stopWriting();
@@ -218,9 +222,9 @@ int main(int argc, char *argv[])
 #endif
     
     transform->stopTriggerThread();
-    //cnvrtToF32->stopTriggerThread();
-    //averageImage->stopTriggerThread();
-    //cnvrtToM8->stopTriggerThread();
+    cnvrtToF32->stopTriggerThread();
+    averageImage->stopTriggerThread();
+    cnvrtToM8->stopTriggerThread();
     
     return 0;
 }
