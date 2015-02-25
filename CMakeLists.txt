@@ -200,6 +200,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
   src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
+  src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
 
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_gamma_pass.cpp
@@ -299,6 +300,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
   include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
+  include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
 
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gamma_pass.h
@@ -387,7 +389,8 @@ ADD_SUBDIRECTORY(examples/average_image)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)
 
-ADD_SUBDIRECTORY(examples/LK_dewarp)
+ADD_SUBDIRECTORY(examples/LK_image_registration_cpu)
+ADD_SUBDIRECTORY(examples/LK_dewarp_cpu)
 ADD_SUBDIRECTORY(examples/DPT)
 
 ADD_SUBDIRECTORY(examples/LK_image_registration)

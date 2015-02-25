@@ -69,30 +69,29 @@ bool FIPConvertToM8::trigger()
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
-            float const * const dataRead=(float *)imRead->data();
-            
             uint8_t * const dataWrite=imWrite->data();
             
-            const ImageFormat imFormat=getDownstreamFormat(imgNum);
+            const ImageFormat imFormatUS=getUpstreamFormat(imgNum);
             
-            const size_t width=imFormat.getWidth();
-            const size_t height=imFormat.getHeight();
-            const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
+            const size_t width=imFormatUS.getWidth();
+            const size_t height=imFormatUS.getHeight();
             
-            const size_t componentsPerLine=componentsPerPixel * width;
-            
-            
-            size_t y=0;
+            if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {
+                float const * const dataRead=(float *)imRead->data();
+                
+                size_t y=0;
                 {
-                    for (y=0; y<height; ++y)
                     {
-                        const size_t lineOffset=y * componentsPerLine;
-                        
-                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
+                        for (y=0; y<height; ++y)
                         {
-                            float writeValue=dataRead[lineOffset + compNum]*(256.0f*scaleFactor_);
-                            dataWrite[lineOffset + compNum]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):writeValue);
+                            const size_t lineOffset=y * width;
+                            
+                            for (size_t x=0; x<width; ++x)
+                            {
+                                float writeValue=dataRead[lineOffset + x]*(256.0f*scaleFactor_);
+                                dataWrite[lineOffset + x]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):writeValue);
+                            }
                         }
                     }
                 }

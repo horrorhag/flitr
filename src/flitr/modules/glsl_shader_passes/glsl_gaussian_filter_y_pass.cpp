@@ -215,7 +215,7 @@ void GLSLGaussianFilterYPass::setStandardDeviation(float sd)
 
     for (int r=0; r<kernelSize; r++)
     {
-        data[r]=(1.0/sqrt(2.0*M_PI*StandardDeviation_*StandardDeviation_))*exp(-r*r/(2.0*StandardDeviation_*StandardDeviation_));
+        data[r]=(1.0/(sqrt(2.0*M_PI)*StandardDeviation_))*exp(-r*r/(2.0*StandardDeviation_*StandardDeviation_));
     }
 
     Kernel1DImage_->dirty();
