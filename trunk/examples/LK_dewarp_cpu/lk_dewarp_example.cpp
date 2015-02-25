@@ -112,17 +112,20 @@ int main(int argc, char *argv[])
     crop->startTriggerThread();
     
     
-    /*
-     shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1, 2));
+    
+     shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1,
+                                                                         1.0f,
+                                                                         3,
+                                                                         2));
      if (!gaussianFilter0->init())
      {
      std::cerr << "Could not initialise the gaussianFilter processor.\n";
      exit(-1);
      }
      gaussianFilter0->startTriggerThread();
-     */
     
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1,
+    
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*gaussianFilter0, 1,
                                                      0.97f, //Average image longevity.
                                                      2)); //Buffer size.
     if (!lkdewarp->init())
