@@ -25,22 +25,64 @@ using namespace flitr;
 using std::shared_ptr;
 
 FIPGaussianFilter::FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                                     const float filterRadius,
+                                     const size_t kernelWidth,
                                      uint32_t buffer_size) :
-ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
+ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+xFiltData_(nullptr),
+kernel1D_(nullptr),
+filterRadius_(filterRadius),
+kernelWidth_(kernelWidth|1)//Make sure the kernel width is odd.
 {
-    
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat downStreamFormat=upStreamProducer.getFormat();
         
         ImageFormat_.push_back(downStreamFormat);
     }
-    
 }
 
 FIPGaussianFilter::~FIPGaussianFilter()
 {
     delete [] xFiltData_;
+    delete [] kernel1D_;
+}
+
+void FIPGaussianFilter::updateKernel1D()
+{
+    if (kernel1D_!=nullptr) delete [] kernel1D_;
+    
+    kernel1D_=new float[kernelWidth_];
+    
+    const float kernelCentre=kernelWidth_ * 0.5f;
+    const float sigma=filterRadius_ * 0.5f;
+    
+    float kernelSum=0.0f;
+    
+    for (size_t i=0; i<kernelWidth_; ++i)
+    {
+        const float r=((i + 0.5f) - kernelCentre);
+        kernel1D_[i]=(1.0f/(sqrt(2.0f*float(M_PI))*sigma)) * exp(-(r*r)/(2.0f*sigma*sigma));
+        kernelSum+=kernel1D_[i];
+    }
+    
+    //=== Ensure that the kernel is normalised!
+    for (size_t i=0; i<kernelWidth_; ++i)
+    {
+        kernel1D_[i]/=kernelSum;
+    }
+}
+
+void FIPGaussianFilter::setFilterRadius(const float filterRadius)
+{
+    filterRadius_=filterRadius;
+    updateKernel1D();
+}
+
+void FIPGaussianFilter::setKernelWidth(const int kernelWidth)
+{
+    kernelWidth_=kernelWidth|1;
+    updateKernel1D();
 }
 
 bool FIPGaussianFilter::init()
@@ -59,7 +101,7 @@ bool FIPGaussianFilter::init()
         
         const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
         
-        const size_t xFiltDataSize = width*height*componentsPerPixel;
+        const size_t xFiltDataSize = width * height * componentsPerPixel;
         
         if (xFiltDataSize>maxXFiltDataSize)
         {
@@ -69,6 +111,8 @@ bool FIPGaussianFilter::init()
     
     //Allocate a buffer big enough for any of the image slots.
     xFiltData_=new float[maxXFiltDataSize];
+    
+    updateKernel1D();
     
     return rValue;
 }
@@ -84,80 +128,62 @@ bool FIPGaussianFilter::trigger()
         //Start stats measurement event.
         ProcessorStats_->tick();
         
-        for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
+        for (size_t imgNum=0; imgNum<ImagesPerSlot_; ++imgNum)
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
-            
-            float const * const dataReadUS=(float const * const)imReadUS->data();
-            float * const dataWriteDS=(float * const)imWriteDS->data();
             
             const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
             
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
-            const size_t widthMinus5=width-((size_t)5);
-            const size_t heightMinus5=height-((size_t)5);
             
-            size_t y=0;
+            const size_t widthMinusKernel=imFormat.getWidth()-(kernelWidth_-1);
+            const size_t heightMinusKernel=imFormat.getHeight()-(kernelWidth_-1);
+            
+            const size_t halfKernelWidth=(kernelWidth_>>1);//Always even!
+            const size_t widthMinusHalfKernel=imFormat.getWidth()-halfKernelWidth;
+            
+            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {
+                float const * const dataReadUS=(float const * const)imReadUS->data();
+                float * const dataWriteDS=(float * const)imWriteDS->data();
+                
+                for (size_t y=0; y<height; ++y)
                 {
-                    for (y=0; y<height; y++)
+                    const size_t lineOffsetFS=y * width + halfKernelWidth;
+                    const size_t lineOffsetUS=y * width;
+                    
+                    for (size_t x=0; x<widthMinusKernel; ++x)
                     {
-                        const size_t lineOffset=y * width;
+                        float xFiltValue=0.0f;
                         
-                        for (size_t x=((size_t)5); x<widthMinus5; x++)
+                        for (size_t j=0; j<kernelWidth_; ++j)
                         {
-                            float xFiltValue=( dataReadUS[lineOffset + x] ) * (252.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 1] +
-                                         dataReadUS[lineOffset + x + 1] ) * (210.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 2] +
-                                         dataReadUS[lineOffset + x + 2] ) * (120.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 3] +
-                                         dataReadUS[lineOffset + x + 3] ) * (45.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 4] +
-                                         dataReadUS[lineOffset + x + 4] ) * (10.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 5] +
-                                         dataReadUS[lineOffset + x + 5] ) * (1.0f/1024.0f);
-                            
-                            xFiltData_[lineOffset + x]=xFiltValue;
+                            xFiltValue += dataReadUS[(lineOffsetUS + x) + j] * kernel1D_[j];
                         }
+                        
+                        xFiltData_[lineOffsetFS + x]=xFiltValue;
                     }
                 }
-            }
-            
-            {
+                
+                for (size_t y=0; y<heightMinusKernel; ++y)
                 {
-                    for (y=((size_t)5); y<heightMinus5; y++)
+                    const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+                    const size_t lineOffsetFS=y * width;
+                    
+                    for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
                     {
-                        const size_t lineOffset=y * width;
+                        float filtValue=0.0f;
                         
-                        for (size_t x=((size_t)5); x<widthMinus5; x++)
+                        for (size_t j=0; j<kernelWidth_; ++j)
                         {
-                            float filtValue=( xFiltData_[lineOffset + x] ) * (252.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - width]+
-                                        xFiltData_[lineOffset + width + x] ) * (210.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - (width<<1)]+
-                                        xFiltData_[lineOffset + (width<<1) + x] ) * (120.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - ((width<<1)+width)]+
-                                        xFiltData_[lineOffset + ((width<<1)+width) + x] ) * (45.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - (width<<2)]+
-                                        xFiltData_[lineOffset + (width<<2) + x] ) * (10.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - ((width<<2)+width)]+
-                                        xFiltData_[lineOffset + ((width<<2)+width) + x] ) * (1.0f/1024.0f);
-                            
-                            dataWriteDS[lineOffset+x]=filtValue;
+                            filtValue += xFiltData_[(lineOffsetFS + x) + j*width] * kernel1D_[j];
+                            //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                            //                  Is the code memory bandwidth limited?
                         }
+                        
+                        dataWriteDS[lineOffsetDS + x]=filtValue;
                     }
                 }
             }

@@ -33,10 +33,10 @@ namespace flitr {
         /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
+         *@param avrgImageLongevity Filter constant for how strong the averaging of the reference image is.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                    const bool useLevelZero,
-                    const float refImageFilter,
+                    const float avrgImageLongevity,
                     uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -50,17 +50,12 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
-        virtual void enableHVectVariance(const bool state);
-        virtual void saveHVectVariance(const std::string &filename);
-        
         /*! Get the latest h-vector calculated between the input and reference frame. Should be called after trigger().
          *@sa ImageProcessor::trigger*/
         virtual void getLatestHVect(float &hx, float &hy)
         {
             OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
-            
-            hx=latestHx_;
-            hy=latestHy_;
+
         }
         
     private:
@@ -73,8 +68,7 @@ namespace flitr {
         
         OpenThreads::Mutex triggerMutex_;
         
-        const bool useLevelZero_;
-        const float refImageFilter_;
+        const float avrgImageLongevity_;
         
         size_t frameNum_;
         
@@ -90,20 +84,10 @@ namespace flitr {
         std::vector<float *> hxVec_;
         std::vector<float *> hyVec_;
         
-        float latestHx_;
-        float latestHy_;
-        
         float *scratchData_;
         
-        //float *finalHxData_;
-        //float *finalHyData_;
         float *finalImgData_; //With lucky regions, etc.
         float *finalSRImgData_; //With lucky regions, super res, etc.
-        
-        bool hVectVarianceEnabled_;
-        float *m2Data_;//for online standard deviation.
-        float *avrgData_;//for online standard deviation.
-        float n_;
     };
     
 }

@@ -91,72 +91,75 @@ bool FIPUnsharpMask::trigger()
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
             
-            float const * const dataReadUS=(float const * const)imReadUS->data();
-            float * const dataWriteDS=(float * const)imWriteDS->data();
-            
             const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
             
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
             
-            size_t y=0;
+            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {
+                float const * const dataReadUS=(float const * const)imReadUS->data();
+                float * const dataWriteDS=(float * const)imWriteDS->data();
+                
+                size_t y=0;
                 {
-                    for (y=0; y<height; y++)
                     {
-                        const size_t lineOffset=y * width;
-                        
-                        for (size_t x=5; x<(width-5); x++)
+                        for (y=0; y<height; y++)
                         {
-                            float xFiltValue=( dataReadUS[lineOffset + x] ) * (252.0f/1024.0f);
+                            const size_t lineOffset=y * width;
                             
-                            xFiltValue+=( dataReadUS[lineOffset + x - 1] +
-                                         dataReadUS[lineOffset + x + 1] ) * (210.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 2] +
-                                         dataReadUS[lineOffset + x + 2] ) * (120.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 3] +
-                                         dataReadUS[lineOffset + x + 3] ) * (45.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 4] +
-                                         dataReadUS[lineOffset + x + 4] ) * (10.0f/1024.0f);
-                            
-                            xFiltValue+=( dataReadUS[lineOffset + x - 5] +
-                                         dataReadUS[lineOffset + x + 5] ) * (1.0f/1024.0f);
-                            
-                            xFiltData_[lineOffset + x]=xFiltValue;
+                            for (size_t x=5; x<(width-5); x++)
+                            {
+                                float xFiltValue=( dataReadUS[lineOffset + x] ) * (252.0f/1024.0f);
+                                
+                                xFiltValue+=( dataReadUS[lineOffset + x - 1] +
+                                             dataReadUS[lineOffset + x + 1] ) * (210.0f/1024.0f);
+                                
+                                xFiltValue+=( dataReadUS[lineOffset + x - 2] +
+                                             dataReadUS[lineOffset + x + 2] ) * (120.0f/1024.0f);
+                                
+                                xFiltValue+=( dataReadUS[lineOffset + x - 3] +
+                                             dataReadUS[lineOffset + x + 3] ) * (45.0f/1024.0f);
+                                
+                                xFiltValue+=( dataReadUS[lineOffset + x - 4] +
+                                             dataReadUS[lineOffset + x + 4] ) * (10.0f/1024.0f);
+                                
+                                xFiltValue+=( dataReadUS[lineOffset + x - 5] +
+                                             dataReadUS[lineOffset + x + 5] ) * (1.0f/1024.0f);
+                                
+                                xFiltData_[lineOffset + x]=xFiltValue;
+                            }
                         }
                     }
                 }
-            }
-            
-            {
+                
                 {
-                    for (y=5; y<(height-5); y++)
                     {
-                        const size_t lineOffset=y * width;
-                        
-                        for (size_t x=0; x<width; ++x)
+                        for (y=5; y<(height-5); y++)
                         {
-                            float filtValue=( xFiltData_[lineOffset + x] ) * (252.0f/1024.0f);
+                            const size_t lineOffset=y * width;
                             
-                            filtValue+=( xFiltData_[lineOffset + x - width]+
-                                        xFiltData_[lineOffset + width + x] ) * (210.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - (width<<1)]+
-                                        xFiltData_[lineOffset + (width<<1) + x] ) * (120.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - ((width<<1)+width)]+
-                                        xFiltData_[lineOffset + ((width<<1)+width) + x] ) * (45.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - (width<<2)]+
-                                        xFiltData_[lineOffset + (width<<2) + x] ) * (10.0f/1024.0f);
-                            
-                            filtValue+=( xFiltData_[lineOffset + x - ((width<<2)+width)]+
-                                        xFiltData_[lineOffset + ((width<<2)+width) + x] ) * (1.0f/1024.0f);
-                            
-                            dataWriteDS[lineOffset+x]=(dataReadUS[lineOffset + x]-filtValue)*gain_+dataReadUS[lineOffset + x];
+                            for (size_t x=0; x<width; ++x)
+                            {
+                                float filtValue=( xFiltData_[lineOffset + x] ) * (252.0f/1024.0f);
+                                
+                                filtValue+=( xFiltData_[lineOffset + x - width]+
+                                            xFiltData_[lineOffset + width + x] ) * (210.0f/1024.0f);
+                                
+                                filtValue+=( xFiltData_[lineOffset + x - (width<<1)]+
+                                            xFiltData_[lineOffset + (width<<1) + x] ) * (120.0f/1024.0f);
+                                
+                                filtValue+=( xFiltData_[lineOffset + x - ((width<<1)+width)]+
+                                            xFiltData_[lineOffset + ((width<<1)+width) + x] ) * (45.0f/1024.0f);
+                                
+                                filtValue+=( xFiltData_[lineOffset + x - (width<<2)]+
+                                            xFiltData_[lineOffset + (width<<2) + x] ) * (10.0f/1024.0f);
+                                
+                                filtValue+=( xFiltData_[lineOffset + x - ((width<<2)+width)]+
+                                            xFiltData_[lineOffset + ((width<<2)+width) + x] ) * (1.0f/1024.0f);
+                                
+                                dataWriteDS[lineOffset+x]=(dataReadUS[lineOffset + x]-filtValue)*gain_+dataReadUS[lineOffset + x];
+                            }
                         }
                     }
                 }

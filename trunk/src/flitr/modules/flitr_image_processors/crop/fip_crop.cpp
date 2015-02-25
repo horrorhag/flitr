@@ -76,11 +76,14 @@ bool FIPCrop::trigger()
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
-            float const * const dataRead=(float const * const)imRead->data();
-            float * const dataWrite=(float * const )imWrite->data();
+            uint8_t const * const dataRead=(uint8_t const * const)imRead->data();
+            uint8_t * const dataWrite=(uint8_t * const )imWrite->data();
             
+            //US and DS pixel formats are the same, but the image sizes are not.
             const ImageFormat imFormatUS=getUpstreamFormat(imgNum);
             const ImageFormat imFormatDS=getDownstreamFormat(imgNum);
+            
+            const size_t bytesPerPixel=imFormatDS.getBytesPerPixel();
             
             const size_t widthUS=imFormatUS.getWidth();
             
@@ -89,10 +92,10 @@ bool FIPCrop::trigger()
             
             for (size_t yDS=0; yDS<heightDS; ++yDS)
             {
-                const size_t lineOffsetUS=(yDS+startY_) * widthUS + startX_;
-                const size_t lineOffsetDS=yDS * widthDS;
+                const size_t lineOffsetUS=((yDS+startY_) * widthUS + startX_) * bytesPerPixel;
+                const size_t lineOffsetDS=(yDS * widthDS) * bytesPerPixel;
                 
-                memcpy(dataWrite+lineOffsetDS, dataRead+lineOffsetUS, widthDS*sizeof(float));
+                memcpy(dataWrite+lineOffsetDS, dataRead+lineOffsetUS, widthDS * bytesPerPixel);
             }
         }
         

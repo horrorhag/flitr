@@ -34,7 +34,8 @@ using namespace flitr;
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
+    if (argc != 2)
+    {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
@@ -45,7 +46,8 @@ int main(int argc, char *argv[])
     bool jitter=false;
 
     shared_ptr<TestPatternProducer> ip(new TestPatternProducer(512*dsFactor, 512*dsFactor, ImageFormat::FLITR_PIX_FMT_Y_8, 0.5, 8));
-    if (!ip->init()) {
+    if (!ip->init())
+    {
         std::cerr << "Could not instantiate the test pattern producer.\n";
         exit(-1);
     }
@@ -54,7 +56,8 @@ int main(int argc, char *argv[])
     bool jitter=false;
 
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY));
-    if (!ip->init()) {
+    if (!ip->init())
+    {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
@@ -62,7 +65,8 @@ int main(int argc, char *argv[])
 
 
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ip,1));
-    if (!osgc->init()) {
+    if (!osgc->init())
+    {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
@@ -194,7 +198,8 @@ int main(int argc, char *argv[])
             ip->trigger();
         }
 
-        if (osgc->getNext()) {
+        if (osgc->getNext())
+        {
             if (numFramesDone>=2)
             {
                 iStab->triggerInput();

@@ -35,10 +35,16 @@ namespace flitr {
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPGaussianDownsample(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                              const float filterRadius,//filterRadius = standardDeviation * 2.0 in US image.
+                              const size_t kernelWidth,//Width of filter kernel in pixels in US image.
                               uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
         virtual ~FIPGaussianDownsample();
+        
+        void updateKernel1D();
+        void setFilterRadius(const float filterRadius);
+        void setKernelWidth(const int kernelWidth);
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -51,6 +57,10 @@ namespace flitr {
     private:
         /*! The result of the first pass of the seperable Gaussian downsample. */
         float *xFiltData_;
+        float *kernel1D_;
+        
+        float filterRadius_;
+        size_t kernelWidth_;
     };
     
 }

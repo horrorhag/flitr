@@ -42,11 +42,11 @@ oldestHistorySlot_(0)
 
 FIPAverageImage::~FIPAverageImage()
 {
-    for (uint32_t i=0; i<ImagesPerSlot_; i++)
+    for (uint32_t i=0; i<ImagesPerSlot_; ++i)
     {
         delete [] sumImageVec_[i];
         
-        for (size_t historyIndex=0; historyIndex<windowLength_; historyIndex++)
+        for (size_t historyIndex=0; historyIndex<windowLength_; ++historyIndex)
         {
             delete [] historyImageVecVec_[i][historyIndex];
         }
@@ -61,7 +61,7 @@ bool FIPAverageImage::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    for (uint32_t i=0; i<ImagesPerSlot_; i++)
+    for (uint32_t i=0; i<ImagesPerSlot_; ++i)
     {
         const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
         
@@ -74,7 +74,7 @@ bool FIPAverageImage::init()
         memset(sumImageVec_[i], 0, width*height*componentsPerPixel*sizeof(float));
         
         historyImageVecVec_.push_back(std::vector<float *>());
-        for (size_t historyIndex=0; historyIndex<windowLength_; historyIndex++)
+        for (size_t historyIndex=0; historyIndex<windowLength_; ++historyIndex)
         {
             historyImageVecVec_[i].push_back(new float[width*height*componentsPerPixel]);
             memset(historyImageVecVec_[i][historyIndex], 0, width*height*componentsPerPixel*sizeof(float));
@@ -99,34 +99,30 @@ bool FIPAverageImage::trigger()
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
-            float const * const dataRead = (float const * const)imRead->data();
-            float * const dataWrite = (float * const)imWrite->data();
-            float * const sumImage = sumImageVec_[imgNum];
-            float * const oldestHistoryImage = historyImageVecVec_[imgNum][oldestHistorySlot_];
-            
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
             
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
-            const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
-            const size_t componentsPerLine=componentsPerPixel * width;
             
             //Update this slot's average image here...
-            int y=0;
+            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {
+                float const * const dataRead = (float const * const)imRead->data();
+                float * const dataWrite = (float * const)imWrite->data();
+                float * const sumImage = sumImageVec_[imgNum];
+                float * const oldestHistoryImage = historyImageVecVec_[imgNum][oldestHistorySlot_];
+                
+                for (size_t y=0; y<height; ++y)
                 {
-                    for (y=0; y<(int)height; ++y)
+                    const size_t lineOffset=y * width;
+                    
+                    for (size_t x=0; x<width; ++x)
                     {
-                        const size_t lineOffset=y * componentsPerLine;
+                        sumImage[lineOffset + x]+=dataRead[lineOffset + x];
+                        sumImage[lineOffset + x]-=oldestHistoryImage[lineOffset + x];
+                        oldestHistoryImage[lineOffset + x]=dataRead[lineOffset + x];
                         
-                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
-                        {
-                            sumImage[lineOffset + compNum]+=dataRead[lineOffset + compNum];
-                            sumImage[lineOffset + compNum]-=oldestHistoryImage[lineOffset + compNum];
-                            oldestHistoryImage[lineOffset + compNum]=dataRead[lineOffset + compNum];
-                            
-                            dataWrite[lineOffset + compNum]=sumImage[lineOffset + compNum] * recipWindowLength_;
-                        }
+                        dataWrite[lineOffset + x]=sumImage[lineOffset + x] * recipWindowLength_;
                     }
                 }
             }

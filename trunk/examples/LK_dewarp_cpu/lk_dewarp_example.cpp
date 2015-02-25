@@ -7,6 +7,7 @@
 #include <osg/io_utils>
 
 #include <flitr/modules/geometry_overlays/points_overlay.h>
+
 #include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
@@ -31,16 +32,18 @@
 using std::shared_ptr;
 using namespace flitr;
 
-class BackgroundTriggerThread : public OpenThreads::Thread {
+class BackgroundTriggerThread : public OpenThreads::Thread
+{
 public:
     BackgroundTriggerThread(ImageProducer* p) :
     Producer_(p),
     ShouldExit_(false),
-    ReadableTarget_(5) {}
+    ReadableTarget_(10) {}
     
     void run()
     {
-        while(!ShouldExit_) {
+        while(!ShouldExit_)
+        {
             bool triggerred = false;
             while (Producer_->getLeastNumReadSlotsAvailable() < ReadableTarget_) {
                 Producer_->trigger();
@@ -58,18 +61,24 @@ private:
     const uint32_t ReadableTarget_;
 };
 
+
+
 #define USE_BACKGROUND_TRIGGER_THREAD 1
+
+
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
+    if (argc != 2)
+    {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
     
     
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
-    if (!ip->init()) {
+    if (!ip->init())
+    {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
@@ -79,93 +88,115 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
+    
     shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*ip, 1, 2));
-    if (!cnvrtToF32->init()) {
+    if (!cnvrtToF32->init())
+    {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
     }
     cnvrtToF32->startTriggerThread();
     
+    
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
-                                         ip->getFormat().getWidth()/2-1,
-                                         ip->getFormat().getHeight()/4-1,
-                                         ip->getFormat().getWidth()/2,
-                                         ip->getFormat().getHeight()/2,
+                                         0,
+                                         0,
+                                         ip->getFormat().getWidth(),
+                                         ip->getFormat().getHeight(),
                                          2));
-    if (!crop->init()) {
+    if (!crop->init())
+    {
         std::cerr << "Could not initialise the crop processor.\n";
         exit(-1);
     }
     crop->startTriggerThread();
     
+    
     /*
-     shared_ptr<FIPGaussianFilter> gaussianFilter(new FIPGaussianFilter(*crop, 1, 2));
-     if (!gaussianFilter->init()) {
+     shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1, 2));
+     if (!gaussianFilter0->init())
+     {
      std::cerr << "Could not initialise the gaussianFilter processor.\n";
      exit(-1);
      }
-     gaussianFilter->startTriggerThread();
+     gaussianFilter0->startTriggerThread();
      */
     
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1, true, 0.025f, 2));
-    if (!lkdewarp->init()) {
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*crop, 1,
+                                                     0.97f, //Average image longevity.
+                                                     2)); //Buffer size.
+    if (!lkdewarp->init())
+    {
         std::cerr << "Could not initialise the lkdewarp processor.\n";
         exit(-1);
     }
     lkdewarp->startTriggerThread();
     
+    
     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 4, 2));
-    if (!averageImage->init()) {
+    if (!averageImage->init())
+    {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
     }
     averageImage->startTriggerThread();
     
-    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 15.0f, 2));
-    if (!unsharpMask->init()) {
+    
+    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 30.0f, 2));
+    if (!unsharpMask->init())
+    {
         std::cerr << "Could not initialise the unsharp mask processor.\n";
         exit(-1);
     }
     unsharpMask->startTriggerThread();
     
-    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 1.25f, 2));
-    if (!tonemap->init()) {
+    
+    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 1.0f, 2));
+    if (!tonemap->init())
+    {
         std::cerr << "Could not initialise the tonemap processor.\n";
         exit(-1);
     }
     tonemap->startTriggerThread();
     
+    
     shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*tonemap, 1, 0.95f, 2));
-    if (!cnvrtToM8->init()) {
+    if (!cnvrtToM8->init())
+    {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
         exit(-1);
     }
     cnvrtToM8->startTriggerThread();
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToM8, 1, 2));
-    if (!osgc->init()) {
+    
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*tonemap, 1, 2));
+    if (!osgc->init())
+    {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
     
     shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*crop, 1));
-    if (!osgcOrig->init()) {
+    if (!osgcOrig->init())
+    {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
     }
     
     
-    /*
-     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
-     if (!mffc->init()) {
-     std::cerr << "Could not init FFmpeg consumer\n";
-     exit(-1);
-     }
-     std::stringstream filenameStringStream;
-     filenameStringStream << argv[1] << "_improved";
-     mffc->openFiles(filenameStringStream.str());
-     */
+    
+    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
+    if (!mffc->init())
+    {
+        std::cerr << "Could not init FFmpeg consumer\n";
+        exit(-1);
+    }
+    std::stringstream filenameStringStream;
+    filenameStringStream << argv[1] << "_improved";
+    mffc->openFiles(filenameStringStream.str());
+    mffc->startWriting();
+    
     
     
     osg::Group *root_node = new osg::Group;
@@ -220,6 +251,7 @@ int main(int argc, char *argv[])
     
     size_t numFrames=0;
     float hx=0.0f,hy=0.0f;
+    
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
         
@@ -245,49 +277,15 @@ int main(int argc, char *argv[])
             
             viewer.frame();
             
-            /*
-             if (numFrames==15)
-             {
-             mffc->startWriting();
-             }
-             */
             
             numFrames++;
-            
-            
-            //=== ===//
-            /* Jason, remember to uncomment this code and also call 'lkdewarp->enableHVectVariance(...)' somewhere before the while loop starts!!!
-             if ((numFrames%100)==0)
-             {
-             lkdewarp->saveHVectVariance("dewarp.f32");
-             }
-             
-             if (numFrames>10)
-             {
-             float dhx=0.0f,dhy=0.0f;
-             lkdewarp->getLatestHVect(dhx, dhy);
-             
-             hx*=0.99f;
-             hy*=0.99f;
-             
-             hx+=dhx;
-             hy+=dhy;
-             
-             pov->clearVertices();
-             pov->addVertex(osg::Vec3d(-hx,
-             hy+osgc->getOutputTexture()->getTextureHeight()*0.5f, +0.1f));
-             
-             }
-             */
-            //=== ===//
-            
         }
         
         OpenThreads::Thread::microSleep(1000);
     }
     
-    //     mffc->stopWriting();
-    //     mffc->closeFiles();
+    mffc->stopWriting();
+    mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -298,9 +296,9 @@ int main(int argc, char *argv[])
     cnvrtToF32->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
     lkdewarp->stopTriggerThread();
-    averageImage->stopTriggerThread();
-    unsharpMask->stopTriggerThread();
-    tonemap->stopTriggerThread();
+    //averageImage->stopTriggerThread();
+    //unsharpMask->stopTriggerThread();
+    //tonemap->stopTriggerThread();
     cnvrtToM8->stopTriggerThread();
     
     return 0;
