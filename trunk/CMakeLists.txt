@@ -201,6 +201,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
   src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
+  src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
 
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_gamma_pass.cpp
@@ -301,6 +302,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
   include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
+  include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
 
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gamma_pass.h

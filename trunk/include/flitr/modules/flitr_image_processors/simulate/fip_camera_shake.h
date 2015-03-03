@@ -18,35 +18,43 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_LK_STABILISE_H
-#define FIP_LK_STABILISE_H 1
+#ifndef FIP_CAMERA_SHAKE_H
+#define FIP_CAMERA_SHAKE_H 1
 
 #include <flitr/image_processor.h>
+#include <random>
 #include <mutex>
 
 namespace flitr {
     
-    /*! Uses LK optical flow to dewarp scintillaty images. */
-    class FLITR_EXPORT FIPLKStabilise : public ImageProcessor
+    /*! Applies simulated camera shake to the image. */
+    class FLITR_EXPORT FIPCameraShake : public ImageProcessor
     {
     public:
         
         /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
-         *@param avrgImageLongevity Filter constant for how strong the averaging of the reference image is.
+         *@param kernelWidth Width of kernel in pixels; recommended to be at least 2x the standard deviation!
+         *@param sd standard deviation of Gaussian random shake in pixels.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                    uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+        FIPCameraShake(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                       const float sd,
+                       const size_t kernelWidth,
+                       uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPLKStabilise();
+        virtual ~FIPCameraShake();
+
+        /*! Sets the amplitude of the shake in pixels.
+         *@param sd standard deviation of Gaussian random shake in pixels.*/
+        virtual void setShakeSD(const float sd);
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
         virtual bool init();
         
-        /*! Synchronous trigger method. Called automatically by the trigger thread if started.
+        /*!Synchronous trigger method. Called automatically by the trigger thread if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
@@ -55,42 +63,34 @@ namespace flitr {
         virtual void getLatestHVect(float &hx, float &hy, size_t &frameNumber) const
         {
             //std::lock_guard<std::mutex> scopedLock(triggerMutex_);
-
-            hx=latestHx_;//Hx_;
-            hy=latestHy_;//Hy_;
+            
+            hx=latestHx_;//currentX_ - oldX_;
+            hy=latestHy_;//currentY_ - oldY_;
             frameNumber=latestHFrameNumber_;//frameNumber_;
         }
-        
-        
+
     private:
-        inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy) const
-        {
-            return
-            data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) + data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
-            data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
-        }
-                
-        size_t numLevels_;
+        /*! Updates/generates the kernel with a random mean taken from a Gaussian distribution with mean zero and standard deviation sd_. */
+        virtual void updateKernel();
         
-        std::vector<float *> imgVec_;
-        std::vector<float *> refImgVec_;
+        std::random_device randDev_;
+        std::mt19937 randGen_;
+        std::normal_distribution<float> randNormDist_;
         
-        std::vector<float *> dxVec_;
-        std::vector<float *> dyVec_;
-        std::vector<float *> dSqRecipVec_;
+        float *kernel2D_;
+        float sd_;
+        const size_t kernelWidth_;
         
-        float *scratchData_;
+        float currentX_;
+        float currentY_;
         
-        float *finalImgData_; //With lucky regions, etc.
+        float oldX_;
+        float oldY_;
         
         float latestHx_;
         float latestHy_;
         size_t latestHFrameNumber_;
-        
-        float sumHx_;
-        float sumHy_;
     };
-    
 }
 
-#endif //FIP_LK_STABILISE_H
+#endif //FIP_CAMERA_SHAKE_H

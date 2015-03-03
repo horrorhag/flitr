@@ -94,6 +94,12 @@ namespace flitr {
         /*! Get the image format being produced to the downstream consumers.*/
         virtual ImageFormat getDownstreamFormat(const uint32_t img_index = 0) const {return ImageProducer::getFormat(img_index);}
         
+        /*! Get number of frames processed. */
+        virtual size_t getFrameNumber()
+        {
+            return frameNumber_;
+        }
+        
     protected:
         const uint32_t ImagesPerSlot_;
         const uint32_t buffer_size_;
@@ -103,6 +109,11 @@ namespace flitr {
         
     private:
         ImageProcessorThread *Thread_;
+        
+    protected:
+        //mutable std::mutex triggerMutex_;
+        
+        size_t frameNumber_;
     };
     
     

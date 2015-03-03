@@ -42,9 +42,9 @@ namespace flitr {
         /*! Virtual destructor */
         virtual ~FIPGaussianDownsample();
         
-        void updateKernel1D();
-        void setFilterRadius(const float filterRadius);
-        void setKernelWidth(const int kernelWidth);
+        virtual void updateKernel1D();
+        virtual void setFilterRadius(const float filterRadius);
+        virtual void setKernelWidth(const int kernelWidth);
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
