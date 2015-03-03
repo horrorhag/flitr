@@ -28,11 +28,19 @@ void ImageProcessorThread::run()
 {
     while (true)
     {
+        //IP_->triggerMutex_.lock();
+        
         if (!IP_->trigger())//The processor work happens in IP_->trigger()!!!
         {
+            //IP_->triggerMutex_.unlock();
+
             // wait a while for producers and consumers if trigger() method didn't do anything...
             Thread::microSleep(1000);
             //Thread::YieldCurrentThread();
+        } else
+        {
+            ++IP_->frameNumber_;
+            //IP_->triggerMutex_.unlock();
         }
 
         // check for exit
@@ -48,7 +56,8 @@ ImageProcessor::ImageProcessor(ImageProducer& upStreamProducer,
     ImageConsumer(upStreamProducer),
     ImagesPerSlot_(images_per_slot),
     buffer_size_(buffer_size),
-    Thread_(0)
+    Thread_(0),
+    frameNumber_(0)
 {
     std::stringstream stats_name;
     stats_name << " ImageProcessor::process";

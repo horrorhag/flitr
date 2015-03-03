@@ -22,6 +22,7 @@
 #define FIP_LK_DEWARP_H 1
 
 #include <flitr/image_processor.h>
+#include <mutex>
 
 namespace flitr {
     
@@ -50,13 +51,6 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
-        /*! Get the latest h-vector calculated between the input and reference frame. Should be called after trigger().
-         *@sa ImageProcessor::trigger*/
-        virtual void getLatestHVect(float &hx, float &hy)
-        {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
-
-        }
         
     private:
         inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
@@ -66,12 +60,8 @@ namespace flitr {
             data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
         }
         
-        OpenThreads::Mutex triggerMutex_;
-        
         const float avrgImageLongevity_;
-        
-        size_t frameNum_;
-        
+                
         const size_t numLevels_;
         
         std::vector<float *> imgVec_;

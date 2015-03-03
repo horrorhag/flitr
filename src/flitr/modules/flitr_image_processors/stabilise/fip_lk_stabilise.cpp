@@ -33,10 +33,14 @@ using std::shared_ptr;
 FIPLKStabilise::FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-frameNum_(0),
 numLevels_(0), //Setup numLevels_ automatically in init().
 scratchData_(0),
-finalImgData_(0)
+finalImgData_(0),
+latestHx_(0.0),
+latestHy_(0.0),
+latestHFrameNumber_(0),
+sumHx_(0.0f),
+sumHy_(0.0f)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
@@ -124,8 +128,6 @@ bool FIPLKStabilise::trigger()
 {
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {
-        OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
-        
         std::vector<Image**> imvRead=reserveReadSlot();
         std::vector<Image**> imvWrite=reserveWriteSlot();
         
@@ -161,7 +163,6 @@ bool FIPLKStabilise::trigger()
                 float * const imgData=imgVec_[0];
                 float * const refImgData=refImgVec_[0];
                 
-                if (frameNum_<3)
                 {//=== Update ref img before new data arrives. ===//
                     memcpy(refImgData, imgData, croppedWidth*croppedHeight*sizeof(float));
                 }
@@ -188,7 +189,6 @@ bool FIPLKStabilise::trigger()
                     //=== Calculate the scale space images ===
                     if (levelNum>0)//First level (incoming data) is not a downsampled image.
                     {
-                        if (frameNum_<3)
                         {//Update ref img before new data arrives.
                             memcpy(refImgVec_[levelNum], imgData, levelWidth*levelHeight*sizeof(float));
                         }
@@ -209,7 +209,7 @@ bool FIPLKStabilise::trigger()
                                 const ptrdiff_t offsetHR=lineOffsetHR + xHR;
                                 
                                 float filtValue=(imgDataHR[offsetHR] +
-                                                 imgDataHR[offsetHR + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
+                                                 imgDataHR[offsetHR + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled/folded away!
                                 
                                 filtValue+=(imgDataHR[offsetHR - 1] +
                                             imgDataHR[offsetHR + 2] ) * (330.0f/2048.0f);
@@ -242,7 +242,7 @@ bool FIPLKStabilise::trigger()
                                 const ptrdiff_t offsetScratch=lineOffsetScratch + x;
                                 
                                 float filtValue=(scratchData_[offsetScratch] +
-                                                 scratchData_[offsetScratch + levelWidth] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
+                                                 scratchData_[offsetScratch + levelWidth] ) * (462.0f/2048.0f);//The const expr devisions will be compiled/folded away!
                                 
                                 filtValue+=(scratchData_[offsetScratch - levelWidth] +
                                             scratchData_[offsetScratch + (levelWidth<<1)] ) * (330.0f/2048.0f);
@@ -295,7 +295,7 @@ bool FIPLKStabilise::trigger()
                                 
                                 dxData[offset]=dx;
                                 dyData[offset]=dy;
-                                dSqRecipData[offset]=1.0f/(dx*dx+dy*dy+0.0000001f);
+                                dSqRecipData[offset]=1.0f/(dx*dx+dy*dy+0.000000001f);
                             }
                         }
                     }//=== ===
@@ -309,7 +309,9 @@ bool FIPLKStabilise::trigger()
             float Hx=0.0f;
             float Hy=0.0f;
             
-            for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=0; --levelNum)
+            const ptrdiff_t levelsToSkip=0;
+            
+            for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=levelsToSkip; --levelNum)
             {
                 Hx*=2.0f;
                 Hy*=2.0f;
@@ -361,13 +363,16 @@ bool FIPLKStabilise::trigger()
                                     const float imgRef=bilinear(refImgData, offsetLT, levelWidth, frac_hx, frac_hy);
                                     
                                     const float imgDiff=imgData[offset]-imgRef;
-                                    dHx+=(imgDiff*dxData[offset])*dSqRecip;
-                                    dHy+=(imgDiff*dyData[offset])*dSqRecip;
                                     
+                                    const float wx=1.0f;// / (fabsf(dxData[offset+1]-dxData[offset-1])+0.001f);
+                                    const float wy=1.0f;// / (fabsf(dyData[offset+1]-dyData[offset-1])+0.001f);
+                                    
+                                    dHx+=wx * (imgDiff*dxData[offset])*dSqRecip;
+                                    dHy+=wy * (imgDiff*dyData[offset])*dSqRecip;
                                     
                                     //Note: Could still weight the sum with the reciprocal of the second derivative dx2,dy2 ...
-                                    dHxWeight+=1.0f;
-                                    dHyWeight+=1.0f;
+                                    dHxWeight+=wx;
+                                    dHyWeight+=wy;
                                 }
                             }
                         }
@@ -397,6 +402,22 @@ bool FIPLKStabilise::trigger()
             //===========================
             
             
+            Hx*=powf(2.0f, float(levelsToSkip));
+            Hy*=powf(2.0f, float(levelsToSkip));
+            
+            
+            //Save latest H vector.
+            latestHx_=Hx;
+            latestHy_=Hy;
+            latestHFrameNumber_=frameNumber_;
+            
+            
+            if (frameNumber_>2)
+            {
+                sumHx_+=latestHx_;
+                sumHy_+=latestHy_;
+            }
+            
             
             //=== Final results ===
             {
@@ -410,29 +431,25 @@ bool FIPLKStabilise::trigger()
                     {
                         const ptrdiff_t offset=lineOffset + x;
                         
-                        const float hx=-Hx;
-                        const float hy=-Hy;
+                        const float hx=-sumHx_;
+                        const float hy=-sumHy_;
                         
-                        //=== Image Dewarping ===//
+                        const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
+                        const float floor_hx=floorf(hx);
+                        const float floor_hy=floorf(hy);
+                        const ptrdiff_t int_hx=lroundf(floor_hx);
+                        const ptrdiff_t int_hy=lroundf(floor_hy);
+                        
+                        if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
                         {
-                            const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
-                            const float floor_hx=floorf(hx);
-                            const float floor_hy=floorf(hy);
-                            const ptrdiff_t int_hx=lroundf(floor_hx);
-                            const ptrdiff_t int_hy=lroundf(floor_hy);
+                            finalImgData_[offset]*=blend;
                             
-                            if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
-                            {
-                                finalImgData_[offset]*=blend;
-                                
-                                const float frac_hx=hx - floor_hx;
-                                const float frac_hy=hy - floor_hy;
-                                const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
-                                
-                                finalImgData_[offset]+=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy)*(1.0f-blend);
-                            }
+                            const float frac_hx=hx - floor_hx;
+                            const float frac_hy=hy - floor_hy;
+                            const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                            
+                            finalImgData_[offset]+=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy)*(1.0f-blend);
                         }
-                        //=== ===
                     }
                 }
                 
@@ -449,8 +466,6 @@ bool FIPLKStabilise::trigger()
                 }
             }
         }
-        
-        ++frameNum_;
         
         //Stop stats measurement event.
         ProcessorStats_->tock();

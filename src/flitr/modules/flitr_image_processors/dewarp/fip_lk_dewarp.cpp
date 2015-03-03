@@ -35,7 +35,6 @@ FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_sl
                          uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
-frameNum_(0),
 numLevels_(4),
 scratchData_(0),
 finalImgData_(0),
@@ -145,8 +144,6 @@ bool FIPLKDewarp::trigger()
 {
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {
-        OpenThreads::ScopedLock<OpenThreads::Mutex> scopedLock(triggerMutex_);
-        
         std::vector<Image**> imvRead=reserveReadSlot();
         std::vector<Image**> imvWrite=reserveWriteSlot();
         
@@ -183,7 +180,7 @@ bool FIPLKDewarp::trigger()
                 float * const dataWrite=(float * const)imWrite->data();
                 
                 //****************
-                const float avrgImageLongevityConst = (frameNum_<3) ? 0.0f : avrgImageLongevity_;
+                const float avrgImageLongevityConst = (frameNumber_ < 3) ? 0.0f : avrgImageLongevity_;
                 //****************
                 
                 {//=== Copy cropped input to level 0 of scale space ===
@@ -262,7 +259,7 @@ bool FIPLKDewarp::trigger()
                                     const ptrdiff_t offsetHR=lineOffsetHR + xHR;
                                     
                                     float filtValue=(imgDataHR[offsetHR] +
-                                                     imgDataHR[offsetHR + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
+                                                     imgDataHR[offsetHR + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled/folded away!
                                     
                                     filtValue+=(imgDataHR[offsetHR - 1] +
                                                 imgDataHR[offsetHR + 2] ) * (330.0f/2048.0f);
@@ -295,7 +292,7 @@ bool FIPLKDewarp::trigger()
                                     const ptrdiff_t offsetScratch=lineOffsetScratch + x;
                                     
                                     float filtValue=(scratchData_[offsetScratch] +
-                                                     scratchData_[offsetScratch + levelWidth] ) * (462.0f/2048.0f);//The const expr devisions will be compiled away!
+                                                     scratchData_[offsetScratch + levelWidth] ) * (462.0f/2048.0f);//The const expr devisions will be compiled/folded away!
                                     
                                     filtValue+=(scratchData_[offsetScratch - levelWidth] +
                                                 scratchData_[offsetScratch + (levelWidth<<1)] ) * (330.0f/2048.0f);
@@ -680,8 +677,6 @@ bool FIPLKDewarp::trigger()
                 }
             }
         }
-        
-        ++frameNum_;
         
         //Stop stats measurement event.
         ProcessorStats_->tock();

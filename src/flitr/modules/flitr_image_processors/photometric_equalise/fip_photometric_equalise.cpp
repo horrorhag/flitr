@@ -146,6 +146,8 @@ bool FIPPhotometricEqualise::trigger()
         }
         
         
+        ++frameNumber_;
+
         //Stop stats measurement event.
         ProcessorStats_->tock();
         
