@@ -28,11 +28,11 @@ void ImageProcessorThread::run()
 {
     while (true)
     {
-        //IP_->triggerMutex_.lock();
+        IP_->triggerMutex_.lock();
         
         if (!IP_->trigger())//The processor work happens in IP_->trigger()!!!
         {
-            //IP_->triggerMutex_.unlock();
+            IP_->triggerMutex_.unlock();
 
             // wait a while for producers and consumers if trigger() method didn't do anything...
             Thread::microSleep(1000);
@@ -40,7 +40,7 @@ void ImageProcessorThread::run()
         } else
         {
             ++IP_->frameNumber_;
-            //IP_->triggerMutex_.unlock();
+            IP_->triggerMutex_.unlock();
         }
 
         // check for exit

@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     
     //==
     shared_ptr<FIPCameraShake> cameraShake(new FIPCameraShake(*cnvrtToF32, 1,
-                                                              3.0f, 32, //Kernel width is required to be >> than SD.
+                                                              3.0f, 30, //Kernel width is required to be >> than SD.
                                                               2));
     if (!cameraShake->init())
     {
@@ -160,7 +160,10 @@ int main(int argc, char *argv[])
     
     
     //==
-    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1, 2));
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
+                                                              true, //doImageTransform_
+                                                              false, //transformGF_ i.e. if (doImageTransform_ && doImageTransform_) then display cropped and Gaussian filtered image.
+                                                              2));
     if (!lkstabilise->init())
     {
         std::cerr << "Could not initialise the lkstabilise processor.\n";
@@ -325,7 +328,7 @@ int main(int argc, char *argv[])
                 {
                     std::cout << "[" << ((errCounter[i]>0) ? sqrtf(errSq[i]/errCounter[i]) : 0.0f) << "]";
                 }
-                
+                std::cout << "\n";
                 std::cout.flush();
             }
             
@@ -346,7 +349,7 @@ int main(int argc, char *argv[])
     
     cnvrtToF32->stopTriggerThread();
     crop->stopTriggerThread();
-    //cameraShake->stopTriggerThread();
+    cameraShake->stopTriggerThread();
     //gaussianDownsample->stopTriggerThread();
     //gaussianFilter0->stopTriggerThread();
     lkstabilise->stopTriggerThread();

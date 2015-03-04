@@ -62,7 +62,7 @@ void FIPCameraShake::updateKernel()
     currentX_=randNormDist_(randGen_)*sd_;
     currentY_=randNormDist_(randGen_)*sd_;
     
-    const float kernelSD=2.0f;
+    const float kernelSD=0.5f;
     
     float kernelSum=0.0f;
     
@@ -75,12 +75,12 @@ void FIPCameraShake::updateKernel()
                 kernel2D_[x+y*kernelWidth_]=0.0f;
             }
         }
-
+        
         for (float t=0.5f; t<1.5f; t+=0.005f)
-        //float t=1.0f;
+            //float t=1.0f;
         {
-            const float tX=oldX_*(1.0f-t) + currentX_*t;
-            const float tY=oldY_*(1.0f-t) + currentY_*t;
+            const float tX=(currentX_-oldX_)*t + oldX_;
+            const float tY=(currentY_-oldY_)*t + oldY_;
             
             for (size_t y=0; y<kernelWidth_; ++y)
             {
@@ -115,7 +115,7 @@ void FIPCameraShake::updateKernel()
 
 void FIPCameraShake::setShakeSD(const float sd)
 {
-    //std::lock_guard<std::mutex> scopedLock(triggerMutex_);
+    std::lock_guard<std::mutex> scopedLock(triggerMutex_);
     
     sd_=sd;
     updateKernel();
@@ -192,12 +192,14 @@ bool FIPCameraShake::trigger()
         }
         
         
-        //A race condition lay here...
-        
-        //Save latest H vector.
-        latestHx_=currentX_ - oldX_;
-        latestHy_=currentY_ - oldY_;
-        latestHFrameNumber_=frameNumber_;
+        {
+            std::lock_guard<std::mutex> scopedLock(latestHMutex_);
+            
+            //Save latest H vector.
+            latestHx_=currentX_ - oldX_;
+            latestHy_=currentY_ - oldY_;
+            latestHFrameNumber_=frameNumber_;
+        }
         
         //Stop stats measurement event.
         ProcessorStats_->tock();

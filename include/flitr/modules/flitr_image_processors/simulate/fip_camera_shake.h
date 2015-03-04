@@ -62,7 +62,7 @@ namespace flitr {
          */
         virtual void getLatestHVect(float &hx, float &hy, size_t &frameNumber) const
         {
-            //std::lock_guard<std::mutex> scopedLock(triggerMutex_);
+            std::lock_guard<std::mutex> scopedLock(latestHMutex_);
             
             hx=latestHx_;//currentX_ - oldX_;
             hy=latestHy_;//currentY_ - oldY_;
@@ -87,6 +87,7 @@ namespace flitr {
         float oldX_;
         float oldY_;
         
+        mutable std::mutex latestHMutex_;
         float latestHx_;
         float latestHy_;
         size_t latestHFrameNumber_;

@@ -37,7 +37,9 @@ namespace flitr {
          *@param avrgImageLongevity Filter constant for how strong the averaging of the reference image is.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                    uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+                       bool doImageTransform,
+                       bool transformGF,
+                       uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
         virtual ~FIPLKStabilise();
@@ -54,8 +56,8 @@ namespace flitr {
          */
         virtual void getLatestHVect(float &hx, float &hy, size_t &frameNumber) const
         {
-            //std::lock_guard<std::mutex> scopedLock(triggerMutex_);
-
+            std::lock_guard<std::mutex> scopedLock(latestHMutex_);
+            
             hx=latestHx_;//Hx_;
             hy=latestHy_;//Hy_;
             frameNumber=latestHFrameNumber_;//frameNumber_;
@@ -69,7 +71,7 @@ namespace flitr {
             data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) + data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
             data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
         }
-                
+        
         size_t numLevels_;
         
         std::vector<float *> imgVec_;
@@ -81,8 +83,10 @@ namespace flitr {
         
         float *scratchData_;
         
-        float *finalImgData_; //With lucky regions, etc.
+        bool doImageTransform_;
+        bool transformGF_;
         
+        mutable std::mutex latestHMutex_;
         float latestHx_;
         float latestHy_;
         size_t latestHFrameNumber_;
