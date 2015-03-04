@@ -111,7 +111,7 @@ namespace flitr {
         ImageProcessorThread *Thread_;
         
     protected:
-        //mutable std::mutex triggerMutex_;
+        mutable std::mutex triggerMutex_;
         
         size_t frameNumber_;
     };

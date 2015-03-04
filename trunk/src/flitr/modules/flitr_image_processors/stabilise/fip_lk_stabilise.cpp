@@ -31,11 +31,14 @@ using namespace flitr;
 using std::shared_ptr;
 
 FIPLKStabilise::FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                               bool doImageTransform,
+                               bool transformGF,
                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 numLevels_(0), //Setup numLevels_ automatically in init().
 scratchData_(0),
-finalImgData_(0),
+doImageTransform_(doImageTransform),
+transformGF_(transformGF),
 latestHx_(0.0),
 latestHy_(0.0),
 latestHFrameNumber_(0),
@@ -53,7 +56,6 @@ sumHy_(0.0f)
 FIPLKStabilise::~FIPLKStabilise()
 {
     delete [] scratchData_;
-    delete [] finalImgData_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
     {
@@ -98,9 +100,6 @@ bool FIPLKStabilise::init()
         
         scratchData_=new float[(width*height)<<1];
         memset(scratchData_, 0, ((width*height)<<1)*sizeof(float));
-        
-        finalImgData_=new float[croppedWidth*croppedHeight];
-        memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
         
         for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
         {
@@ -167,7 +166,7 @@ bool FIPLKStabilise::trigger()
                     memcpy(refImgData, imgData, croppedWidth*croppedHeight*sizeof(float));
                 }
                 
-                //=== Copy input data to level 0 of scale space ===//
+                //=== Crop copy input data to level 0 of scale space ===//
                 for (size_t y=startCroppedY; y<=endCroppedY; ++y)
                 {
                     const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
@@ -406,10 +405,14 @@ bool FIPLKStabilise::trigger()
             Hy*=powf(2.0f, float(levelsToSkip));
             
             
-            //Save latest H vector.
-            latestHx_=Hx;
-            latestHy_=Hy;
-            latestHFrameNumber_=frameNumber_;
+            {
+                std::lock_guard<std::mutex> scopedLock(latestHMutex_);
+                
+                //Save latest H vector.
+                latestHx_=Hx;
+                latestHy_=Hy;
+                latestHFrameNumber_=frameNumber_;
+            }
             
             
             if (frameNumber_>2)
@@ -419,51 +422,76 @@ bool FIPLKStabilise::trigger()
             }
             
             
-            //=== Final results ===
+            //=== Results ===
+            if (doImageTransform_)
             {
-                float * const imgDataGF=imgVec_[0];
-                
-                for (ptrdiff_t y=0; y<=croppedHeight; ++y)
-                {
-                    const ptrdiff_t lineOffset=y*croppedWidth;
+                if (transformGF_)
+                {//Use the cropped Gaussian filtered input image.
+                    float const * const imgDataGF=imgVec_[0];
                     
-                    for (ptrdiff_t x=0; x<croppedWidth; ++x)
+                    for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
                     {
-                        const ptrdiff_t offset=lineOffset + x;
+                        const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
+                        const ptrdiff_t croppedY=uncroppedY-startCroppedY;
+                        const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
                         
-                        const float hx=-sumHx_;
-                        const float hy=-sumHy_;
-                        
-                        const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
-                        const float floor_hx=floorf(hx);
-                        const float floor_hy=floorf(hy);
-                        const ptrdiff_t int_hx=lroundf(floor_hx);
-                        const ptrdiff_t int_hy=lroundf(floor_hy);
-                        
-                        if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
+                        for (ptrdiff_t croppedX=0; croppedX<croppedWidth; ++croppedX)
                         {
-                            finalImgData_[offset]*=blend;
+                            const ptrdiff_t croppedOffset=croppedLineOffset + croppedX;
+                            const ptrdiff_t unCroppedOffset=uncroppedLineOffset + croppedX;
                             
-                            const float frac_hx=hx - floor_hx;
-                            const float frac_hy=hy - floor_hy;
-                            const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                            const float hx=-sumHx_;
+                            const float hy=-sumHy_;
                             
-                            finalImgData_[offset]+=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy)*(1.0f-blend);
+                            const float floor_hx=floorf(hx);
+                            const float floor_hy=floorf(hy);
+                            const ptrdiff_t int_hx=lroundf(floor_hx);
+                            const ptrdiff_t int_hy=lroundf(floor_hy);
+                            
+                            if ( ((croppedX+int_hx)>((ptrdiff_t)1)) && ((croppedY+int_hy)>((ptrdiff_t)1)) && ((croppedX+int_hx)<(croppedWidth-1)) && ((croppedY+int_hy)<(croppedHeight-1)) )
+                            {
+                                const float frac_hx=hx - floor_hx;
+                                const float frac_hy=hy - floor_hy;
+                                const ptrdiff_t offsetLT=croppedOffset + int_hx + int_hy * croppedWidth;
+                                
+                                dataWrite[unCroppedOffset]=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                            }
+                        }
+                    }
+                } else
+                {//Use the unprocessed input image.
+                    for (ptrdiff_t uncroppedY=0; uncroppedY<uncroppedHeight; ++uncroppedY)
+                    {
+                        const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth;
+                        
+                        for (ptrdiff_t uncroppedX=0; uncroppedX<uncroppedWidth; ++uncroppedX)
+                        {
+                            const ptrdiff_t unCroppedOffset=uncroppedLineOffset + uncroppedX;
+                            
+                            const float hx=-sumHx_;
+                            const float hy=-sumHy_;
+                            
+                            const float floor_hx=floorf(hx);
+                            const float floor_hy=floorf(hy);
+                            const ptrdiff_t int_hx=lroundf(floor_hx);
+                            const ptrdiff_t int_hy=lroundf(floor_hy);
+                            
+                            if (((uncroppedX+int_hx)>((ptrdiff_t)1)) && ((uncroppedY+int_hy)>((ptrdiff_t)1)) &&
+                                ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
+                            {
+                                const float frac_hx=hx - floor_hx;
+                                const float frac_hy=hy - floor_hy;
+                                const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
+                                
+                                dataWrite[unCroppedOffset]=bilinear(dataRead, offsetLT, uncroppedWidth, frac_hx, frac_hy);
+                            }
                         }
                     }
                 }
-                
-                
-                //Copy finalImgData_ result to uncropped output image slot.
-                //  The data is copied because of the lucky region accumulation that needs to happen in the result buffer.
-                for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
-                {
-                    const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
-                    const ptrdiff_t croppedY=uncroppedY-startCroppedY;
-                    const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
-                    
-                    memcpy((dataWrite+uncroppedLineOffset), (finalImgData_+croppedLineOffset), croppedWidth*sizeof(float));
-                }
+            } else
+            {
+                //Copy input to output image slot.
+                memcpy(dataWrite, dataRead, uncroppedWidth*uncroppedHeight*sizeof(float));
             }
         }
         
