@@ -144,6 +144,7 @@ int main(int argc, char *argv[])
      gaussianFilter0->startTriggerThread();
     */
     
+    
     //==
     shared_ptr<FIPCrop> crop(new FIPCrop(*cameraShake, 1,
                                          ip->getFormat().getWidth()/4,
