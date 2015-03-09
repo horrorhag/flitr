@@ -594,6 +594,10 @@ bool FIPLKDewarp::trigger()
                             
                             //=== Image Dewarping ===//
                             {
+                                //Note: Use a local contrast measure to control blending...
+                                //      It is assumed the the best lucky frame/region has the best local contrast.
+                                //      Could look at RMS contrast (the standard deviation) over an image patch centred at the desired location!
+                                
                                 const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
                                 const float floor_hx=floorf(hx);
                                 const float floor_hy=floorf(hy);
