@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
     }
 
     
-    while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
+    while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/&&(numFrames<1000))
     {
         
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
