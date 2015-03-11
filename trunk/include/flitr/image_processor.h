@@ -26,7 +26,7 @@
 #include <flitr/stats_collector.h>
 
 #include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <mutex>
 
 namespace flitr {
     

@@ -204,7 +204,7 @@ bool FIPLKDewarp::trigger()
                     }
                     
                     //=== Copy input data to level 0 of scale space ===//
-                    for (size_t y=startCroppedY; y<=endCroppedY; ++y)
+                    for (ptrdiff_t y=startCroppedY; y<=endCroppedY; ++y)
                     {
                         const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
                         const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
@@ -248,7 +248,7 @@ bool FIPLKDewarp::trigger()
                             const ptrdiff_t widthHR=croppedWidth >> (levelNum-1);
                             
                             //=== Seperable Gaussian first pass - down filter x ===
-                            for (size_t y=0; y<heightHR; ++y)
+                            for (ptrdiff_t y=0; y<heightHR; ++y)
                             {
                                 const ptrdiff_t lineOffsetScratch=y * levelWidth;
                                 const ptrdiff_t lineOffsetHR=y * widthHR;
