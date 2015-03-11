@@ -35,8 +35,8 @@ void ImageProcessorThread::run()
             IP_->triggerMutex_.unlock();
 
             // wait a while for producers and consumers if trigger() method didn't do anything...
-            Thread::microSleep(1000);
-            //Thread::YieldCurrentThread();
+            //Thread::microSleep(100);
+            Thread::YieldCurrentThread();
         } else
         {
             ++IP_->frameNumber_;
