@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
-    
+
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();

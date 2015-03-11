@@ -308,7 +308,7 @@ bool FIPLKStabilise::trigger()
             float Hx=0.0f;
             float Hy=0.0f;
             
-            const ptrdiff_t levelsToSkip=0;
+            const ptrdiff_t levelsToSkip=1;
             
             for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=levelsToSkip; --levelNum)
             {
@@ -327,7 +327,7 @@ bool FIPLKStabilise::trigger()
                 const ptrdiff_t levelWidthMinus1=levelWidth - ((ptrdiff_t)1);
                 
                 
-                for (size_t newtonRaphsonI=0; newtonRaphsonI<7; ++newtonRaphsonI)
+                for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
                 {
                     float dHx=0.0f;
                     float dHy=0.0f;
