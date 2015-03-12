@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     }
     cnvrtToF32->startTriggerThread();
     
-    
+/*
     //==
     shared_ptr<FIPCameraShake> cameraShake(new FIPCameraShake(*cnvrtToF32, 1,
                                                               3.0f, 30, //Kernel width is required to be >> than SD.
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     cameraShake->startTriggerThread();
-    
+*/
     
     
     /*
@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
      gaussianFilter0->startTriggerThread();
     */
     
-    
+/*
     //==
     shared_ptr<FIPCrop> crop(new FIPCrop(*cameraShake, 1,
                                          ip->getFormat().getWidth()/4,
@@ -158,12 +158,11 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     crop->startTriggerThread();
-    
+*/
     
     //==
-    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
-                                                              true, //doImageTransform_
-                                                              false, //transformGF_ i.e. if (doImageTransform_ && doImageTransform_) then display cropped and Gaussian filtered image.
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToF32, 1,
+                                                              FIPLKStabilise::Mode::INTSTAB,
                                                               2));
     if (!lkstabilise->init())
     {
@@ -173,7 +172,7 @@ int main(int argc, char *argv[])
     lkstabilise->startTriggerThread();
     
     
-    
+/*
     //==
     shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*lkstabilise, 1, 0.95f, 2));
     if (!cnvrtToM8->init())
@@ -182,7 +181,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     cnvrtToM8->startTriggerThread();
-    
+*/    
     
     
     //==
@@ -203,7 +202,7 @@ int main(int argc, char *argv[])
     //    }
     
     
-    
+/*
     //==
     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
     if (!mffc->init())
@@ -215,7 +214,7 @@ int main(int argc, char *argv[])
     filenameStringStream << argv[1] << "_improved";
     mffc->openFiles(filenameStringStream.str());
     mffc->startWriting();
-    
+*/
     
     
     osg::Group *root_node = new osg::Group;
@@ -292,10 +291,8 @@ int main(int argc, char *argv[])
         
         if (osgc->getNext())
         {
-            //osgcOrig->getNext();
-            
             viewer.frame();
-            
+/*
             float simHx, simHy;
             size_t simFrameNumber;
             float lkHx, lkHy;
@@ -332,6 +329,7 @@ int main(int argc, char *argv[])
                 std::cout << "\n";
                 std::cout.flush();
             }
+*/
             
             numFrames++;
         }
@@ -339,8 +337,8 @@ int main(int argc, char *argv[])
         OpenThreads::Thread::microSleep(3000);
     }
     
-    mffc->stopWriting();
-    mffc->closeFiles();
+    //mffc->stopWriting();
+    //mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -349,12 +347,12 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToF32->stopTriggerThread();
-    crop->stopTriggerThread();
-    cameraShake->stopTriggerThread();
+    //crop->stopTriggerThread();
+    //cameraShake->stopTriggerThread();
     //gaussianDownsample->stopTriggerThread();
     //gaussianFilter0->stopTriggerThread();
     lkstabilise->stopTriggerThread();
-    cnvrtToM8->stopTriggerThread();
+    //cnvrtToM8->stopTriggerThread();
     
     return 0;
 }

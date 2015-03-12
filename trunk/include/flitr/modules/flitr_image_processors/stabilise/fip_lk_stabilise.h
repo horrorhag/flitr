@@ -30,6 +30,8 @@ namespace flitr {
 class FLITR_EXPORT FIPLKStabilise : public ImageProcessor
 {
 public:
+    
+    enum class Mode : uint8_t { NOTRANSFORM = 1, CROP_FILTER_SUBPIXELSTAB = 2, SUBPIXELSTAB = 3, INTSTAB = 4 };
 
     /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
@@ -37,8 +39,7 @@ public:
          *@param avrgImageLongevity Filter constant for how strong the averaging of the reference image is.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
     FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                   bool doImageTransform,
-                   bool transformGF,
+                   Mode outputMode,
                    uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
     /*! Virtual destructor */
@@ -92,8 +93,7 @@ private:
 
     float *scratchData_;
 
-    bool doImageTransform_;
-    bool transformGF_;
+    Mode outputMode_;
 
     mutable std::mutex latestHMutex_;
     float latestHx_;

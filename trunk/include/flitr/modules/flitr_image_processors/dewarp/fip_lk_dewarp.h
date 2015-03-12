@@ -77,7 +77,6 @@ namespace flitr {
         float *scratchData_;
         
         float *finalImgData_; //With lucky regions, etc.
-        float *finalSRImgData_; //With lucky regions, super res, etc.
     };
     
 }
