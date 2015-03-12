@@ -37,8 +37,7 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
 numLevels_(4),
 scratchData_(0),
-finalImgData_(0),
-finalSRImgData_(0)
+finalImgData_(0)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i) {
@@ -51,7 +50,6 @@ FIPLKDewarp::~FIPLKDewarp()
 {
     delete [] scratchData_;
     delete [] finalImgData_;
-    delete [] finalSRImgData_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
     {
@@ -102,9 +100,6 @@ bool FIPLKDewarp::init()
         
         finalImgData_=new float[croppedWidth*croppedHeight];
         memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
-        
-        finalSRImgData_=new float[(croppedWidth<<1)*(croppedHeight<<1)];
-        memset(finalSRImgData_, 0, (croppedWidth<<1)*(croppedHeight<<1)*sizeof(float));
         
         for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
         {
@@ -165,9 +160,6 @@ bool FIPLKDewarp::trigger()
             //const ptrdiff_t croppedWidth=1 << ((int)log2f(uncroppedWidth));
             //const ptrdiff_t croppedHeight=1 << ((int)log2f(uncroppedHeight));
             //=== ===
-            
-            const ptrdiff_t sCroppedWidth=croppedWidth<<1;
-            const ptrdiff_t sCroppedHeight=croppedHeight<<1;
             
             const ptrdiff_t startCroppedX=(uncroppedWidth - croppedWidth)>>1;
             const ptrdiff_t startCroppedY=(uncroppedHeight - croppedHeight)>>1;
@@ -238,7 +230,6 @@ bool FIPLKDewarp::trigger()
                                         
                                         refImgData[offset]*=avrgImageLongevityConst;
                                         refImgData[offset]+=imgData[offset] * (1.0f - avrgImageLongevityConst);
-                                        //refImgData[offset]=imgData[offset];
                                     }
                                 }
                             }
@@ -355,6 +346,9 @@ bool FIPLKDewarp::trigger()
                 
                 //===========================
                 //=== Calculate h vectors ===
+                memset(hxVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
+                memset(hyVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
+
                 for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=0; --levelNum)
                 {
                     float const * const imgData=imgVec_[levelNum];
@@ -389,8 +383,8 @@ bool FIPLKDewarp::trigger()
                             const float fy=(y&((ptrdiff_t)1))*(-0.5f)+0.75f;
                             
                             const ptrdiff_t offset=lineOffset + x;
-                            hxData[offset]=/*hxDataLR[offsetLR]*2.0f;*/bilinear(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
-                            hyData[offset]=/*hyDataLR[offsetLR]*2.0f;*/bilinear(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
+                            hxData[offset]=/*hxDataLR[offsetLR]*2.0f;*/bilinear(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 1.75f;
+                            hyData[offset]=/*hyDataLR[offsetLR]*2.0f;*/bilinear(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 1.75f;
                         }
                     }
                     //=== ===//
@@ -408,7 +402,7 @@ bool FIPLKDewarp::trigger()
                                     
                                     const float dSqRecip=dSqRecipData[offset];
                                     
-                                    if (dSqRecip<(1.0f/0.0005f))
+                                    if (dSqRecip<(1.0f/0.00005f))
                                     {
                                         float hx=hxData[offset];
                                         float hy=hyData[offset];
@@ -425,11 +419,14 @@ bool FIPLKDewarp::trigger()
                                         if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
                                         {
                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
-                                            const float imgRef=bilinear(refImgData, offsetLT, levelWidth, frac_hx, frac_hy);
                                             
-                                            const float imgDiff=imgData[offset]-imgRef;
-                                            hx+=(imgDiff*dxData[offset])*dSqRecip;
-                                            hy+=(imgDiff*dyData[offset])*dSqRecip;
+                                            const float img=bilinear(imgData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float dx=bilinear(dxData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float dy=bilinear(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            
+                                            const float imgDiff=img-refImgData[offset];
+                                            hx-=(imgDiff*dx)*dSqRecip;
+                                            hy-=(imgDiff*dy)*dSqRecip;
                                         }
                                         
                                         hxData[offset]=hx;
@@ -551,6 +548,7 @@ bool FIPLKDewarp::trigger()
                                     }
                                 }
                             }//=== ===
+                            
                         }
                     }
                 }
@@ -569,36 +567,25 @@ bool FIPLKDewarp::trigger()
                     float * const hyDataGF=hyVec_[0];
                     
                     
-                    for (ptrdiff_t y=0; y<=croppedHeight; ++y)
+                    for (ptrdiff_t y=0; y<croppedHeight; ++y)
                     {
                         const ptrdiff_t lineOffset=y*croppedWidth;
-                        const ptrdiff_t sy=y<<1;
-                        const ptrdiff_t srLineOffset=sy*sCroppedWidth;
                         
                         for (ptrdiff_t x=0; x<croppedWidth; ++x)
                         {
                             const ptrdiff_t offset=lineOffset + x;
-                            const ptrdiff_t sx=x<<1;
-                            const ptrdiff_t srOffset=srLineOffset + sx;
                             
-                            const float hx=-hxDataGF[offset];
-                            const float hy=-hyDataGF[offset];
+                            const float hx=hxDataGF[offset];
+                            const float hy=hyDataGF[offset];
                             
-                            const float dx=dxDataGF[offset];
-                            const float dy=dyDataGF[offset];
-                            
-                            const float dL1=fabsf(dx)+fabsf(dy);
-                            const float dL2=sqrtf(dx*dx+dy*dy);
-                            
-                            
-                            
+                            if (true)
+                            {
                             //=== Image Dewarping ===//
                             {
                                 //Note: Use a local contrast measure to control blending...
                                 //      It is assumed the the best lucky frame/region has the best local contrast.
                                 //      Could look at RMS contrast (the standard deviation) over an image patch centred at the desired location!
                                 
-                                const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
                                 const float floor_hx=floorf(hx);
                                 const float floor_hy=floorf(hy);
                                 const ptrdiff_t int_hx=lroundf(floor_hx);
@@ -606,57 +593,35 @@ bool FIPLKDewarp::trigger()
                                 
                                 if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
                                 {
-                                    finalImgData_[offset]*=blend;
-                                    
                                     const float frac_hx=hx - floor_hx;
                                     const float frac_hy=hy - floor_hy;
                                     const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
                                     
-                                    finalImgData_[offset]+=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy)*(1.0f-blend);
+                                    const float img=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+
+                                    /*
+                                    const float dx=bilinear(dxDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                    const float dy=bilinear(dyDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                    
+                                    const float dL1=fabsf(dx)+fabsf(dy);
+                                    const float dL2=sqrtf(dx*dx+dy*dy);
+                                    */
+                                    
+                                    const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
+                                    finalImgData_[offset]*=blend;
+                                    finalImgData_[offset]+=img*(1.0f-blend);
                                 }
                             }
                             //=== ===
-                            
-                            //finalImgData_[offset]=(imgDataGF[offset] - refImgDataGF[offset])*100.0f;
-                            
-                            
-                            /*
-                             //=== Image super resolution ===
-                             {
-                             const float blend=1.0f/(1.0f+dL1*10.0f);
-                             
-                             if (dL2>0.001f)
-                             {
-                             const float shx=hxDataGF[offset] * 2.0f;
-                             const float shy=hyDataGF[offset] * 2.0f;
-                             
-                             const ptrdiff_t int_shx=lroundf(shx);
-                             const ptrdiff_t int_shy=lroundf(shy);
-                             
-                             if ( ((sx+int_shx)>((ptrdiff_t)1)) && ((sy+int_shy)>((ptrdiff_t)1)) && ((sx+int_shx)<(sCroppedWidth-((ptrdiff_t)1))) && ((sy+int_shy)<(sCroppedHeight-((ptrdiff_t)1))) )
-                             {
-                             ptrdiff_t srOffsetPlusH=srOffset+int_shx+int_shy*sCroppedWidth;
-                             
-                             finalSRImgData_[srOffsetPlusH]*=1.0f-(1.0f-blend)*1.0f;
-                             //finalSRImgData_[srOffsetPlusH-((ptrdiff_t)1)]*=1.0f-(1.0f-blend)*0.25f;
-                             //finalSRImgData_[srOffsetPlusH+((ptrdiff_t)1)]*=1.0f-(1.0f-blend)*0.25f;
-                             //finalSRImgData_[srOffsetPlusH-sCroppedWidth]*=1.0f-(1.0f-blend)*0.25f;
-                             //finalSRImgData_[srOffsetPlusH+sCroppedWidth]*=1.0f-(1.0f-blend)*0.25f;
-                             
-                             finalSRImgData_[srOffsetPlusH]+=imgDataGF[offset]*(1.0f-blend)*1.0f;
-                             //finalSRImgData_[srOffsetPlusH-((ptrdiff_t)1)]+=imgDataGF[offset]*(1.0f-blend)*0.25f;
-                             //finalSRImgData_[srOffsetPlusH+((ptrdiff_t)1)]+=imgDataGF[offset]*(1.0f-blend)*0.25f;
-                             //finalSRImgData_[srOffsetPlusH-sCroppedWidth]+=imgDataGF[offset]*(1.0f-blend)*0.25f;
-                             //finalSRImgData_[srOffsetPlusH+sCroppedWidth]+=imgDataGF[offset]*(1.0f-blend)*0.25f;
-                             
-                             //OR
-                             
-                             //finalSRImgData_[srOffsetPlusH]=imgDataGF[offset];
-                             }
-                             }
-                             }
-                             //=== ===
-                             */
+                            }
+                            else //OR
+                            {
+                                const size_t levelIndex=0;//(numLevels_-1) - 5;
+                                const size_t offsetB=(x>>levelIndex) + (y>>levelIndex)*(croppedWidth>>levelIndex);
+                                const float hxB=hxVec_[levelIndex][offsetB];
+                                const float hyB=hyVec_[levelIndex][offsetB];
+                                finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1;
+                            }
                         }
                     }
                     
@@ -668,13 +633,10 @@ bool FIPLKDewarp::trigger()
                         const ptrdiff_t croppedY=uncroppedY-startCroppedY;
                         const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
                         
-                        const ptrdiff_t srCroppedLineOffset=croppedY * sCroppedWidth;
                         
                         memcpy((dataWrite+uncroppedLineOffset), (finalImgData_+croppedLineOffset), croppedWidth*sizeof(float));
                         //OR
                         //memcpy((dataWrite+uncroppedLineOffset), (refImgVec_[0]+croppedLineOffset), croppedWidth*sizeof(float));
-                        //OR
-                        //memcpy((dataWrite+uncroppedLineOffset), (finalSRImgData_+srCroppedLineOffset+croppedWidth - 1 + (sCroppedWidth<<6)), croppedWidth*sizeof(float));
                     }
                     
                     //memcpy(imgVec_[0], finalImgData_, croppedWidth*croppedHeight*sizeof(float));

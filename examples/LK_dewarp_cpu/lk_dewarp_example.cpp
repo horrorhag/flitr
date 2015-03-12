@@ -20,6 +20,7 @@
 #include <flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h>
 
 #include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h>
+#include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
@@ -75,7 +76,8 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    
+
+//===
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     if (!ip->init())
     {
@@ -89,6 +91,7 @@ int main(int argc, char *argv[])
 #endif
     
     
+    //===
     shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*ip, 1, 2));
     if (!cnvrtToF32->init())
     {
@@ -97,7 +100,8 @@ int main(int argc, char *argv[])
     }
     cnvrtToF32->startTriggerThread();
     
-    
+/*
+    //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
                                          0,
                                          0,
@@ -110,9 +114,10 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     crop->startTriggerThread();
+*/
     
-    
-    
+/*
+    //===
      shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1,
                                                                          1.0f,
                                                                          3,
@@ -123,10 +128,23 @@ int main(int argc, char *argv[])
      exit(-1);
      }
      gaussianFilter0->startTriggerThread();
+*/
     
+    //==
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToF32, 1,
+                                                              FIPLKStabilise::Mode::INTSTAB,
+                                                              2));
+    if (!lkstabilise->init())
+    {
+        std::cerr << "Could not initialise the lkstabilise processor.\n";
+        exit(-1);
+    }
+    lkstabilise->startTriggerThread();
+
     
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*gaussianFilter0, 1,
-                                                     0.97f, //Average image longevity.
+    //===
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
+                                                     0.95f, //Internal average image longevity.
                                                      2)); //Buffer size.
     if (!lkdewarp->init())
     {
@@ -135,7 +153,8 @@ int main(int argc, char *argv[])
     }
     lkdewarp->startTriggerThread();
     
-    
+
+    //===
     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 4, 2));
     if (!averageImage->init())
     {
@@ -144,7 +163,7 @@ int main(int argc, char *argv[])
     }
     averageImage->startTriggerThread();
     
-    
+
     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 30.0f, 2));
     if (!unsharpMask->init())
     {
@@ -161,7 +180,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     tonemap->startTriggerThread();
-    
+
     
     shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*tonemap, 1, 0.95f, 2));
     if (!cnvrtToM8->init())
@@ -180,7 +199,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*crop, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*lkstabilise, 1));
     if (!osgcOrig->init())
     {
         std::cerr << "Could not init osgcOrig consumer\n";
@@ -297,11 +316,13 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToF32->stopTriggerThread();
+    //crop->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
+    lkstabilise->stopTriggerThread();
     lkdewarp->stopTriggerThread();
-    //averageImage->stopTriggerThread();
-    //unsharpMask->stopTriggerThread();
-    //tonemap->stopTriggerThread();
+    averageImage->stopTriggerThread();
+    unsharpMask->stopTriggerThread();
+    tonemap->stopTriggerThread();
     cnvrtToM8->stopTriggerThread();
     
     return 0;
