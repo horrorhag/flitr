@@ -308,7 +308,7 @@ bool FIPLKStabilise::trigger()
             float Hx=0.0f;
             float Hy=0.0f;
             
-            const ptrdiff_t levelsToSkip=1;
+            const ptrdiff_t levelsToSkip=0;
             
             for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=levelsToSkip; --levelNum)
             {
@@ -343,7 +343,7 @@ bool FIPLKStabilise::trigger()
                             
                             const float dSqRecip=dSqRecipData[offset];
                             
-                            if (dSqRecip<(1.0f/0.0001f)) //Only do processing when the image gradient is above a certain limit.
+                            if (dSqRecip<(1.0f/0.0001f)) //Only do processing when the image gradient is above a certain limit. The calculation seems inaccurate anyway for small gradients...
                             {
                                 //=== calc bilinear filter fractions ===//
                                 const float floor_hx=floorf(Hx);
@@ -358,6 +358,8 @@ bool FIPLKStabilise::trigger()
                                     ((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
                                 {
                                     const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
+                                    
+                                    //Moving&interpolating the reference image allows one to avoid having to bilinear filter the img gradients dx and dy!!!
                                     const float imgRef=bilinear(refImgData, offsetLT, levelWidth, frac_hx, frac_hy);
                                     
                                     const float imgDiff=imgData[offset]-imgRef;

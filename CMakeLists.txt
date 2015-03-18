@@ -153,6 +153,7 @@ SET(LIB_SOURCES
   src/flitr/high_resolution_time.cpp
   src/flitr/image_consumer.cpp
   src/flitr/image_processor.cpp
+  src/flitr/image_processor_utils.cpp
   src/flitr/log_message.cpp
   src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
@@ -238,6 +239,7 @@ SET(LIB_SOURCES
   include/flitr/high_resolution_time.h
   include/flitr/image_consumer.h
   include/flitr/image_processor.h
+  include/flitr/image_processor_utils.h
   include/flitr/image_format.h
   include/flitr/image.h
   include/flitr/image_metadata.h

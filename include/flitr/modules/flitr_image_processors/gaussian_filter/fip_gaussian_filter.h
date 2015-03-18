@@ -22,6 +22,7 @@
 #define FIP_GAUSSIAN_FILTER_H 1
 
 #include <flitr/image_processor.h>
+#include <flitr/image_processor_utils.h>
 
 namespace flitr {
     
@@ -42,7 +43,6 @@ namespace flitr {
         /*! Virtual destructor */
         virtual ~FIPGaussianFilter();
         
-        virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);
         
@@ -57,10 +57,7 @@ namespace flitr {
     private:
         /*! The result of the first pass of the seperable Gaussian filter. */
         float *xFiltData_;
-        float *kernel1D_;
-        
-        float filterRadius_;
-        size_t kernelWidth_;
+        GaussianFilter gaussianFilter_;
     };
     
 }

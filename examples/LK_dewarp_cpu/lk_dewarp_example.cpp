@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-
-//===
+    
+    //===
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     if (!ip->init())
     {
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     }
     cnvrtToF32->startTriggerThread();
     
-/*
+    
     //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
                                          0,
@@ -114,24 +114,24 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     crop->startTriggerThread();
-*/
     
-/*
-    //===
+    
+    /*
+     //===
      shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1,
-                                                                         1.0f,
-                                                                         3,
-                                                                         2));
+     1.0f,
+     3,
+     2));
      if (!gaussianFilter0->init())
      {
      std::cerr << "Could not initialise the gaussianFilter processor.\n";
      exit(-1);
      }
      gaussianFilter0->startTriggerThread();
-*/
+     */
     
     //==
-    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToF32, 1,
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
                                                               FIPLKStabilise::Mode::INTSTAB,
                                                               2));
     if (!lkstabilise->init())
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     lkstabilise->startTriggerThread();
-
+    
     
     //===
     shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
@@ -153,9 +153,9 @@ int main(int argc, char *argv[])
     }
     lkdewarp->startTriggerThread();
     
-
+    
     //===
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 4, 2));
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 5, 2));
     if (!averageImage->init())
     {
         std::cerr << "Could not initialise the average image processor.\n";
@@ -163,8 +163,8 @@ int main(int argc, char *argv[])
     }
     averageImage->startTriggerThread();
     
-
-    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 30.0f, 2));
+    
+    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 20.0f, 2.75f, 2));
     if (!unsharpMask->init())
     {
         std::cerr << "Could not initialise the unsharp mask processor.\n";
@@ -173,16 +173,16 @@ int main(int argc, char *argv[])
     unsharpMask->startTriggerThread();
     
     
-    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 1.0f, 2));
+    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 0.8f, 2));
     if (!tonemap->init())
     {
         std::cerr << "Could not initialise the tonemap processor.\n";
         exit(-1);
     }
     tonemap->startTriggerThread();
-
     
-    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*tonemap, 1, 0.95f, 2));
+    
+    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*tonemap, 1, 0.90f, 2));
     if (!cnvrtToM8->init())
     {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
@@ -272,7 +272,6 @@ int main(int argc, char *argv[])
     }
     
     size_t numFrames=0;
-    float hx=0.0f,hy=0.0f;
     
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
@@ -289,16 +288,7 @@ int main(int argc, char *argv[])
         {
             osgcOrig->getNext();
             
-            /*
-             osg::Matrix translate;
-             translate.makeTranslate(osg::Vec3d(+dewarp->getRigidHx(2)*4.0,
-             -dewarp->getRigidHy(2)*4.0,
-             0.0));
-             quad->setTransform(translate);
-             */
-            
             viewer.frame();
-            
             
             numFrames++;
         }
@@ -316,7 +306,7 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToF32->stopTriggerThread();
-    //crop->stopTriggerThread();
+    crop->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
     lkstabilise->stopTriggerThread();
     lkdewarp->stopTriggerThread();

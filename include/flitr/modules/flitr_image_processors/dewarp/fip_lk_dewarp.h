@@ -21,7 +21,9 @@
 #ifndef FIP_LK_DEWARP_H
 #define FIP_LK_DEWARP_H 1
 
+#include <flitr/image_processor_utils.h>
 #include <flitr/image_processor.h>
+
 #include <mutex>
 
 namespace flitr {
@@ -53,15 +55,24 @@ namespace flitr {
         
         
     private:
-        inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
+        inline float bilinearRead(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
         {
             return
             data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) + data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
             data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
         }
         
+        inline void bilinearAdd(const float value, float * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
+        {
+            data[offsetLT]                        += value * ((1.0f-fx) * (1.0f-fy));
+            data[offsetLT+((ptrdiff_t)1)]         += value * (fx * (1.0f-fy));
+            data[offsetLT+width]                  += value * ((1.0f-fx) * fy);
+            data[offsetLT+(((ptrdiff_t)1)+width)] += value * (fx * fy);
+        }
+        
         const float avrgImageLongevity_;
-                
+        const float recipGradientThreshold_;
+        
         const size_t numLevels_;
         
         std::vector<float *> imgVec_;
@@ -74,8 +85,14 @@ namespace flitr {
         std::vector<float *> hxVec_;
         std::vector<float *> hyVec_;
         
+        GaussianFilter gaussianFilter_;
+        GaussianDownsample gaussianDownsample_;
+
+        GaussianFilter gaussianReguFilter_;
+        
         float *scratchData_;
         
+        float *inputImgData_;
         float *finalImgData_; //With lucky regions, etc.
     };
     
