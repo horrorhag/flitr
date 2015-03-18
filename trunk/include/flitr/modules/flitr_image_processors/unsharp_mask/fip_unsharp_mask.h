@@ -21,11 +21,12 @@
 #ifndef FIP_UNSHARP_MASK_H
 #define FIP_UNSHARP_MASK_H 1
 
+#include <flitr/image_processor_utils.h>
 #include <flitr/image_processor.h>
 
 namespace flitr {
     
-    /*! Applies an unsharp mask (using 5 pixel radius Gaussian blur) to the image. */
+    /*! Applies an unsharp mask to the image. */
     class FLITR_EXPORT FIPUnsharpMask : public ImageProcessor
     {
     public:
@@ -36,6 +37,7 @@ namespace flitr {
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPUnsharpMask(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                        const float gain,
+                       const float filterRadius,
                        uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -52,7 +54,11 @@ namespace flitr {
     private:
         /*! The result of the first pass of the seperable Gaussian filter. */
         const float gain_;
+        
         float *xFiltData_;
+        float *filtData_;
+
+        GaussianFilter gaussianFilter_;
     };
     
 }

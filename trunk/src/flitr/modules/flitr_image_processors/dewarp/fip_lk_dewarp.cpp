@@ -26,21 +26,28 @@
 #include <math.h>
 
 
-
 using namespace flitr;
 using std::shared_ptr;
+
+
 
 FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                          const float avrgImageLongevity,
                          uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
-numLevels_(4),
+recipGradientThreshold_(1.0f / 0.00025f),
+numLevels_(4),//Num levels searched for scint motion.
+gaussianFilter_(2.0f, 8),
+gaussianDownsample_(1.0f, 4),
+gaussianReguFilter_(2.5f, 10),
 scratchData_(0),
+inputImgData_(0),
 finalImgData_(0)
 {
     //Setup image format being produced to downstream.
-    for (uint32_t i=0; i<images_per_slot; ++i) {
+    for (uint32_t i=0; i<images_per_slot; ++i)
+    {
         ImageFormat imgFormat=upStreamProducer.getFormat(i);
         ImageFormat_.push_back(imgFormat);
     }
@@ -50,6 +57,7 @@ FIPLKDewarp::~FIPLKDewarp()
 {
     delete [] scratchData_;
     delete [] finalImgData_;
+    delete [] inputImgData_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
     {
@@ -98,6 +106,9 @@ bool FIPLKDewarp::init()
         scratchData_=new float[(width*height)<<1];
         memset(scratchData_, 0, ((width*height)<<1)*sizeof(float));
         
+        inputImgData_=new float[croppedWidth*croppedHeight];
+        memset(inputImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
+        
         finalImgData_=new float[croppedWidth*croppedHeight];
         memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
         
@@ -126,14 +137,15 @@ bool FIPLKDewarp::init()
         }
         
         //Push zero h vectors to ordinal numLevels_+1
-        hxVec_.push_back(new float[(croppedWidth>>numLevels_) * (croppedHeight>>numLevels_)]);
-        memset(hxVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
-        hyVec_.push_back(new float[(croppedWidth>>numLevels_) * (croppedHeight>>numLevels_)]);
-        memset(hyVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
+        hxVec_.push_back(new float[(croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2)]);
+        memset(hxVec_.back(), 0, (croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2) * sizeof(float));
+        hyVec_.push_back(new float[(croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2)]);
+        memset(hyVec_.back(), 0, (croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2) * sizeof(float));
     }
     
     return rValue;
 }
+
 
 bool FIPLKDewarp::trigger()
 {
@@ -172,6 +184,7 @@ bool FIPLKDewarp::trigger()
                 float * const dataWrite=(float * const)imWrite->data();
                 
                 //****************
+                //Replace the reference image during the first couple of frames.
                 const float avrgImageLongevityConst = (frameNumber_ < 3) ? 0.0f : avrgImageLongevity_;
                 //****************
                 
@@ -200,14 +213,18 @@ bool FIPLKDewarp::trigger()
                     {
                         const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
                         const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
-                        memcpy((imgVec_[0]+croppedLineOffset), (dataRead+uncroppedLineOffset), croppedWidth*sizeof(float));
+                        memcpy((inputImgData_+croppedLineOffset), (dataRead+uncroppedLineOffset), croppedWidth*sizeof(float));
                     }
+                    
+                    //=== Do Gaussian filter of initial input ===//
+                    gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
                 }//=== ===
                 
                 {//=== Calculate scale space pyramid. ===
                     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
                     {
                         float * const imgData=imgVec_[levelNum];
+                        float * const refImgData=refImgVec_[levelNum];
                         
                         const ptrdiff_t levelHeight=croppedHeight >> levelNum;
                         const ptrdiff_t levelWidth=croppedWidth >> levelNum;
@@ -234,76 +251,15 @@ bool FIPLKDewarp::trigger()
                                 }
                             }
                             
-                            float const * const imgDataHR=imgVec_[levelNum-1];
-                            const ptrdiff_t heightHR=croppedHeight >> (levelNum-1);
-                            const ptrdiff_t widthHR=croppedWidth >> (levelNum-1);
-                            
-                            //=== Seperable Gaussian first pass - down filter x ===
-                            for (ptrdiff_t y=0; y<heightHR; ++y)
-                            {
-                                const ptrdiff_t lineOffsetScratch=y * levelWidth;
-                                const ptrdiff_t lineOffsetHR=y * widthHR;
+                            {//Downsample higher resolution level.
+                                const ptrdiff_t heightUS=croppedHeight >> (levelNum-1);
+                                const ptrdiff_t widthUS=croppedWidth >> (levelNum-1);
                                 
-                                for (ptrdiff_t x=3; x<levelWidthMinus3; ++x)
-                                {
-                                    const ptrdiff_t xHR=(x<<1);
-                                    const ptrdiff_t offsetHR=lineOffsetHR + xHR;
-                                    
-                                    float filtValue=(imgDataHR[offsetHR] +
-                                                     imgDataHR[offsetHR + 1] ) * (462.0f/2048.0f);//The const expr devisions will be compiled/folded away!
-                                    
-                                    filtValue+=(imgDataHR[offsetHR - 1] +
-                                                imgDataHR[offsetHR + 2] ) * (330.0f/2048.0f);
-                                    
-                                    filtValue+=(imgDataHR[offsetHR - 2] +
-                                                imgDataHR[offsetHR + 3] ) * (165.0f/2048.0f);
-                                    
-                                    filtValue+=(imgDataHR[offsetHR - 3] +
-                                                imgDataHR[offsetHR + 4] ) * (55.0f/2048.0f);
-                                    
-                                    filtValue+=(imgDataHR[offsetHR - 4] +
-                                                imgDataHR[offsetHR + 5] ) * (11.0f/2048.0f);
-                                    
-                                    filtValue+=(imgDataHR[offsetHR - 5] +
-                                                imgDataHR[offsetHR + 6] ) * (1.0f/2048.0f);
-                                    
-                                    scratchData_[lineOffsetScratch + x]=filtValue;
-                                }
-                            }
-                            //=== ===
+                                gaussianDownsample_.downsample(imgData, imgVec_[levelNum-1],
+                                                               widthUS, heightUS,
+                                                               scratchData_);
+                            }//=== ===
                             
-                            //=== Seperable Gaussian second pass - down filter y===
-                            for (ptrdiff_t y=((ptrdiff_t)3); y<(levelHeight-((ptrdiff_t)3)); ++y)
-                            {
-                                const ptrdiff_t lineOffset=y * levelWidth;
-                                const ptrdiff_t lineOffsetScratch=(y<<1) * levelWidth;
-                                
-                                for (ptrdiff_t x=3; x<levelWidthMinus3; ++x)
-                                {
-                                    const ptrdiff_t offsetScratch=lineOffsetScratch + x;
-                                    
-                                    float filtValue=(scratchData_[offsetScratch] +
-                                                     scratchData_[offsetScratch + levelWidth] ) * (462.0f/2048.0f);//The const expr devisions will be compiled/folded away!
-                                    
-                                    filtValue+=(scratchData_[offsetScratch - levelWidth] +
-                                                scratchData_[offsetScratch + (levelWidth<<1)] ) * (330.0f/2048.0f);
-                                    
-                                    filtValue+=(scratchData_[offsetScratch - (levelWidth<<1)] +
-                                                scratchData_[offsetScratch + ((levelWidth<<1) + levelWidth)] ) * (165.0f/2048.0f);
-                                    
-                                    filtValue+=(scratchData_[offsetScratch - ((levelWidth<<1) + levelWidth)] +
-                                                scratchData_[offsetScratch + (levelWidth<<2)] ) * (55.0f/2048.0f);
-                                    
-                                    filtValue+=(scratchData_[offsetScratch - (levelWidth<<2)] +
-                                                scratchData_[offsetScratch + ((levelWidth<<2) + levelWidth)] ) * (11.0f/2048.0f);
-                                    
-                                    filtValue+=(scratchData_[offsetScratch - ((levelWidth<<2) + levelWidth)] +
-                                                scratchData_[offsetScratch + ((levelWidth<<2) + (levelWidth<<1))] ) * (1.0f/2048.0f);
-                                    
-                                    imgData[lineOffset + x]=filtValue;
-                                }
-                            }
-                            //=== ===
                         }//=== ===
                         
                         
@@ -320,6 +276,19 @@ bool FIPLKDewarp::trigger()
                                 {
                                     const ptrdiff_t offset=lineOffset + x;
                                     
+//#define DESCINT_SCATTER
+                                    
+#ifdef DESCINT_SCATTER
+                                    const float v1=refImgData[offset-levelWidth-1];
+                                    const float v2=refImgData[offset-levelWidth];
+                                    const float v3=refImgData[offset-levelWidth+1];
+                                    const float v4=refImgData[offset-1];
+                                    //const float v5=refImgData[offset];
+                                    const float v6=refImgData[offset+1];
+                                    const float v7=refImgData[offset+levelWidth-1];
+                                    const float v8=refImgData[offset+levelWidth];
+                                    const float v9=refImgData[offset+levelWidth+1];
+#else//DESCINT_GATHER
                                     const float v1=imgData[offset-levelWidth-1];
                                     const float v2=imgData[offset-levelWidth];
                                     const float v3=imgData[offset-levelWidth+1];
@@ -329,8 +298,9 @@ bool FIPLKDewarp::trigger()
                                     const float v7=imgData[offset+levelWidth-1];
                                     const float v8=imgData[offset+levelWidth];
                                     const float v9=imgData[offset+levelWidth+1];
+#endif
                                     
-                                    //Use Scharr operator for image gradient.
+                                    //Use Scharr operator for image gradient. It has good rotation independence!
                                     const float dx=(v3-v1)*(3.0f/32.0f) + (v6-v4)*(10.0f/32.0f) + (v9-v7)*(3.0f/32.0f);
                                     const float dy=(v7-v1)*(3.0f/32.0f) + (v8-v2)*(10.0f/32.0f) + (v9-v3)*(3.0f/32.0f);
                                     
@@ -348,7 +318,7 @@ bool FIPLKDewarp::trigger()
                 //=== Calculate h vectors ===
                 memset(hxVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
                 memset(hyVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
-
+                
                 for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=0; --levelNum)
                 {
                     float const * const imgData=imgVec_[levelNum];
@@ -383,14 +353,14 @@ bool FIPLKDewarp::trigger()
                             const float fy=(y&((ptrdiff_t)1))*(-0.5f)+0.75f;
                             
                             const ptrdiff_t offset=lineOffset + x;
-                            hxData[offset]=/*hxDataLR[offsetLR]*2.0f;*/bilinear(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 1.75f;
-                            hyData[offset]=/*hyDataLR[offsetLR]*2.0f;*/bilinear(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 1.75f;
+                            hxData[offset]=/*hxDataLR[offsetLR]*2.0f;*/bilinearRead(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
+                            hyData[offset]=/*hyDataLR[offsetLR]*2.0f;*/bilinearRead(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
                         }
                     }
                     //=== ===//
                     
                     {
-                        for (size_t newtonRaphsonI=0; newtonRaphsonI<7; ++newtonRaphsonI)
+                        for (size_t newtonRaphsonI=0; newtonRaphsonI<7; ++newtonRaphsonI)//5 or more iterations seem to work well.
                         {
                             for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
                             {
@@ -402,7 +372,7 @@ bool FIPLKDewarp::trigger()
                                     
                                     const float dSqRecip=dSqRecipData[offset];
                                     
-                                    if (dSqRecip<(1.0f/0.00005f))
+                                    if (dSqRecip<(recipGradientThreshold_))
                                     {
                                         float hx=hxData[offset];
                                         float hy=hyData[offset];
@@ -416,18 +386,36 @@ bool FIPLKDewarp::trigger()
                                         const float frac_hy=hy - floor_hy;
                                         //=== ===//
                                         
+                                        
+#ifdef DESCINT_SCATTER
                                         if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
                                         {
                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
                                             
-                                            const float img=bilinear(imgData, offsetLT, levelWidth, frac_hx, frac_hy);
-                                            const float dx=bilinear(dxData, offsetLT, levelWidth, frac_hx, frac_hy);
-                                            const float dy=bilinear(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float refImg=bilinearRead(refImgData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            
+                                            const float dx=bilinearRead(dxData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float dy=bilinearRead(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            
+                                            const float imgDiff=imgData[offset]-refImg;
+                                            hx+=(imgDiff*dx)*dSqRecip;
+                                            hy+=(imgDiff*dy)*dSqRecip;
+                                        }
+#else //DESCINT_GATHER
+                                        if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
+                                        {
+                                            const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
+                                            
+                                            const float img=bilinearRead(imgData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            
+                                            const float dx=bilinearRead(dxData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float dy=bilinearRead(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
                                             
                                             const float imgDiff=img-refImgData[offset];
                                             hx-=(imgDiff*dx)*dSqRecip;
                                             hy-=(imgDiff*dy)*dSqRecip;
                                         }
+#endif
                                         
                                         hxData[offset]=hx;
                                         hyData[offset]=hy;
@@ -436,117 +424,10 @@ bool FIPLKDewarp::trigger()
                             }
                             
                             
+                            //if (levelNum>=1)
                             {//=== Smooth/regularise the vector field of this iteration using Gaussian filters in x and y ===//
-                                const ptrdiff_t levelWidthMinus5=levelWidth - ((ptrdiff_t)5);
-                                const ptrdiff_t levelHeightMinus5=levelHeight - ((ptrdiff_t)5);
-                                
-                                for (ptrdiff_t y=0; y<levelHeight; ++y)
-                                {
-                                    const ptrdiff_t lineOffset=y*levelWidth;
-                                    const ptrdiff_t lineOffsetHy=lineOffset+levelWidth*levelHeight;
-                                    
-                                    for (ptrdiff_t x=5; x<levelWidthMinus5; ++x)
-                                    {
-                                        const ptrdiff_t offset=lineOffset + x;
-                                        
-                                        float filtValue=(hxData[offset]) * (252.0f/1002.0f);
-                                        
-                                        filtValue+=(hxData[offset - 1] +
-                                                    hxData[offset + 1]) * (210.0f/1002.0f);
-                                        
-                                        filtValue+=(hxData[offset - 2] +
-                                                    hxData[offset + 2]) * (120.0f/1002.0f);
-                                        
-                                        filtValue+=(hxData[offset - 3] +
-                                                    hxData[offset + 3] ) * (45.0f/1002.0f);
-                                        
-                                        
-                                        filtValue+=( hxData[offset - 4] +
-                                                    hxData[offset + 4] ) * (10.0f/1002.0f);
-                                        
-                                        filtValue+=( hxData[offset - 5] +
-                                                    hxData[offset + 5] ) * (1.0f/1002.0f);
-                                        
-                                        scratchData_[offset]=filtValue;
-                                        
-                                        
-                                        filtValue=( hyData[offset] ) * (252.0f/1002.0f);
-                                        
-                                        filtValue+=( hyData[offset - ((ptrdiff_t)1)] +
-                                                    hyData[offset + ((ptrdiff_t)1)] ) * (210.0f/1002.0f);
-                                        
-                                        filtValue+=( hyData[offset - ((ptrdiff_t)2)] +
-                                                    hyData[offset + ((ptrdiff_t)2)] ) * (120.0f/1002.0f);
-                                        
-                                        filtValue+=( hyData[offset - ((ptrdiff_t)3)] +
-                                                    hyData[offset + ((ptrdiff_t)3)] ) * (45.0f/1002.0f);
-                                        
-                                        
-                                        
-                                        filtValue+=( hyData[offset - ((ptrdiff_t)4)] +
-                                                    hyData[offset + ((ptrdiff_t)4)] ) * (10.0f/1002.0f);
-                                        
-                                        filtValue+=( hyData[offset - ((ptrdiff_t)5)] +
-                                                    hyData[offset + ((ptrdiff_t)5)] ) * (1.0f/1002.0f);
-                                        
-                                        
-                                        scratchData_[lineOffsetHy + x]=filtValue;
-                                    }
-                                }
-                                
-                                for (ptrdiff_t y=5; y<levelHeightMinus5; ++y)
-                                {
-                                    const ptrdiff_t lineOffset=y*levelWidth;
-                                    const ptrdiff_t lineOffsetHy=lineOffset+levelWidth*levelHeight;
-                                    
-                                    for (ptrdiff_t x=0; x<levelWidth; ++x)
-                                    {
-                                        const ptrdiff_t offset=lineOffset + x;
-                                        
-                                        float filtValue=( scratchData_[offset] ) * (252.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offset - levelWidth] +
-                                                    scratchData_[offset + levelWidth] ) * (210.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offset - (levelWidth<<1)] +
-                                                    scratchData_[offset + (levelWidth<<1)] ) * (120.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offset - ((levelWidth<<1)+levelWidth)] +
-                                                    scratchData_[offset + ((levelWidth<<1)+levelWidth)] ) * (45.0f/1002.0f);
-                                        
-                                        
-                                        filtValue+=( scratchData_[offset - (levelWidth<<2)] +
-                                                    scratchData_[offset + (levelWidth<<2)] ) * (10.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offset - ((levelWidth<<2)+levelWidth)] +
-                                                    scratchData_[offset + ((levelWidth<<2)+levelWidth)] ) * (1.0f/1002.0f);
-                                        
-                                        
-                                        hxData[offset]=filtValue;
-                                        
-                                        
-                                        const ptrdiff_t offsetHy=lineOffsetHy + x;
-                                        
-                                        filtValue=( scratchData_[offsetHy] ) * (252.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offsetHy - levelWidth] +
-                                                    scratchData_[offsetHy + levelWidth] ) * (210.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offsetHy - (levelWidth<<1)] +
-                                                    scratchData_[offsetHy + (levelWidth<<1)] ) * (120.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offsetHy - ((levelWidth<<1)+levelWidth)] +
-                                                    scratchData_[offsetHy + ((levelWidth<<1)+levelWidth)] ) * (45.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offsetHy - (levelWidth<<2)] +
-                                                    scratchData_[offsetHy + (levelWidth<<2)] ) * (10.0f/1002.0f);
-                                        
-                                        filtValue+=( scratchData_[offsetHy - ((levelWidth<<2)+levelWidth)] +
-                                                    scratchData_[offsetHy + ((levelWidth<<2)+levelWidth)] ) * (1.0f/1002.0f);
-                                        
-                                        hyData[offset]=filtValue;
-                                    }
-                                }
+                                gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
+                                gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
                             }//=== ===
                             
                         }
@@ -559,13 +440,11 @@ bool FIPLKDewarp::trigger()
                 
                 //=== Final results ===
                 {
-                    float * const imgDataGF=imgVec_[0];
-                    float * const refImgDataGF=refImgVec_[0];
-                    float * const dxDataGF=dxVec_[0];
-                    float * const dyDataGF=dyVec_[0];
+                    memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
+                    
+                    float * const imgDataGF=inputImgData_;
                     float * const hxDataGF=hxVec_[0];
                     float * const hyDataGF=hyVec_[0];
-                    
                     
                     for (ptrdiff_t y=0; y<croppedHeight; ++y)
                     {
@@ -575,52 +454,63 @@ bool FIPLKDewarp::trigger()
                         {
                             const ptrdiff_t offset=lineOffset + x;
                             
-                            const float hx=hxDataGF[offset];
-                            const float hy=hyDataGF[offset];
-                            
                             if (true)
                             {
-                            //=== Image Dewarping ===//
-                            {
-                                //Note: Use a local contrast measure to control blending...
-                                //      It is assumed the the best lucky frame/region has the best local contrast.
-                                //      Could look at RMS contrast (the standard deviation) over an image patch centred at the desired location!
-                                
-                                const float floor_hx=floorf(hx);
-                                const float floor_hy=floorf(hy);
-                                const ptrdiff_t int_hx=lroundf(floor_hx);
-                                const ptrdiff_t int_hy=lroundf(floor_hy);
-                                
-                                if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
+                                //=== Image Dewarping ===//
                                 {
-                                    const float frac_hx=hx - floor_hx;
-                                    const float frac_hy=hy - floor_hy;
-                                    const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                                    //Note: Use a local contrast measure to control blending...
+                                    //      It is assumed the the best lucky frame/region has the best local contrast.
+                                    //      Could look at RMS contrast (the standard deviation) over an image patch centred at the desired location!
+#ifdef DESCINT_SCATTER
+                                    const float hx=-hxDataGF[offset];
+                                    const float hy=-hyDataGF[offset];
                                     
-                                    const float img=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-
-                                    /*
-                                    const float dx=bilinear(dxDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                    const float dy=bilinear(dyDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                    const float floor_hx=floorf(hx);
+                                    const float floor_hy=floorf(hy);
+                                    const ptrdiff_t int_hx=lroundf(floor_hx);
+                                    const ptrdiff_t int_hy=lroundf(floor_hy);
                                     
-                                    const float dL1=fabsf(dx)+fabsf(dy);
-                                    const float dL2=sqrtf(dx*dx+dy*dy);
-                                    */
+                                    if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
+                                    {
+                                        const float frac_hx=hx - floor_hx;
+                                        const float frac_hy=hy - floor_hy;
+                                        const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                                        
+                                        const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                        finalImgData_[offset]=img;
+                                        
+                                        //bilinearAdd(imgDataGF[offset], finalImgData_, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                        //finalImgData_[offsetLT]=imgDataGF[offset];
+                                    }
+#else//DESCINT_GATHER
+                                    const float hx=hxDataGF[offset];
+                                    const float hy=hyDataGF[offset];
                                     
-                                    const float blend=0.0f;//1.0f/(1.0f+dL1*10.0f);
-                                    finalImgData_[offset]*=blend;
-                                    finalImgData_[offset]+=img*(1.0f-blend);
+                                    const float floor_hx=floorf(hx);
+                                    const float floor_hy=floorf(hy);
+                                    const ptrdiff_t int_hx=lroundf(floor_hx);
+                                    const ptrdiff_t int_hy=lroundf(floor_hy);
+                                    
+                                    if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
+                                    {
+                                        const float frac_hx=hx - floor_hx;
+                                        const float frac_hy=hy - floor_hy;
+                                        const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                                        
+                                        const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                        finalImgData_[offset]=img;
+                                    }
+#endif
                                 }
-                            }
-                            //=== ===
+                                //=== ===
                             }
                             else //OR
                             {
-                                const size_t levelIndex=0;//(numLevels_-1) - 5;
+                                const size_t levelIndex=4;//(numLevels_-1) - 5;
                                 const size_t offsetB=(x>>levelIndex) + (y>>levelIndex)*(croppedWidth>>levelIndex);
                                 const float hxB=hxVec_[levelIndex][offsetB];
                                 const float hyB=hyVec_[levelIndex][offsetB];
-                                finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1;
+                                finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1f;
                             }
                         }
                     }
@@ -638,8 +528,6 @@ bool FIPLKDewarp::trigger()
                         //OR
                         //memcpy((dataWrite+uncroppedLineOffset), (refImgVec_[0]+croppedLineOffset), croppedWidth*sizeof(float));
                     }
-                    
-                    //memcpy(imgVec_[0], finalImgData_, croppedWidth*croppedHeight*sizeof(float));
                 }
             }
         }
