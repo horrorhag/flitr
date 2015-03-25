@@ -19,6 +19,7 @@
  */
 
 #define _USE_MATH_DEFINES
+#include <memory>
 #include <cmath>
 
 #include <flitr/image_processor_utils.h>
