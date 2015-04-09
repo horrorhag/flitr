@@ -75,8 +75,12 @@ AVFrame* flitr::allocFFmpegFrame(AVPixelFormat pix_fmt, int width, int height)
     if (!picture_buf) {
         av_free(picture);
         return NULL;
-    }
-    
+    }       
+
+    picture->width=width;
+    picture->height=height;
+    picture->format=int(pix_fmt);
+
     avpicture_fill((AVPicture *)picture, picture_buf,
                    pix_fmt, width, height);
 
