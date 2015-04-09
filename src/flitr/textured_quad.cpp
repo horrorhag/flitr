@@ -102,10 +102,6 @@ void TexturedQuad::setShader(std::string filename)
 
 void TexturedQuad::init()
 {
-    OldWidth_ = -1;
-    OldHeight_ = -1;
-    OldUseNormalised_ = false;
-
     RootGroup_ = new osg::Group;
     RootGroup_->setName("flitr_textured_quad");
     MatrixTransform_ = new osg::MatrixTransform; // identity
@@ -119,17 +115,6 @@ void TexturedQuad::init()
  
 void TexturedQuad::replaceGeom(bool use_normalised_coordinates)
 {
-    // initial Old* values will cause this to pass on first call at least
-    if (Width_ == OldWidth_ &&
-        Height_ == OldHeight_ &&
-        use_normalised_coordinates == OldUseNormalised_) 
-    {
-        return;
-    }
-    OldWidth_ = Width_;
-    OldHeight_ = Height_;
-    OldUseNormalised_ = use_normalised_coordinates;
-
     Geode_->removeDrawables(0, Geode_->getNumDrawables());
     
     osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
