@@ -86,6 +86,20 @@ void TexturedQuad::setTexture(osg::Texture2D* in_tex)
     GeomStateSet_->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
 }
 
+void TexturedQuad::flipTextureCoordsLeftToRight()
+{
+    std::swap((*tcoords_)[0], (*tcoords_)[1]);
+    std::swap((*tcoords_)[2], (*tcoords_)[3]);
+    //Geom_->setTexCoordArray(0,tcoords_.get());
+}
+
+void TexturedQuad::flipTextureCoordsTopToBottom()
+{
+    std::swap((*tcoords_)[0], (*tcoords_)[3]);
+    std::swap((*tcoords_)[1], (*tcoords_)[2]);
+    //Geom_->setTexCoordArray(0,tcoords_.get());
+}
+
 void TexturedQuad::setShader(std::string filename)
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT ); 
@@ -109,6 +123,8 @@ void TexturedQuad::init()
     Geode_->setName("flitr_textured_quad");
     Geode_->setCullingActive(false);
 
+    tcoords_ = new osg::Vec2Array();
+
     RootGroup_->addChild(MatrixTransform_.get());
     MatrixTransform_->addChild(Geode_.get());
 }
@@ -121,17 +137,18 @@ void TexturedQuad::replaceGeom(bool use_normalised_coordinates)
     colors->push_back(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
 
     // texture coords flipped here
-    osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array; // texture coords
+    tcoords_->clear();
+
     if (use_normalised_coordinates) {
-        tcoords->push_back(osg::Vec2(0, 1));
-        tcoords->push_back(osg::Vec2(1, 1));
-        tcoords->push_back(osg::Vec2(1, 0));
-        tcoords->push_back(osg::Vec2(0, 0));
+        tcoords_->push_back(osg::Vec2(0, 1));
+        tcoords_->push_back(osg::Vec2(1, 1));
+        tcoords_->push_back(osg::Vec2(1, 0));
+        tcoords_->push_back(osg::Vec2(0, 0));
     } else {
-        tcoords->push_back(osg::Vec2(0, Height_));
-        tcoords->push_back(osg::Vec2(Width_, Height_));
-        tcoords->push_back(osg::Vec2(Width_, 0));
-        tcoords->push_back(osg::Vec2(0, 0));
+        tcoords_->push_back(osg::Vec2(0, Height_));
+        tcoords_->push_back(osg::Vec2(Width_, Height_));
+        tcoords_->push_back(osg::Vec2(Width_, 0));
+        tcoords_->push_back(osg::Vec2(0, 0));
     }
 
     osg::ref_ptr<osg::Vec3Array> vcoords = new osg::Vec3Array; // vertex coords
@@ -144,7 +161,7 @@ void TexturedQuad::replaceGeom(bool use_normalised_coordinates)
     Geom_ = new osg::Geometry;
     Geom_->setName("flitr_textured_quad");
     Geom_->setVertexArray(vcoords.get());
-    Geom_->setTexCoordArray(0,tcoords.get());
+    Geom_->setTexCoordArray(0, tcoords_.get());
     osg::ref_ptr<osg::DrawArrays> da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
     da->setName("flitr_textured_quad");
     Geom_->addPrimitiveSet(da.get());

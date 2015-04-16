@@ -50,6 +50,9 @@ class FLITR_EXPORT TexturedQuad
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
 
+    void flipTextureCoordsLeftToRight();
+    void flipTextureCoordsTopToBottom();
+
     void setShader(std::string filename);
 
   private:
@@ -61,6 +64,8 @@ class FLITR_EXPORT TexturedQuad
 	osg::ref_ptr<osg::Geometry> Geom_;
     osg::ref_ptr<osg::StateSet> GeomStateSet_;
     osg::ref_ptr<osg::Program> FragmentProgram_;
+
+    osg::ref_ptr<osg::Vec2Array> tcoords_;
 
 	int Width_;
 	int Height_;
