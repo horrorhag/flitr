@@ -71,6 +71,11 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     */
     uint32_t getNumImages() const;
 
+    bool isWriting()
+    {
+        return Writing_;
+    }
+
   protected:
     std::vector<ImageFormat> ImageFormat_;
     uint32_t ImagesPerSlot_;
