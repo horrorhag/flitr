@@ -28,6 +28,171 @@
 using namespace flitr;
 using std::shared_ptr;
 
+//=========== Integral Image ==========//
+
+IntegralImage::IntegralImage()
+{}
+
+IntegralImage::~IntegralImage()
+{}
+
+bool IntegralImage::process(float * const dataWriteDS, float const * const dataReadUS,
+                            const size_t width, const size_t height)
+{
+    dataWriteDS[0]=dataReadUS[0];
+    
+    size_t offset=1;
+    
+    for (size_t x=1; x<width; ++x)
+    {
+        dataWriteDS[x]=dataReadUS[x] + dataWriteDS[x-1];
+    }
+    
+    offset=width;
+    for (size_t y=1; y<height; ++y)
+    {
+        dataWriteDS[offset]=dataReadUS[offset] + dataWriteDS[offset - width];
+        offset+=width;
+    }
+    
+    for (size_t y=1; y<height; ++y)
+    {
+        offset=y*width+1;
+        
+        for (size_t x=1; x<width; ++x)
+        {
+            dataWriteDS[offset]=dataReadUS[offset] + dataWriteDS[offset - width] + dataWriteDS[offset - 1] - dataWriteDS[offset - width - 1];
+            ++offset;
+        }
+    }
+    
+    return true;
+}
+
+//=========================================//
+
+
+
+//=========== BoxFilter ==========//
+
+BoxFilter::BoxFilter(const size_t kernelWidth) :
+kernelWidth_(kernelWidth|1)//Make sure the kernel width is odd.
+{}
+
+BoxFilter::~BoxFilter()
+{}
+
+void BoxFilter::setKernelWidth(const int kernelWidth)
+{
+    kernelWidth_=kernelWidth|1;
+}
+
+bool BoxFilter::filter(float * const dataWriteDS, float const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       float * const dataScratch)
+{
+    const size_t widthMinusKernel=width-(kernelWidth_-1);
+    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    const float recipKernelWidth=1.0f/kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            float xFiltValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValue += dataReadUS[(lineOffsetUS + x) + j];
+            }
+            
+            dataScratch[lineOffsetFS + x]=xFiltValue*recipKernelWidth;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValue += dataScratch[(lineOffsetFS + x) + j*width];
+                //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                //                  Is the code memory bandwidth limited?
+            }
+            
+            dataWriteDS[lineOffsetDS + x]=filtValue*recipKernelWidth;
+        }
+    }
+    
+    return true;
+}
+
+//=========================================//
+
+
+
+//=========== BoxFilterII ==========//
+
+BoxFilterII::BoxFilterII(const size_t kernelWidth) :
+kernelWidth_(kernelWidth|1)//Make sure the kernel width is odd.
+{}
+
+BoxFilterII::~BoxFilterII()
+{}
+
+void BoxFilterII::setKernelWidth(const int kernelWidth)
+{
+    kernelWidth_=kernelWidth|1;
+}
+
+bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       float * const dataScratch)
+{
+    integralImage_.process(dataScratch, dataReadUS, width, height);
+
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusKernel=width - kernelWidth_;
+    const size_t heightMinusKernel=height - kernelWidth_;
+    const float recipKernelWidthSq=1.0f / (kernelWidth_*kernelWidth_);
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        size_t lineOffset=(y+halfKernelWidth+1) * width + (halfKernelWidth+1);
+        size_t lineOffsetII=(y+kernelWidth_) * width + kernelWidth_;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            const float c=dataScratch[lineOffsetII]
+            - dataScratch[lineOffsetII - kernelWidth_]
+            - dataScratch[lineOffsetII - width*kernelWidth_]
+            + dataScratch[lineOffsetII - kernelWidth_ - width*kernelWidth_];
+            
+            dataWriteDS[lineOffset]=c * recipKernelWidthSq;
+            
+            ++lineOffset;
+            ++lineOffsetII;
+        }
+    }
+
+    return true;
+}
+
+//=========================================//
+
+
+
 //=========== GaussianFilter ==========//
 
 GaussianFilter::GaussianFilter(const float filterRadius,
@@ -91,44 +256,41 @@ bool GaussianFilter::filter(float * const dataWriteDS, float const * const dataR
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusHalfKernel=width-halfKernelWidth;
     
-    //if (pixelFormat==ImageFormat::FLITR_PIX_FMT_Y_F32)
+    for (size_t y=0; y<height; ++y)
     {
-        for (size_t y=0; y<height; ++y)
-        {
-            const size_t lineOffsetFS=y * width + halfKernelWidth;
-            const size_t lineOffsetUS=y * width;
-            
-            for (size_t x=0; x<widthMinusKernel; ++x)
-            {
-                float xFiltValue=0.0f;
-                
-                for (size_t j=0; j<kernelWidth_; ++j)
-                {
-                    xFiltValue += dataReadUS[(lineOffsetUS + x) + j] * kernel1D_[j];
-                }
-                
-                dataScratch[lineOffsetFS + x]=xFiltValue;
-            }
-        }
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
         
-        for (size_t y=0; y<heightMinusKernel; ++y)
+        for (size_t x=0; x<widthMinusKernel; ++x)
         {
-            const size_t lineOffsetDS=(y + halfKernelWidth) * width;
-            const size_t lineOffsetFS=y * width;
+            float xFiltValue=0.0f;
             
-            for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+            for (size_t j=0; j<kernelWidth_; ++j)
             {
-                float filtValue=0.0f;
-                
-                for (size_t j=0; j<kernelWidth_; ++j)
-                {
-                    filtValue += dataScratch[(lineOffsetFS + x) + j*width] * kernel1D_[j];
-                    //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
-                    //                  Is the code memory bandwidth limited?
-                }
-                
-                dataWriteDS[lineOffsetDS + x]=filtValue;
+                xFiltValue += dataReadUS[(lineOffsetUS + x) + j] * kernel1D_[j];
             }
+            
+            dataScratch[lineOffsetFS + x]=xFiltValue;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValue += dataScratch[(lineOffsetFS + x) + j*width] * kernel1D_[j];
+                //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                //                  Is the code memory bandwidth limited?
+            }
+            
+            dataWriteDS[lineOffsetDS + x]=filtValue;
         }
     }
     
@@ -203,44 +365,41 @@ bool GaussianDownsample::downsample(float * const dataWriteUS, float const * con
     
     const size_t halfKernelWidth=(kernelWidth_>>1);//kernelWidth_ is even!
     
-    //if (pixelFormat==ImageFormat::FLITR_PIX_FMT_Y_F32)
+    for (size_t y=0; y<heightUS; ++y)
     {
-        for (size_t y=0; y<heightUS; ++y)
-        {
-            const size_t lineOffsetFS=y * widthDS + (halfKernelWidth>>1);
-            const size_t lineOffsetUS=y * widthUS;
-            
-            for (size_t xUS=0; xUS<widthUSMinusKernel; xUS+=2)
-            {
-                float xFiltValue=0.0f;
-                
-                for (size_t j=0; j<kernelWidth_; ++j)
-                {
-                    xFiltValue+=dataReadUS[(lineOffsetUS + xUS) + j] * kernel1D_[j];
-                }
-                
-                dataScratch[lineOffsetFS + (xUS>>1)]=xFiltValue;
-            }
-        }
+        const size_t lineOffsetFS=y * widthDS + (halfKernelWidth>>1);
+        const size_t lineOffsetUS=y * widthUS;
         
-        for (size_t y=0; y<heightUSMinusKernel; y+=2)
+        for (size_t xUS=0; xUS<widthUSMinusKernel; xUS+=2)
         {
-            const size_t lineOffsetDS=((y>>1) + (halfKernelWidth>>1)) * widthDS;
-            const size_t lineOffsetFS=y * widthDS;
+            float xFiltValue=0.0f;
             
-            for (size_t xFS=0; xFS<widthDS; ++xFS)
+            for (size_t j=0; j<kernelWidth_; ++j)
             {
-                float filtValue=0.0f;
-                
-                for (size_t j=0; j<kernelWidth_; ++j)
-                {
-                    filtValue+=dataScratch[(lineOffsetFS + xFS) + j*widthDS] * kernel1D_[j];
-                    //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
-                    //                  Is the code memory bandwidth limited?
-                }
-                
-                dataWriteUS[lineOffsetDS + xFS]=filtValue;
+                xFiltValue+=dataReadUS[(lineOffsetUS + xUS) + j] * kernel1D_[j];
             }
+            
+            dataScratch[lineOffsetFS + (xUS>>1)]=xFiltValue;
+        }
+    }
+    
+    for (size_t y=0; y<heightUSMinusKernel; y+=2)
+    {
+        const size_t lineOffsetDS=((y>>1) + (halfKernelWidth>>1)) * widthDS;
+        const size_t lineOffsetFS=y * widthDS;
+        
+        for (size_t xFS=0; xFS<widthDS; ++xFS)
+        {
+            float filtValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValue+=dataScratch[(lineOffsetFS + xFS) + j*widthDS] * kernel1D_[j];
+                //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                //                  Is the code memory bandwidth limited?
+            }
+            
+            dataWriteUS[lineOffsetDS + xFS]=filtValue;
         }
     }
     

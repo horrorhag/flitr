@@ -103,8 +103,8 @@ bool FIPLKDewarp::init()
         //const ptrdiff_t croppedHeight=1 << ((int)log2f(height));
         //=== ===
         
-        scratchData_=new float[(width*height)<<1];
-        memset(scratchData_, 0, ((width*height)<<1)*sizeof(float));
+        scratchData_=new float[width*height];
+        memset(scratchData_, 0, (width*height)*sizeof(float));
         
         inputImgData_=new float[croppedWidth*croppedHeight];
         memset(inputImgData_, 0, croppedWidth*croppedHeight*sizeof(float));

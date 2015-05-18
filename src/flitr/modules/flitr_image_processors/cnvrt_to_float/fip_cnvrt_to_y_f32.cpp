@@ -18,35 +18,32 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb8.h>
-
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 
 using namespace flitr;
 using std::shared_ptr;
 
-FIPConvertToRGB8::FIPConvertToRGB8(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                                   float scale_factor,
-                                   uint32_t buffer_size) :
-ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-scaleFactor_(scale_factor)
+FIPConvertToYF32::FIPConvertToYF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                                 uint32_t buffer_size) :
+    ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
 {
     
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
         ImageFormat downStreamFormat(upStreamProducer.getFormat().getWidth(), upStreamProducer.getFormat().getHeight(),
-                                     ImageFormat::FLITR_PIX_FMT_RGB_8);
+                                     ImageFormat::FLITR_PIX_FMT_Y_F32);
         
         ImageFormat_.push_back(downStreamFormat);
     }
     
 }
 
-FIPConvertToRGB8::~FIPConvertToRGB8()
+FIPConvertToYF32::~FIPConvertToYF32()
 {
 }
 
-bool FIPConvertToRGB8::init()
+bool FIPConvertToYF32::init()
 {
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
@@ -54,7 +51,7 @@ bool FIPConvertToRGB8::init()
     return rValue;
 }
 
-bool FIPConvertToRGB8::trigger()
+bool FIPConvertToYF32::trigger()
 {
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {//There are images to consume and the downstream producer has space to produce.
@@ -69,35 +66,45 @@ bool FIPConvertToRGB8::trigger()
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
-            uint8_t * const dataWrite=imWrite->data();
+            uint8_t const * const dataRead=imRead->data();
+            
+            float * const dataWrite=(float *)imWrite->data();
             
             const ImageFormat imFormatUS=getUpstreamFormat(imgNum);
             
             const size_t width=imFormatUS.getWidth();
             const size_t height=imFormatUS.getHeight();
-            
-            if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+
+            if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_8)
             {
-                float const * const dataRead=(float *)imRead->data();
-                
                 for (size_t y=0; y<height; ++y)
                 {
-                    size_t offset=(y * width) * 3;
-                    
+                    const size_t lineOffset=y * width;
+
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float R=dataRead[offset + 0]*(256.0f*scaleFactor_);
-                        const float G=dataRead[offset + 1]*(256.0f*scaleFactor_);
-                        const float B=dataRead[offset + 2]*(256.0f*scaleFactor_);
-                        
-                        dataWrite[offset + 0]=(R>=255.0f)?((uint8_t)255):((R<=0.0f)?((uint8_t)0):R);
-                        dataWrite[offset + 1]=(G>=255.0f)?((uint8_t)255):((G<=0.0f)?((uint8_t)0):G);
-                        dataWrite[offset + 2]=(B>=255.0f)?((uint8_t)255):((B<=0.0f)?((uint8_t)0):B);
-                        
-                        offset+=3;
+                        dataWrite[lineOffset + x]=((float)dataRead[lineOffset + x]) * 0.00390625f; // /256.0
                     }
                 }
-            }
+            } else
+                if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_8)
+                {
+                    for (size_t y=0; y<height; ++y)
+                    {
+                        const size_t lineOffset=y * width;
+                        size_t readOffset=lineOffset*3+1;
+
+                        for (size_t x=0; x<width; ++x)
+                        {
+                            float dw=((float)dataRead[readOffset]) * (0.00390625f*0.33333333333f); // /(256.0*3.0)
+                            dw+=((float)dataRead[readOffset+1]) * (0.00390625f*0.33333333333f); // /(256.0*3.0)
+                            dw+=((float)dataRead[readOffset+2]) * (0.00390625f*0.33333333333f); // /(256.0*3.0)
+                            
+                            dataWrite[lineOffset + x]=dw;
+                            readOffset+=3;
+                        }
+                    }
+                }
         }
         
         //Stop stats measurement event.
@@ -108,7 +115,6 @@ bool FIPConvertToRGB8::trigger()
         
         return true;
     }
-    
     return false;
 }
 

@@ -191,10 +191,10 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/crop/fip_crop.cpp
   src/flitr/modules/flitr_image_processors/msr/fip_msr.cpp
   src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
-  src/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_f32.cpp
-  src/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_m8.cpp
-  src/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb32.cpp
-  src/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb8.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.cpp
   src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
@@ -294,10 +294,10 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/flip/fip_flip.h
   include/flitr/modules/flitr_image_processors/rotate/fip_rotate.h
   include/flitr/modules/flitr_image_processors/dpt/fip_dpt.h
-  include/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_f32.h
-  include/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_m8.h
-  include/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb32.h
-  include/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb8.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h
   include/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h
   include/flitr/modules/flitr_image_processors/msr/fip_msr.h
   include/flitr/modules/flitr_image_processors/crop/fip_crop.h
@@ -395,6 +395,7 @@ ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 
+ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)

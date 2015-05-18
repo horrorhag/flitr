@@ -10,8 +10,12 @@
 #include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
 #include <flitr/modules/flitr_image_processors/transform2D/fip_transform2D.h>
 
+#include <flitr/modules/flitr_image_processors/msr/fip_msr.h>
+
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
 
 #include <flitr/ffmpeg_producer.h>
@@ -62,7 +66,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY, 5));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -73,42 +77,39 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    const float theta=(45.0f / 180.0f) * float(M_PI);
-    const float scale=0.35f;
-    
-    shared_ptr<FIPTransform2D> transform(new FIPTransform2D(*ip, 1, {{scale*cosf(theta), scale*sinf(theta), -scale*sinf(theta), scale*cosf(theta)}}, 1));
-    if (!transform->init())
-    {
-        std::cerr << "Could not initialise the transform2D processor.\n";
+    shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 1));
+    if (!cnvrtToRGBF32->init()) {
+        std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
         exit(-1);
     }
-    transform->startTriggerThread();
-
-
-    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*transform, 1, 1));
-    if (!cnvrtToYF32->init()) {
-        std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
+    cnvrtToRGBF32->startTriggerThread();
+    
+    
+    shared_ptr<FIPMSR> msr(new FIPMSR(*cnvrtToRGBF32, 1, 1));
+    if (!msr->init()) {
+        std::cerr << "Could not initialise the msr image processor.\n";
         exit(-1);
     }
-    cnvrtToYF32->startTriggerThread();
+    msr->startTriggerThread();
     
     
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToYF32, 1, 4, 1));
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*msr, 1, 1, 1));
     if (!averageImage->init()) {
         std::cerr << "Could not initialise the average image processor.\n";
         exit(-1);
     }
     averageImage->startTriggerThread();
     
-    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*averageImage, 1, 0.95f, 1));
-    if (!cnvrtToY8->init()) {
-        std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
+    
+    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*averageImage, 1, 0.95f, 1));
+    if (!cnvrtToRGB8->init()) {
+        std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
         exit(-1);
     }
-    cnvrtToY8->startTriggerThread();
+    cnvrtToRGB8->startTriggerThread();
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1, 1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
@@ -194,7 +195,7 @@ int main(int argc, char *argv[])
         
         if (osgc->getNext()) renderFrame=true;
         if (osgcOrig->getNext()) renderFrame=true;
-
+        
         if (renderFrame)
         {
             viewer.frame();
@@ -221,10 +222,10 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    transform->stopTriggerThread();
-    cnvrtToYF32->stopTriggerThread();
+    cnvrtToRGBF32->stopTriggerThread();
+    msr->stopTriggerThread();
     averageImage->stopTriggerThread();
-    cnvrtToY8->stopTriggerThread();
+    cnvrtToRGB8->stopTriggerThread();
     
     return 0;
 }

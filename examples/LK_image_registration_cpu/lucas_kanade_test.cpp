@@ -9,9 +9,9 @@
 #include <flitr/modules/geometry_overlays/points_overlay.h>
 
 #include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
-#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
-#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_m8.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
 #include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
 #include <flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h>
@@ -94,17 +94,17 @@ int main(int argc, char *argv[])
     
     
     //==
-    shared_ptr<FIPConvertToF32> cnvrtToF32(new FIPConvertToF32(*ip, 1, 2));
-    if (!cnvrtToF32->init())
+    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*ip, 1, 2));
+    if (!cnvrtToYF32->init())
     {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
     }
-    cnvrtToF32->startTriggerThread();
+    cnvrtToYF32->startTriggerThread();
     
 /*
     //==
-    shared_ptr<FIPCameraShake> cameraShake(new FIPCameraShake(*cnvrtToF32, 1,
+    shared_ptr<FIPCameraShake> cameraShake(new FIPCameraShake(*cnvrtToYF32, 1,
                                                               3.0f, 30, //Kernel width is required to be >> than SD.
                                                               2));
     if (!cameraShake->init())
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 */
     
     //==
-    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToF32, 1,
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1,
                                                               FIPLKStabilise::Mode::INTSTAB,
                                                               2));
     if (!lkstabilise->init())
@@ -174,13 +174,13 @@ int main(int argc, char *argv[])
     
 /*
     //==
-    shared_ptr<FIPConvertToM8> cnvrtToM8(new FIPConvertToM8(*lkstabilise, 1, 0.95f, 2));
-    if (!cnvrtToM8->init())
+    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkstabilise, 1, 0.95f, 2));
+    if (!cnvrtToY8->init())
     {
-        std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
+        std::cerr << "Could not initialise the cnvrtToY8 processor.\n";
         exit(-1);
     }
-    cnvrtToM8->startTriggerThread();
+    cnvrtToY8->startTriggerThread();
 */    
     
     
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
     
 /*
     //==
-    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
+    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToY8,1));
     if (!mffc->init())
     {
         std::cerr << "Could not init FFmpeg consumer\n";
@@ -346,13 +346,13 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    cnvrtToF32->stopTriggerThread();
+    cnvrtToYF32->stopTriggerThread();
     //crop->stopTriggerThread();
     //cameraShake->stopTriggerThread();
     //gaussianDownsample->stopTriggerThread();
     //gaussianFilter0->stopTriggerThread();
     lkstabilise->stopTriggerThread();
-    //cnvrtToM8->stopTriggerThread();
+    //cnvrtToY8->stopTriggerThread();
     
     return 0;
 }

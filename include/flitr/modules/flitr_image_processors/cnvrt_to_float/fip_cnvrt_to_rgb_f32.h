@@ -18,15 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_CNVRT_TO_M8_H
-#define FIP_CNVRT_TO_M8_H 1
+#ifndef FIP_CNVRT_TO_RGBF32_H
+#define FIP_CNVRT_TO_RGBF32_H 1
 
 #include <flitr/image_processor.h>
 
 namespace flitr {
     
-    /*! Converts image to uint8 with a pre-scale.*/
-    class FLITR_EXPORT FIPConvertToM8 : public ImageProcessor
+    /*! Converts image to float RGB F32 format. */
+    class FLITR_EXPORT FIPConvertToRGBF32 : public ImageProcessor
     {
     public:
         
@@ -34,12 +34,11 @@ namespace flitr {
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPConvertToM8(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                       float scale_factor,
+        FIPConvertToRGBF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPConvertToM8();
+        virtual ~FIPConvertToRGBF32();
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -50,9 +49,8 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        const float scaleFactor_;
     };
     
 }
 
-#endif //FIP_CNVRT_TO_M8_H
+#endif //FIP_CNVRT_TO_RGBF32_H
