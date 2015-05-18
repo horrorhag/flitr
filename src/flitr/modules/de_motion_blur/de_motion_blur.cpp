@@ -60,19 +60,19 @@ bool DeMotionBlur::trigger()
         unsigned int i=0;
         for (i=0; i<ImagesPerSlot_; i++)
         {
-            Image const * const imRead = *(imvRead[i]);
-            Image * const imWrite = *(imvWrite[i]);
+//            Image const * const imRead = *(imvRead[i]);
+//            Image * const imWrite = *(imvWrite[i]);
 
-            const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
-            const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
+//            const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
+//            const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
 
-            const uint32_t width=imFormat.getWidth();
-            const uint32_t height=imFormat.getHeight();
-            const uint32_t bytesPerPixel=imFormat.getBytesPerPixel();
-            uint8_t const * const dataRead=imRead->data();
-            uint8_t * const dataWrite=imWrite->data();
+//            const uint32_t width=imFormat.getWidth();
+//            const uint32_t height=imFormat.getHeight();
+//            const uint32_t bytesPerPixel=imFormat.getBytesPerPixel();
+//            uint8_t const * const dataRead=imRead->data();
+//            uint8_t * const dataWrite=imWrite->data();
 
-            uint32_t offset=0;
+//            uint32_t offset=0;
 
 
             //Do image processing here...

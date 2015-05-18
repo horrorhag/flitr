@@ -80,19 +80,14 @@ bool FIPConvertToM8::trigger()
             {
                 float const * const dataRead=(float *)imRead->data();
                 
-                size_t y=0;
+                for (size_t y=0; y<height; ++y)
                 {
+                    const size_t lineOffset=y * width;
+                    
+                    for (size_t x=0; x<width; ++x)
                     {
-                        for (y=0; y<height; ++y)
-                        {
-                            const size_t lineOffset=y * width;
-                            
-                            for (size_t x=0; x<width; ++x)
-                            {
-                                float writeValue=dataRead[lineOffset + x]*(256.0f*scaleFactor_);
-                                dataWrite[lineOffset + x]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):writeValue);
-                            }
-                        }
+                        const float writeValue=dataRead[lineOffset + x]*(256.0f*scaleFactor_);
+                        dataWrite[lineOffset + x]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):writeValue);
                     }
                 }
             }

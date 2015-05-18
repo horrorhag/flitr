@@ -142,6 +142,12 @@ bool TMultiOSGConsumer<T>::init()
                                            1,
                                            GL_RGB, GL_FLOAT);
             break;
+        case ImageFormat::FLITR_PIX_FMT_RGB_F32:
+                DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                                               ImageFormat_[i].getHeight(),
+                                               1,
+                                               GL_RGB, GL_FLOAT);
+            break;
         default:
             // \todo report error
             break;
@@ -203,6 +209,14 @@ bool TMultiOSGConsumer<T>::init()
                                            GL_RGB32F_ARB, GL_LUMINANCE, GL_FLOAT,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
+                break;
+            case ImageFormat::FLITR_PIX_FMT_RGB_F32:
+                    OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                                               ImageFormat_[i].getHeight(),
+                                               1,
+                                               GL_RGB32F_ARB, GL_RGB, GL_FLOAT,
+                                               DummyImages_[i]->data(),
+                                               osg::Image::NO_DELETE);
                 break;
             default:
                 // \todo report error
@@ -336,6 +350,14 @@ bool TMultiOSGConsumer<T>::getNext()
                                                           GL_LUMINANCE32F_ARB, GL_LUMINANCE, GL_FLOAT,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
+                break;
+            case ImageFormat::FLITR_PIX_FMT_RGB_F32:
+                    OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                                                              ImageFormat_[i].getHeight(),
+                                                              1,
+                                                              GL_RGB32F_ARB, GL_RGB, GL_FLOAT,
+                                                              im->data(),
+                                                              osg::Image::NO_DELETE);
                 break;
             default:
                 // \todo report error

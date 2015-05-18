@@ -25,7 +25,7 @@
 
 namespace flitr {
     
-    /*! Converts image to uint8 with a pre-scale. Currently assumes float F32 input! */
+    /*! Converts image to uint8 with a pre-scale.*/
     class FLITR_EXPORT FIPConvertToM8 : public ImageProcessor
     {
     public:
@@ -55,4 +55,4 @@ namespace flitr {
     
 }
 
-#endif //FIP_CNVRT_TO_F32_H
+#endif //FIP_CNVRT_TO_M8_H

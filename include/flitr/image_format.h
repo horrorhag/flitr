@@ -41,7 +41,8 @@ namespace flitr {
             FLITR_PIX_FMT_UNDF = 4,
             FLITR_PIX_FMT_BGR = 5,//should really be FLITR_PIX_FMT_BGR_8
             FLITR_PIX_FMT_BGRA = 6,//should really be FLITR_PIX_FMT_BGRA_8
-            FLITR_PIX_FMT_Y_F32 = 7
+            FLITR_PIX_FMT_Y_F32 = 7,
+            FLITR_PIX_FMT_RGB_F32 = 8
         };
         
         
@@ -129,7 +130,16 @@ namespace flitr {
                         break;
                     case FLITR_PIX_FMT_Y_F32:
                     {
-                        *((float*)outData)=((*inData)+0.5f)/256.0f;
+                        *((float*)outData)=((*inData)+0.5f) * 0.00390625f;// / 256.0f
+                    }
+                        break;
+                    case FLITR_PIX_FMT_RGB_F32:
+                    {
+                        const float fc=((*inData)+0.5f) * 0.00390625f;// / 256.0f;
+                        
+                        *(((float*)outData) + 0)=fc;
+                        *(((float*)outData) + 1)=fc;
+                        *(((float*)outData) + 2)=fc;
                     }
                         break;
                     default:
@@ -183,7 +193,14 @@ namespace flitr {
                     {
                         *((float*)outData)=(( ((uint16_t)(*(inData+0)))+
                                             ((uint16_t)(*(inData+1)))+
-                                            ((uint16_t)(*(inData+2))) )+1.5f)/(3.0f*256.0f);
+                                            ((uint16_t)(*(inData+2))) )+1.5f)*(0.333333333f*0.00390625f);
+                    }
+                        break;
+                    case FLITR_PIX_FMT_RGB_F32:
+                    {
+                        *(((float*)outData) + 0)=(*(inData+0) + 0.5f)*(0.333333333f*0.00390625f);
+                        *(((float*)outData) + 1)=(*(inData+1) + 0.5f)*(0.333333333f*0.00390625f);
+                        *(((float*)outData) + 2)=(*(inData+2) + 0.5f)*(0.333333333f*0.00390625f);
                     }
                         break;
                     default:
@@ -228,7 +245,15 @@ namespace flitr {
                         break;
                     case FLITR_PIX_FMT_Y_F32:
                     {
-                        *((float*)outData)=((*((uint16_t *)inData))+0.5f)/65536.0f;
+                        *((float*)outData)=((*((uint16_t *)inData))+0.5f) * 0.000015258789f;// / 655636.0f
+                    }
+                        break;
+                    case FLITR_PIX_FMT_RGB_F32:
+                    {
+                        const float fc=((*((uint16_t *)inData))+0.5f) * 0.000015258789f;// / 655636.0f
+                        *(((float*)outData) + 0)=fc;
+                        *(((float*)outData) + 1)=fc;
+                        *(((float*)outData) + 2)=fc;
                     }
                         break;
                     default:
@@ -285,6 +310,93 @@ namespace flitr {
                         *((float*)outData)=*((float*)inData);
                     }
                         break;
+                    case FLITR_PIX_FMT_RGB_F32:
+                    {
+                        const float fc=*((float*)inData);
+                        *(((float*)outData) + 0)=fc;
+                        *(((float*)outData) + 1)=fc;
+                        *(((float*)outData) + 2)=fc;
+                    }
+                        break;
+                    default:
+                        //! @todo maybe return error
+                        break;
+                }
+                    break;
+                    
+                case FLITR_PIX_FMT_RGB_F32:
+                    switch (outFormat)
+                {
+                    case FLITR_PIX_FMT_Y_8:
+                    {
+                        const float R=(*(((float *)inData) + 0));
+                        const float G=(*(((float *)inData) + 1));
+                        const float B=(*(((float *)inData) + 2));
+                        const float Y=(R+G+B) * (256.0f*0.333333333333f);
+                        
+                        *outData=(Y<256.0f) ? ((Y>=0.0f ? ((uint8_t)Y) : ((uint8_t)0) )) : ((uint8_t)255);
+                    }
+                        break;
+                    case FLITR_PIX_FMT_RGB_8:
+                    {
+                        const float R=(*(((float *)inData) + 0)) * 256.0f;
+                        const float G=(*(((float *)inData) + 1)) * 256.0f;
+                        const float B=(*(((float *)inData) + 2)) * 256.0f;
+                        
+                        *(outData+0)=(R<256.0f) ? ((R>=0.0f ? ((uint8_t)R) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+1)=(G<256.0f) ? ((G>=0.0f ? ((uint8_t)G) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+2)=(B<256.0f) ? ((B>=0.0f ? ((uint8_t)B) : ((uint8_t)0) )) : ((uint8_t)255);;
+                    }
+                        break;
+                    case FLITR_PIX_FMT_Y_16:
+                    {
+                        const float R=(*(((float *)inData) + 0));
+                        const float G=(*(((float *)inData) + 1));
+                        const float B=(*(((float *)inData) + 2));
+                        const float Y=(R+G+B) * (65536.0f*0.333333333333f);
+                        
+                        *((uint16_t *)outData)=(Y<65536.0f) ? ((Y>=0.0f ? ((uint16_t)Y) : ((uint16_t)0) )) : ((uint16_t)65535);
+                    }
+                        break;
+                    case FLITR_PIX_FMT_BGR:
+                    {
+                        const float R=(*(((float *)inData) + 0)) * 256.0f;
+                        const float G=(*(((float *)inData) + 1)) * 256.0f;
+                        const float B=(*(((float *)inData) + 2)) * 256.0f;
+                        
+                        *(outData+2)=(R<256.0f) ? ((R>=0.0f ? ((uint8_t)R) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+1)=(G<256.0f) ? ((G>=0.0f ? ((uint8_t)G) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+0)=(B<256.0f) ? ((B>=0.0f ? ((uint8_t)B) : ((uint8_t)0) )) : ((uint8_t)255);;
+                    }
+                        break;
+                    case FLITR_PIX_FMT_BGRA:
+                    {
+                        const float R=(*(((float *)inData) + 0)) * 256.0f;
+                        const float G=(*(((float *)inData) + 1)) * 256.0f;
+                        const float B=(*(((float *)inData) + 2)) * 256.0f;
+                        
+                        *(outData+2)=(R<256.0f) ? ((R>=0.0f ? ((uint8_t)R) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+1)=(G<256.0f) ? ((G>=0.0f ? ((uint8_t)G) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+0)=(B<256.0f) ? ((B>=0.0f ? ((uint8_t)B) : ((uint8_t)0) )) : ((uint8_t)255);;
+                        *(outData+3)=(uint8_t)255;
+                    }
+                        break;
+                    case FLITR_PIX_FMT_Y_F32:
+                    {
+                        const float R=(*(((float *)inData) + 0));
+                        const float G=(*(((float *)inData) + 1));
+                        const float B=(*(((float *)inData) + 2));
+                        
+                        *((float*)outData)=(R+G+B) * 0.333333333333f;
+                    }
+                        break;
+                    case FLITR_PIX_FMT_RGB_F32:
+                    {
+                        *(((float*)outData) + 0)=(*(((float *)inData) + 0));
+                        *(((float*)outData) + 1)=(*(((float *)inData) + 1));
+                        *(((float*)outData) + 2)=(*(((float *)inData) + 2));
+                    }
+                        break;
                     default:
                         //! @todo maybe return error
                         break;
@@ -333,6 +445,9 @@ namespace flitr {
                 case FLITR_PIX_FMT_Y_F32:
                     BytesPerPixel_ = 4;
                     break;
+                case FLITR_PIX_FMT_RGB_F32:
+                    BytesPerPixel_ = 12;
+                    break;
                 default:
                     //! @todo maybe return error
                     BytesPerPixel_ = 1;
@@ -360,6 +475,9 @@ namespace flitr {
                     break;
                 case FLITR_PIX_FMT_Y_F32:
                     ComponentsPerPixel_ = 1;
+                    break;
+                case FLITR_PIX_FMT_RGB_F32:
+                    ComponentsPerPixel_ = 3;
                     break;
                 default:
                     //! @todo maybe return error

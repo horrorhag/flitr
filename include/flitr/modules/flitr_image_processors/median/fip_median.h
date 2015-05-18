@@ -18,27 +18,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_CNVRT_TO_F32_H
-#define FIP_CNVRT_TO_F32_H 1
+#ifndef FIP_MEDIAN_H
+#define FIP_MEDIAN_H 1
 
 #include <flitr/image_processor.h>
 
 namespace flitr {
     
-    /*! Converts image to float F32 format. */
-    class FLITR_EXPORT FIPConvertToF32 : public ImageProcessor
+    
+    /*! Compute Median of image. Currently assumes 8-bit mono input! */
+    class FLITR_EXPORT FIPMedian : public ImageProcessor
     {
     public:
         
         /*! Constructor given the upstream producer.
-         *@param upStreamProducer The upstream image producer.
+         *@param producer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                        uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+        FIPMedian(ImageProducer& upStreamProducer, uint32_t filterSize,
+               uint32_t images_per_slot,
+               uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPConvertToF32();
+        virtual ~FIPMedian();
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -49,8 +51,9 @@ namespace flitr {
         virtual bool trigger();
         
     private:
+        uint32_t filterSize_;
     };
     
 }
 
-#endif //FIP_CNVRT_TO_F32_H
+#endif //FIP_DPT_H
