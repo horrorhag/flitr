@@ -26,7 +26,8 @@ using std::shared_ptr;
 FIPMSR::FIPMSR(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-scratchData_(nullptr)
+scratchData_(nullptr),
+scratchData2_(nullptr)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -42,6 +43,7 @@ scratchData_(nullptr)
 FIPMSR::~FIPMSR()
 {
     delete [] scratchData_;
+    delete [] scratchData2_;
     
     for (uint32_t i=0; i<ImagesPerSlot_; ++i)
     {
@@ -62,9 +64,9 @@ bool FIPMSR::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    GFVec_.emplace_back(10.0f, 30);
-    GFVec_.emplace_back(30.0f, 90);
-    GFVec_.emplace_back(90.0f, 270);
+    GFVec_.emplace_back(15);
+    GFVec_.emplace_back(45);
+    GFVec_.emplace_back(135);
     
     size_t maxWidth=0;
     size_t maxHeight=0;
@@ -98,6 +100,9 @@ bool FIPMSR::init()
     
     scratchData_=new float[maxWidth*maxHeight];
     memset(scratchData_, 0, maxWidth*maxHeight*sizeof(float));
+    
+    scratchData2_=new float[maxWidth*maxHeight];
+    memset(scratchData2_, 0, maxWidth*maxHeight*sizeof(float));
     
     return rValue;
 }
@@ -160,6 +165,13 @@ bool FIPMSR::trigger()
                 for (size_t scaleIndex=0; scaleIndex<numScales; ++scaleIndex)
                 {
                     GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], F32Image, width, height, scratchData_);
+
+                    //Approximate Gaussian filt kernel...
+                    for (int i=0; i<2; ++i)
+                    {
+                        memcpy(scratchData2_, GFF32ImageVecVec_[imgNum][scaleIndex], width*height*sizeof(float));
+                        GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], scratchData2_, width, height, scratchData_);
+                    }
                 }
             }
             //=== ===

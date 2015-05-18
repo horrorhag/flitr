@@ -18,15 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_CNVRT_TO_F32_H
-#define FIP_CNVRT_TO_F32_H 1
+#ifndef FIP_CNVRT_TO_YF32_H
+#define FIP_CNVRT_TO_YF32_H 1
 
 #include <flitr/image_processor.h>
 
 namespace flitr {
     
     /*! Converts image to float F32 format. */
-    class FLITR_EXPORT FIPConvertToF32 : public ImageProcessor
+    class FLITR_EXPORT FIPConvertToYF32 : public ImageProcessor
     {
     public:
         
@@ -34,11 +34,11 @@ namespace flitr {
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+        FIPConvertToYF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPConvertToF32();
+        virtual ~FIPConvertToYF32();
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -53,4 +53,4 @@ namespace flitr {
     
 }
 
-#endif //FIP_CNVRT_TO_F32_H
+#endif //FIP_CNVRT_TO_YF32_H

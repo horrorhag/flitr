@@ -26,7 +26,7 @@
 
 namespace flitr {
     
-    /*! Converts image to rgb8 with a pre-scale.*/
+    /*! Multi-Scale Retinex Implementation.*/
     class FLITR_EXPORT FIPMSR : public ImageProcessor
     {
     public:
@@ -53,12 +53,13 @@ namespace flitr {
         /*! The grayscale image per slot. */
         std::vector<float *> F32ImageVec_;
 
-        std::vector<GaussianFilter> GFVec_;
+        std::vector<BoxFilterII> GFVec_;
         std::vector<std::vector<float *> > GFF32ImageVecVec_;
         
         float *scratchData_;
+        float *scratchData2_;
     };
     
 }
 
-#endif //FIP_CNVRT_TO_RGB8_H
+#endif //FIP_MSR_H

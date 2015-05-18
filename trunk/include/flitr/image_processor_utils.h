@@ -25,6 +25,130 @@
 #include <flitr/flitr_export.h>
 
 namespace flitr {
+    //! General purpose Integral image. Should be moved to FLITR_FIP_UTILS or similar.
+    class FLITR_EXPORT IntegralImage
+    {
+    public:
+        
+        IntegralImage();
+        
+        /*! Virtual destructor */
+        virtual ~IntegralImage();
+        
+        //! Copy constructor
+        IntegralImage(const IntegralImage& rh)
+        {}
+        
+        //! Assignment operator
+        IntegralImage& operator=(const IntegralImage& rh)
+        {
+            return *this;
+        }
+        
+        /*!Synchronous process method.*/
+        virtual bool process(float * const dataWriteDS, float const * const dataReadUS,
+                            const size_t width, const size_t height);
+        
+        /*!Synchronous process method.*/
+        //virtual bool processRGB(float * const dataWriteDS, float const * const dataReadUS,
+        //                       const size_t width, const size_t height);
+    };
+    
+    
+    //! General purpose Box filter. Should be moved to FLITR_FIP_UTILS or similar.
+    class FLITR_EXPORT BoxFilter
+    {
+    public:
+        
+        BoxFilter(const size_t kernelWidth//Width of filter kernel in pixels in US image.
+        );
+        
+        /*! Virtual destructor */
+        virtual ~BoxFilter();
+        
+        //! Copy constructor
+        BoxFilter(const BoxFilter& rh) :
+        kernelWidth_(rh.kernelWidth_)
+        {}
+        
+        //! Assignment operator
+        BoxFilter& operator=(const BoxFilter& rh)
+        {
+            if (this == &rh)
+            {
+                return *this;
+            }
+            
+            kernelWidth_=rh.kernelWidth_;
+            
+            return *this;
+        }
+        
+        virtual void setKernelWidth(const int kernelWidth);
+        
+        /*!Synchronous process method.*/
+        virtual bool filter(float * const dataWriteDS, float const * const dataReadUS,
+                            const size_t width, const size_t height,
+                            float * const dataScratch);
+        
+        /*!Synchronous process method.*/
+        //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+        //                       const size_t width, const size_t height,
+        //                       float * const dataScratch);
+        
+    private:
+        size_t kernelWidth_;
+    };
+    
+    
+    //! General purpose Box filter USING AN INTEGRAL IMAGE. Should be moved to FLITR_FIP_UTILS or similar.
+    class FLITR_EXPORT BoxFilterII
+    {
+    public:
+        
+        BoxFilterII(const size_t kernelWidth//Width of filter kernel in pixels in US image.
+        );
+        
+        /*! Virtual destructor */
+        virtual ~BoxFilterII();
+        
+        //! Copy constructor
+        BoxFilterII(const BoxFilterII& rh) :
+        kernelWidth_(rh.kernelWidth_)
+        {}
+        
+        //! Assignment operator
+        BoxFilterII& operator=(const BoxFilterII& rh)
+        {
+            if (this == &rh)
+            {
+                return *this;
+            }
+            
+            kernelWidth_=rh.kernelWidth_;
+            
+            return *this;
+        }
+        
+        virtual void setKernelWidth(const int kernelWidth);
+        
+        /*!Synchronous process method.*/
+        virtual bool filter(float * const dataWriteDS, float const * const dataReadUS,
+                            const size_t width, const size_t height,
+                            float * const dataScratch);
+        
+        /*!Synchronous process method.*/
+        //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+        //                       const size_t width, const size_t height,
+        //                       float * const dataScratch);
+        
+    private:
+        size_t kernelWidth_;
+        
+        IntegralImage integralImage_;
+    };
+    
+    
     //! General purpose Gaussial filter. Should be moved to FLITR_FIP_UTILS or similar.
     class FLITR_EXPORT GaussianFilter
     {
