@@ -18,31 +18,35 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/modules/flitr_image_processors/transform2D/fip_transform2D.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_rgb8.h>
+
 
 using namespace flitr;
 using std::shared_ptr;
 
-FIPTransform2D::FIPTransform2D(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                               const std::vector<M2D> transformVect,
-                               uint32_t buffer_size) :
+FIPConvertToRGB8::FIPConvertToRGB8(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                                   float scale_factor,
+                                   uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-transformVect_(transformVect)
+scaleFactor_(scale_factor)
 {
     
     //Setup image format being produced to downstream.
-    for (uint32_t i=0; i<images_per_slot; i++)
-    {
-        ImageFormat_.push_back(upStreamProducer.getFormat(i));
+    for (uint32_t i=0; i<images_per_slot; i++) {
+        //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
+        ImageFormat downStreamFormat(upStreamProducer.getFormat().getWidth(), upStreamProducer.getFormat().getHeight(),
+                                     ImageFormat::FLITR_PIX_FMT_RGB_8);
+        
+        ImageFormat_.push_back(downStreamFormat);
     }
     
 }
 
-FIPTransform2D::~FIPTransform2D()
+FIPConvertToRGB8::~FIPConvertToRGB8()
 {
 }
 
-bool FIPTransform2D::init()
+bool FIPConvertToRGB8::init()
 {
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
@@ -50,7 +54,7 @@ bool FIPTransform2D::init()
     return rValue;
 }
 
-bool FIPTransform2D::trigger()
+bool FIPConvertToRGB8::trigger()
 {
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {//There are images to consume and the downstream producer has space to produce.
@@ -65,44 +69,36 @@ bool FIPTransform2D::trigger()
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
-            uint8_t const * const dataRead=(uint8_t const * const)imRead->data();
-            uint8_t * const dataWrite=(uint8_t * const )imWrite->data();
+            uint8_t * const dataWrite=imWrite->data();
             
             const ImageFormat imFormatUS=getUpstreamFormat(imgNum);
-            const ImageFormat imFormatDS=getDownstreamFormat(imgNum);
             
-            const int widthUS=imFormatUS.getWidth();
-            //const int heightUS=imFormatUS.getHeight();
-            const int widthDS=imFormatDS.getWidth();
-            const int heightDS=imFormatDS.getHeight();
+            const size_t width=imFormatUS.getWidth();
+            const size_t height=imFormatUS.getHeight();
             
-            const float halfWidthDS=widthDS * 0.5f;
-            const float halfHeightDS=heightDS * 0.5f;
-            
-            const M2D transform=transformVect_[imgNum];
-            
-            const int bytesPerPixel=imFormatUS.getBytesPerPixel();
-            
-            for (int y=0; y<heightDS; ++y)
+            if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
             {
-                int writeOffset=(y*widthDS)*bytesPerPixel;
+                float const * const dataRead=(float *)imRead->data();
                 
-                for (int x=0; x<widthDS; ++x)
+                for (size_t y=0; y<height; ++y)
                 {
-                    const float cx = x-halfWidthDS;
-                    const float cy = y-halfHeightDS;
+                    size_t offset=(y * width) * 3;
                     
-                    const float s=(cx*transform.a_) + (cy*transform.b_) + halfWidthDS;
-                    const float t=(cx*transform.c_) + (cy*transform.d_) + halfHeightDS;
-                    
-                    const int readOffset=(int(s+0.5f) + int(t+0.5f)*widthUS)*bytesPerPixel;
-                    
-                    memcpy(dataWrite+writeOffset, dataRead+readOffset, bytesPerPixel);
-                    writeOffset+=bytesPerPixel;
+                    for (size_t x=0; x<width; ++x)
+                    {
+                        const float R=dataRead[offset + 0]*(256.0f*scaleFactor_);
+                        const float G=dataRead[offset + 1]*(256.0f*scaleFactor_);
+                        const float B=dataRead[offset + 2]*(256.0f*scaleFactor_);
+                        
+                        dataWrite[offset + 0]=(R>=255.0f)?((uint8_t)255):((R<=0.0f)?((uint8_t)0):R);
+                        dataWrite[offset + 1]=(G>=255.0f)?((uint8_t)255):((G<=0.0f)?((uint8_t)0):G);
+                        dataWrite[offset + 2]=(B>=255.0f)?((uint8_t)255):((B<=0.0f)?((uint8_t)0):B);
+                        
+                        offset+=3;
+                    }
                 }
             }
         }
-        
         
         //Stop stats measurement event.
         ProcessorStats_->tock();
@@ -115,6 +111,4 @@ bool FIPTransform2D::trigger()
     
     return false;
 }
-
-
 

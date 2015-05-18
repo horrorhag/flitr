@@ -38,9 +38,9 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
 recipGradientThreshold_(1.0f / 0.00025f),
 numLevels_(4),//Num levels searched for scint motion.
-gaussianFilter_(2.0f, 8),
+gaussianFilter_(2.0f, 9),
 gaussianDownsample_(1.0f, 4),
-gaussianReguFilter_(2.5f, 10),
+gaussianReguFilter_(2.5f, 11),
 scratchData_(0),
 inputImgData_(0),
 finalImgData_(0)
@@ -224,12 +224,12 @@ bool FIPLKDewarp::trigger()
                     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
                     {
                         float * const imgData=imgVec_[levelNum];
-                        float * const refImgData=refImgVec_[levelNum];
+                        //float * const refImgData=refImgVec_[levelNum];
                         
                         const ptrdiff_t levelHeight=croppedHeight >> levelNum;
                         const ptrdiff_t levelWidth=croppedWidth >> levelNum;
                         const ptrdiff_t levelWidthMinus1 = levelWidth - ((ptrdiff_t)1);
-                        const ptrdiff_t levelWidthMinus3 = levelWidth - ((ptrdiff_t)3);
+//                        const ptrdiff_t levelWidthMinus3 = levelWidth - ((ptrdiff_t)3);
                         
                         //=== Calculate the scale space images ===
                         if (levelNum>0)//First level (incoming data) is not a downsampled image.

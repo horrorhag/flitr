@@ -18,15 +18,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FIP_CNVRT_TO_F32_H
-#define FIP_CNVRT_TO_F32_H 1
+#ifndef FIP_MSR_H
+#define FIP_MSR_H 1
 
 #include <flitr/image_processor.h>
+#include <flitr/image_processor_utils.h>
 
 namespace flitr {
     
-    /*! Converts image to float F32 format. */
-    class FLITR_EXPORT FIPConvertToF32 : public ImageProcessor
+    /*! Converts image to rgb8 with a pre-scale.*/
+    class FLITR_EXPORT FIPMSR : public ImageProcessor
     {
     public:
         
@@ -34,11 +35,11 @@ namespace flitr {
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
-        FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+        FIPMSR(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
-        virtual ~FIPConvertToF32();
+        virtual ~FIPMSR();
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
@@ -49,8 +50,15 @@ namespace flitr {
         virtual bool trigger();
         
     private:
+        /*! The grayscale image per slot. */
+        std::vector<float *> F32ImageVec_;
+
+        std::vector<GaussianFilter> GFVec_;
+        std::vector<std::vector<float *> > GFF32ImageVecVec_;
+        
+        float *scratchData_;
     };
     
 }
 
-#endif //FIP_CNVRT_TO_F32_H
+#endif //FIP_CNVRT_TO_RGB8_H

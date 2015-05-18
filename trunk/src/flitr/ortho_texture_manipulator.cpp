@@ -152,7 +152,7 @@ void OrthoTextureManipulator::init(const GUIEventAdapter&, GUIActionAdapter& )
 
 void OrthoTextureManipulator::getUsage(osg::ApplicationUsage& usage) const
 {
-    usage.addKeyboardMouseBinding("OrthoTextureManipulator: Space","Reset the viewing position to home");
+    usage.addKeyboardMouseBinding("OrthoTextureManipulator: Space", "Reset the viewing position to home");
 }
 
 bool OrthoTextureManipulator::handle(const GUIEventAdapter& ea, GUIActionAdapter& us)

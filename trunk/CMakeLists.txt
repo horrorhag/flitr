@@ -74,11 +74,9 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 # ==================
 
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
-  FIND_PACKAGE(OpenSceneGraph REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
+FIND_PACKAGE(OpenSceneGraph REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
 INCLUDE_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIR})
 LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_DIRS})
-
-
 
 
 # === find FFmpeg ===
@@ -142,7 +140,6 @@ SET(LIB_SOURCES
   src/flitr/raw_video_file_writer.cpp
   src/flitr/raw_video_file_reader.cpp
   src/flitr/raw_video_file_producer.cpp
-  src/flitr/hud.cpp
   src/flitr/ffmpeg_producer.cpp
   src/flitr/test_pattern_producer.cpp
   src/flitr/smulti_ffmpeg_producer.cpp
@@ -154,6 +151,7 @@ SET(LIB_SOURCES
   src/flitr/image_consumer.cpp
   src/flitr/image_processor.cpp
   src/flitr/image_processor_utils.cpp
+  src/flitr/hud.cpp
   src/flitr/log_message.cpp
   src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
@@ -191,9 +189,12 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/rotate/fip_rotate.cpp
   src/flitr/modules/flitr_image_processors/dpt/fip_dpt.cpp
   src/flitr/modules/flitr_image_processors/crop/fip_crop.cpp
+  src/flitr/modules/flitr_image_processors/msr/fip_msr.cpp
   src/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.cpp
   src/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.cpp
   src/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_rgb32.cpp
+  src/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_rgb8.cpp
   src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
@@ -295,7 +296,10 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/dpt/fip_dpt.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h
   include/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_rgb32.h
+  include/flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_rgb8.h
   include/flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h
+  include/flitr/modules/flitr_image_processors/msr/fip_msr.h
   include/flitr/modules/flitr_image_processors/crop/fip_crop.h
   include/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
@@ -365,7 +369,7 @@ ADD_LIBRARY(flitr SHARED
 IF(WIN32) 
   TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSEIF(APPLE)
-  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
+  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSE()
   TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} m rt)
 

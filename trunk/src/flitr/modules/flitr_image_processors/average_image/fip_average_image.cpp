@@ -121,11 +121,43 @@ bool FIPAverageImage::trigger()
                         sumImage[lineOffset + x]+=dataRead[lineOffset + x];
                         sumImage[lineOffset + x]-=oldestHistoryImage[lineOffset + x];
                         oldestHistoryImage[lineOffset + x]=dataRead[lineOffset + x];
-                        
                         dataWrite[lineOffset + x]=sumImage[lineOffset + x] * recipWindowLength_;
                     }
                 }
-            }
+            } else
+                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                {
+                    float const * const dataRead = (float const * const)imRead->data();
+                    float * const dataWrite = (float * const)imWrite->data();
+                    float * const sumImage = sumImageVec_[imgNum];
+                    float * const oldestHistoryImage = historyImageVecVec_[imgNum][oldestHistorySlot_];
+                    
+                    for (size_t y=0; y<height; ++y)
+                    {
+                        size_t offset=y * width*3;
+                        
+                        for (size_t x=0; x<width; ++x)
+                        {
+                            sumImage[offset + 0]+=dataRead[offset + 0];
+                            sumImage[offset + 0]-=oldestHistoryImage[offset + 0];
+                            oldestHistoryImage[offset + 0]=dataRead[offset + 0];
+                            dataWrite[offset + 0]=sumImage[offset + 0] * recipWindowLength_;
+                            
+                            sumImage[offset + 1]+=dataRead[offset + 1];
+                            sumImage[offset + 1]-=oldestHistoryImage[offset + 1];
+                            oldestHistoryImage[offset + 1]=dataRead[offset + 1];
+                            dataWrite[offset + 1]=sumImage[offset + 1] * recipWindowLength_;
+                            
+                            sumImage[offset + 2]+=dataRead[offset + 2];
+                            sumImage[offset + 2]-=oldestHistoryImage[offset + 2];
+                            oldestHistoryImage[offset + 2]=dataRead[offset + 2];
+                            dataWrite[offset + 2]=sumImage[offset + 2] * recipWindowLength_;
+                            
+                            offset+=3;
+                        }
+                    }
+                }
+
         }
         
         oldestHistorySlot_=(oldestHistorySlot_+1) % windowLength_;

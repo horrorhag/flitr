@@ -37,6 +37,30 @@ namespace flitr {
         /*! Virtual destructor */
         virtual ~GaussianFilter();
         
+        //! Copy constructor
+        GaussianFilter(const GaussianFilter& rh) :
+            kernel1D_(nullptr),
+            filterRadius_(rh.filterRadius_),
+            kernelWidth_(rh.kernelWidth_)
+        {
+            updateKernel1D();
+        }
+        
+        //! Assignment operator
+        GaussianFilter& operator=(const GaussianFilter& rh)
+        {
+            if (this == &rh)
+            {
+                return *this;
+            }
+            
+            filterRadius_=rh.filterRadius_;
+            kernelWidth_=rh.kernelWidth_;
+            updateKernel1D();
+            
+            return *this;
+        }
+
         virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);
@@ -45,6 +69,11 @@ namespace flitr {
         virtual bool filter(float * const dataWriteDS, float const * const dataReadUS,
                             const size_t width, const size_t height,
                             float * const dataScratch);
+        
+        /*!Synchronous process method.*/
+        //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+        //                       const size_t width, const size_t height,
+        //                       float * const dataScratch);
         
     private:
         float *kernel1D_;
@@ -66,6 +95,30 @@ namespace flitr {
         /*! Virtual destructor */
         virtual ~GaussianDownsample();
         
+        //! Copy constructor
+        GaussianDownsample(const GaussianDownsample& rh) :
+        kernel1D_(nullptr),
+        filterRadius_(rh.filterRadius_),
+        kernelWidth_(rh.kernelWidth_)
+        {
+            updateKernel1D();
+        }
+        
+        //! Assignment operator
+        GaussianDownsample& operator=(const GaussianDownsample& rh)
+        {
+            if (this == &rh)
+            {
+                return *this;
+            }
+            
+            filterRadius_=rh.filterRadius_;
+            kernelWidth_=rh.kernelWidth_;
+            updateKernel1D();
+            
+            return *this;
+        }
+
         virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);
@@ -74,6 +127,11 @@ namespace flitr {
         virtual bool downsample(float * const dataWriteDS, float const * const dataReadUS,
                                 const size_t widthUS, const size_t heightUS,
                                 float * const dataScratch);
+        
+        /*!Synchronous process method.*/
+        //virtual bool downsampleRGB(float * const dataWriteDS, float const * const dataReadUS,
+        //                           const size_t widthUS, const size_t heightUS,
+        //                           float * const dataScratch);
         
     private:
         float *kernel1D_;
