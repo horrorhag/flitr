@@ -18,12 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb32.h>
 
 using namespace flitr;
 using std::shared_ptr;
 
-FIPConvertToF32::FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+FIPConvertToRGB32::FIPConvertToRGB32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                  uint32_t buffer_size) :
     ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
 {
@@ -32,18 +32,18 @@ FIPConvertToF32::FIPConvertToF32(ImageProducer& upStreamProducer, uint32_t image
     for (uint32_t i=0; i<images_per_slot; i++) {
         //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
         ImageFormat downStreamFormat(upStreamProducer.getFormat().getWidth(), upStreamProducer.getFormat().getHeight(),
-                                     ImageFormat::FLITR_PIX_FMT_Y_F32);
+                                     ImageFormat::FLITR_PIX_FMT_RGB_F32);
         
         ImageFormat_.push_back(downStreamFormat);
     }
     
 }
 
-FIPConvertToF32::~FIPConvertToF32()
+FIPConvertToRGB32::~FIPConvertToRGB32()
 {
 }
 
-bool FIPConvertToF32::init()
+bool FIPConvertToRGB32::init()
 {
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
@@ -51,7 +51,7 @@ bool FIPConvertToF32::init()
     return rValue;
 }
 
-bool FIPConvertToF32::trigger()
+bool FIPConvertToRGB32::trigger()
 {
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {//There are images to consume and the downstream producer has space to produce.
@@ -80,10 +80,15 @@ bool FIPConvertToF32::trigger()
                 for (size_t y=0; y<height; ++y)
                 {
                     const size_t lineOffset=y * width;
+                    size_t writeOffset=lineOffset*3;
 
                     for (size_t x=0; x<width; ++x)
                     {
-                        dataWrite[lineOffset + x]=((float)dataRead[lineOffset + x]) * 0.00390625f; // /256.0
+                        const float fc=((float)dataRead[lineOffset + x]) * 0.00390625f; // /256.0
+                        dataWrite[writeOffset + 0]=fc;
+                        dataWrite[writeOffset + 1]=fc;
+                        dataWrite[writeOffset + 2]=fc;
+                        writeOffset+=3;
                     }
                 }
             } else
@@ -91,17 +96,14 @@ bool FIPConvertToF32::trigger()
                 {
                     for (size_t y=0; y<height; ++y)
                     {
-                        const size_t lineOffset=y * width;
-                        size_t readOffset=lineOffset*3+1;
+                        size_t offset=(y * width) * 3;
 
                         for (size_t x=0; x<width; ++x)
                         {
-                            float dw=((float)dataRead[readOffset]) * (0.00390625f*0.33333333333f); // /(256.0*3.0)
-                            dw+=((float)dataRead[readOffset+1]) * (0.00390625f*0.33333333333f); // /(256.0*3.0)
-                            dw+=((float)dataRead[readOffset+2]) * (0.00390625f*0.33333333333f); // /(256.0*3.0)
-                            
-                            dataWrite[lineOffset + x]=dw;
-                            readOffset+=3;
+                            dataWrite[offset + 0]=((float)dataRead[offset+0]) * 0.00390625f; // /256.0
+                            dataWrite[offset + 1]=((float)dataRead[offset+1]) * 0.00390625f; // /256.0
+                            dataWrite[offset + 2]=((float)dataRead[offset+2]) * 0.00390625f; // /256.0
+                            offset+=3;
                         }
                     }
                 }
