@@ -9,9 +9,9 @@
 #include <flitr/modules/geometry_overlays/points_overlay.h>
 
 #include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
-#include <flitr/modules/flitr_image_processors/cnvrt_to_f32/fip_cnvrt_to_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
-#include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_m8.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_m8.h>
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
 #include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
 #include <flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h>

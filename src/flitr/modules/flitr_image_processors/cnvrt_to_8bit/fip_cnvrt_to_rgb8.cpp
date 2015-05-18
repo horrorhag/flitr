@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/modules/flitr_image_processors/cnvrt_to_m8/fip_cnvrt_to_rgb8.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb8.h>
 
 
 using namespace flitr;
