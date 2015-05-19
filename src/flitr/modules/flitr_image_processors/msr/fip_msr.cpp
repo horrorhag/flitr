@@ -64,9 +64,9 @@ bool FIPMSR::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    GFVec_.emplace_back(15);
-    GFVec_.emplace_back(45);
-    GFVec_.emplace_back(135);
+    GFVec_.emplace_back(16);
+    GFVec_.emplace_back(32);
+    GFVec_.emplace_back(128);
     
     size_t maxWidth=0;
     size_t maxHeight=0;
@@ -133,7 +133,7 @@ bool FIPMSR::trigger()
             
             float const * F32Image=nullptr;
             
-            //=== Get grayscale input ==//
+            //=== Get intensity of input ==//
             if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {//Input image already Y_F32. Just use its pointer.
                 F32Image=dataRead;
@@ -148,7 +148,7 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        preAllocF32Image[writeOffset]=(dataRead[readOffset+0] + dataRead[readOffset+1] + dataRead[readOffset+2])*0.333333333f;
+                        preAllocF32Image[writeOffset]=(dataRead[readOffset+0] + dataRead[readOffset+1] + dataRead[readOffset+2])*(1.0f/3.0f);
                         readOffset+=3;
                         ++writeOffset;
                     }
@@ -165,9 +165,9 @@ bool FIPMSR::trigger()
                 for (size_t scaleIndex=0; scaleIndex<numScales; ++scaleIndex)
                 {
                     GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], F32Image, width, height, scratchData_);
-
+                    
                     //Approximate Gaussian filt kernel...
-                    for (int i=0; i<2; ++i)
+                    for (int i=0; i<1; ++i)
                     {
                         memcpy(scratchData2_, GFF32ImageVecVec_[imgNum][scaleIndex], width*height*sizeof(float));
                         GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], scratchData2_, width, height, scratchData_);
@@ -177,43 +177,92 @@ bool FIPMSR::trigger()
             //=== ===
             
             
-            //=== Copy Gaussian result to downstream ===//
-            float const * const filteredInput=GFF32ImageVecVec_[imgNum][0];
+            //===  ===//
+            memset(scratchData_, 0, width*height*sizeof(float));
             
-            if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+            for (size_t scaleIndex=0; scaleIndex<GFVec_.size(); ++scaleIndex)
             {
-                for (size_t y=0; y<height; ++y)
-                {
-                    size_t readOffset=y*width;
-                    size_t writeOffset=y*width;
-                    
-                    for (size_t x=0; x<width; ++x)
-                    {
-                        dataWrite[writeOffset]=filteredInput[readOffset];
-                        
-                        ++readOffset;
-                        ++writeOffset;
-                    }
-                }
-            } else
-                if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                float const * const filteredInput=GFF32ImageVecVec_[imgNum][scaleIndex];
+                
+                if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
                 {
                     for (size_t y=0; y<height; ++y)
                     {
                         size_t readOffset=y*width;
-                        size_t writeOffset=y*width*3;
+                        size_t writeOffset=y*width;
                         
                         for (size_t x=0; x<width; ++x)
                         {
-                            dataWrite[writeOffset+0]=filteredInput[readOffset];
-                            dataWrite[writeOffset+1]=filteredInput[readOffset];
-                            dataWrite[writeOffset+2]=filteredInput[readOffset];
+                            dataWrite[writeOffset]+=filteredInput[readOffset];
                             
                             ++readOffset;
-                            writeOffset+=3;
+                            ++writeOffset;
                         }
                     }
-                }
+                } else
+                    if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                    {
+                        //MSR
+                        for (size_t y=0; y<height; ++y)
+                        {
+                            size_t offset=y*width;
+                            
+                            for (size_t x=0; x<width; ++x)
+                            {
+                                const float r=(log10f(F32Image[offset]+1.0f) - log10f(filteredInput[offset]+1.0f));//+1.0f in case the intensities are zero.
+                                
+                                scratchData_[offset]+=r;
+                                
+                                ++offset;
+                            }
+                        }
+                        
+                        
+                        //Min/max
+                        float min=std::numeric_limits<float>::infinity();
+                        float max=-std::numeric_limits<float>::infinity();
+                        
+                        for (size_t y=height/3; y<(height*2)/3; ++y)
+                        {
+                            size_t offset=y*width + width/3;
+                            
+                            for (size_t x=width/3; x<(width*2/3); ++x)
+                            {
+                                const float r=scratchData_[offset];
+                                
+                                if (r<min) min=r;
+                                if (r>max) max=r;
+                                
+                                ++offset;
+                            }
+                        }
+
+                        
+                        //Fit range.
+                        const float recipRange=1.0f/(max-min);
+                        
+                        for (size_t y=0; y<height; ++y)
+                        {
+                            size_t intensityOffset=y*width;
+                            size_t colourOffset=y*width*3;
+                            
+                            for (size_t x=0; x<width; ++x)
+                            {
+                                const float r=(scratchData_[intensityOffset]-min)*recipRange;
+                                const float recipInput=1.0f/(F32Image[intensityOffset]+(5.0f/255.0f));
+                                //const float r=filteredInput[readOffset];
+                                
+                                dataWrite[colourOffset+0]=r * (dataRead[colourOffset+0]*recipInput);
+                                dataWrite[colourOffset+1]=r * (dataRead[colourOffset+1]*recipInput);
+                                dataWrite[colourOffset+2]=r * (dataRead[colourOffset+2]*recipInput);
+                                
+                                ++intensityOffset;
+                                colourOffset+=3;
+                            }
+                        }
+                        
+                    }
+            }
             //=== ===
         }
         
