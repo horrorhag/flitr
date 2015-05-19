@@ -9,6 +9,7 @@
 #include <flitr/modules/flitr_image_processors/flip/fip_flip.h>
 #include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
 #include <flitr/modules/flitr_image_processors/transform2D/fip_transform2D.h>
+#include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
 
 #include <flitr/modules/flitr_image_processors/msr/fip_msr.h>
 
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 1));
+    shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 2));
     if (!cnvrtToRGBF32->init()) {
         std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
         exit(-1);
@@ -93,7 +94,7 @@ int main(int argc, char *argv[])
     msr->startTriggerThread();
     
     
-    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr, 1, 0.95f, 1));
+    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr, 1, 0.95f, 2));
     if (!cnvrtToRGB8->init()) {
         std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
         exit(-1);
@@ -101,14 +102,14 @@ int main(int argc, char *argv[])
     cnvrtToRGB8->startTriggerThread();
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToRGB8, 1, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToRGB8, 1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
@@ -202,7 +203,7 @@ int main(int argc, char *argv[])
             numFrames++;
         }
         
-        OpenThreads::Thread::microSleep(0);
+        OpenThreads::Thread::microSleep(1000);
     }
     
     //     mffc->stopWriting();

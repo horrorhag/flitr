@@ -46,11 +46,11 @@ namespace flitr {
         }
         
         /*!Synchronous process method.*/
-        virtual bool process(float * const dataWriteDS, float const * const dataReadUS,
+        virtual bool process(double * const dataWriteDS, float const * const dataReadUS,
                             const size_t width, const size_t height);
         
         /*!Synchronous process method.*/
-        //virtual bool processRGB(float * const dataWriteDS, float const * const dataReadUS,
+        //virtual bool processRGB(double * const dataWriteDS, float const * const dataReadUS,
         //                       const size_t width, const size_t height);
     };
     
@@ -135,7 +135,7 @@ namespace flitr {
         /*!Synchronous process method.*/
         virtual bool filter(float * const dataWriteDS, float const * const dataReadUS,
                             const size_t width, const size_t height,
-                            float * const dataScratch);
+                            double * const doubleScratch);
         
         /*!Synchronous process method.*/
         //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,

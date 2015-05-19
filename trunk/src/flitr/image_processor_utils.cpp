@@ -36,7 +36,7 @@ IntegralImage::IntegralImage()
 IntegralImage::~IntegralImage()
 {}
 
-bool IntegralImage::process(float * const dataWriteDS, float const * const dataReadUS,
+bool IntegralImage::process(double * const dataWriteDS, float const * const dataReadUS,
                             const size_t width, const size_t height)
 {
     dataWriteDS[0]=dataReadUS[0];
@@ -158,9 +158,9 @@ void BoxFilterII::setKernelWidth(const int kernelWidth)
 
 bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
                        const size_t width, const size_t height,
-                       float * const dataScratch)
+                       double * const doubleScratch)
 {
-    integralImage_.process(dataScratch, dataReadUS, width, height);
+    integralImage_.process(doubleScratch, dataReadUS, width, height);
 
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusKernel=width - kernelWidth_;
@@ -174,10 +174,10 @@ bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataRead
         
         for (size_t x=0; x<widthMinusKernel; ++x)
         {
-            const float c=dataScratch[lineOffsetII]
-            - dataScratch[lineOffsetII - kernelWidth_]
-            - dataScratch[lineOffsetII - width*kernelWidth_]
-            + dataScratch[lineOffsetII - kernelWidth_ - width*kernelWidth_];
+            const float c=doubleScratch[lineOffsetII]
+            - doubleScratch[lineOffsetII - kernelWidth_]
+            - doubleScratch[lineOffsetII - width*kernelWidth_]
+            + doubleScratch[lineOffsetII - kernelWidth_ - width*kernelWidth_];
             
             dataWriteDS[lineOffset]=c * recipKernelWidthSq;
             
