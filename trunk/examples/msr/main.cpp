@@ -34,18 +34,13 @@ class BackgroundTriggerThread : public OpenThreads::Thread {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
     Producer_(p),
-    ShouldExit_(false),
-    ReadableTarget_(5) {}
+    ShouldExit_(false) {}
     
     void run()
     {
-        while(!ShouldExit_) {
-            bool triggerred = false;
-            while ((Producer_->getLeastNumReadSlotsAvailable() < ReadableTarget_)&&(!ShouldExit_)) {
-                Producer_->trigger();
-                triggerred = true;
-            }
-            Thread::microSleep(5000);
+        while(!ShouldExit_)
+        {
+            if (!Producer_->trigger()) Thread::microSleep(5000);
         }
     }
     
@@ -54,7 +49,6 @@ public:
 private:
     ImageProducer* Producer_;
     bool ShouldExit_;
-    const uint32_t ReadableTarget_;
 };
 
 #define USE_BACKGROUND_TRIGGER_THREAD 1
@@ -67,7 +61,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY, 5));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY, 3));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
