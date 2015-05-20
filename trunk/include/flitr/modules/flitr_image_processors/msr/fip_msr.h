@@ -54,6 +54,8 @@ namespace flitr {
         std::vector<float *> F32ImageVec_;
 
         std::vector<BoxFilterII> GFVec_;
+        size_t GFScale_;
+        
         std::vector<std::vector<float *> > GFF32ImageVecVec_;
         
         float *floatScratchData_;

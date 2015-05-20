@@ -30,7 +30,8 @@ floatScratchData_(nullptr),
 doubleScratchData_(nullptr),
 fmin_(std::numeric_limits<float>::infinity()),
 fmax_(-std::numeric_limits<float>::infinity()),
-triggerCount_(0)
+triggerCount_(0),
+GFScale_(0)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -67,9 +68,11 @@ bool FIPMSR::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
+    //Initial GF width, but this is updated in trigger() for different image slot sizes.
     GFVec_.emplace_back(8);
     GFVec_.emplace_back(32);
     GFVec_.emplace_back(64);
+    GFScale_=12;
     
     size_t maxWidth=0;
     size_t maxHeight=0;
@@ -170,6 +173,8 @@ bool FIPMSR::trigger()
                 
                 for (size_t scaleIndex=0; scaleIndex<numScales; ++scaleIndex)
                 {
+                    GFVec_[scaleIndex].setKernelWidth(imFormatUS.getWidth() / (GFScale_*(1<<scaleIndex)) );
+                    
                     GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], F32Image, width, height,
                                               doubleScratchData_);
                     
@@ -201,6 +206,8 @@ bool FIPMSR::trigger()
                         {
                             //const float r=(log10f(F32Image[offset]+1.0f) - log10f(filteredInput[offset]+1.0f));//+1.0f in case the intensities are zero.
                             const float r=(F32Image[offset] - filteredInput[offset]);
+                            //Note: The log version seems to not have a big impact AND it is slower.
+                            //      The gain and chromatGain below may be used to tweak the image.
                             
                             floatScratchData_[offset]+=r;
                             
@@ -244,8 +251,9 @@ bool FIPMSR::trigger()
             
             
             //Fit range.
-            const float gain=1.0f;
-            const float chromatIntensFloor=2.5f/255.0f;
+            const float gain=1.0f;//Boosts image intensity.
+            const float chromatGain=1.0f;//Boosts colour.
+            const float blacknessFloor=2.5f/255.0f;//Limits the enhancement of low signal (black) areas.
             
             const float recipRange=1.0f/(fmax_-fmin_);
             
@@ -258,12 +266,23 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float r=(floatScratchData_[intensityOffset]-fmin_)*recipRange * gain;
-                        const float recipInput=1.0f/(F32Image[intensityOffset]+chromatIntensFloor);
+                        const float r=(floatScratchData_[intensityOffset]-fmin_) * recipRange * gain;
+                        const float intInput=F32Image[intensityOffset];
+                        const float recipIntInput=1.0f/(intInput+blacknessFloor);
 
-                        dataWrite[colourOffset+0]=r * (dataRead[colourOffset+0]*recipInput);
-                        dataWrite[colourOffset+1]=r * (dataRead[colourOffset+1]*recipInput);
-                        dataWrite[colourOffset+2]=r * (dataRead[colourOffset+2]*recipInput);
+                        dataWrite[colourOffset+0]=r * (dataRead[colourOffset+0]*recipIntInput) + (recipRange * chromatGain) * (dataRead[colourOffset+0]-intInput);
+                        dataWrite[colourOffset+1]=r * (dataRead[colourOffset+1]*recipIntInput) + (recipRange * chromatGain) * (dataRead[colourOffset+1]-intInput);
+                        dataWrite[colourOffset+2]=r * (dataRead[colourOffset+2]*recipIntInput) + (recipRange * chromatGain) * (dataRead[colourOffset+2]-intInput);
+                        
+                        /*
+                        const float r=(floatScratchData_[intensityOffset]-fmin_)*recipRange * gain;
+                        const float intInput=F32Image[intensityOffset];
+                        const float recipIntInput=1.0f/(intInput+chromatIntensFloor);
+                        
+                        dataWrite[colourOffset+0]=r ;//+ recipRange * (dataRead[colourOffset+0]-intInput);
+                        dataWrite[colourOffset+1]=r ;//+ recipRange * (dataRead[colourOffset+1]-intInput);
+                        dataWrite[colourOffset+2]=r ;//+ recipRange * (dataRead[colourOffset+2]-intInput);
+                         */
                         
                         ++intensityOffset;
                         colourOffset+=3;
@@ -277,7 +296,10 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        dataWrite[offset+x]=(floatScratchData_[offset+x]-fmin_)*recipRange * gain;
+                        const float r=(floatScratchData_[offset+x]-fmin_) * recipRange * gain;
+                        const float intInput=F32Image[offset+x];
+
+                        dataWrite[offset+x]=r * (intInput/(intInput+blacknessFloor));
                     }
                 }
             }
