@@ -29,18 +29,13 @@ class BackgroundTriggerThread : public OpenThreads::Thread {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
     Producer_(p),
-    ShouldExit_(false),
-    ReadableTarget_(5) {}
+    ShouldExit_(false) {}
     
     void run()
     {
-        while(!ShouldExit_) {
-            bool triggerred = false;
-            while ((Producer_->getLeastNumReadSlotsAvailable() < ReadableTarget_)&&(!ShouldExit_)) {
-                Producer_->trigger();
-                triggerred = true;
-            }
-            Thread::microSleep(5000);
+        while(!ShouldExit_)
+        {
+            if (!Producer_->trigger()) Thread::microSleep(5000);
         }
     }
     
@@ -49,7 +44,6 @@ public:
 private:
     ImageProducer* Producer_;
     bool ShouldExit_;
-    const uint32_t ReadableTarget_;
 };
 
 #define USE_BACKGROUND_TRIGGER_THREAD 1
