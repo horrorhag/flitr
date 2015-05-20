@@ -58,6 +58,10 @@ namespace flitr {
         
         float *floatScratchData_;
         double *doubleScratchData_;
+        
+        float fmin_;
+        float fmax_;
+        size_t triggerCount_;
     };
     
 }

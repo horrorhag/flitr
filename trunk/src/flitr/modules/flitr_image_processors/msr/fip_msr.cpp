@@ -27,7 +27,10 @@ FIPMSR::FIPMSR(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 floatScratchData_(nullptr),
-doubleScratchData_(nullptr)
+doubleScratchData_(nullptr),
+fmin_(std::numeric_limits<float>::infinity()),
+fmax_(-std::numeric_limits<float>::infinity()),
+triggerCount_(0)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -64,7 +67,7 @@ bool FIPMSR::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    GFVec_.emplace_back(16);
+    GFVec_.emplace_back(8);
     GFVec_.emplace_back(32);
     GFVec_.emplace_back(64);
     
@@ -113,6 +116,8 @@ bool FIPMSR::trigger()
     {//There are images to consume and the downstream producer has space to produce.
         std::vector<Image**> imvRead=reserveReadSlot();
         std::vector<Image**> imvWrite=reserveWriteSlot();
+        
+        ++triggerCount_;
         
         //Start stats measurement event.
         ProcessorStats_->tick();
@@ -167,14 +172,15 @@ bool FIPMSR::trigger()
                 {
                     GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], F32Image, width, height,
                                               doubleScratchData_);
-                    /*
+                    
                     //Approximate Gaussian filt kernel...
                     for (int i=0; i<1; ++i)
                     {
-                        memcpy(scratchData2_, GFF32ImageVecVec_[imgNum][scaleIndex], width*height*sizeof(float));
-                        GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], scratchData2_, width, height, scratchData_);
+                        memcpy(floatScratchData_, GFF32ImageVecVec_[imgNum][scaleIndex], width*height*sizeof(float));
+                        
+                        GFVec_[scaleIndex].filter(GFF32ImageVecVec_[imgNum][scaleIndex], floatScratchData_, width, height,
+                                                  doubleScratchData_);
                     }
-                     */
                 }
             }
             //=== ===
@@ -187,8 +193,6 @@ bool FIPMSR::trigger()
             {
                 float const * const filteredInput=GFF32ImageVecVec_[imgNum][scaleIndex];
                 
-                if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
-                {
                     for (size_t y=0; y<height; ++y)
                     {
                         size_t offset=y*width;
@@ -203,32 +207,47 @@ bool FIPMSR::trigger()
                             ++offset;
                         }
                     }
-                }
             }
             
             
             //Min/max
-            float min=std::numeric_limits<float>::infinity();
-            float max=-std::numeric_limits<float>::infinity();
+            float rmin=std::numeric_limits<float>::infinity();
+            float rmax=-std::numeric_limits<float>::infinity();
             
             for (size_t y=height/3; y<(height*2)/3; ++y)
             {
-                size_t offset=y*width + width/3;
+                const size_t offset=y*width;
                 
                 for (size_t x=width/3; x<(width*2/3); ++x)
                 {
-                    const float r=floatScratchData_[offset];
+                    const float r=floatScratchData_[offset+x];
                     
-                    if (r<min) min=r;
-                    if (r>max) max=r;
-                    
-                    ++offset;
+                    if (r<rmin) rmin=r;
+                    if (r>rmax) rmax=r;
                 }
             }
             
             
-            //Fit range. ToDo: Throw out the outliers...
-            const float recipRange=1.0f/(max-min);
+            //Filter the min/max limits to prevent flickering.
+            //  Note: Filtering then min/max values is somewhat faster than removing outliers.
+            if (triggerCount_<3)
+            {
+                fmin_=rmin;
+                fmax_=rmax;
+            } else
+            {
+                const float a=0.2f;
+                
+                fmin_=fmin_*(1.0f-a) + rmin*a;
+                fmax_=fmax_*(1.0f-a) + rmax*a;
+            }
+            
+            
+            //Fit range.
+            const float gain=1.0f;
+            const float chromatIntensFloor=2.5f/255.0f;
+            
+            const float recipRange=1.0f/(fmax_-fmin_);
             
             if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
             {
@@ -239,8 +258,8 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float r=(floatScratchData_[intensityOffset]-min)*recipRange * 1.2f;
-                        const float recipInput=1.0f/(F32Image[intensityOffset]+(2.5f/255.0f));
+                        const float r=(floatScratchData_[intensityOffset]-fmin_)*recipRange * gain;
+                        const float recipInput=1.0f/(F32Image[intensityOffset]+chromatIntensFloor);
 
                         dataWrite[colourOffset+0]=r * (dataRead[colourOffset+0]*recipInput);
                         dataWrite[colourOffset+1]=r * (dataRead[colourOffset+1]*recipInput);
@@ -248,6 +267,17 @@ bool FIPMSR::trigger()
                         
                         ++intensityOffset;
                         colourOffset+=3;
+                    }
+                }
+            } else
+            {
+                for (size_t y=0; y<height; ++y)
+                {
+                    const size_t offset=y*width;
+                    
+                    for (size_t x=0; x<width; ++x)
+                    {
+                        dataWrite[offset+x]=(floatScratchData_[offset+x]-fmin_)*recipRange * gain;
                     }
                 }
             }
