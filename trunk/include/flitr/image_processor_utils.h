@@ -47,7 +47,7 @@ namespace flitr {
         
         /*!Synchronous process method.*/
         virtual bool process(double * const dataWriteDS, float const * const dataReadUS,
-                            const size_t width, const size_t height);
+                             const size_t width, const size_t height);
         
         /*!Synchronous process method.*/
         //virtual bool processRGB(double * const dataWriteDS, float const * const dataReadUS,
@@ -133,9 +133,10 @@ namespace flitr {
         virtual void setKernelWidth(const int kernelWidth);
         
         /*!Synchronous process method.*/
-        virtual bool filter(float * const dataWriteDS, float const * const dataReadUS,
-                            const size_t width, const size_t height,
-                            double * const doubleScratch);
+        virtual float filter(float * const dataWriteDS, float const * const dataReadUS,
+                             const size_t width, const size_t height,
+                             double * const IIDoubleScratch,
+                             bool reuseIIScratch);
         
         /*!Synchronous process method.*/
         //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
@@ -163,9 +164,9 @@ namespace flitr {
         
         //! Copy constructor
         GaussianFilter(const GaussianFilter& rh) :
-            kernel1D_(nullptr),
-            filterRadius_(rh.filterRadius_),
-            kernelWidth_(rh.kernelWidth_)
+        kernel1D_(nullptr),
+        filterRadius_(rh.filterRadius_),
+        kernelWidth_(rh.kernelWidth_)
         {
             updateKernel1D();
         }
@@ -184,7 +185,7 @@ namespace flitr {
             
             return *this;
         }
-
+        
         virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);
@@ -242,7 +243,7 @@ namespace flitr {
             
             return *this;
         }
-
+        
         virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);

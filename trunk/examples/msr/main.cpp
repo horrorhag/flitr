@@ -17,7 +17,9 @@
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
+
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
+#include <flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
@@ -29,6 +31,54 @@
 
 using std::shared_ptr;
 using namespace flitr;
+
+
+
+class KeyPressedHandler : public osgGA::GUIEventHandler
+{
+public:
+    
+    KeyPressedHandler(const float GFScale) :
+    GFScale_(GFScale)
+    {}
+    
+    ~KeyPressedHandler()
+    {
+    }
+    
+    bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
+    {
+        osgViewer::Viewer* viewer = dynamic_cast<osgViewer::Viewer*>(&aa);
+        if (!viewer) return false;
+        
+        switch(ea.getEventType())
+        {
+            case(osgGA::GUIEventAdapter::KEYUP):
+            {
+                if (ea.getKey()==']')
+                {
+                    ++GFScale_;
+                    std::cout << "GFScale_ = " << GFScale_ << "\n";
+                    std::cout.flush();
+                } else
+                    if (ea.getKey()=='[')
+                    {
+                        --GFScale_;
+                        std::cout << "GFScale_ = " << GFScale_ << "\n";
+                        std::cout.flush();
+                    }
+                break;
+            }
+            default:
+                break;
+        }
+        
+        return false;
+    }
+    
+    size_t GFScale_;
+};
+
 
 class BackgroundTriggerThread : public OpenThreads::Thread {
 public:
@@ -87,6 +137,14 @@ int main(int argc, char *argv[])
     }
     msr->startTriggerThread();
     
+    /*
+     shared_ptr<FIPAverageImageIIR> averageIIR(new FIPAverageImageIIR(*msr, 1, 50.0f, 1));
+     if (!averageIIR->init()) {
+     std::cerr << "Could not initialise the averageIIR image processor.\n";
+     exit(-1);
+     }
+     averageIIR->startTriggerThread();
+     */
     
     shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr, 1, 0.95f, 2));
     if (!cnvrtToRGB8->init()) {
@@ -148,6 +206,10 @@ int main(int argc, char *argv[])
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
+    
+    KeyPressedHandler *kbHandler=new KeyPressedHandler(10);
+    viewer.addEventHandler(kbHandler);
+    
     viewer.setSceneData(root_node);
     
     viewer.setUpViewInWindow(100, 100, 640, 480);
@@ -183,6 +245,8 @@ int main(int argc, char *argv[])
         if (osgc->getNext()) renderFrame=true;
         if (osgcOrig->getNext()) renderFrame=true;
         
+        msr->setGFScale(kbHandler->GFScale_);
+        
         if (renderFrame)
         {
             viewer.frame();
@@ -210,6 +274,7 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToRGBF32->stopTriggerThread();
+    //averageIIR->stopTriggerThread();
     msr->stopTriggerThread();
     cnvrtToRGB8->stopTriggerThread();
     

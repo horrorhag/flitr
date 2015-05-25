@@ -61,7 +61,12 @@ bool IntegralImage::process(double * const dataWriteDS, float const * const data
         
         for (size_t x=1; x<width; ++x)
         {
-            dataWriteDS[offset]=dataReadUS[offset] + dataWriteDS[offset - width] + dataWriteDS[offset - 1] - dataWriteDS[offset - width - 1];
+            dataWriteDS[offset]=
+            dataReadUS[offset] +
+            dataWriteDS[offset - width] +
+            dataWriteDS[offset - 1] -
+            dataWriteDS[offset - width - 1];
+            
             ++offset;
         }
     }
@@ -156,12 +161,16 @@ void BoxFilterII::setKernelWidth(const int kernelWidth)
     kernelWidth_=kernelWidth|1;
 }
 
-bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
-                       const size_t width, const size_t height,
-                       double * const doubleScratch)
+float BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
+                          const size_t width, const size_t height,
+                          double * const IIDoubleScratch,
+                          bool reuseIIScratch)
 {
-    integralImage_.process(doubleScratch, dataReadUS, width, height);
-
+    if (!reuseIIScratch)
+    {
+        integralImage_.process(IIDoubleScratch, dataReadUS, width, height);
+    }
+    
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusKernel=width - kernelWidth_;
     const size_t heightMinusKernel=height - kernelWidth_;
@@ -174,10 +183,10 @@ bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataRead
         
         for (size_t x=0; x<widthMinusKernel; ++x)
         {
-            const float c=doubleScratch[lineOffsetII]
-            - doubleScratch[lineOffsetII - kernelWidth_]
-            - doubleScratch[lineOffsetII - width*kernelWidth_]
-            + doubleScratch[lineOffsetII - kernelWidth_ - width*kernelWidth_];
+            const float c=IIDoubleScratch[lineOffsetII]
+            - IIDoubleScratch[lineOffsetII - kernelWidth_]
+            - IIDoubleScratch[lineOffsetII - width*kernelWidth_]
+            + IIDoubleScratch[lineOffsetII - kernelWidth_ - width*kernelWidth_];
             
             dataWriteDS[lineOffset]=c * recipKernelWidthSq;
             
@@ -185,8 +194,8 @@ bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataRead
             ++lineOffsetII;
         }
     }
-
-    return true;
+    
+    return (IIDoubleScratch[width*height-1])/(width*height);
 }
 
 //=========================================//

@@ -49,20 +49,28 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
+        void setGFScale(size_t scale)
+        {
+            GFScale_=scale;
+        }
+        
     private:
         /*! The grayscale image per slot. */
-        std::vector<float *> F32ImageVec_;
-
-        std::vector<BoxFilterII> GFVec_;
+        BoxFilterII GF_;
+        IntegralImage II_;
         size_t GFScale_;
         
-        std::vector<std::vector<float *> > GFF32ImageVecVec_;
-        
+        float *IntScratchData_;
+        float *GFScratchData_;
+        float *MSRScratchData_;
+
         float *floatScratchData_;
-        double *doubleScratchData_;
+        double *doubleScratchData1_;
+        double *doubleScratchData2_;
         
-        float fmin_;
-        float fmax_;
+#define histoBinArrSize_ 2000
+        size_t *histoBins_;
+        
         size_t triggerCount_;
     };
     
