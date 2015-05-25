@@ -87,7 +87,7 @@ bool FIPConvertToY8::trigger()
                     for (size_t x=0; x<width; ++x)
                     {
                         const float writeValue=dataRead[lineOffset + x]*(256.0f*scaleFactor_);
-                        dataWrite[lineOffset + x]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):writeValue);
+                        dataWrite[lineOffset + x]=(writeValue>=255.0f)?((uint8_t)255):((writeValue<=0.0f)?((uint8_t)0):(writeValue+0.5f));
                     }
                 }
             }

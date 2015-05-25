@@ -90,9 +90,9 @@ bool FIPConvertToRGB8::trigger()
                         const float G=dataRead[offset + 1]*(256.0f*scaleFactor_);
                         const float B=dataRead[offset + 2]*(256.0f*scaleFactor_);
                         
-                        dataWrite[offset + 0]=(R>=255.0f)?((uint8_t)255):((R<=0.0f)?((uint8_t)0):R);
-                        dataWrite[offset + 1]=(G>=255.0f)?((uint8_t)255):((G<=0.0f)?((uint8_t)0):G);
-                        dataWrite[offset + 2]=(B>=255.0f)?((uint8_t)255):((B<=0.0f)?((uint8_t)0):B);
+                        dataWrite[offset + 0]=(R>=255.0f)?((uint8_t)255):((R<=0.0f)?((uint8_t)0):(R+0.5f));
+                        dataWrite[offset + 1]=(G>=255.0f)?((uint8_t)255):((G<=0.0f)?((uint8_t)0):(G+0.5f));
+                        dataWrite[offset + 2]=(B>=255.0f)?((uint8_t)255):((B<=0.0f)?((uint8_t)0):(B+0.5f));
                         
                         offset+=3;
                     }

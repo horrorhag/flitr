@@ -197,6 +197,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.cpp
   src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
+  src/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
@@ -303,6 +304,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/crop/fip_crop.h
   include/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
+  include/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
