@@ -34,8 +34,11 @@ double secondsSinceMidnightLT()
     uint64_t timeNS=currentTimeNanoSec();
     
     time_t timestamp_t=currentTimeNanoSec() / 1000000000;
-    struct tm *timestamp_tm=localtime(&timestamp_t);    
-    return timestamp_tm->tm_hour*3600.0 + timestamp_tm->tm_min*60.0 + timestamp_tm->tm_sec + (timeNS%1000000000)*0.000000001;
+    
+    struct tm timestamp_tm;
+    localtime_r(&timestamp_t, &timestamp_tm);
+    
+    return timestamp_tm.tm_hour*3600.0 + timestamp_tm.tm_min*60.0 + timestamp_tm.tm_sec + (timeNS%1000000000)*0.000000001;
 }
 
 //!Seconds since midnight in GMT.
@@ -44,6 +47,9 @@ double secondsSinceMidnightGMT()
     uint64_t timeNS=currentTimeNanoSec();
     
     time_t timestamp_t=currentTimeNanoSec() / 1000000000;
-    struct tm *timestamp_tm=gmtime(&timestamp_t);
-    return timestamp_tm->tm_hour*3600.0 + timestamp_tm->tm_min*60.0 + timestamp_tm->tm_sec + (timeNS%1000000000)*0.000000001;
+    
+    struct tm timestamp_tm;
+    gmtime_r(&timestamp_t, &timestamp_tm);
+
+    return timestamp_tm.tm_hour*3600.0 + timestamp_tm.tm_min*60.0 + timestamp_tm.tm_sec + (timeNS%1000000000)*0.000000001;
 }
