@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
     osg::Group *root_node = new osg::Group;
     
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
-    quad->flipTextureCoordsLeftToRight();
-    quad->flipTextureCoordsTopToBottom();
+    //quad->flipTextureCoordsLeftToRight();
+    //quad->flipTextureCoordsTopToBottom();
     root_node->addChild(quad->getRoot().get());
 
     osgViewer::Viewer viewer;
