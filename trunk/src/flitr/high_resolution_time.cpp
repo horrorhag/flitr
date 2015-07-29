@@ -28,6 +28,22 @@ uint64_t currentTimeNanoSec()
     return std::chrono::duration_cast<std::chrono::nanoseconds>(tp.time_since_epoch()).count();
 }
 
+std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
+{
+    time_t timestamp_t=timeNanoSec / 1000000000;
+
+    struct tm timestamp_tm;
+    localtime_r(&timestamp_t, &timestamp_tm);
+    
+    char timestr[512];
+    sprintf(timestr, "%d-%02d-%02d_%02dh%02dm%02d.%03ds",
+            timestamp_tm.tm_year+1900, timestamp_tm.tm_mon+1, timestamp_tm.tm_mday,
+            timestamp_tm.tm_hour, timestamp_tm.tm_min, timestamp_tm.tm_sec, int((timeNanoSec % 1000000000)/1000000));
+    
+    std::string s(timestr);
+    return s;
+}
+
 //!Seconds since midnight in local time.
 double secondsSinceMidnightLT()
 {
