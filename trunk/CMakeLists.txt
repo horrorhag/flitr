@@ -203,6 +203,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
   src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
+  src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.cpp
   src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
 
@@ -310,6 +311,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
   include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
+  include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h
   include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
   include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
 

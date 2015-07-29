@@ -19,7 +19,7 @@
 #include <flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h>
 #include <flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h>
 
-#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h>
+#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
 #include <flitr/ffmpeg_producer.h>
@@ -96,10 +96,10 @@ int main(int argc, char *argv[])
     
     //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
-                                         0,
-                                         0,
-                                         ip->getFormat().getWidth(),
-                                         ip->getFormat().getHeight(),
+                                         ip->getFormat().getWidth()/6,
+                                         ip->getFormat().getHeight()/6,
+                                         (ip->getFormat().getWidth()/6)*4,
+                                         (ip->getFormat().getHeight()/6)*4,
                                          2));
     if (!crop->init())
     {
@@ -123,22 +123,23 @@ int main(int argc, char *argv[])
      gaussianFilter0->startTriggerThread();
      */
     
-    //==
-    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
-                                                              FIPLKStabilise::Mode::INTSTAB,
-                                                              2));
-    if (!lkstabilise->init())
-    {
-        std::cerr << "Could not initialise the lkstabilise processor.\n";
-        exit(-1);
-    }
-    lkstabilise->startTriggerThread();
-    
+    /*
+     //==
+     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
+     FIPLKStabilise::Mode::INTSTAB,
+     2));
+     if (!lkstabilise->init())
+     {
+     std::cerr << "Could not initialise the lkstabilise processor.\n";
+     exit(-1);
+     }
+     lkstabilise->startTriggerThread();
+     */
     
     //===
-    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
-                                                     0.95f, //Internal average image longevity.
-                                                     2)); //Buffer size.
+    shared_ptr<FIPLKDewarpEx> lkdewarp(new FIPLKDewarpEx(*crop, 1,
+                                                         0.95f, //Internal average image longevity.
+                                                         2)); //Buffer size.
     if (!lkdewarp->init())
     {
         std::cerr << "Could not initialise the lkdewarp processor.\n";
@@ -147,35 +148,36 @@ int main(int argc, char *argv[])
     lkdewarp->startTriggerThread();
     
     
-    //===
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 5, 2));
-    if (!averageImage->init())
-    {
-        std::cerr << "Could not initialise the average image processor.\n";
-        exit(-1);
-    }
-    averageImage->startTriggerThread();
+    /*
+     //===
+     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 5, 2));
+     if (!averageImage->init())
+     {
+     std::cerr << "Could not initialise the average image processor.\n";
+     exit(-1);
+     }
+     averageImage->startTriggerThread();
+     
+     
+     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 20.0f, 2.75f, 2));
+     if (!unsharpMask->init())
+     {
+     std::cerr << "Could not initialise the unsharp mask processor.\n";
+     exit(-1);
+     }
+     unsharpMask->startTriggerThread();
+     
+     
+     shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 0.8f, 2));
+     if (!tonemap->init())
+     {
+     std::cerr << "Could not initialise the tonemap processor.\n";
+     exit(-1);
+     }
+     tonemap->startTriggerThread();
+     */
     
-    
-    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 20.0f, 2.75f, 2));
-    if (!unsharpMask->init())
-    {
-        std::cerr << "Could not initialise the unsharp mask processor.\n";
-        exit(-1);
-    }
-    unsharpMask->startTriggerThread();
-    
-    
-    shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 0.8f, 2));
-    if (!tonemap->init())
-    {
-        std::cerr << "Could not initialise the tonemap processor.\n";
-        exit(-1);
-    }
-    tonemap->startTriggerThread();
-    
-    
-    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*tonemap, 1, 0.90f, 2));
+    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkdewarp, 1, 0.90f, 2));
     if (!cnvrtToY8->init())
     {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
@@ -184,7 +186,7 @@ int main(int argc, char *argv[])
     cnvrtToY8->startTriggerThread();
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*tonemap, 1, 2));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*lkdewarp, 1, 2));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -192,7 +194,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*lkstabilise, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*crop, 1));
     if (!osgcOrig->init())
     {
         std::cerr << "Could not init osgcOrig consumer\n";
@@ -200,18 +202,18 @@ int main(int argc, char *argv[])
     }
     
     
-    
-    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToY8,1));
-    if (!mffc->init())
-    {
-        std::cerr << "Could not init FFmpeg consumer\n";
-        exit(-1);
-    }
-    std::stringstream filenameStringStream;
-    filenameStringStream << argv[1] << "_improved";
-    mffc->openFiles(filenameStringStream.str());
-    mffc->startWriting();
-    
+    /*
+     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToY8,1));
+     if (!mffc->init())
+     {
+     std::cerr << "Could not init FFmpeg consumer\n";
+     exit(-1);
+     }
+     std::stringstream filenameStringStream;
+     filenameStringStream << argv[1] << "_improved";
+     mffc->openFiles(filenameStringStream.str());
+     mffc->startWriting();
+     */
     
     
     osg::Group *root_node = new osg::Group;
@@ -219,21 +221,17 @@ int main(int argc, char *argv[])
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
     {
-        osg::Matrix translate;
-        translate.makeTranslate(osg::Vec3d(osgcOrig->getOutputTexture()->getTextureWidth()/2,
-                                           0.0,
-                                           0.0));
-        quad->setTransform(translate);
+        quad->flipAroundHorizontal();
+        quad->rotateAroundCentre(6.0/180.0*M_PI);
+        quad->translate(osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
     shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
     root_node->addChild(quadOrig->getRoot().get());
     {
-        osg::Matrix translate;
-        translate.makeTranslate(osg::Vec3d(-osgcOrig->getOutputTexture()->getTextureWidth()/2,
-                                           0.0,
-                                           0.0));
-        quadOrig->setTransform(translate);
+        quadOrig->flipAroundHorizontal();
+        quadOrig->rotateAroundCentre(6.0/180.0*M_PI);
+        quadOrig->translate(-osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
     //=== Points overlay to test homography registration ===
@@ -289,8 +287,8 @@ int main(int argc, char *argv[])
         OpenThreads::Thread::microSleep(1000);
     }
     
-    mffc->stopWriting();
-    mffc->closeFiles();
+    //mffc->stopWriting();
+    //mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -301,11 +299,11 @@ int main(int argc, char *argv[])
     cnvrtToYF32->stopTriggerThread();
     crop->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
-    lkstabilise->stopTriggerThread();
+    //lkstabilise->stopTriggerThread();
     lkdewarp->stopTriggerThread();
-    averageImage->stopTriggerThread();
-    unsharpMask->stopTriggerThread();
-    tonemap->stopTriggerThread();
+    //averageImage->stopTriggerThread();
+    //unsharpMask->stopTriggerThread();
+    //tonemap->stopTriggerThread();
     cnvrtToY8->stopTriggerThread();
     
     return 0;

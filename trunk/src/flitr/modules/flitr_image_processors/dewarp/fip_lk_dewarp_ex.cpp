@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h>
+#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h>
 
 #include <iostream>
 #include <fstream>
@@ -31,7 +31,7 @@ using std::shared_ptr;
 
 
 
-FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+FIPLKDewarpEx::FIPLKDewarpEx(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                          const float avrgImageLongevity,
                          uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
@@ -53,7 +53,7 @@ finalImgData_(0)
     }
 }
 
-FIPLKDewarp::~FIPLKDewarp()
+FIPLKDewarpEx::~FIPLKDewarpEx()
 {
     delete [] scratchData_;
     delete [] finalImgData_;
@@ -84,7 +84,7 @@ FIPLKDewarp::~FIPLKDewarp()
     }
 }
 
-bool FIPLKDewarp::init()
+bool FIPLKDewarpEx::init()
 {
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
@@ -147,7 +147,7 @@ bool FIPLKDewarp::init()
 }
 
 
-bool FIPLKDewarp::trigger()
+bool FIPLKDewarpEx::trigger()
 {
     if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
     {

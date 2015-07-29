@@ -49,7 +49,42 @@ class FLITR_EXPORT TexturedQuad
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
+    void resetTransform() { MatrixTransform_->setMatrix(osg::Matrixd()); }
+    
+    void translate(double x, double y)
+    {
+        osg::Matrixd m=MatrixTransform_->getMatrix();
+        m*=osg::Matrixd::translate(osg::Vec3d(x, y, 0.0));
+        MatrixTransform_->setMatrix(m);
+    }
+    
+    void flipAroundHorizontal()
+    {
+        osg::Matrixd m=MatrixTransform_->getMatrix();
+        m*=osg::Matrixd::translate(osg::Vec3d(-Width_*0.5, -Height_*0.5, 0.0));
+        m*=osg::Matrixd::scale(osg::Vec3d(1.0, -1.0, 1.0));
+        m*=osg::Matrixd::translate(osg::Vec3d(Width_*0.5, Height_*0.5, 0.0));
+        MatrixTransform_->setMatrix(m);
+    }
+    
+    void flipAroundVertical()
+    {
+        osg::Matrixd m=MatrixTransform_->getMatrix();
+        m*=osg::Matrixd::translate(osg::Vec3d(-Width_*0.5, -Height_*0.5, 0.0));
+        m*=osg::Matrixd::scale(osg::Vec3d(-1.0, 1.0, 1.0));
+        m*=osg::Matrixd::translate(osg::Vec3d(Width_*0.5, Height_*0.5, 0.0));
+        MatrixTransform_->setMatrix(m);
+    }
 
+    void rotateAroundCentre(double angle)
+    {
+        osg::Matrixd m=MatrixTransform_->getMatrix();
+        m*=osg::Matrixd::translate(osg::Vec3d(-Width_*0.5, -Height_*0.5, 0.0));
+        m*=osg::Matrixd::rotate(angle, osg::Vec3d(0.0, 0.0, -1.0));
+        m*=osg::Matrixd::translate(osg::Vec3d(Width_*0.5, Height_*0.5, 0.0));
+        MatrixTransform_->setMatrix(m);
+    }
+    
     void flipTextureCoordsLeftToRight();
     void flipTextureCoordsTopToBottom();
 
@@ -71,6 +106,7 @@ class FLITR_EXPORT TexturedQuad
 	int Height_;
 };
 
+    
 /*! Textured quad similar to TexturedQuad, but with two textures which may be masked/combined with the user applied shader.*/
 class FLITR_EXPORT TexturedQuadAB
 {
@@ -86,7 +122,8 @@ class FLITR_EXPORT TexturedQuadAB
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
-
+    void resetTransform() { MatrixTransform_->setMatrix(osg::Matrixd()); }
+    
     void setShader(const std::string &filename);
 
     void setColourMaskA(const osg::Vec4f &colourMask)
