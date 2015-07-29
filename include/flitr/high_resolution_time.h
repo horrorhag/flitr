@@ -33,19 +33,7 @@
    \brief Get the date and time of the nanosec since epoch as a string.
    \return String representing current PC time of the form "2007-02-26_17h35m20.001s".
 */
-inline std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
-{
-    time_t timestamp_t=timeNanoSec / 1000000000;
-    struct tm *timestamp_tm=localtime(&timestamp_t);
-
-    char timestr[512];
-    sprintf(timestr, "%d-%02d-%02d_%02dh%02dm%02d.%03ds",
-        timestamp_tm->tm_year+1900, timestamp_tm->tm_mon+1, timestamp_tm->tm_mday,
-        timestamp_tm->tm_hour, timestamp_tm->tm_min, timestamp_tm->tm_sec, int((timeNanoSec % 1000000000)/1000000));
-
-    std::string s(timestr);
-    return s;
-}
+extern FLITR_EXPORT std::string nanoSecToCalenderDate(uint64_t timeNanoSec);
 
 /// Returns nanoseconds since the epoch!
 extern FLITR_EXPORT uint64_t currentTimeNanoSec();
