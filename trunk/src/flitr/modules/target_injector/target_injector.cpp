@@ -26,12 +26,12 @@ using std::shared_ptr;
 TargetInjector::TargetInjector(ImageProducer& upStreamProducer,
                                uint32_t images_per_slot, uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-targetBrightness_(255.0f)
+targetBrightness_(255.0f),
+startTimeSec_(0.0)
 {
-	timer_.restart();
-    
     //Setup image format being produced to downstream.
-    for (uint32_t i=0; i<images_per_slot; i++) {
+    for (uint32_t i=0; i<images_per_slot; i++)
+    {
         ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.
     }
     
@@ -46,6 +46,8 @@ bool TargetInjector::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
+    startTimeSec_=currentTimeNanoSec() / 1000000000.0;
+    
     return rValue;
 }
 
@@ -59,8 +61,7 @@ bool TargetInjector::trigger()
         //Start stats measurement event.
         
 		// Update timer
-		float dT = (float)timer_.elapsed();
-		timer_.restart();
+		float dT = double(currentTimeNanoSec()) / 1000000000.0 - startTimeSec_;
         
         //Update the synthetic targets.
         std::vector<SyntheticTarget>::iterator iter=targetVector_.begin();

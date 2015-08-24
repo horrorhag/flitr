@@ -327,7 +327,7 @@ bool FIPLKStabilise::trigger()
                 const ptrdiff_t levelWidthMinus1=levelWidth - ((ptrdiff_t)1);
                 
                 
-                for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
+                for (size_t newtonRaphsonI=0; newtonRaphsonI<7; ++newtonRaphsonI)
                 {
                     float dHx=0.0f;
                     float dHy=0.0f;

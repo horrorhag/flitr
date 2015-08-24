@@ -32,18 +32,15 @@ using std::shared_ptr;
 
 
 FIPLKDewarpEx::FIPLKDewarpEx(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                         const float avrgImageLongevity,
-                         uint32_t buffer_size) :
+                             const float avrgImageLongevity,
+                             uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
-recipGradientThreshold_(1.0f / 0.0005f),
-numLevels_(4),//Num levels searched for scint motion.
-gaussianFilter_(2.0f, 8),
-gaussianDownsample_(2.0f, 8),
-gaussianReguFilter_(2.5f, 11),
-scratchData_(0),
-inputImgData_(0),
-finalImgData_(0)
+gradientSqThreshold_(0.000001f),
+numLevels_(7),//Num levels searched for scint motion.
+gaussianFilter_(4.0f, 17),
+gaussianReguFilter_(5.0f, 22),
+scratchData_(0)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
@@ -56,8 +53,6 @@ finalImgData_(0)
 FIPLKDewarpEx::~FIPLKDewarpEx()
 {
     delete [] scratchData_;
-    delete [] finalImgData_;
-    delete [] inputImgData_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
     {
@@ -73,14 +68,20 @@ FIPLKDewarpEx::~FIPLKDewarpEx()
         delete [] dyVec_.back();
         dyVec_.pop_back();
         
-        delete [] dSqRecipVec_.back();
-        dSqRecipVec_.pop_back();
+        delete [] dSqVec_.back();
+        dSqVec_.pop_back();
         
         delete [] hxVec_.back();
         hxVec_.pop_back();
         
         delete [] hyVec_.back();
         hyVec_.pop_back();
+        
+        delete [] hxAVec_.back();
+        hxAVec_.pop_back();
+        
+        delete [] hyAVec_.back();
+        hyAVec_.pop_back();
     }
 }
 
@@ -96,51 +97,51 @@ bool FIPLKDewarpEx::init()
         const ptrdiff_t width=imFormat.getWidth();
         const ptrdiff_t height=imFormat.getHeight();
         
-        //=== Image will be cropped so that at least all levels of the pyramid is divisible by 2 ===
-        const ptrdiff_t croppedWidth=(width>>(numLevels_-1))<<(numLevels_-1);
-        const ptrdiff_t croppedHeight=(height>>(numLevels_-1))<<(numLevels_-1);
-        //const ptrdiff_t croppedWidth=1 << ((int)log2f(width));
-        //const ptrdiff_t croppedHeight=1 << ((int)log2f(height));
-        //=== ===
-        
         scratchData_=new float[width*height];
         memset(scratchData_, 0, (width*height)*sizeof(float));
         
-        inputImgData_=new float[croppedWidth*croppedHeight];
-        memset(inputImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
-        
-        finalImgData_=new float[croppedWidth*croppedHeight];
-        memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
-        
         for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
         {
-            imgVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(imgVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            imgVec_.push_back(new float[width*height]);
+            memset(imgVec_.back(), 0, (width*height)*sizeof(float));
             
-            refImgVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(refImgVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            refImgVec_.push_back(new float[width*height]);
+            memset(refImgVec_.back(), 0, (width*height)*sizeof(float));
             
-            dxVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(dxVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            dxVec_.push_back(new float[width*height]);
+            memset(dxVec_.back(), 0, (width*height)*sizeof(float));
             
-            dyVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(dyVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            dyVec_.push_back(new float[width*height]);
+            memset(dyVec_.back(), 0, (width*height)*sizeof(float));
             
-            dSqRecipVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(dSqRecipVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            dSqVec_.push_back(new float[width*height]);
+            memset(dSqVec_.back(), 0, (width*height)*sizeof(float));
             
-            hxVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(hxVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            hxVec_.push_back(new float[width*height]);
+            memset(hxVec_.back(), 0, (width*height)*sizeof(float));
             
-            hyVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
-            memset(hyVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
+            hyVec_.push_back(new float[width*height]);
+            memset(hyVec_.back(), 0, (width*height)*sizeof(float));
+            
+            hxAVec_.push_back(new float[width*height]);
+            memset(hxAVec_.back(), 0, (width*height)*sizeof(float));
+            
+            hyAVec_.push_back(new float[width*height]);
+            memset(hyAVec_.back(), 0, (width*height)*sizeof(float));
+            
         }
         
         //Push zero h vectors to ordinal numLevels_+1
-        hxVec_.push_back(new float[(croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2)]);
-        memset(hxVec_.back(), 0, (croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2) * sizeof(float));
-        hyVec_.push_back(new float[(croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2)]);
-        memset(hyVec_.back(), 0, (croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2) * sizeof(float));
+        hxVec_.push_back(new float[width*height]);
+        memset(hxVec_.back(), 0, (width*height)*sizeof(float));
+        hyVec_.push_back(new float[width*height]);
+        memset(hyVec_.back(), 0, (width*height)*sizeof(float));
+        
+        //Push zero h vectors to ordinal numLevels_+1
+        hxAVec_.push_back(new float[width*height]);
+        memset(hxAVec_.back(), 0, (width*height)*sizeof(float));
+        hyAVec_.push_back(new float[width*height]);
+        memset(hyAVec_.back(), 0, (width*height)*sizeof(float));
     }
     
     return rValue;
@@ -163,20 +164,9 @@ bool FIPLKDewarpEx::trigger()
             Image * const imWrite = *(imvWrite[imgNum]);
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);
-            const ptrdiff_t uncroppedWidth=imFormat.getWidth();
-            const ptrdiff_t uncroppedHeight=imFormat.getHeight();
-            
-            //=== Image will be cropped so that at least all levels of the pyramid is divisible by 2 ===
-            const ptrdiff_t croppedWidth=(uncroppedWidth>>(numLevels_-1))<<(numLevels_-1);
-            const ptrdiff_t croppedHeight=(uncroppedHeight>>(numLevels_-1))<<(numLevels_-1);
-            //const ptrdiff_t croppedWidth=1 << ((int)log2f(uncroppedWidth));
-            //const ptrdiff_t croppedHeight=1 << ((int)log2f(uncroppedHeight));
-            //=== ===
-            
-            const ptrdiff_t startCroppedX=(uncroppedWidth - croppedWidth)>>1;
-            const ptrdiff_t startCroppedY=(uncroppedHeight - croppedHeight)>>1;
-            
-            const ptrdiff_t endCroppedY=startCroppedY + croppedHeight - 1;
+            const ptrdiff_t width=imFormat.getWidth();
+            const ptrdiff_t widthMinus1 = width - ((ptrdiff_t)1);
+            const ptrdiff_t height=imFormat.getHeight();
             
             if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {
@@ -188,117 +178,60 @@ bool FIPLKDewarpEx::trigger()
                 const float avrgImageLongevityConst = (frameNumber_ < 3) ? 0.0f : avrgImageLongevity_;
                 //****************
                 
-                {//=== Copy cropped input to level 0 of scale space ===
-                    
-                    {//=== Update ref/avrg img before new data arrives. ===//
-                        float * const imgData=imgVec_[0];
-                        float * const refImgData=refImgVec_[0];
-                        
-                        for (ptrdiff_t y=0; y<croppedHeight; ++y)
-                        {
-                            const ptrdiff_t lineOffset=y*croppedWidth;
-                            
-                            for (ptrdiff_t x=0; x<croppedWidth; ++x)
-                            {
-                                const ptrdiff_t offset=lineOffset + x;
-                                
-                                refImgData[offset]*=avrgImageLongevityConst;
-                                refImgData[offset]+=imgData[offset] * (1.0f - avrgImageLongevityConst);
-                            }
-                        }
-                    }
-                    
-                    //=== Copy input data to level 0 of scale space ===//
-                    for (ptrdiff_t y=startCroppedY; y<=endCroppedY; ++y)
-                    {
-                        const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
-                        const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
-                        memcpy((inputImgData_+croppedLineOffset), (dataRead+uncroppedLineOffset), croppedWidth*sizeof(float));
-                    }
-                    
-                    //=== Do Gaussian filter of initial input ===//
-                    gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
-                }//=== ===
-                
-                {//=== Calculate scale space pyramid. ===
+                {//=== Calculate scale space images. ===
                     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
                     {
                         float * const imgData=imgVec_[levelNum];
                         //float * const refImgData=refImgVec_[levelNum];
                         
-                        const ptrdiff_t levelHeight=croppedHeight >> levelNum;
-                        const ptrdiff_t levelWidth=croppedWidth >> levelNum;
-                        const ptrdiff_t levelWidthMinus1 = levelWidth - ((ptrdiff_t)1);
-//                        const ptrdiff_t levelWidthMinus3 = levelWidth - ((ptrdiff_t)3);
-                        
-                        //=== Calculate the scale space images ===
-                        if (levelNum>0)//First level (incoming data) is not a downsampled image.
-                        {
-                            {//Update ref/avrg img before new data arrives.
-                                float * const refImgData=refImgVec_[levelNum];
+                        {//Update ref/avrg img before new data arrives.
+                            float * const refImgData=refImgVec_[levelNum];
+                            
+                            for (ptrdiff_t y=0; y<height; ++y)
+                            {
+                                const ptrdiff_t lineOffset=y*width;
                                 
-                                for (ptrdiff_t y=0; y<levelHeight; ++y)
+                                for (ptrdiff_t x=0; x<width; ++x)
                                 {
-                                    const ptrdiff_t lineOffset=y*levelWidth;
+                                    const ptrdiff_t offset=lineOffset + x;
                                     
-                                    for (ptrdiff_t x=0; x<levelWidth; ++x)
-                                    {
-                                        const ptrdiff_t offset=lineOffset + x;
-                                        
-                                        refImgData[offset]*=avrgImageLongevityConst;
-                                        refImgData[offset]+=imgData[offset] * (1.0f - avrgImageLongevityConst);
-                                    }
+                                    refImgData[offset]*=avrgImageLongevityConst;
+                                    refImgData[offset]+=imgData[offset] * (1.0f - avrgImageLongevityConst);
                                 }
                             }
-                            
-                            {//Downsample higher resolution level.
-                                const ptrdiff_t heightUS=croppedHeight >> (levelNum-1);
-                                const ptrdiff_t widthUS=croppedWidth >> (levelNum-1);
-                                
-                                gaussianDownsample_.downsample(imgData, imgVec_[levelNum-1],
-                                                               widthUS, heightUS,
-                                                               scratchData_);
-                            }//=== ===
-                            
-                        }//=== ===
+                        }
+                        
+                        if (levelNum==0)
+                        {//Do Gaussian filter of initial input
+                            gaussianFilter_.filter(imgData, dataRead, width, height, scratchData_);
+                        } else
+                        {//Downsample higher resolution level.
+                            gaussianFilter_.filter(imgData, imgVec_[levelNum-1], width, height, scratchData_);
+                        }
                         
                         
                         {//=== Calculate scale space gradient images ===
                             float * const dxData=dxVec_[levelNum];
                             float * const dyData=dyVec_[levelNum];
-                            float * const dSqRecipData=dSqRecipVec_[levelNum];
+                            float * const dSqData=dSqVec_[levelNum];
                             
-                            for (ptrdiff_t y=1; y<(levelHeight - ((ptrdiff_t)1)); ++y)
+                            for (ptrdiff_t y=1; y<(height - ((ptrdiff_t)1)); ++y)
                             {
-                                const ptrdiff_t lineOffset=y*levelWidth;
+                                const ptrdiff_t lineOffset=y*width;
                                 
-                                for (ptrdiff_t x=((ptrdiff_t)1); x<levelWidthMinus1; ++x)
+                                for (ptrdiff_t x=((ptrdiff_t)1); x<widthMinus1; ++x)
                                 {
                                     const ptrdiff_t offset=lineOffset + x;
                                     
-//#define DESCINT_SCATTER
-                                    
-#ifdef DESCINT_SCATTER
-                                    const float v1=refImgData[offset-levelWidth-1];
-                                    const float v2=refImgData[offset-levelWidth];
-                                    const float v3=refImgData[offset-levelWidth+1];
-                                    const float v4=refImgData[offset-1];
-                                    //const float v5=refImgData[offset];
-                                    const float v6=refImgData[offset+1];
-                                    const float v7=refImgData[offset+levelWidth-1];
-                                    const float v8=refImgData[offset+levelWidth];
-                                    const float v9=refImgData[offset+levelWidth+1];
-#else//DESCINT_GATHER
-                                    const float v1=imgData[offset-levelWidth-1];
-                                    const float v2=imgData[offset-levelWidth];
-                                    const float v3=imgData[offset-levelWidth+1];
+                                    const float v1=imgData[offset-width-1];
+                                    const float v2=imgData[offset-width];
+                                    const float v3=imgData[offset-width+1];
                                     const float v4=imgData[offset-1];
                                     //const float v5=imgData[offset];
                                     const float v6=imgData[offset+1];
-                                    const float v7=imgData[offset+levelWidth-1];
-                                    const float v8=imgData[offset+levelWidth];
-                                    const float v9=imgData[offset+levelWidth+1];
-#endif
+                                    const float v7=imgData[offset+width-1];
+                                    const float v8=imgData[offset+width];
+                                    const float v9=imgData[offset+width+1];
                                     
                                     //Use Scharr operator for image gradient. It has good rotation independence!
                                     const float dx=(v3-v1)*(3.0f/32.0f) + (v6-v4)*(10.0f/32.0f) + (v9-v7)*(3.0f/32.0f);
@@ -306,7 +239,7 @@ bool FIPLKDewarpEx::trigger()
                                     
                                     dxData[offset]=dx;
                                     dyData[offset]=dy;
-                                    dSqRecipData[offset]=1.0f/(dx*dx+dy*dy+0.0000001f);
+                                    dSqData[offset]=dx*dx+dy*dy;
                                 }
                             }
                         }//=== ===
@@ -316,8 +249,8 @@ bool FIPLKDewarpEx::trigger()
                 
                 //===========================
                 //=== Calculate h vectors ===
-                memset(hxVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
-                memset(hyVec_.back(), 0, (croppedWidth>>numLevels_) * (croppedHeight>>numLevels_) * sizeof(float));
+                memset(hxVec_.back(), 0, width * height * sizeof(float));
+                memset(hyVec_.back(), 0, width * height * sizeof(float));
                 
                 for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=0; --levelNum)
                 {
@@ -326,96 +259,70 @@ bool FIPLKDewarpEx::trigger()
                     
                     float const * const dxData=dxVec_[levelNum];
                     float const * const dyData=dyVec_[levelNum];
-                    float const * const dSqRecipData=dSqRecipVec_[levelNum];
+                    float const * const dSqData=dSqVec_[levelNum];
                     
                     float * const hxData=hxVec_[levelNum];
                     float * const hyData=hyVec_[levelNum];
                     float const * const hxDataLR=hxVec_[levelNum+1];
                     float const * const hyDataLR=hyVec_[levelNum+1];
                     
-                    const ptrdiff_t levelWidth=(croppedWidth>>levelNum);
-                    const ptrdiff_t levelHeight=(croppedHeight>>levelNum);
-                    const ptrdiff_t levelWidthLR=(levelWidth>>1);
-                    const ptrdiff_t levelWidthMinus1=levelWidth - ((ptrdiff_t)1);
-                    
                     //=== Start with h-vectors from lower resolution level ===//
-                    for (ptrdiff_t y=1; y<(levelHeight - ((ptrdiff_t)1)); ++y)
+                    for (ptrdiff_t y=1; y<(height - ((ptrdiff_t)1)); ++y)
                     {
-                        const ptrdiff_t lineOffset=y*levelWidth;
-                        const ptrdiff_t lineOffsetLR=(y>>1)*levelWidthLR;
+                        const ptrdiff_t lineOffset=y*width;
                         
-                        for (ptrdiff_t x=((ptrdiff_t)1); x<levelWidthMinus1; ++x)
+                        for (ptrdiff_t x=((ptrdiff_t)1); x<widthMinus1; ++x)
                         {
-                            const ptrdiff_t offsetLR=lineOffsetLR + (x>>((ptrdiff_t)1));
-                            
-                            const ptrdiff_t offsetLT=offsetLR-levelWidthLR-((ptrdiff_t)1)+(y&((ptrdiff_t)1))*levelWidthLR+(x&((ptrdiff_t)1));
-                            const float fx=(x&((ptrdiff_t)1))*(-0.5f)+0.75f;
-                            const float fy=(y&((ptrdiff_t)1))*(-0.5f)+0.75f;
-                            
                             const ptrdiff_t offset=lineOffset + x;
-                            hxData[offset]=/*hxDataLR[offsetLR]*2.0f;*/bilinearRead(hxDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
-                            hyData[offset]=/*hyDataLR[offsetLR]*2.0f;*/bilinearRead(hyDataLR, offsetLT, levelWidthLR, fx, fy) * 2.0f;
+                            
+                            hxData[offset]=hxDataLR[offset];
+                            hyData[offset]=hyDataLR[offset];
                         }
                     }
                     //=== ===//
                     
+                    if (levelNum>=4)
                     {
-                        for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)//5 or more iterations seem to work well.
+                        for (size_t newtonRaphsonI=0; newtonRaphsonI<6; ++newtonRaphsonI)//5 or more iterations seem to work well.
                         {
-                            for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
+                            for (ptrdiff_t y=((ptrdiff_t)1); y<(height - ((ptrdiff_t)1)); ++y)
                             {
-                                const ptrdiff_t lineOffset=y*levelWidth;
+                                const ptrdiff_t lineOffset=y*width;
                                 
-                                for (ptrdiff_t x=((ptrdiff_t)1); x<levelWidthMinus1; ++x)
+                                for (ptrdiff_t x=((ptrdiff_t)1); x<widthMinus1; ++x)
                                 {
                                     const ptrdiff_t offset=lineOffset + x;
                                     
-                                    const float dSqRecip=dSqRecipData[offset];
+                                    const float dSq=dSqData[offset];
                                     
-                                    if (dSqRecip<(recipGradientThreshold_))
+                                    if (dSq > gradientSqThreshold_)
                                     {
                                         float hx=hxData[offset];
                                         float hy=hyData[offset];
+                                        const ptrdiff_t int_hx=lroundf(hx);
+                                        const ptrdiff_t int_hy=lroundf(hy);
                                         
-                                        //=== calc bilinear filter fractions ===//
-                                        const float floor_hx=floorf(hx);
-                                        const float floor_hy=floorf(hy);
-                                        const ptrdiff_t int_hx=lroundf(floor_hx);
-                                        const ptrdiff_t int_hy=lroundf(floor_hy);
-                                        const float frac_hx=hx - floor_hx;
-                                        const float frac_hy=hy - floor_hy;
-                                        //=== ===//
-                                        
-                                        
-#ifdef DESCINT_SCATTER
-                                        if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
+                                        if (((x+int_hx)>((ptrdiff_t)1)) &&
+                                            ((y+int_hy)>((ptrdiff_t)1)) &&
+                                            ((x+int_hx+((ptrdiff_t)2))<width) &&
+                                            ((y+int_hy+((ptrdiff_t)2))<height))
                                         {
-                                            const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
+                                            const ptrdiff_t offsetH=offset + int_hx + int_hy * width;
                                             
-                                            const float refImg=bilinearRead(refImgData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float dx=dxData[offsetH];
+                                            const float dy=dyData[offsetH];
                                             
-                                            const float dx=bilinearRead(dxData, offsetLT, levelWidth, frac_hx, frac_hy);
-                                            const float dy=bilinearRead(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
+                                            const float imgDiff=imgData[offsetH]-refImgData[offset];
                                             
-                                            const float imgDiff=imgData[offset]-refImg;
-                                            hx+=(imgDiff*dx)*dSqRecip;
-                                            hy+=(imgDiff*dy)*dSqRecip;
+                                            //Unsimplified code:
+                                            //h=imgDiff/d;
+                                            //hx=h * dx/d;
+                                            //hy=h * dx/d;
+                                            
+                                            //Simplified code.
+                                            hx-=0.25f*imgDiff*(dx/dSq);
+                                            hy-=0.25f*imgDiff*(dy/dSq);
                                         }
-#else //DESCINT_GATHER
-                                        if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
-                                        {
-                                            const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
-                                            
-                                            const float img=bilinearRead(imgData, offsetLT, levelWidth, frac_hx, frac_hy);
-                                            
-                                            const float dx=bilinearRead(dxData, offsetLT, levelWidth, frac_hx, frac_hy);
-                                            const float dy=bilinearRead(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
-                                            
-                                            const float imgDiff=img-refImgData[offset];
-                                            hx-=(imgDiff*dx)*dSqRecip;
-                                            hy-=(imgDiff*dy)*dSqRecip;
-                                        }
-#endif
                                         
                                         hxData[offset]=hx;
                                         hyData[offset]=hy;
@@ -424,10 +331,8 @@ bool FIPLKDewarpEx::trigger()
                             }
                             
                             
-                            //if (levelNum>=1)
+                            if (levelNum<=1)
                             {//=== Smooth/regularise the vector field of this iteration using Gaussian filters in x and y ===//
-                                gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
-                                gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
                             }//=== ===
                             
                         }
@@ -440,49 +345,21 @@ bool FIPLKDewarpEx::trigger()
                 
                 //=== Final results ===
                 {
-                    memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
-                    
-                    float * const imgDataGF=inputImgData_;
                     float * const hxDataGF=hxVec_[0];
                     float * const hyDataGF=hyVec_[0];
                     
-                    for (ptrdiff_t y=0; y<croppedHeight; ++y)
+                    for (ptrdiff_t y=0; y<height; ++y)
                     {
-                        const ptrdiff_t lineOffset=y*croppedWidth;
+                        const ptrdiff_t lineOffset=y*width;
                         
-                        for (ptrdiff_t x=0; x<croppedWidth; ++x)
+                        for (ptrdiff_t x=0; x<width; ++x)
                         {
                             const ptrdiff_t offset=lineOffset + x;
                             
-                            if (true)
+                            if (false)
                             {
                                 //=== Image Dewarping ===//
                                 {
-                                    //Note: Use a local contrast measure to control blending...
-                                    //      It is assumed the the best lucky frame/region has the best local contrast.
-                                    //      Could look at RMS contrast (the standard deviation) over an image patch centred at the desired location!
-#ifdef DESCINT_SCATTER
-                                    const float hx=-hxDataGF[offset];
-                                    const float hy=-hyDataGF[offset];
-                                    
-                                    const float floor_hx=floorf(hx);
-                                    const float floor_hy=floorf(hy);
-                                    const ptrdiff_t int_hx=lroundf(floor_hx);
-                                    const ptrdiff_t int_hy=lroundf(floor_hy);
-                                    
-                                    if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
-                                    {
-                                        const float frac_hx=hx - floor_hx;
-                                        const float frac_hy=hy - floor_hy;
-                                        const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
-                                        
-                                        const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                        finalImgData_[offset]=img;
-                                        
-                                        //bilinearAdd(imgDataGF[offset], finalImgData_, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                        //finalImgData_[offsetLT]=imgDataGF[offset];
-                                    }
-#else//DESCINT_GATHER
                                     const float hx=hxDataGF[offset];
                                     const float hy=hyDataGF[offset];
                                     
@@ -491,43 +368,40 @@ bool FIPLKDewarpEx::trigger()
                                     const ptrdiff_t int_hx=lroundf(floor_hx);
                                     const ptrdiff_t int_hy=lroundf(floor_hy);
                                     
-                                    if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
+                                    if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(width-1)) && ((y+int_hy)<(height-1)) )
                                     {
                                         const float frac_hx=hx - floor_hx;
                                         const float frac_hy=hy - floor_hy;
-                                        const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                                        const ptrdiff_t offsetLT=offset + int_hx + int_hy * width;
                                         
-                                        const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                        finalImgData_[offset]=img;
+                                        const float img=bilinearRead(dataRead, offsetLT, width, frac_hx, frac_hy);
+                                        dataWrite[offset]=img;
                                     }
-#endif
                                 }
                                 //=== ===
                             }
                             else //OR
                             {
-                                const size_t levelIndex=3;//(numLevels_-1) - 5;
-                                const size_t offsetB=(x>>levelIndex) + (y>>levelIndex)*(croppedWidth>>levelIndex);
-                                const float i=imgVec_[levelIndex][offsetB];
-                                const float hxB=hxVec_[levelIndex][offsetB];
-                                const float hyB=hyVec_[levelIndex][offsetB];
-                                finalImgData_[offset]=i;//sqrtf(hxB*hxB+hyB*hyB)*1.0f;
+                                const size_t levelIndex=5;//(numLevels_-1) - 5;
+                                
+                                const float i=imgVec_[levelIndex][offset];
+                                const float r=refImgVec_[levelIndex][offset];
+                                const float hx=hxVec_[levelIndex][offset];
+                                const float hy=hyVec_[levelIndex][offset];
+                                
+                                hxAVec_[levelIndex][offset]*=0.9f;
+                                hxAVec_[levelIndex][offset]+=hx*0.1f;
+                                
+                                hyAVec_[levelIndex][offset]*=0.9f;
+                                hyAVec_[levelIndex][offset]+=hy*0.1f;
+                                
+                                const float hxA=hxAVec_[levelIndex][offset];
+                                const float hyA=hyAVec_[levelIndex][offset];
+                                
+                                //dataWrite[offset]=r;
+                                dataWrite[offset]=sqrtf(hx*hx+hy*hy)*0.075f;
                             }
                         }
-                    }
-                    
-                    //Copy finalImgData_ result to uncropped output image slot.
-                    //  The data is copied because of the lucky region accumulation that needs to happen in the result buffer.
-                    for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
-                    {
-                        const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
-                        const ptrdiff_t croppedY=uncroppedY-startCroppedY;
-                        const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
-                        
-                        
-                        memcpy((dataWrite+uncroppedLineOffset), (finalImgData_+croppedLineOffset), croppedWidth*sizeof(float));
-                        //OR
-                        //memcpy((dataWrite+uncroppedLineOffset), (refImgVec_[0]+croppedLineOffset), croppedWidth*sizeof(float));
                     }
                 }
             }

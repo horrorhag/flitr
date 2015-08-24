@@ -23,7 +23,7 @@
 
 #include <flitr/modules/geometry_overlays/geometry_overlay.h>
 
-#include <boost/cstdint.hpp>
+//#include <boost/cstdint.hpp>
 
 #include <osg/ref_ptr>
 #include <osg/Node>
@@ -52,7 +52,7 @@ class FLITR_EXPORT Plot2DOverlay : public GeometryOverlay
      *
      */
     Plot2DOverlay(const double x, const double y, const double width, const double height,
-                  const double axisU, const double axisV, const boost::uint32_t numPlots=1);
+                  const double axisU, const double axisV, const uint32_t numPlots=1);
 
     virtual ~Plot2DOverlay() {};
 

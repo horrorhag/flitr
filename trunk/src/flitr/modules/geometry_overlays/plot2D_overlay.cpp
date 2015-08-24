@@ -21,7 +21,7 @@
 #include <flitr/modules/geometry_overlays/plot2D_overlay.h>
 
 using namespace flitr;
-using namespace boost;
+//using namespace boost;
 
 Plot2DOverlay::Plot2DOverlay(const double x, const double y, const double width, const double height,
                              const double axisU, const double axisV, const uint32_t numPlots) :

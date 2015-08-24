@@ -39,7 +39,7 @@ avrgImageLongevity_(avrgImageLongevity),
 recipGradientThreshold_(1.0f / 0.0005f),
 numLevels_(4),//Num levels searched for scint motion.
 gaussianFilter_(2.0f, 8),
-gaussianDownsample_(2.0f, 8),
+gaussianDownsample_(1.0f, 4),
 gaussianReguFilter_(2.5f, 11),
 scratchData_(0),
 inputImgData_(0),
@@ -426,8 +426,8 @@ bool FIPLKDewarp::trigger()
                             
                             //if (levelNum>=1)
                             {//=== Smooth/regularise the vector field of this iteration using Gaussian filters in x and y ===//
-                                gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
-                                gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
+                                //gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
+                                //gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
                             }//=== ===
                             
                         }
@@ -454,7 +454,7 @@ bool FIPLKDewarp::trigger()
                         {
                             const ptrdiff_t offset=lineOffset + x;
                             
-                            if (true)
+                            if (false)
                             {
                                 //=== Image Dewarping ===//
                                 {
@@ -511,7 +511,7 @@ bool FIPLKDewarp::trigger()
                                 const float i=imgVec_[levelIndex][offsetB];
                                 const float hxB=hxVec_[levelIndex][offsetB];
                                 const float hyB=hyVec_[levelIndex][offsetB];
-                                finalImgData_[offset]=i;//sqrtf(hxB*hxB+hyB*hyB)*1.0f;
+                                finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*1.0f;
                             }
                         }
                     }

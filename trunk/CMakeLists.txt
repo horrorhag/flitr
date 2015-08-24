@@ -54,23 +54,23 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 
 
 # === find Boost ===
-    SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
-    SET(Boost_NO_SYSTEM_PATHS OFF CACHE BOOL "Search only BOOST_ROOT.")
-    SET(BOOST_ROOT "" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
+    #SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
+    #SET(Boost_NO_SYSTEM_PATHS OFF CACHE BOOL "Search only BOOST_ROOT.")
+    #SET(BOOST_ROOT "" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
     
-    MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
+    #MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     #SET(Boost_USE_STATIC_LIBS OFF)
-    SET(Boost_USE_MULTITHREADED ON)
-    SET(Boost_ADDITIONAL_VERSIONS "1.49")
+    #SET(Boost_USE_MULTITHREADED ON)
+    #SET(Boost_ADDITIONAL_VERSIONS "1.49")
 
-    FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS filesystem system)
+    #FIND_PACKAGE(Boost 1.46 REQUIRED COMPONENTS filesystem system)
 
-    INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
-    LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
+    #INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+    #LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
-    IF (NOT Boost_FOUND)
-      MESSAGE(FATAL_ERROR "Cannot find boost, set BOOST_ROOT.")
-    ENDIF(NOT Boost_FOUND)
+    #IF (NOT Boost_FOUND)
+    #  MESSAGE(FATAL_ERROR "Cannot find boost, set BOOST_ROOT.")
+    #ENDIF(NOT Boost_FOUND)
 # ==================
 
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)

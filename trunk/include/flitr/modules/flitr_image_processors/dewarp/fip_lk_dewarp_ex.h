@@ -62,16 +62,8 @@ namespace flitr {
             data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
         }
         
-        inline void bilinearAdd(const float value, float * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
-        {
-            data[offsetLT]                        += value * ((1.0f-fx) * (1.0f-fy));
-            data[offsetLT+((ptrdiff_t)1)]         += value * (fx * (1.0f-fy));
-            data[offsetLT+width]                  += value * ((1.0f-fx) * fy);
-            data[offsetLT+(((ptrdiff_t)1)+width)] += value * (fx * fy);
-        }
-        
         const float avrgImageLongevity_;
-        const float recipGradientThreshold_;
+        const float gradientSqThreshold_;
         
         const size_t numLevels_;
         
@@ -80,20 +72,18 @@ namespace flitr {
         
         std::vector<float *> dxVec_;
         std::vector<float *> dyVec_;
-        std::vector<float *> dSqRecipVec_;
+        std::vector<float *> dSqVec_;
         
         std::vector<float *> hxVec_;
         std::vector<float *> hyVec_;
         
+        std::vector<float *> hxAVec_;
+        std::vector<float *> hyAVec_;
+        
         GaussianFilter gaussianFilter_;
-        GaussianDownsample gaussianDownsample_;
-
         GaussianFilter gaussianReguFilter_;
         
         float *scratchData_;
-        
-        float *inputImgData_;
-        float *finalImgData_; //With lucky regions, etc.
     };
     
 }
