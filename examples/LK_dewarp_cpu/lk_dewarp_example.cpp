@@ -19,6 +19,7 @@
 #include <flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h>
 #include <flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h>
 
+#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h>
 #include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
@@ -96,10 +97,10 @@ int main(int argc, char *argv[])
     
     //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
-                                         ip->getFormat().getWidth()/6,
-                                         ip->getFormat().getHeight()/6,
-                                         (ip->getFormat().getWidth()/6)*4,
-                                         (ip->getFormat().getHeight()/6)*4,
+                                         0,
+                                         0,
+                                         ip->getFormat().getWidth(),
+                                         ip->getFormat().getHeight(),
                                          2));
     if (!crop->init())
     {
@@ -107,6 +108,33 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     crop->startTriggerThread();
+    
+    
+    
+    //===
+    shared_ptr<FIPGaussianDownsample> gaussianDownSample0(new FIPGaussianDownsample(*crop, 1,
+                                                                                   2.0f,
+                                                                                   6,
+                                                                                   2));
+    if (!gaussianDownSample0->init())
+    {
+        std::cerr << "Could not initialise the gaussianDownSample0 processor.\n";
+        exit(-1);
+    }
+    gaussianDownSample0->startTriggerThread();
+    
+    
+    //===
+    shared_ptr<FIPGaussianDownsample> gaussianDownSample1(new FIPGaussianDownsample(*crop, 1,
+                                                                                    2.0f,
+                                                                                    6,
+                                                                                    2));
+    if (!gaussianDownSample1->init())
+    {
+        std::cerr << "Could not initialise the gaussianDownSample1 processor.\n";
+        exit(-1);
+    }
+    gaussianDownSample1->startTriggerThread();
     
     
     /*
@@ -127,6 +155,7 @@ int main(int argc, char *argv[])
      //==
      shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
      FIPLKStabilise::Mode::INTSTAB,
+     //FIPLKStabilise::Mode::SUBPIXELSTAB,
      2));
      if (!lkstabilise->init())
      {
@@ -137,8 +166,8 @@ int main(int argc, char *argv[])
      */
     
     //===
-    shared_ptr<FIPLKDewarpEx> lkdewarp(new FIPLKDewarpEx(*crop, 1,
-                                                         0.95f, //Internal average image longevity.
+    shared_ptr<FIPLKDewarpEx> lkdewarp(new FIPLKDewarpEx(*gaussianDownSample1, 1,
+                                                         0.0f, //Internal average image longevity.
                                                          2)); //Buffer size.
     if (!lkdewarp->init())
     {
@@ -194,7 +223,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*crop, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*gaussianDownSample1, 1));
     if (!osgcOrig->init())
     {
         std::cerr << "Could not init osgcOrig consumer\n";
@@ -222,7 +251,7 @@ int main(int argc, char *argv[])
     root_node->addChild(quad->getRoot().get());
     {
         quad->flipAroundHorizontal();
-        quad->rotateAroundCentre(6.0/180.0*M_PI);
+        quad->rotateAroundCentre(5.0/180.0*M_PI);
         quad->translate(osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
@@ -230,7 +259,7 @@ int main(int argc, char *argv[])
     root_node->addChild(quadOrig->getRoot().get());
     {
         quadOrig->flipAroundHorizontal();
-        quadOrig->rotateAroundCentre(6.0/180.0*M_PI);
+        quadOrig->rotateAroundCentre(5.0/180.0*M_PI);
         quadOrig->translate(-osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
@@ -298,6 +327,8 @@ int main(int argc, char *argv[])
     
     cnvrtToYF32->stopTriggerThread();
     crop->stopTriggerThread();
+    gaussianDownSample0->stopTriggerThread();
+    gaussianDownSample1->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
     //lkstabilise->stopTriggerThread();
     lkdewarp->stopTriggerThread();

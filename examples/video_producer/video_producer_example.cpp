@@ -3,8 +3,6 @@
 #include <sstream>
 #include <fstream>
 
-#include <boost/lexical_cast.hpp>
-
 #include <osgDB/WriteFile>
 #include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
@@ -47,7 +45,7 @@ class KeyPressedHandler : public osgGA::GUIEventHandler
                     theImage = osgc_->getOutputTexture()->getImage();
                     theImage->flipVertical();
                     
-                    std::string s = "frame_cap_" + boost::lexical_cast<std::string>(count_) + ".png";
+                    std::string s = "frame_cap_" + std::to_string(count_) + ".png";
                     osgDB::writeImageFile(*theImage, s);
 
                     count_++;

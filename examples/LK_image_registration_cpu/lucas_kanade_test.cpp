@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
     
     //==
     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1,
-                                                              FIPLKStabilise::Mode::INTSTAB,
+                                                              FIPLKStabilise::Mode::SUBPIXELSTAB,
                                                               2));
     if (!lkstabilise->init())
     {
@@ -284,6 +284,8 @@ int main(int argc, char *argv[])
         if (osgc->getNext())
         {
             viewer.frame();
+            
+            lkstabilise->burnOutputTransform(0.95f, 0.95f);
 /*
             float simHx, simHy;
             size_t simFrameNumber;
