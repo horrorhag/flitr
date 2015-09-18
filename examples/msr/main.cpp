@@ -189,7 +189,9 @@ int main(int argc, char *argv[])
         translate.makeTranslate(osg::Vec3d(+osgcOrig->getOutputTexture()->getTextureWidth()/2,
                                            0.0,
                                            0.0));
-        quad->setTransform(translate);
+        quad->flipAroundHorizontal();
+        quad->rotateAroundCentre(5.0/180.0*M_PI);
+        quad->translate(osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
     shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
@@ -199,7 +201,9 @@ int main(int argc, char *argv[])
         translate.makeTranslate(osg::Vec3d(-osgcOrig->getOutputTexture()->getTextureWidth()/2,
                                            0.0,
                                            0.0));
-        quadOrig->setTransform(translate);
+        quadOrig->flipAroundHorizontal();
+        quadOrig->rotateAroundCentre(5.0/180.0*M_PI);
+        quadOrig->translate(-osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
     

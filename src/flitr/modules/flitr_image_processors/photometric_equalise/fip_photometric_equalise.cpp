@@ -19,7 +19,7 @@
  */
 
 #include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
-
+//#include <iostream>
 
 using namespace flitr;
 using std::shared_ptr;
@@ -119,7 +119,7 @@ bool FIPPhotometricEqualise::trigger()
             
             //Single thread!
             uint32_t imageSum=0;
-            for (y=(int)height/4; y<((int)height*3)/4; y++)
+            for (y=0; y<int(height); y++)
                 //for (y=0; y<height; y++)
             {
                 imageSum+=lineSumArray_[y];
@@ -129,6 +129,8 @@ bool FIPPhotometricEqualise::trigger()
             const float average = imageSum / ((float)componentsPerImage);
             const float eScale=targetAverage_ / average;
             
+            //std::cout << average << "\n";
+            //std::cout.flush();
             
             {
                 {

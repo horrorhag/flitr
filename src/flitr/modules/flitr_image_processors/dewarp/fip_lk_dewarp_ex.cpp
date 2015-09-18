@@ -36,10 +36,10 @@ FIPLKDewarpEx::FIPLKDewarpEx(ImageProducer& upStreamProducer, uint32_t images_pe
                              uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
-gradientSqThreshold_(0.000001f),
+gradientSqThreshold_(0.000005f),
 numLevels_(7),//Num levels searched for scint motion.
-gaussianFilter_(4.0f, 17),
-gaussianReguFilter_(5.0f, 22),
+gaussianFilter_(5.0f, 20),
+gaussianReguFilter_(5.0f, 20),
 scratchData_(0)
 {
     //Setup image format being produced to downstream.
@@ -281,7 +281,7 @@ bool FIPLKDewarpEx::trigger()
                     }
                     //=== ===//
                     
-                    if (levelNum>=4)
+                    //if (levelNum>=4)
                     {
                         for (size_t newtonRaphsonI=0; newtonRaphsonI<6; ++newtonRaphsonI)//5 or more iterations seem to work well.
                         {
@@ -320,8 +320,8 @@ bool FIPLKDewarpEx::trigger()
                                             //hy=h * dx/d;
                                             
                                             //Simplified code.
-                                            hx-=0.25f*imgDiff*(dx/dSq);
-                                            hy-=0.25f*imgDiff*(dy/dSq);
+                                            hx-=0.5f*imgDiff*(dx/dSq);
+                                            hy-=0.5f*imgDiff*(dy/dSq);
                                         }
                                         
                                         hxData[offset]=hx;
@@ -382,24 +382,29 @@ bool FIPLKDewarpEx::trigger()
                             }
                             else //OR
                             {
-                                const size_t levelIndex=5;//(numLevels_-1) - 5;
+                                const size_t levelIndex=1;//(numLevels_-1) - 5;
                                 
                                 const float i=imgVec_[levelIndex][offset];
                                 const float r=refImgVec_[levelIndex][offset];
                                 const float hx=hxVec_[levelIndex][offset];
                                 const float hy=hyVec_[levelIndex][offset];
                                 
-                                hxAVec_[levelIndex][offset]*=0.9f;
-                                hxAVec_[levelIndex][offset]+=hx*0.1f;
+                                const float fc=0.99f;
                                 
-                                hyAVec_[levelIndex][offset]*=0.9f;
-                                hyAVec_[levelIndex][offset]+=hy*0.1f;
+                                hxAVec_[levelIndex][offset]*=fc;
+                                hxAVec_[levelIndex][offset]+=hx*(1.0f-fc);
+                                
+                                hyAVec_[levelIndex][offset]*=fc;
+                                hyAVec_[levelIndex][offset]+=hy*(1.0f-fc);
                                 
                                 const float hxA=hxAVec_[levelIndex][offset];
                                 const float hyA=hyAVec_[levelIndex][offset];
                                 
+                                const float dhx=(hx);//-hxA);
+                                const float dhy=(hy);//-hyA);
+                                
                                 //dataWrite[offset]=r;
-                                dataWrite[offset]=sqrtf(hx*hx+hy*hy)*0.075f;
+                                dataWrite[offset]=sqrtf(dhx*dhx + dhy*dhy)*0.075f;
                             }
                         }
                     }

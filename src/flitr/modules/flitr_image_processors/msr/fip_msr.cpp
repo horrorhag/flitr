@@ -171,7 +171,7 @@ bool FIPMSR::trigger()
                 // #parallel
                 GF_.filter(GFScratchData_, F32Image, width, height,
                                           doubleScratchData1_,
-                           scaleIndex==0 ? false : true);
+                           scaleIndex==0 ? true : false);
                 
                 //Approximate Gaussian filt kernel...
                 for (int i=0; i<1; ++i)
@@ -181,7 +181,7 @@ bool FIPMSR::trigger()
                     
                     // #parallel
                     GF_.filter(GFScratchData_, floatScratchData_, width, height,
-                                              doubleScratchData2_, false);
+                                              doubleScratchData2_, true);
                 }
                 
                 //Calc SSR image...
@@ -261,7 +261,7 @@ bool FIPMSR::trigger()
                 }
                  
                 //Remove outliers.
-                size_t lowerToRemove=numHistoSamples*0.001f;
+                size_t lowerToRemove=numHistoSamples*0.005f;
                 size_t lowerRemoved=0;
                 
                 for (int binNum=0; binNum<histoBinArrSize_; ++binNum)
@@ -325,7 +325,7 @@ bool FIPMSR::trigger()
             //MSR cont.
             const float gain=1.0f;//Boosts image intensity.
             const float chromatGain=1.0f;//Boosts colour.
-            const float blacknessFloor=1.5f/255.0f;//Limits the enhancement of low signal (black) areas.
+            const float blacknessFloor=0.05f/255.0f;//Limits the enhancement of low signal (black) areas.
             
             if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
             {

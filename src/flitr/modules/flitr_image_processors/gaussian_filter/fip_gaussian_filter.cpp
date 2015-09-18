@@ -27,10 +27,14 @@ using std::shared_ptr;
 FIPGaussianFilter::FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                      const float filterRadius,
                                      const size_t kernelWidth,
+                                     const short intImgApprox,
                                      uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-xFiltData_(nullptr),
-gaussianFilter_(filterRadius, kernelWidth)
+scratchData_(nullptr),
+intImageScratchData_(nullptr),
+gaussianFilter_(filterRadius, kernelWidth),
+boxFilter_(kernelWidth),
+intImgApprox_(intImgApprox)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -42,7 +46,8 @@ gaussianFilter_(filterRadius, kernelWidth)
 
 FIPGaussianFilter::~FIPGaussianFilter()
 {
-    delete [] xFiltData_;
+    delete [] scratchData_;
+    delete [] intImageScratchData_;
 }
 
 void FIPGaussianFilter::setFilterRadius(const float filterRadius)
@@ -60,7 +65,7 @@ bool FIPGaussianFilter::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    size_t maxXFiltDataSize=0;
+    size_t maxScratchDataSize=0;
     
     for (uint32_t i=0; i<ImagesPerSlot_; i++)
     {
@@ -71,16 +76,17 @@ bool FIPGaussianFilter::init()
         
         const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
         
-        const size_t xFiltDataSize = width * height * componentsPerPixel;
+        const size_t scratchDataSize = width * height * componentsPerPixel;
         
-        if (xFiltDataSize>maxXFiltDataSize)
+        if (scratchDataSize>maxScratchDataSize)
         {
-            maxXFiltDataSize=xFiltDataSize;
+            maxScratchDataSize=scratchDataSize;
         }
     }
     
     //Allocate a buffer big enough for any of the image slots.
-    xFiltData_=new float[maxXFiltDataSize];
+    scratchData_=new float[maxScratchDataSize];
+    intImageScratchData_=new double[maxScratchDataSize];
     
     return rValue;
 }
@@ -111,8 +117,23 @@ bool FIPGaussianFilter::trigger()
             {
                 float const * const dataReadUS=(float const * const)imReadUS->data();
                 float * const dataWriteDS=(float * const)imWriteDS->data();
-
-                gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, xFiltData_);
+                
+                if (intImgApprox_==0)
+                {
+                    gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, scratchData_);
+                } else
+                {
+                    boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
+                                      intImageScratchData_, true);
+                    
+                    for (short i=1; i<intImgApprox_; ++i)
+                    {
+                        memcpy(scratchData_, dataWriteDS, width*height*sizeof(float));
+                        
+                        boxFilter_.filter(dataWriteDS, scratchData_, width, height,
+                                          intImageScratchData_, true);
+                    }
+                }
             }
         }
         

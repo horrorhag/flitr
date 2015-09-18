@@ -136,7 +136,7 @@ namespace flitr {
         virtual float filter(float * const dataWriteDS, float const * const dataReadUS,
                              const size_t width, const size_t height,
                              double * const IIDoubleScratch,
-                             bool reuseIIScratch);
+                             const bool recalcIntegralImage);
         
         /*!Synchronous process method.*/
         //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,

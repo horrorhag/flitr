@@ -34,6 +34,7 @@
 using std::shared_ptr;
 using namespace flitr;
 
+
 class BackgroundTriggerThread : public OpenThreads::Thread
 {
 public:
@@ -93,6 +94,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     cnvrtToYF32->startTriggerThread();
+    
     
 /*
     //==
@@ -164,7 +166,6 @@ int main(int argc, char *argv[])
     lkstabilise->startTriggerThread();
     
     
-/*
     //==
     shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkstabilise, 1, 0.95f, 2));
     if (!cnvrtToY8->init())
@@ -173,11 +174,10 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     cnvrtToY8->startTriggerThread();
-*/    
-    
+ 
     
     //==
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*lkstabilise, 1, 2));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1, 2));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
     //    }
     
     
-/*
+
     //==
     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToY8,1));
     if (!mffc->init())
@@ -203,10 +203,10 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     std::stringstream filenameStringStream;
-    filenameStringStream << argv[1] << "_improved";
+    filenameStringStream << argv[1] << "_istab";
     mffc->openFiles(filenameStringStream.str());
     mffc->startWriting();
-*/
+
     
     
     osg::Group *root_node = new osg::Group;
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
         {
             viewer.frame();
             
-            lkstabilise->burnOutputTransform(0.95f, 0.95f);
+            lkstabilise->burnOutputTransform(0.975f, 0.975f);
 /*
             float simHx, simHy;
             size_t simFrameNumber;
@@ -326,13 +326,16 @@ int main(int argc, char *argv[])
 */
             
             numFrames++;
+            
+            std::cout << numFrames << "\n";
+            std::cout.flush();
         }
         
         OpenThreads::Thread::microSleep(3000);
     }
     
-    //mffc->stopWriting();
-    //mffc->closeFiles();
+    mffc->stopWriting();
+    mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -346,7 +349,7 @@ int main(int argc, char *argv[])
     //gaussianDownsample->stopTriggerThread();
     //gaussianFilter0->stopTriggerThread();
     lkstabilise->stopTriggerThread();
-    //cnvrtToY8->stopTriggerThread();
+    cnvrtToY8->stopTriggerThread();
     
     return 0;
 }

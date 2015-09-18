@@ -55,11 +55,16 @@ namespace flitr {
         
         
     private:
-        inline float bilinearRead(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)
+        inline float bilinearRead(float const * const data,
+                                  const ptrdiff_t offsetLT,
+                                  const ptrdiff_t width,
+                                  const float fx, const float fy)
         {
             return
-            data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) + data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
-            data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
+            data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) +
+            data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
+            data[offsetLT+width] * ((1.0f-fx) * fy) +
+            data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
         }
         
         inline void bilinearAdd(const float value, float * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy)

@@ -41,31 +41,30 @@ bool IntegralImage::process(double * const dataWriteDS, float const * const data
 {
     dataWriteDS[0]=dataReadUS[0];
     
-    size_t offset=1;
-    
     for (size_t x=1; x<width; ++x)
     {
         dataWriteDS[x]=dataReadUS[x] + dataWriteDS[x-1];
     }
     
-    offset=width;
+    size_t offset=width;
     for (size_t y=1; y<height; ++y)
     {
         dataWriteDS[offset]=dataReadUS[offset] + dataWriteDS[offset - width];
         offset+=width;
     }
     
+    
     for (size_t y=1; y<height; ++y)
     {
-        offset=y*width+1;
+        offset=y*width;
+        double lineSum=dataReadUS[offset];
+        ++offset;
         
         for (size_t x=1; x<width; ++x)
         {
-            dataWriteDS[offset]=
-            dataReadUS[offset] +
-            dataWriteDS[offset - width] +
-            dataWriteDS[offset - 1] -
-            dataWriteDS[offset - width - 1];
+            lineSum+=dataReadUS[offset];
+
+            dataWriteDS[offset]=lineSum + dataWriteDS[offset - width];
             
             ++offset;
         }
@@ -164,9 +163,9 @@ void BoxFilterII::setKernelWidth(const int kernelWidth)
 float BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
                           const size_t width, const size_t height,
                           double * const IIDoubleScratch,
-                          bool reuseIIScratch)
+                          const bool recalcIntegralImage)
 {
-    if (!reuseIIScratch)
+    if (recalcIntegralImage)
     {
         integralImage_.process(IIDoubleScratch, dataReadUS, width, height);
     }
@@ -175,6 +174,7 @@ float BoxFilterII::filter(float * const dataWriteDS, float const * const dataRea
     const size_t widthMinusKernel=width - kernelWidth_;
     const size_t heightMinusKernel=height - kernelWidth_;
     const float recipKernelWidthSq=1.0f / (kernelWidth_*kernelWidth_);
+    const size_t widthTimesKernelWidth = width*kernelWidth_;
     
     for (size_t y=0; y<heightMinusKernel; ++y)
     {
@@ -185,8 +185,8 @@ float BoxFilterII::filter(float * const dataWriteDS, float const * const dataRea
         {
             const float c=IIDoubleScratch[lineOffsetII]
             - IIDoubleScratch[lineOffsetII - kernelWidth_]
-            - IIDoubleScratch[lineOffsetII - width*kernelWidth_]
-            + IIDoubleScratch[lineOffsetII - kernelWidth_ - width*kernelWidth_];
+            - IIDoubleScratch[lineOffsetII - widthTimesKernelWidth]
+            + IIDoubleScratch[lineOffsetII - kernelWidth_ - widthTimesKernelWidth];
             
             dataWriteDS[lineOffset]=c * recipKernelWidthSq;
             

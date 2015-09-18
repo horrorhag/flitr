@@ -360,7 +360,8 @@ bool FIPLKDewarp::trigger()
                     //=== ===//
                     
                     {
-                        for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)//5 or more iterations seem to work well.
+                        for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
+                            //5 or more iterations seem to work well.
                         {
                             for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
                             {
@@ -388,7 +389,10 @@ bool FIPLKDewarp::trigger()
                                         
                                         
 #ifdef DESCINT_SCATTER
-                                        if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
+                                        if (((x+int_hx)>((ptrdiff_t)1))&&
+                                            ((y+int_hy)>((ptrdiff_t)1))&&
+                                            ((x+int_hx+((ptrdiff_t)2))<levelWidth)&&
+                                            ((y+int_hy+((ptrdiff_t)2))<levelHeight))
                                         {
                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
                                             
@@ -402,7 +406,10 @@ bool FIPLKDewarp::trigger()
                                             hy+=(imgDiff*dy)*dSqRecip;
                                         }
 #else //DESCINT_GATHER
-                                        if (((x+int_hx)>((ptrdiff_t)1))&&((y+int_hy)>((ptrdiff_t)1))&&((x+int_hx+((ptrdiff_t)2))<levelWidth)&&((y+int_hy+((ptrdiff_t)2))<levelHeight))
+                                        if (((x+int_hx)>((ptrdiff_t)1))&&
+                                            ((y+int_hy)>((ptrdiff_t)1))&&
+                                            ((x+int_hx+((ptrdiff_t)2))<levelWidth)&&
+                                            ((y+int_hy+((ptrdiff_t)2))<levelHeight))
                                         {
                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * levelWidth;
                                             
@@ -454,7 +461,7 @@ bool FIPLKDewarp::trigger()
                         {
                             const ptrdiff_t offset=lineOffset + x;
                             
-                            if (false)
+                            if (true)
                             {
                                 //=== Image Dewarping ===//
                                 {
@@ -491,7 +498,10 @@ bool FIPLKDewarp::trigger()
                                     const ptrdiff_t int_hx=lroundf(floor_hx);
                                     const ptrdiff_t int_hy=lroundf(floor_hy);
                                     
-                                    if ( ((x+int_hx)>((ptrdiff_t)1)) && ((y+int_hy)>((ptrdiff_t)1)) && ((x+int_hx)<(croppedWidth-1)) && ((y+int_hy)<(croppedHeight-1)) )
+                                    if (((x+int_hx)>((ptrdiff_t)1)) &&
+                                        ((y+int_hy)>((ptrdiff_t)1)) &&
+                                        ((x+int_hx)<(croppedWidth-1)) &&
+                                        ((y+int_hy)<(croppedHeight-1)) )
                                     {
                                         const float frac_hx=hx - floor_hx;
                                         const float frac_hy=hy - floor_hy;

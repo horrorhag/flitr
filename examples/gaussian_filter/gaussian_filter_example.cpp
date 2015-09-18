@@ -12,7 +12,7 @@
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
-#include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
+#include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
@@ -50,14 +50,15 @@ private:
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
+    if (argc != 2)
+    {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
     
-    
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
-    if (!ip->init()) {
+    if (!ip->init())
+    {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
@@ -67,36 +68,28 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    /*
-    const float theta=(45.0f / 180.0f) * float(M_PI);
-    const float scale=0.35f;
-    
-    shared_ptr<FIPTransform2D> transform(new FIPTransform2D(*ip, 1, {{scale*cosf(theta), scale*sinf(theta), -scale*sinf(theta), scale*cosf(theta)}}, 1));
-    if (!transform->init())
+    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*ip, 1, 1));
+    if (!cnvrtToYF32->init())
     {
-        std::cerr << "Could not initialise the transform2D processor.\n";
-        exit(-1);
-    }
-    transform->startTriggerThread();
-     */
-
-    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*transform, 1, 1));
-    if (!cnvrtToYF32->init()) {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
     }
     cnvrtToYF32->startTriggerThread();
     
     
-    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*cnvrtToYF32, 1, 4, 1));
-    if (!averageImage->init()) {
-        std::cerr << "Could not initialise the average image processor.\n";
+    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToYF32, 1,
+                                                            40.0, 80,
+                                                            3));
+    if (!gaussFilt->init())
+    {
+        std::cerr << "Could not initialise the gaussFilt processor.\n";
         exit(-1);
     }
-    averageImage->startTriggerThread();
+    gaussFilt->startTriggerThread();
     
-    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*averageImage, 1, 0.95f, 1));
-    if (!cnvrtToY8->init()) {
+    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*gaussFilt, 1, 0.95f, 1));
+    if (!cnvrtToY8->init())
+    {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
         exit(-1);
     }
@@ -104,14 +97,16 @@ int main(int argc, char *argv[])
     
     
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1, 1));
-    if (!osgc->init()) {
+    if (!osgc->init())
+    {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
     
     shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
-    if (!osgcOrig->init()) {
+    if (!osgcOrig->init())
+    {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
     }
@@ -204,7 +199,7 @@ int main(int argc, char *argv[])
             numFrames++;
         }
         
-        OpenThreads::Thread::microSleep(0);
+        OpenThreads::Thread::microSleep(5000);
     }
     
     //     mffc->stopWriting();
@@ -216,9 +211,8 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    //transform->stopTriggerThread();
     cnvrtToYF32->stopTriggerThread();
-    averageImage->stopTriggerThread();
+    gaussFilt->stopTriggerThread();
     cnvrtToY8->stopTriggerThread();
     
     return 0;

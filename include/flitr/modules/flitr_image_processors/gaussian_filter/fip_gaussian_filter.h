@@ -38,6 +38,7 @@ namespace flitr {
         FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                           const float filterRadius,//filterRadius = standardDeviation * 2.0
                           const size_t kernelWidth,//Width of filter kernel in pixels.
+                          const short intImgApprox,
                           uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -55,9 +56,15 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        /*! The result of the first pass of the seperable Gaussian filter. */
-        float *xFiltData_;
-        GaussianFilter gaussianFilter_;
+        float *scratchData_;
+        
+        double *intImageScratchData_;
+        
+        GaussianFilter gaussianFilter_; //No significant state associated with this.
+
+        BoxFilterII boxFilter_; //No significant state associated with this.
+        
+        short intImgApprox_;
     };
     
 }

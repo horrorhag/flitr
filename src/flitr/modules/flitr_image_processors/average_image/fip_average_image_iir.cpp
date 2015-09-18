@@ -164,7 +164,7 @@ bool FIPAverageImageIIR::trigger()
             {
                 // #parallel
                 GF_.setKernelWidth(width/75);
-                imgAvrg[triggerCount_%2]=GF_.filter(gfImageVec_[triggerCount_%2][imgNum], F32Image, width, height, doubleScratchData_, false);
+                imgAvrg[triggerCount_%2]=GF_.filter(gfImageVec_[triggerCount_%2][imgNum], F32Image, width, height, doubleScratchData_, true);
                 
                 std::cout << imgAvrg[triggerCount_%2] << "\n";
                 std::cout.flush();
@@ -177,7 +177,7 @@ bool FIPAverageImageIIR::trigger()
                     
                     // #parallel
                     GF_.filter(gfImageVec_[triggerCount_%2][imgNum], floatScratchData_, width, height,
-                               doubleScratchData_, false);
+                               doubleScratchData_, true);
                 }
             }
             

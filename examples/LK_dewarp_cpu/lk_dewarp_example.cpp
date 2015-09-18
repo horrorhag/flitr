@@ -94,13 +94,13 @@ int main(int argc, char *argv[])
     }
     cnvrtToYF32->startTriggerThread();
     
-    
+    /*
     //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
-                                         0,
-                                         0,
-                                         ip->getFormat().getWidth(),
-                                         ip->getFormat().getHeight(),
+                                         190,
+                                         250,
+                                         640,
+                                         480,
                                          2));
     if (!crop->init())
     {
@@ -108,9 +108,9 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     crop->startTriggerThread();
+    */
     
-    
-    
+/*
     //===
     shared_ptr<FIPGaussianDownsample> gaussianDownSample0(new FIPGaussianDownsample(*crop, 1,
                                                                                    2.0f,
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FIPGaussianDownsample> gaussianDownSample1(new FIPGaussianDownsample(*crop, 1,
+    shared_ptr<FIPGaussianDownsample> gaussianDownSample1(new FIPGaussianDownsample(*gaussianDownSample0, 1,
                                                                                     2.0f,
                                                                                     6,
                                                                                     2));
@@ -135,25 +135,39 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     gaussianDownSample1->startTriggerThread();
-    
+*/
     
     /*
      //===
-     shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1,
+     shared_ptr<FIPGaussianFilter> gaussianFilter(new FIPGaussianFilter(*crop, 1,
      1.0f,
      3,
      2));
-     if (!gaussianFilter0->init())
+     if (!gaussianFilter->init())
      {
      std::cerr << "Could not initialise the gaussianFilter processor.\n";
      exit(-1);
      }
-     gaussianFilter0->startTriggerThread();
-     */
+     gaussianFilter->startTriggerThread();
+    */
     
-    /*
-     //==
-     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
+    
+    //===
+    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToYF32, 1,
+                                                                                      0.6, //target average
+                                                                                      2));//Buffer size.
+    
+    if (!photometricEqualise->init())
+    {
+        std::cerr << "Could not initialise the photometricEqualise processor.\n";
+        exit(-1);
+    }
+    photometricEqualise->startTriggerThread();
+    
+    
+    
+    //==
+     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*photometricEqualise, 1,
      FIPLKStabilise::Mode::INTSTAB,
      //FIPLKStabilise::Mode::SUBPIXELSTAB,
      2));
@@ -163,11 +177,13 @@ int main(int argc, char *argv[])
      exit(-1);
      }
      lkstabilise->startTriggerThread();
-     */
+    
+
+    
     
     //===
-    shared_ptr<FIPLKDewarpEx> lkdewarp(new FIPLKDewarpEx(*gaussianDownSample1, 1,
-                                                         0.0f, //Internal average image longevity.
+    shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
+                                                         0.3f, //Internal average image longevity.
                                                          2)); //Buffer size.
     if (!lkdewarp->init())
     {
@@ -177,7 +193,7 @@ int main(int argc, char *argv[])
     lkdewarp->startTriggerThread();
     
     
-    /*
+    
      //===
      shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 5, 2));
      if (!averageImage->init())
@@ -196,7 +212,7 @@ int main(int argc, char *argv[])
      }
      unsharpMask->startTriggerThread();
      
-     
+     /*
      shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 0.8f, 2));
      if (!tonemap->init())
      {
@@ -204,18 +220,19 @@ int main(int argc, char *argv[])
      exit(-1);
      }
      tonemap->startTriggerThread();
-     */
+    */
     
-    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkdewarp, 1, 0.90f, 2));
+    /*
+    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*unsharpMask, 1, 0.90f, 2));
     if (!cnvrtToY8->init())
     {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
         exit(-1);
     }
     cnvrtToY8->startTriggerThread();
+    */
     
-    
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*lkdewarp, 1, 2));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*unsharpMask, 1, 2));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -223,7 +240,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*gaussianDownSample1, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*lkstabilise, 1));
     if (!osgcOrig->init())
     {
         std::cerr << "Could not init osgcOrig consumer\n";
@@ -250,16 +267,16 @@ int main(int argc, char *argv[])
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
     {
-        quad->flipAroundHorizontal();
-        quad->rotateAroundCentre(5.0/180.0*M_PI);
+        //quad->flipAroundHorizontal();
+        //quad->rotateAroundCentre(5.0/180.0*M_PI);
         quad->translate(osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
     shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
     root_node->addChild(quadOrig->getRoot().get());
     {
-        quadOrig->flipAroundHorizontal();
-        quadOrig->rotateAroundCentre(5.0/180.0*M_PI);
+        //quadOrig->flipAroundHorizontal();
+        //quadOrig->rotateAroundCentre(5.0/180.0*M_PI);
         quadOrig->translate(-osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
@@ -326,16 +343,17 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToYF32->stopTriggerThread();
-    crop->stopTriggerThread();
-    gaussianDownSample0->stopTriggerThread();
-    gaussianDownSample1->stopTriggerThread();
+    //crop->stopTriggerThread();
+    //gaussianDownSample0->stopTriggerThread();
+    //gaussianDownSample1->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
-    //lkstabilise->stopTriggerThread();
+    lkstabilise->stopTriggerThread();
+    //photometricEqualise->stopTriggerThread();
     lkdewarp->stopTriggerThread();
-    //averageImage->stopTriggerThread();
-    //unsharpMask->stopTriggerThread();
+    averageImage->stopTriggerThread();
+    unsharpMask->stopTriggerThread();
     //tonemap->stopTriggerThread();
-    cnvrtToY8->stopTriggerThread();
+    //cnvrtToY8->stopTriggerThread();
     
     return 0;
 }
