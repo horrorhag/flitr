@@ -198,6 +198,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.cpp
+  src/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
@@ -206,6 +207,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.cpp
   src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
+  src/flitr/modules/flitr_image_processors/simulate/fip_test_pattern.cpp
 
   src/flitr/modules/glsl_shader_passes/glsl_masked_gain_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
@@ -306,6 +308,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/gradient_image/fip_gradient_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.h
+  include/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
@@ -314,6 +317,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h
   include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
   include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
+  include/flitr/modules/flitr_image_processors/simulate/fip_test_pattern.h
 
   include/flitr/modules/glsl_shader_passes/glsl_masked_gain_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
@@ -401,6 +405,7 @@ ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/beat_image)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)

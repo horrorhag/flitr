@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     transform->startTriggerThread();
      */
 
-    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*transform, 1, 1));
+    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*ip, 1, 1));
     if (!cnvrtToYF32->init()) {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
             numFrames++;
         }
         
-        OpenThreads::Thread::microSleep(0);
+        OpenThreads::Thread::microSleep(1000);
     }
     
     //     mffc->stopWriting();
