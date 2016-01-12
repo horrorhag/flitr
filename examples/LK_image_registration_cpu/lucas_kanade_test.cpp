@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
-
+    
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();
@@ -96,19 +96,18 @@ int main(int argc, char *argv[])
     cnvrtToYF32->startTriggerThread();
     
     
-/*
-    //==
-    shared_ptr<FIPCameraShake> cameraShake(new FIPCameraShake(*cnvrtToYF32, 1,
-                                                              3.0f, 30, //Kernel width is required to be >> than SD.
-                                                              2));
-    if (!cameraShake->init())
-    {
-        std::cerr << "Could not initialise the cameraShake processor.\n";
-        exit(-1);
-    }
-    cameraShake->startTriggerThread();
-*/
-    
+    /*
+     //==
+     shared_ptr<FIPCameraShake> cameraShake(new FIPCameraShake(*cnvrtToYF32, 1,
+     3.0f, 30, //Kernel width is required to be >> than SD.
+     2));
+     if (!cameraShake->init())
+     {
+     std::cerr << "Could not initialise the cameraShake processor.\n";
+     exit(-1);
+     }
+     cameraShake->startTriggerThread();
+     */
     
     /*
      //==
@@ -123,8 +122,8 @@ int main(int argc, char *argv[])
      }
      gaussianDownsample->startTriggerThread();
      */
-     
-     /*
+    
+    /*
      //==
      shared_ptr<FIPGaussianFilter> gaussianFilter0(new FIPGaussianFilter(*crop, 1,
      1.0f,
@@ -136,23 +135,23 @@ int main(int argc, char *argv[])
      exit(-1);
      }
      gaussianFilter0->startTriggerThread();
-    */
+     */
     
-/*
-    //==
-    shared_ptr<FIPCrop> crop(new FIPCrop(*cameraShake, 1,
-                                         ip->getFormat().getWidth()/4,
-                                         160,
-                                         ip->getFormat().getWidth()/2,
-                                         640,
-                                         2));
-    if (!crop->init())
-    {
-        std::cerr << "Could not initialise the crop processor.\n";
-        exit(-1);
-    }
-    crop->startTriggerThread();
-*/
+    /*
+     //==
+     shared_ptr<FIPCrop> crop(new FIPCrop(*cameraShake, 1,
+     ip->getFormat().getWidth()/4,
+     160,
+     ip->getFormat().getWidth()/2,
+     640,
+     2));
+     if (!crop->init())
+     {
+     std::cerr << "Could not initialise the crop processor.\n";
+     exit(-1);
+     }
+     crop->startTriggerThread();
+     */
     
     //==
     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1,
@@ -174,7 +173,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     cnvrtToY8->startTriggerThread();
- 
+    
     
     //==
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1, 2));
@@ -194,7 +193,7 @@ int main(int argc, char *argv[])
     //    }
     
     
-
+    
     //==
     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToY8,1));
     if (!mffc->init())
@@ -206,7 +205,7 @@ int main(int argc, char *argv[])
     filenameStringStream << argv[1] << "_istab";
     mffc->openFiles(filenameStringStream.str());
     mffc->startWriting();
-
+    
     
     
     osg::Group *root_node = new osg::Group;
@@ -230,6 +229,7 @@ int main(int argc, char *argv[])
     //                                           0.0));
     //        quadOrig->setTransform(translate);
     //    }
+    
     
     //=== Points overlay to test homography registration ===
     //Note that the points will be one frame behind input!!!
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
     }
     
     size_t numFrames=0;
-
+    
     float errSq[16];
     float errCounter[16];
     for (size_t i=0; i<15; ++i)
@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
         errSq[i]=0.0f;
         errCounter[i]=0;
     }
-
+    
     
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/&&(numFrames<1000))
     {
@@ -285,50 +285,52 @@ int main(int argc, char *argv[])
         {
             viewer.frame();
             
+            //High pass filter output transform.
             lkstabilise->burnOutputTransform(0.975f, 0.975f);
-/*
-            float simHx, simHy;
-            size_t simFrameNumber;
-            float lkHx, lkHy;
-            size_t lkFrameNumber;
             
-            lkstabilise->getLatestHVect(lkHx, lkHy, lkFrameNumber);
-            
-            cameraShake->getLatestHVect(simHx, simHy, simFrameNumber);
-            
-            //simHx*=0.5f;
-            //simHy*=0.5f;
-            
-            if (numFrames>0)
-            {
-                const float H=sqrtf(simHx*simHx + simHy*simHy);
-                const float ieSq=(lkHx-simHx)*(lkHx-simHx) + (lkHy-simHy)*(lkHy-simHy);
-                
-                const size_t hIndex=(H/16.0f)*16;
-                
-                if (hIndex<=15)
-                {
-                    errSq[hIndex]+=ieSq;
-                    ++errCounter[hIndex];
-                }
-                
-                std::cout << "LK_" << lkFrameNumber << "=(" << lkHx << " " << lkHy << ")\n";
-                std::cout << "SIM_" << simFrameNumber << "=(" << simHx << " " << simHy << ")\n";
-                std::cout << "[H=" << H << ", err=" << sqrtf(ieSq) << "]\n";
-                
-                for (size_t i=0; i<15; ++i)
-                {
-                    std::cout << "[" << ((errCounter[i]>0) ? sqrtf(errSq[i]/errCounter[i]) : 0.0f) << "]";
-                }
-                std::cout << "\n";
-                std::cout.flush();
-            }
-*/
+            /*
+             float simHx, simHy;
+             size_t simFrameNumber;
+             float lkHx, lkHy;
+             size_t lkFrameNumber;
+             
+             lkstabilise->getLatestHVect(lkHx, lkHy, lkFrameNumber);
+             
+             cameraShake->getLatestHVect(simHx, simHy, simFrameNumber);
+             
+             //simHx*=0.5f;
+             //simHy*=0.5f;
+             
+             if (numFrames>0)
+             {
+             const float H=sqrtf(simHx*simHx + simHy*simHy);
+             const float ieSq=(lkHx-simHx)*(lkHx-simHx) + (lkHy-simHy)*(lkHy-simHy);
+             
+             const size_t hIndex=(H/16.0f)*16;
+             
+             if (hIndex<=15)
+             {
+             errSq[hIndex]+=ieSq;
+             ++errCounter[hIndex];
+             }
+             
+             std::cout << "LK_" << lkFrameNumber << "=(" << lkHx << " " << lkHy << ")\n";
+             std::cout << "SIM_" << simFrameNumber << "=(" << simHx << " " << simHy << ")\n";
+             std::cout << "[H=" << H << ", err=" << sqrtf(ieSq) << "]\n";
+             
+             for (size_t i=0; i<15; ++i)
+             {
+             std::cout << "[" << ((errCounter[i]>0) ? sqrtf(errSq[i]/errCounter[i]) : 0.0f) << "]";
+             }
+             std::cout << "\n";
+             std::cout.flush();
+             }
+             */
             
             numFrames++;
             
-            std::cout << numFrames << "\n";
-            std::cout.flush();
+            //std::cout << numFrames << "\n";
+            //std::cout.flush();
         }
         
         OpenThreads::Thread::microSleep(3000);
