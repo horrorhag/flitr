@@ -36,7 +36,7 @@ public:
     /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
-         *@param avrgImageLongevity Filter constant for how strong the averaging of the reference image is.
+         *@param Mode Mode of transform applied to the output image.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
     FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                    Mode outputMode,
@@ -64,7 +64,7 @@ public:
         frameNumber=latestHFrameNumber_;//frameNumber_;
     }
 
-    /*! Resets the output image transform.
+    /*! Burns/filters the output image transform.
          *@param fx Factor [0..1] by which to reduce the output image transform in x.
          *@param fy Factor [0..1] by which to reduce the output image transform in y.
      */
