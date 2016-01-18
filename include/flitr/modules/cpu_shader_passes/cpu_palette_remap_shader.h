@@ -8,7 +8,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT CPUPaletteRemap_Shader : public flitr::CPUShaderPass::CPUShader
+class CPUPaletteRemap_Shader : public flitr::CPUShaderPass::CPUShader
 {
 public:
     CPUPaletteRemap_Shader(osg::Image* image, bool exposeParameters=true) :

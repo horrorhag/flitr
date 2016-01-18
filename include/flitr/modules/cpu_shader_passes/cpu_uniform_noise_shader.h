@@ -7,7 +7,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT CPUUniformNoise_Shader : public flitr::CPUShaderPass::CPUShader
+class CPUUniformNoise_Shader : public flitr::CPUShaderPass::CPUShader
 {
 public:
     CPUUniformNoise_Shader(osg::Image* image, float noiseLevel) :
