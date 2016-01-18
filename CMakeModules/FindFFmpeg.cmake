@@ -45,6 +45,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
             PATHS
             ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
+			${CMAKE_INSTALL_PREFIX}
+			${CMAKE_INSTALL_PREFIX}/include
             PATH_SUFFIXES ffmpeg
             DOC "Location of FFmpeg Headers"
             NO_DEFAULT_PATH
@@ -54,6 +56,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
             PATHS
             ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
+			${CMAKE_INSTALL_PREFIX}
+			${CMAKE_INSTALL_PREFIX}/include
             $ENV{FFMPEG_DIR}/includecc
             ~/Library/Frameworks
             /Library/Frameworks
@@ -74,6 +78,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
             PATHS
             ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
+			${CMAKE_INSTALL_PREFIX}
+			${CMAKE_INSTALL_PREFIX}/include
             DOC "Location of FFmpeg Headers"
             PATH_SUFFIXES ffmpeg
             NO_DEFAULT_PATH
@@ -83,6 +89,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
             PATHS
             ${FFmpeg_ROOT}
             ${FFmpeg_ROOT}/include
+			${CMAKE_INSTALL_PREFIX}
+			${CMAKE_INSTALL_PREFIX}/include
             $ENV{FFMPEG_DIR}/include
             ~/Library/Frameworks
             /Library/Frameworks
@@ -108,6 +116,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
             ${FFmpeg_ROOT}/lib
             ${FFmpeg_ROOT}/lib_lin32
             ${FFmpeg_ROOT}/lib_win32
+			${CMAKE_INSTALL_PREFIX}
+			${CMAKE_INSTALL_PREFIX}/lib
             DOC "Location of FFmpeg Libraries"
             NO_DEFAULT_PATH
         )
@@ -119,6 +129,8 @@ MARK_AS_ADVANCED(FORCE FFmpeg_${varname}_FOUND)
             ${FFmpeg_ROOT}/lib
             ${FFmpeg_ROOT}/lib_lin32
             ${FFmpeg_ROOT}/lib_win32
+			${CMAKE_INSTALL_PREFIX}
+			${CMAKE_INSTALL_PREFIX}/lib
             $ENV{FFMPEG_DIR}/lib
             $ENV{FFMPEG_DIR}/lib_lin32
             $ENV{FFMPEG_DIR}/lib_win32
@@ -162,6 +174,7 @@ ELSEIF(WIN32)
 	FIND_PATH(FFmpeg_STDINT_INCLUDE_DIR stdint.h
         PATHS
         ${FFmpeg_ROOT}/include
+		${CMAKE_INSTALL_PREFIX}/include
         $ENV{FFMPEG_DIR}/include
         ~/Library/Frameworks
         /Library/Frameworks
@@ -194,12 +207,11 @@ SET(FFmpeg_LIBRARIES FFmpeg_LIBRARIES-NOTFOUND)# CACHE STRING "docstring")
 SET(FFmpeg_FOUND FALSE)
 
 
-FFmpeg_FIND(LIBAVFORMAT    avformat avformat.h)
-FFmpeg_FIND(LIBAVDEVICE    avdevice avdevice.h)
-FFmpeg_FIND(LIBAVCODEC     avcodec  avcodec.h)
-FFmpeg_FIND(LIBAVUTIL      avutil   avutil.h)
-FFmpeg_FIND(LIBSWSCALE     swscale  swscale.h)
-#FFmpeg_FIND(LIBSWRESAMPLE  swresample  swresample.h)
+FFmpeg_FIND(LIBAVFORMAT avformat avformat.h)
+FFmpeg_FIND(LIBAVDEVICE avdevice avdevice.h)
+FFmpeg_FIND(LIBAVCODEC  avcodec  avcodec.h)
+FFmpeg_FIND(LIBAVUTIL   avutil   avutil.h)
+FFmpeg_FIND(LIBSWSCALE  swscale  swscale.h)
 
 
 MARK_AS_ADVANCED(CLEAR FFmpeg_LIBAVFORMAT_LIBRARIES) #Mark one lib as non-advanced to show where FFmpeg was found.
@@ -214,7 +226,6 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
         ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS} #${FFmpeg_LIBAVCODEC_INCLUDE_DIRS}/libavcodec
         ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS} #${FFmpeg_LIBAVUTIL_INCLUDE_DIRS}/libavutil
         ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS} #${FFmpeg_LIBSWSCALE_INCLUDE_DIRS}/libswscale
-        #${FFmpeg_LIBSWRESAMPLE_INCLUDE_DIRS} #${FFmpeg_LIBSWRESAMPLE_INCLUDE_DIRS}/libswresample
         #CACHE STRING  "docstring"
     )
 
@@ -227,7 +238,6 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
             #${FFmpeg_STDINT_INCLUDE_DIR}/libavcodec
             #${FFmpeg_STDINT_INCLUDE_DIR}/libavutil
             #${FFmpeg_STDINT_INCLUDE_DIR}/libswscale
-            #${FFmpeg_STDINT_INCLUDE_DIR}/libswresample
             #CACHE  STRING  "docstring"
         )
     ENDIF()
@@ -238,7 +248,6 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
         ${FFmpeg_LIBAVCODEC_LIBRARIES}
         ${FFmpeg_LIBAVUTIL_LIBRARIES}
         ${FFmpeg_LIBSWSCALE_LIBRARIES}
-#        ${FFmpeg_LIBSWRESAMPLE_LIBRARIES}
         #CACHE  STRING  "docstring"
     )
 
