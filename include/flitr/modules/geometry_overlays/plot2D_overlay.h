@@ -23,6 +23,7 @@
 
 #include <flitr/modules/geometry_overlays/geometry_overlay.h>
 
+#include <stdint.h>
 //#include <boost/cstdint.hpp>
 
 #include <osg/ref_ptr>

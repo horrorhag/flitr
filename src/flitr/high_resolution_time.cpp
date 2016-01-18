@@ -21,6 +21,8 @@
 #include <flitr/high_resolution_time.h>
 
 #include <chrono>
+#include <ctime>
+#include <string>
 
 uint64_t currentTimeNanoSec()
 {
@@ -33,7 +35,8 @@ std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
     time_t timestamp_t=timeNanoSec / 1000000000;
 
     struct tm timestamp_tm;
-    localtime_r(&timestamp_t, &timestamp_tm);
+    localtime_s(&timestamp_tm, &timestamp_t);
+    //localtime_r(&timestamp_t, &timestamp_tm);
     
     char timestr[512];
     sprintf(timestr, "%d-%02d-%02d_%02dh%02dm%02d.%03ds",
@@ -52,7 +55,8 @@ double secondsSinceMidnightLT()
     time_t timestamp_t=currentTimeNanoSec() / 1000000000;
     
     struct tm timestamp_tm;
-    localtime_r(&timestamp_t, &timestamp_tm);
+    //localtime_r(&timestamp_t, &timestamp_tm);
+    localtime_s(&timestamp_tm, &timestamp_t);
     
     return timestamp_tm.tm_hour*3600.0 + timestamp_tm.tm_min*60.0 + timestamp_tm.tm_sec + (timeNS%1000000000)*0.000000001;
 }
@@ -65,7 +69,8 @@ double secondsSinceMidnightGMT()
     time_t timestamp_t=currentTimeNanoSec() / 1000000000;
     
     struct tm timestamp_tm;
-    gmtime_r(&timestamp_t, &timestamp_tm);
+    //gmtime_r(&timestamp_t, &timestamp_tm);
+    gmtime_s(&timestamp_tm, &timestamp_t);
 
     return timestamp_tm.tm_hour*3600.0 + timestamp_tm.tm_min*60.0 + timestamp_tm.tm_sec + (timeNS%1000000000)*0.000000001;
 }

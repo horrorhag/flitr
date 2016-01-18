@@ -20,6 +20,7 @@
 
 #include <flitr/modules/flitr_image_processors/msr/fip_msr.h>
 #include <iostream>
+#include <algorithm>
 
 using namespace flitr;
 using std::shared_ptr;

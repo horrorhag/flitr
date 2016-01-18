@@ -116,7 +116,8 @@ public:
 
         unsigned char * const data=(unsigned char *)Image_->data();
 
-        unsigned long pixelSum[numComponents];
+        //unsigned long pixelSum[numComponents];
+        unsigned long pixelSum[4];
         for (unsigned long i=0; i<numComponents; i++)
         {
             pixelSum[i]=0;
