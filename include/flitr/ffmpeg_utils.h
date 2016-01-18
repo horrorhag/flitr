@@ -26,7 +26,16 @@
 extern "C" {
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
+#ifdef WIN32
+#define av_pix_fmt_descriptors av_pix_fmt_descriptors_foo
+#endif
+
 #include <libavutil/pixdesc.h>
+
+#ifdef WIN32
+#undef av_pix_fmt_descriptors
+    extern __declspec(dllimport) const AVPixFmtDescriptor av_pix_fmt_descriptors[];
+#endif
 #include <libavutil/pixfmt.h>
 }
 
