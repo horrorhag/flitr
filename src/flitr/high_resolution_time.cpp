@@ -32,11 +32,15 @@ uint64_t currentTimeNanoSec()
 
 std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
 {
-    time_t timestamp_t=timeNanoSec / 1000000000;
+    const time_t timestamp_t=timeNanoSec / 1000000000;
 
     struct tm timestamp_tm;
+
+#ifdef WIN32
     localtime_s(&timestamp_tm, &timestamp_t);
-    //localtime_r(&timestamp_t, &timestamp_tm);
+#else
+    localtime_r(&timestamp_t, &timestamp_tm);
+#endif
     
     char timestr[512];
     sprintf(timestr, "%d-%02d-%02d_%02dh%02dm%02d.%03ds",
@@ -50,13 +54,17 @@ std::string nanoSecToCalenderDate(uint64_t timeNanoSec)
 //!Seconds since midnight in local time.
 double secondsSinceMidnightLT()
 {
-    uint64_t timeNS=currentTimeNanoSec();
+    const uint64_t timeNS=currentTimeNanoSec();
     
-    time_t timestamp_t=currentTimeNanoSec() / 1000000000;
+    const time_t timestamp_t=currentTimeNanoSec() / 1000000000;
     
     struct tm timestamp_tm;
-    //localtime_r(&timestamp_t, &timestamp_tm);
+    
+#ifdef WIN32
     localtime_s(&timestamp_tm, &timestamp_t);
+#else
+    localtime_r(&timestamp_t, &timestamp_tm);
+#endif
     
     return timestamp_tm.tm_hour*3600.0 + timestamp_tm.tm_min*60.0 + timestamp_tm.tm_sec + (timeNS%1000000000)*0.000000001;
 }
@@ -64,13 +72,17 @@ double secondsSinceMidnightLT()
 //!Seconds since midnight in GMT.
 double secondsSinceMidnightGMT()
 {
-    uint64_t timeNS=currentTimeNanoSec();
+    const uint64_t timeNS=currentTimeNanoSec();
     
-    time_t timestamp_t=currentTimeNanoSec() / 1000000000;
+    const time_t timestamp_t=currentTimeNanoSec() / 1000000000;
     
     struct tm timestamp_tm;
-    //gmtime_r(&timestamp_t, &timestamp_tm);
+    
+#ifdef WIN32
     gmtime_s(&timestamp_tm, &timestamp_t);
+#else
+    gmtime_r(&timestamp_t, &timestamp_tm);
+#endif
 
     return timestamp_tm.tm_hour*3600.0 + timestamp_tm.tm_min*60.0 + timestamp_tm.tm_sec + (timeNS%1000000000)*0.000000001;
 }
