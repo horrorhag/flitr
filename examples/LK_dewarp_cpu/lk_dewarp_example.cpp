@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     }
     cnvrtToYF32->startTriggerThread();
     
-    /*
+    
     //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
                                          190,
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     crop->startTriggerThread();
-    */
+    
     
 /*
     //===
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToYF32, 1,
+    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*crop, 1,
                                                                                       0.6, //target average
                                                                                       2));//Buffer size.
     

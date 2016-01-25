@@ -1,10 +1,11 @@
 PROJECT(FLITr)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3)
 
+
 IF(UNIX AND NOT WIN32 AND NOT APPLE)
-IF(EXISTS "${CMAKE_INSTALL_PREFIX}/lib64/" AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
-set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
-ENDIF()
+	IF(EXISTS "${CMAKE_INSTALL_PREFIX}/lib64/" AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
+		set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+	ENDIF()
 ENDIF(UNIX AND NOT WIN32 AND NOT APPLE)
 
 
@@ -15,6 +16,7 @@ IF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
      "Choose the type of build, options are: Debug Release RelWithDebInfo."
      FORCE)
 ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+
 
 # We have some custom .cmake scripts not in the official distribution.
 SET(CMAKE_MODULE_PATH "${FLITr_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
@@ -74,10 +76,13 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     #ENDIF(NOT Boost_FOUND)
 # ==================
 
+
+# === Find OSG ===#
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
 INCLUDE_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIR})
 LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_DIRS})
+#=================#
 
 
 # === find FFmpeg ===
@@ -98,7 +103,6 @@ LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_
 # ===================
 
 
-
 OPTION(FLITR_USE_OPENMP "Enable the compiler's OpenMP directives if available." ON)
 IF(FLITR_USE_OPENMP)
 # === find OpenMP ===
@@ -111,7 +115,6 @@ if (OPENMP_FOUND)
 endif()
 # ===================
 ENDIF(FLITR_USE_OPENMP)
-
 
 
 #default include and lib directories.
