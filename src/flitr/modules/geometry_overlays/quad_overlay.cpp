@@ -52,12 +52,16 @@ void QuadOverlay::makeQuad(bool filled)
     } else {
         _DrawArray = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
     }
+    
     _Geom->addPrimitiveSet(_DrawArray.get());
     _Geom->setUseDisplayList(false);
+    _Geom->setCullingActive(false);
+    
     _Geode->addDrawable(_Geom.get());
     _Geode->setCullingActive(false);
 
     _GeometryGroup->addChild(_Geode.get());
+    _GeometryGroup->setCullingActive(false);
 }
 
 void QuadOverlay::updateQuad()

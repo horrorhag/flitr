@@ -133,6 +133,7 @@ void Plot2DOverlay::create(const double x, const double y, const double width, c
 
     _GeometryGroup->addChild(_AxisFrntGeode.get());
     _GeometryGroup->addChild(_AxisBckGeode.get());
+    _GeometryGroup->setCullingActive(false);
 
     dirtyBound();
     //=====================//

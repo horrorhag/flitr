@@ -50,10 +50,12 @@ void PointsOverlay::makeGraph()
 
     geom->addPrimitiveSet(_DrawArray.get());
     geom->setUseDisplayList(false);
+    geom->setCullingActive(false);
     geode->addDrawable(geom.get());
     geode->setCullingActive(false);
     
     _GeometryGroup->addChild(geode.get());
+    _GeometryGroup->setCullingActive(false);
 }
 
 void PointsOverlay::setVertices(osg::Vec3Array& v)
