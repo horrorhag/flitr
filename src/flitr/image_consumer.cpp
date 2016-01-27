@@ -29,6 +29,10 @@ ImageConsumer::ImageConsumer(ImageProducer& producer) :
 	ImageProducer_->addConsumer(*this);
 }
 
+ImageConsumer::~ImageConsumer()
+{
+    ImageProducer_->removeConsumer(*this);
+}
 
 ImageFormat ImageConsumer::getFormat(uint32_t index) const
 {

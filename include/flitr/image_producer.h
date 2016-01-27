@@ -128,6 +128,18 @@ class FLITR_EXPORT ImageProducer {
     {
         return SharedImageBuffer_->addConsumer(consumer);
     }
+
+    /**
+     * Called when a consumer must be removed.
+     *
+     * \param consumer Consumer that was previously added that must be removed.
+     *
+     * \return Whether the remove was successful.
+     */
+    virtual bool removeConsumer(ImageConsumer& consumer)
+    {
+        return SharedImageBuffer_->removeConsumer(consumer);
+    }
     
     /** 
      * Reserve (obtain) a slot for writing new image data. Multiple

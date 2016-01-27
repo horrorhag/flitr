@@ -214,6 +214,14 @@ class FLITR_EXPORT SharedImageBuffer {
      * \return True if successfully added.
      */
     virtual bool addConsumer(ImageConsumer& consumer);
+    /**
+     * Remove a new consumer from this buffer.
+     *
+     * \param consumer Reference to the consumer to be removed.
+     *
+     * \return True if successfully removed.
+     */
+    virtual bool removeConsumer(ImageConsumer& consumer);
 
   private:
     /// Returns true if there is no more space in the buffer for writing.

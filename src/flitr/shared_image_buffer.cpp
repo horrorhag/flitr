@@ -154,6 +154,18 @@ bool SharedImageBuffer::addConsumer(ImageConsumer& consumer)
 	return true;
 }
 
+bool SharedImageBuffer::removeConsumer(ImageConsumer& consumer) {
+    OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    int numErased;
+    numErased  = ReadTails_.erase(&consumer);
+    numErased += ReadHeads_.erase(&consumer);
+    if(numErased == 0)
+    {
+        return false;
+    }
+    return true;
+}
+
 uint32_t SharedImageBuffer::getNumWriteSlotsAvailable() const
 {
     //OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);

@@ -48,7 +48,7 @@ class FLITR_EXPORT ImageConsumer {
      */
     ImageConsumer(ImageProducer& producer);
     
-    virtual ~ImageConsumer() {}
+    virtual ~ImageConsumer();
 
 	/** 
      * Obtain the number of image slots that are available for
