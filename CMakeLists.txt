@@ -171,6 +171,8 @@ SET(LIB_SOURCES
   src/flitr/modules/geometry_overlays/geometry_overlay.cpp
   src/flitr/modules/geometry_overlays/points_overlay.cpp
   src/flitr/modules/geometry_overlays/quad_overlay.cpp
+  src/flitr/modules/geometry_overlays/triangle_overlay.cpp
+  src/flitr/modules/geometry_overlays/circle_overlay.cpp
   src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
   src/flitr/modules/geometry_overlays/text_label_overlay.cpp
 
@@ -271,6 +273,8 @@ SET(LIB_SOURCES
   include/flitr/modules/geometry_overlays/geometry_overlay.h
   include/flitr/modules/geometry_overlays/points_overlay.h
   include/flitr/modules/geometry_overlays/quad_overlay.h
+  include/flitr/modules/geometry_overlays/triangle_overlay.h
+  include/flitr/modules/geometry_overlays/circle_overlay.h
   include/flitr/modules/geometry_overlays/plot2D_overlay.h
   include/flitr/modules/geometry_overlays/text_label_overlay.h
 
@@ -428,6 +432,7 @@ ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
+ADD_SUBDIRECTORY(examples/geometry_overlays)
 ADD_SUBDIRECTORY(examples/video_producer)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.

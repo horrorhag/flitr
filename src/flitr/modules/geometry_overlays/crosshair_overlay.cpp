@@ -41,8 +41,8 @@ CrosshairOverlay::CrosshairOverlay(double center_x, double center_y, double widt
 void CrosshairOverlay::makeCrosshair()
 {
     osg::ref_ptr<osg::Geode> geode = new osg::Geode();
-	osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
-	
+    osg::ref_ptr<osg::Geometry> geom = new osg::Geometry();
+
     updateCrosshair();
 
     geom->setVertexArray(_Vertices.get());
@@ -50,14 +50,14 @@ void CrosshairOverlay::makeCrosshair()
     osg::ref_ptr<osg::DrawArrays> da;
     da= new osg::DrawArrays(osg::PrimitiveSet::LINES,0,4);
 
-	geom->addPrimitiveSet(da.get());
-	geom->setUseDisplayList(false);
+    geom->addPrimitiveSet(da.get());
+    geom->setUseDisplayList(false);
     geom->setCullingActive(false);
 
-	geode->addDrawable(geom.get());
+    geode->addDrawable(geom.get());
     geode->setCullingActive(false);
-	
-	_GeometryGroup->addChild(geode.get());
+
+    _GeometryGroup->addChild(geode.get());
     _GeometryGroup->setCullingActive(false);
 }
 
