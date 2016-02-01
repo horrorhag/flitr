@@ -51,12 +51,12 @@ namespace flitr {
          *@return Boolean result flag. True indicates successful initialisation.*/
         virtual bool init();
         
-        /*!Synchronous trigger method. Called automatically by the trigger thread if started.
+        /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
     private:
-        float *scratchData_;
+        uint8_t *scratchData_;
         
         double *intImageScratchData_;
         

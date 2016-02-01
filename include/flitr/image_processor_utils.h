@@ -186,7 +186,6 @@ namespace flitr {
             return *this;
         }
         
-        virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);
         
@@ -196,11 +195,19 @@ namespace flitr {
                             float * const dataScratch);
         
         /*!Synchronous process method.*/
-        //virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
-        //                       const size_t width, const size_t height,
-        //                       float * const dataScratch);
+        virtual bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+                               const size_t width, const size_t height,
+                               float * const dataScratch);
+        
+        /*!Synchronous process method.*/
+        virtual bool filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                               const size_t width, const size_t height,
+                               uint8_t * const dataScratch);
+        
         
     private:
+        virtual void updateKernel1D();
+
         float *kernel1D_;
         
         float filterRadius_;
@@ -244,7 +251,6 @@ namespace flitr {
             return *this;
         }
         
-        virtual void updateKernel1D();
         virtual void setFilterRadius(const float filterRadius);
         virtual void setKernelWidth(const int kernelWidth);
         
@@ -259,6 +265,8 @@ namespace flitr {
         //                           float * const dataScratch);
         
     private:
+        virtual void updateKernel1D();
+        
         float *kernel1D_;
         
         float filterRadius_;

@@ -63,7 +63,7 @@ bool IntegralImage::process(double * const dataWriteDS, float const * const data
         for (size_t x=1; x<width; ++x)
         {
             lineSum+=dataReadUS[offset];
-
+            
             dataWriteDS[offset]=lineSum + dataWriteDS[offset - width];
             
             ++offset;
@@ -306,6 +306,143 @@ bool GaussianFilter::filter(float * const dataWriteDS, float const * const dataR
     return true;
 }
 
+bool GaussianFilter::filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+                               const size_t width, const size_t height,
+                               float * const dataScratch)
+{
+    const size_t widthMinusKernel=width-(kernelWidth_-1);
+    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            float xFiltValueR=0.0f;
+            float xFiltValueG=0.0f;
+            float xFiltValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                const size_t xOffset=((lineOffsetUS + x) + j)*3;
+                
+                xFiltValueR += dataReadUS[xOffset + 0] * kernel1D_[j];
+                xFiltValueG += dataReadUS[xOffset + 1] * kernel1D_[j];
+                xFiltValueB += dataReadUS[xOffset + 2] * kernel1D_[j];
+            }
+            
+            const size_t xOffset=(lineOffsetFS + x)*3;
+            
+            dataScratch[xOffset + 0]=xFiltValueR;
+            dataScratch[xOffset + 1]=xFiltValueG;
+            dataScratch[xOffset + 2]=xFiltValueB;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValueR=0.0f;
+            float filtValueG=0.0f;
+            float filtValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                const size_t xOffset=((lineOffsetFS + x) + j*width)*3;
+                
+                filtValueR += dataScratch[xOffset + 0] * kernel1D_[j];
+                filtValueG += dataScratch[xOffset + 1] * kernel1D_[j];
+                filtValueB += dataScratch[xOffset + 2] * kernel1D_[j];
+            }
+
+            const size_t xOffset=(lineOffsetDS + x)*3;
+            
+            dataWriteDS[xOffset + 0]=filtValueR;
+            dataWriteDS[xOffset + 1]=filtValueG;
+            dataWriteDS[xOffset + 2]=filtValueB;
+        }
+    }
+    
+    return true;
+}
+
+bool GaussianFilter::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                               const size_t width, const size_t height,
+                               uint8_t * const dataScratch)
+{
+    const size_t widthMinusKernel=width-(kernelWidth_-1);
+    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            float xFiltValueR=0.0f;
+            float xFiltValueG=0.0f;
+            float xFiltValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                const size_t xOffset=((lineOffsetUS + x) + j)*3;
+                
+                xFiltValueR += float(dataReadUS[xOffset + 0]) * kernel1D_[j];
+                xFiltValueG += float(dataReadUS[xOffset + 1]) * kernel1D_[j];
+                xFiltValueB += float(dataReadUS[xOffset + 2]) * kernel1D_[j];
+            }
+            
+            const size_t xOffset=(lineOffsetFS + x)*3;
+            
+            dataScratch[xOffset + 0]=uint8_t(xFiltValueR+0.5f);
+            dataScratch[xOffset + 1]=uint8_t(xFiltValueG+0.5f);
+            dataScratch[xOffset + 2]=uint8_t(xFiltValueB+0.5f);
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValueR=0.0f;
+            float filtValueG=0.0f;
+            float filtValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                const size_t xOffset=((lineOffsetFS + x) + j*width)*3;
+                
+                filtValueR += float(dataScratch[xOffset + 0]) * kernel1D_[j];
+                filtValueG += float(dataScratch[xOffset + 1]) * kernel1D_[j];
+                filtValueB += float(dataScratch[xOffset + 2]) * kernel1D_[j];
+            }
+            
+            const size_t xOffset=(lineOffsetDS + x)*3;
+            
+            dataWriteDS[xOffset + 0]=uint8_t(filtValueR+0.5f);
+            dataWriteDS[xOffset + 1]=uint8_t(filtValueG+0.5f);
+            dataWriteDS[xOffset + 2]=uint8_t(filtValueB+0.5f);
+        }
+    }
+    
+    return true;
+}
 //=========================================//
 
 

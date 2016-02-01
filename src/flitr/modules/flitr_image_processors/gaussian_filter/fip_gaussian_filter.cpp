@@ -74,9 +74,9 @@ bool FIPGaussianFilter::init()
         const size_t width=imFormat.getWidth();
         const size_t height=imFormat.getHeight();
         
-        const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
+        const size_t bytesPerPixel=imFormat.getBytesPerPixel();
         
-        const size_t scratchDataSize = width * height * componentsPerPixel;
+        const size_t scratchDataSize = width * height * bytesPerPixel;
         
         if (scratchDataSize>maxScratchDataSize)
         {
@@ -85,7 +85,7 @@ bool FIPGaussianFilter::init()
     }
     
     //Allocate a buffer big enough for any of the image slots.
-    scratchData_=new float[maxScratchDataSize];
+    scratchData_=new uint8_t[maxScratchDataSize];
     intImageScratchData_=new double[maxScratchDataSize];
     
     return rValue;
@@ -106,9 +106,7 @@ bool FIPGaussianFilter::trigger()
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
-            
             const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
-            
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
             
@@ -120,7 +118,7 @@ bool FIPGaussianFilter::trigger()
                 
                 if (intImgApprox_==0)
                 {
-                    gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, scratchData_);
+                    gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
                 } else
                 {
                     boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
@@ -130,11 +128,55 @@ bool FIPGaussianFilter::trigger()
                     {
                         memcpy(scratchData_, dataWriteDS, width*height*sizeof(float));
                         
-                        boxFilter_.filter(dataWriteDS, scratchData_, width, height,
+                        boxFilter_.filter(dataWriteDS, (float *)scratchData_, width, height,
                                           intImageScratchData_, true);
                     }
                 }
-            }
+            } else
+                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                {
+                    float const * const dataReadUS=(float const * const)imReadUS->data();
+                    float * const dataWriteDS=(float * const)imWriteDS->data();
+                    
+                    //if (intImgApprox_==0)
+                    {
+                        gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
+                    } /*else
+                       {
+                       boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
+                       intImageScratchData_, true);
+                       
+                       for (short i=1; i<intImgApprox_; ++i)
+                       {
+                       memcpy(scratchData_, dataWriteDS, width*height*sizeof(float));
+                       
+                       boxFilter_.filter(dataWriteDS, scratchData_, width, height,
+                       intImageScratchData_, true);
+                       }
+                       }*/
+                } else
+                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                    {
+                        uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                        uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+                        
+                        //if (intImgApprox_==0)
+                        {
+                            gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, scratchData_);
+                        } /*else
+                           {
+                           boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
+                           intImageScratchData_, true);
+                           
+                           for (short i=1; i<intImgApprox_; ++i)
+                           {
+                           memcpy(scratchData_, dataWriteDS, width*height*sizeof(uint8_t));
+                           
+                           boxFilter_.filter(dataWriteDS, scratchData_, width, height,
+                           intImageScratchData_, true);
+                           }
+                           }*/
+                    }
         }
         
         //Stop stats measurement event.

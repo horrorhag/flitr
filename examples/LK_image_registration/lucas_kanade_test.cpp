@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     //===
 
 
-    //=== GPS+CPU Lucas-Kanade ===
+    //=== GPU+CPU Lucas-Kanade ===
     unsigned long roi_dim=256;
     std::vector< std::pair<int,int> > roiVec;
 
