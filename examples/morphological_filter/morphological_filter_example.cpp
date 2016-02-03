@@ -81,15 +81,34 @@ int main(int argc, char *argv[])
      cnvrtToRGBF32->startTriggerThread();
      */
     
-    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*ip, 1,
-                                                                  2.0, 4,
-                                                                  1));
-    if (!gaussFilt->init())
+    shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*ip, 1,
+                                                                                    15,//square structuring element size.
+                                                                                    15, 255,//threshold, binaryMax
+                                                                                    1));
+    
+    
+    //===TOP HAT===//
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
+    //=== ===//
+    
+    //===BLACK HAT===//
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::MINUS_SOURCE);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
+    //=== ===//
+    
+    
+    if (!morphologicalFilt->init())
     {
-        std::cerr << "Could not initialise the gaussFilt processor.\n";
+        std::cerr << "Could not initialise the morphologicalFilt processor.\n";
         exit(-1);
     }
-    gaussFilt->startTriggerThread();
+    
+    morphologicalFilt->startTriggerThread();
     
     
     /*
@@ -103,7 +122,7 @@ int main(int argc, char *argv[])
      */
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFilt, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -219,7 +238,7 @@ int main(int argc, char *argv[])
 #endif
     
     //cnvrtToRGBF32->stopTriggerThread();
-    gaussFilt->stopTriggerThread();
+    morphologicalFilt->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;

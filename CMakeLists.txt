@@ -417,6 +417,7 @@ ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
 ADD_SUBDIRECTORY(examples/beat_image)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
+ADD_SUBDIRECTORY(examples/morphological_filter)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)
 
