@@ -38,8 +38,8 @@ AVPixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in
           return PIX_FMT_BGRA;
           break;
       default:
-        // \todo maybe return error
-        return PIX_FMT_GRAY8;
+        // \todo maybe return error for unhandled FLITr pix format!
+        return PIX_FMT_NONE;
     }
 }
 

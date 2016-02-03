@@ -208,6 +208,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
+  src/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.cpp
   src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.cpp
@@ -320,6 +321,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
+  include/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h
   include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h

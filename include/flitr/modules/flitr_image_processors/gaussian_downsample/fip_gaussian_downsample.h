@@ -57,6 +57,7 @@ namespace flitr {
     private:
         /*! The result of the first pass of the seperable Gaussian downsample. */
         float *xFiltData_;
+        
         GaussianDownsample gaussianDownsample_;
     };
     

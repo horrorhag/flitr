@@ -56,6 +56,8 @@ namespace flitr {
         virtual bool trigger();
         
     private:
+        short intImgApprox_;
+        
         uint8_t *scratchData_;
         
         double *intImageScratchData_;
@@ -63,8 +65,6 @@ namespace flitr {
         GaussianFilter gaussianFilter_; //No significant state associated with this.
 
         BoxFilterII boxFilter_; //No significant state associated with this.
-        
-        short intImgApprox_;
     };
     
 }

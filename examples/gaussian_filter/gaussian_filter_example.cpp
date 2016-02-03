@@ -15,6 +15,7 @@
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
 #include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
+#include <flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
@@ -58,7 +59,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_RGB_8, 2));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
     if (!ip->init())
     {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -71,18 +72,18 @@ int main(int argc, char *argv[])
 #endif
     
     /*
-    shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 1));
-    if (!cnvrtToRGBF32->init())
-    {
-        std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
-        exit(-1);
-    }
-    cnvrtToRGBF32->startTriggerThread();
-    */
+     shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 1));
+     if (!cnvrtToRGBF32->init())
+     {
+     std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
+     exit(-1);
+     }
+     cnvrtToRGBF32->startTriggerThread();
+     */
     
     shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*ip, 1,
-                                                            40.0, 80,
-                                                            3));
+                                                                  2.0, 4,
+                                                                  1));
     if (!gaussFilt->init())
     {
         std::cerr << "Could not initialise the gaussFilt processor.\n";
@@ -90,17 +91,44 @@ int main(int argc, char *argv[])
     }
     gaussFilt->startTriggerThread();
     
-    /*
-    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 1));
-    if (!cnvrtToRGB8->init())
+    
+    shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*gaussFilt, 1,
+                                                                                    15,
+                                                                                    35, 255,
+                                                                                    1));
+    //===TOP HAT===//
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
+    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
+    //=== ===//
+    //===BLACK HAT===//
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::MINUS_SOURCE);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
+    //=== ===//
+    
+    if (!morphologicalFilt->init())
     {
-        std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
+        std::cerr << "Could not initialise the morphologicalFilt processor.\n";
         exit(-1);
     }
-    cnvrtToRGB8->startTriggerThread();
-    */
+    morphologicalFilt->startTriggerThread();
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
+    
+    /*
+     shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 1));
+     if (!cnvrtToRGB8->init())
+     {
+     std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
+     exit(-1);
+     }
+     cnvrtToRGB8->startTriggerThread();
+     */
+    
+    
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFilt, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -188,7 +216,7 @@ int main(int argc, char *argv[])
         
         if (osgc->getNext()) renderFrame=true;
         if (osgcOrig->getNext()) renderFrame=true;
-
+        
         if (renderFrame)
         {
             viewer.frame();

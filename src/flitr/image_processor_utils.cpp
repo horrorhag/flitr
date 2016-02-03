@@ -28,54 +28,6 @@
 using namespace flitr;
 using std::shared_ptr;
 
-//=========== Integral Image ==========//
-
-IntegralImage::IntegralImage()
-{}
-
-IntegralImage::~IntegralImage()
-{}
-
-bool IntegralImage::process(double * const dataWriteDS, float const * const dataReadUS,
-                            const size_t width, const size_t height)
-{
-    dataWriteDS[0]=dataReadUS[0];
-    
-    for (size_t x=1; x<width; ++x)
-    {
-        dataWriteDS[x]=dataReadUS[x] + dataWriteDS[x-1];
-    }
-    
-    size_t offset=width;
-    for (size_t y=1; y<height; ++y)
-    {
-        dataWriteDS[offset]=dataReadUS[offset] + dataWriteDS[offset - width];
-        offset+=width;
-    }
-    
-    
-    for (size_t y=1; y<height; ++y)
-    {
-        offset=y*width;
-        double lineSum=dataReadUS[offset];
-        ++offset;
-        
-        for (size_t x=1; x<width; ++x)
-        {
-            lineSum+=dataReadUS[offset];
-            
-            dataWriteDS[offset]=lineSum + dataWriteDS[offset - width];
-            
-            ++offset;
-        }
-    }
-    
-    return true;
-}
-
-//=========================================//
-
-
 
 //=========== BoxFilter ==========//
 
@@ -83,8 +35,7 @@ BoxFilter::BoxFilter(const size_t kernelWidth) :
 kernelWidth_(kernelWidth|1)//Make sure the kernel width is odd.
 {}
 
-BoxFilter::~BoxFilter()
-{}
+BoxFilter::~BoxFilter() {}
 
 void BoxFilter::setKernelWidth(const int kernelWidth)
 {
@@ -95,8 +46,8 @@ bool BoxFilter::filter(float * const dataWriteDS, float const * const dataReadUS
                        const size_t width, const size_t height,
                        float * const dataScratch)
 {
-    const size_t widthMinusKernel=width-(kernelWidth_-1);
-    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
     const float recipKernelWidth=1.0f/kernelWidth_;
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusHalfKernel=width-halfKernelWidth;
@@ -142,6 +93,181 @@ bool BoxFilter::filter(float * const dataWriteDS, float const * const dataReadUS
     return true;
 }
 
+bool BoxFilter::filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       float * const dataScratch)
+{
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const float recipKernelWidth=1.0f/kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            float xFiltValueR=0.0f;
+            float xFiltValueG=0.0f;
+            float xFiltValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValueR += dataReadUS[((lineOffsetUS + x) + j)*3 + 0];
+                xFiltValueG += dataReadUS[((lineOffsetUS + x) + j)*3 + 1];
+                xFiltValueB += dataReadUS[((lineOffsetUS + x) + j)*3 + 2];
+            }
+            
+            dataScratch[(lineOffsetFS + x)*3 + 0]=xFiltValueR*recipKernelWidth;
+            dataScratch[(lineOffsetFS + x)*3 + 1]=xFiltValueG*recipKernelWidth;
+            dataScratch[(lineOffsetFS + x)*3 + 2]=xFiltValueB*recipKernelWidth;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValueR=0.0f;
+            float filtValueG=0.0f;
+            float filtValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValueR += dataScratch[((lineOffsetFS + x) + j*width)*3 + 0];
+                filtValueG += dataScratch[((lineOffsetFS + x) + j*width)*3 + 1];
+                filtValueB += dataScratch[((lineOffsetFS + x) + j*width)*3 + 2];
+            }
+            
+            dataWriteDS[(lineOffsetDS + x)*3 + 0]=filtValueR*recipKernelWidth;
+            dataWriteDS[(lineOffsetDS + x)*3 + 1]=filtValueG*recipKernelWidth;
+            dataWriteDS[(lineOffsetDS + x)*3 + 2]=filtValueB*recipKernelWidth;
+        }
+    }
+    
+    return true;
+}
+
+bool BoxFilter::filter(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       uint8_t * const dataScratch)
+{
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t xFiltValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValue += dataReadUS[(lineOffsetUS + x) + j];
+            }
+            
+            dataScratch[lineOffsetFS + x]=xFiltValue/kernelWidth_;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t filtValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValue += dataScratch[(lineOffsetFS + x) + j*width];
+                //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                //                  Is the code memory bandwidth limited?
+            }
+            
+            dataWriteDS[lineOffsetDS + x]=filtValue/kernelWidth_;
+        }
+    }
+    
+    return true;
+}
+
+bool BoxFilter::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                          const size_t width, const size_t height,
+                          uint8_t * const dataScratch)
+{
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t xFiltValueR=0.0f;
+            size_t xFiltValueG=0.0f;
+            size_t xFiltValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValueR += dataReadUS[((lineOffsetUS + x) + j)*3 + 0];
+                xFiltValueG += dataReadUS[((lineOffsetUS + x) + j)*3 + 1];
+                xFiltValueB += dataReadUS[((lineOffsetUS + x) + j)*3 + 2];
+            }
+            
+            dataScratch[(lineOffsetFS + x)*3 + 0]=xFiltValueR/kernelWidth_;
+            dataScratch[(lineOffsetFS + x)*3 + 1]=xFiltValueG/kernelWidth_;
+            dataScratch[(lineOffsetFS + x)*3 + 2]=xFiltValueB/kernelWidth_;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t filtValueR=0.0f;
+            size_t filtValueG=0.0f;
+            size_t filtValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValueR += dataScratch[((lineOffsetFS + x) + j*width)*3 + 0];
+                filtValueG += dataScratch[((lineOffsetFS + x) + j*width)*3 + 1];
+                filtValueB += dataScratch[((lineOffsetFS + x) + j*width)*3 + 2];
+            }
+            
+            dataWriteDS[(lineOffsetDS + x)*3 + 0]=filtValueR/kernelWidth_;
+            dataWriteDS[(lineOffsetDS + x)*3 + 1]=filtValueG/kernelWidth_;
+            dataWriteDS[(lineOffsetDS + x)*3 + 2]=filtValueB/kernelWidth_;
+        }
+    }
+    
+    return true;
+}
+
 //=========================================//
 
 
@@ -152,15 +278,14 @@ BoxFilterII::BoxFilterII(const size_t kernelWidth) :
 kernelWidth_(kernelWidth|1)//Make sure the kernel width is odd.
 {}
 
-BoxFilterII::~BoxFilterII()
-{}
+BoxFilterII::~BoxFilterII() {}
 
 void BoxFilterII::setKernelWidth(const int kernelWidth)
 {
     kernelWidth_=kernelWidth|1;
 }
 
-float BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
+bool BoxFilterII::filter(float * const dataWriteDS, float const * const dataReadUS,
                           const size_t width, const size_t height,
                           double * const IIDoubleScratch,
                           const bool recalcIntegralImage)
@@ -195,9 +320,143 @@ float BoxFilterII::filter(float * const dataWriteDS, float const * const dataRea
         }
     }
     
-    return (IIDoubleScratch[width*height-1])/(width*height);
+    return true;
 }
 
+bool BoxFilterII::filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+                             const size_t width, const size_t height,
+                             double * const IIDoubleScratch,
+                             const bool recalcIntegralImage)
+{
+    if (recalcIntegralImage)
+    {
+        integralImage_.processRGB(IIDoubleScratch, dataReadUS, width, height);
+    }
+    
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusKernel=width - kernelWidth_;
+    const size_t heightMinusKernel=height - kernelWidth_;
+    const float recipKernelWidthSq=1.0f / (kernelWidth_*kernelWidth_);
+    const size_t widthTimesKernelWidth = width*kernelWidth_;
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        size_t lineOffset=(y+halfKernelWidth+1) * width + (halfKernelWidth+1);
+        size_t lineOffsetII=(y+kernelWidth_) * width + kernelWidth_;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            const float R=IIDoubleScratch[lineOffsetII*3 + 0]
+            - IIDoubleScratch[(lineOffsetII - kernelWidth_)*3 + 0]
+            - IIDoubleScratch[(lineOffsetII - widthTimesKernelWidth)*3 + 0]
+            + IIDoubleScratch[(lineOffsetII - kernelWidth_ - widthTimesKernelWidth)*3 + 0];
+            const float G=IIDoubleScratch[lineOffsetII*3 + 1]
+            - IIDoubleScratch[(lineOffsetII - kernelWidth_)*3 + 1]
+            - IIDoubleScratch[(lineOffsetII - widthTimesKernelWidth)*3 + 1]
+            + IIDoubleScratch[(lineOffsetII - kernelWidth_ - widthTimesKernelWidth)*3 + 1];
+            const float B=IIDoubleScratch[lineOffsetII*3 + 2]
+            - IIDoubleScratch[(lineOffsetII - kernelWidth_)*3 + 2]
+            - IIDoubleScratch[(lineOffsetII - widthTimesKernelWidth)*3 + 2]
+            + IIDoubleScratch[(lineOffsetII - kernelWidth_ - widthTimesKernelWidth)*3 + 2];
+            
+            dataWriteDS[lineOffset*3 + 0]=R * recipKernelWidthSq;
+            dataWriteDS[lineOffset*3 + 1]=G * recipKernelWidthSq;
+            dataWriteDS[lineOffset*3 + 2]=B * recipKernelWidthSq;
+            
+            ++lineOffset;
+            ++lineOffsetII;
+        }
+    }
+    
+    return true;
+}
+
+bool BoxFilterII::filter(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                         const size_t width, const size_t height,
+                         double * const IIDoubleScratch,
+                         const bool recalcIntegralImage)
+{
+    if (recalcIntegralImage)
+    {
+        integralImage_.process(IIDoubleScratch, dataReadUS, width, height);
+    }
+    
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusKernel=width - kernelWidth_;
+    const size_t heightMinusKernel=height - kernelWidth_;
+    const float recipKernelWidthSq=1.0f / (kernelWidth_*kernelWidth_);
+    const size_t widthTimesKernelWidth = width*kernelWidth_;
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        size_t lineOffset=(y+halfKernelWidth+1) * width + (halfKernelWidth+1);
+        size_t lineOffsetII=(y+kernelWidth_) * width + kernelWidth_;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            const float c=IIDoubleScratch[lineOffsetII]
+            - IIDoubleScratch[lineOffsetII - kernelWidth_]
+            - IIDoubleScratch[lineOffsetII - widthTimesKernelWidth]
+            + IIDoubleScratch[lineOffsetII - kernelWidth_ - widthTimesKernelWidth];
+            
+            dataWriteDS[lineOffset]=uint8_t(c * recipKernelWidthSq + 0.5f);
+            
+            ++lineOffset;
+            ++lineOffsetII;
+        }
+    }
+    
+    return true;
+}
+
+bool BoxFilterII::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                            const size_t width, const size_t height,
+                            double * const IIDoubleScratch,
+                            const bool recalcIntegralImage)
+{
+    if (recalcIntegralImage)
+    {
+        integralImage_.processRGB(IIDoubleScratch, dataReadUS, width, height);
+    }
+    
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusKernel=width - kernelWidth_;
+    const size_t heightMinusKernel=height - kernelWidth_;
+    const float recipKernelWidthSq=1.0f / (kernelWidth_*kernelWidth_);
+    const size_t widthTimesKernelWidth = width*kernelWidth_;
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        size_t lineOffset=(y+halfKernelWidth+1) * width + (halfKernelWidth+1);
+        size_t lineOffsetII=(y+kernelWidth_) * width + kernelWidth_;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            const float R=IIDoubleScratch[lineOffsetII*3 + 0]
+            - IIDoubleScratch[(lineOffsetII - kernelWidth_)*3 + 0]
+            - IIDoubleScratch[(lineOffsetII - widthTimesKernelWidth)*3 + 0]
+            + IIDoubleScratch[(lineOffsetII - kernelWidth_ - widthTimesKernelWidth)*3 + 0];
+            const float G=IIDoubleScratch[lineOffsetII*3 + 1]
+            - IIDoubleScratch[(lineOffsetII - kernelWidth_)*3 + 1]
+            - IIDoubleScratch[(lineOffsetII - widthTimesKernelWidth)*3 + 1]
+            + IIDoubleScratch[(lineOffsetII - kernelWidth_ - widthTimesKernelWidth)*3 + 1];
+            const float B=IIDoubleScratch[lineOffsetII*3 + 2]
+            - IIDoubleScratch[(lineOffsetII - kernelWidth_)*3 + 2]
+            - IIDoubleScratch[(lineOffsetII - widthTimesKernelWidth)*3 + 2]
+            + IIDoubleScratch[(lineOffsetII - kernelWidth_ - widthTimesKernelWidth)*3 + 2];
+            
+            dataWriteDS[lineOffset*3 + 0]=uint8_t(R * recipKernelWidthSq + 0.5f);
+            dataWriteDS[lineOffset*3 + 1]=uint8_t(G * recipKernelWidthSq + 0.5f);
+            dataWriteDS[lineOffset*3 + 2]=uint8_t(B * recipKernelWidthSq + 0.5f);
+            
+            ++lineOffset;
+            ++lineOffsetII;
+        }
+    }
+    
+    return true;
+}
+//=========================================//
 //=========================================//
 
 
@@ -259,8 +518,8 @@ bool GaussianFilter::filter(float * const dataWriteDS, float const * const dataR
                             const size_t width, const size_t height,
                             float * const dataScratch)
 {
-    const size_t widthMinusKernel=width-(kernelWidth_-1);
-    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
     
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusHalfKernel=width-halfKernelWidth;
@@ -310,8 +569,8 @@ bool GaussianFilter::filterRGB(float * const dataWriteDS, float const * const da
                                const size_t width, const size_t height,
                                float * const dataScratch)
 {
-    const size_t widthMinusKernel=width-(kernelWidth_-1);
-    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
     
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusHalfKernel=width-halfKernelWidth;
@@ -363,7 +622,7 @@ bool GaussianFilter::filterRGB(float * const dataWriteDS, float const * const da
                 filtValueG += dataScratch[xOffset + 1] * kernel1D_[j];
                 filtValueB += dataScratch[xOffset + 2] * kernel1D_[j];
             }
-
+            
             const size_t xOffset=(lineOffsetDS + x)*3;
             
             dataWriteDS[xOffset + 0]=filtValueR;
@@ -375,12 +634,63 @@ bool GaussianFilter::filterRGB(float * const dataWriteDS, float const * const da
     return true;
 }
 
+bool GaussianFilter::filter(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                            const size_t width, const size_t height,
+                            uint8_t * const dataScratch)
+{
+    const size_t widthMinusKernel=width - kernelWidth_;
+    const size_t heightMinusKernel=height - kernelWidth_;
+    
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            float xFiltValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValue += dataReadUS[(lineOffsetUS + x) + j] * kernel1D_[j];
+            }
+            
+            dataScratch[lineOffsetFS + x]=uint8_t(xFiltValue+0.5f);
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValue += dataScratch[(lineOffsetFS + x) + j*width] * kernel1D_[j];
+                //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                //                  Is the code memory bandwidth limited?
+            }
+            
+            dataWriteDS[lineOffsetDS + x]=uint8_t(filtValue+0.5f);
+        }
+    }
+    
+    return true;
+}
+
 bool GaussianFilter::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
                                const size_t width, const size_t height,
                                uint8_t * const dataScratch)
 {
-    const size_t widthMinusKernel=width-(kernelWidth_-1);
-    const size_t heightMinusKernel=height-(kernelWidth_-1);
+    const size_t widthMinusKernel=width - kernelWidth_;
+    const size_t heightMinusKernel=height - kernelWidth_;
     
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusHalfKernel=width-halfKernelWidth;
@@ -506,8 +816,8 @@ bool GaussianDownsample::downsample(float * const dataWriteUS, float const * con
     const size_t widthDS=widthUS>>1;
     //const size_t heightDS=widthUS>>1;
     
-    const size_t widthUSMinusKernel=widthUS-(kernelWidth_-1);
-    const size_t heightUSMinusKernel=heightUS-(kernelWidth_-1);
+    const size_t widthUSMinusKernel=widthUS - kernelWidth_;
+    const size_t heightUSMinusKernel=heightUS - kernelWidth_;
     
     const size_t halfKernelWidth=(kernelWidth_>>1);//kernelWidth_ is even!
     
