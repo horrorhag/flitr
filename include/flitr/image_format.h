@@ -45,6 +45,11 @@ namespace flitr {
             FLITR_PIX_FMT_RGB_F32 = 8
         };
         
+        enum DataType {
+            FLITR_PIX_DT_UINT8 = 0,
+            FLITR_PIX_DT_UINT16 = 1,
+            FLITR_PIX_DT_FLOAT32 = 2
+        };
         
         ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
         Width_(w),
@@ -53,8 +58,7 @@ namespace flitr {
 		flipV_(flipV),
 		flipH_(flipH)
         {
-            setBytesPerPixel();
-            setComponentsPerPixel();
+            setPixelFormatDetails();
         }
         
         inline uint32_t getWidth() const { return Width_; }
@@ -66,6 +70,8 @@ namespace flitr {
         inline uint32_t getComponentsPerPixel() const { return ComponentsPerPixel_; }
         
         inline uint32_t getBytesPerPixel() const { return BytesPerPixel_; }
+        
+        inline DataType getDataType() const { return DataType_;}
         
         inline uint32_t getBytesPerImage() const { return Width_ * Height_ * BytesPerPixel_; }
         
@@ -80,8 +86,7 @@ namespace flitr {
         inline void setPixelFormat(PixelFormat pix_fmt)
         {
             PixelFormat_ = pix_fmt;
-            setBytesPerPixel();
-            setComponentsPerPixel();
+            setPixelFormatDetails();
         }
         
         inline void flipVertical() { flipV_ = !flipV_; }
@@ -423,73 +428,61 @@ namespace flitr {
         }
         
     private:
-        inline void setBytesPerPixel()
+        inline void setPixelFormatDetails()
         {
             switch (PixelFormat_)
             {
                 case FLITR_PIX_FMT_Y_8:
                     BytesPerPixel_ = 1;
+                    ComponentsPerPixel_ = 1;
+                    DataType_=FLITR_PIX_DT_UINT8;
                     break;
                 case FLITR_PIX_FMT_RGB_8:
                     BytesPerPixel_ = 3;
+                    ComponentsPerPixel_ = 3;
+                    DataType_=FLITR_PIX_DT_UINT8;
                     break;
                 case FLITR_PIX_FMT_BGR:
                     BytesPerPixel_ = 3;
+                    ComponentsPerPixel_ = 3;
+                    DataType_=FLITR_PIX_DT_UINT8;
                     break;
                 case FLITR_PIX_FMT_BGRA:
                     BytesPerPixel_ = 4;
+                    ComponentsPerPixel_ = 4;
+                    DataType_=FLITR_PIX_DT_UINT8;
                     break;
                 case FLITR_PIX_FMT_Y_16:
                     BytesPerPixel_ = 2;
+                    ComponentsPerPixel_ = 1;
+                    DataType_=FLITR_PIX_DT_UINT16;
                     break;
                 case FLITR_PIX_FMT_Y_F32:
                     BytesPerPixel_ = 4;
+                    ComponentsPerPixel_ = 1;
+                    DataType_=FLITR_PIX_DT_FLOAT32;
                     break;
                 case FLITR_PIX_FMT_RGB_F32:
                     BytesPerPixel_ = 12;
+                    ComponentsPerPixel_ = 3;
+                    DataType_=FLITR_PIX_DT_FLOAT32;
                     break;
                 default:
                     //! @todo maybe return error
                     BytesPerPixel_ = 1;
-            }
-        }
-        
-        inline void setComponentsPerPixel()
-        {
-            switch (PixelFormat_)
-            {
-                case FLITR_PIX_FMT_Y_8:
                     ComponentsPerPixel_ = 1;
-                    break;
-                case FLITR_PIX_FMT_RGB_8:
-                    ComponentsPerPixel_ = 3;
-                    break;
-                case FLITR_PIX_FMT_BGR:
-                    ComponentsPerPixel_ = 3;
-                    break;
-                case FLITR_PIX_FMT_BGRA:
-                    ComponentsPerPixel_ = 4;
-                    break;
-                case FLITR_PIX_FMT_Y_16:
-                    ComponentsPerPixel_ = 1;
-                    break;
-                case FLITR_PIX_FMT_Y_F32:
-                    ComponentsPerPixel_ = 1;
-                    break;
-                case FLITR_PIX_FMT_RGB_F32:
-                    ComponentsPerPixel_ = 3;
-                    break;
-                default:
-                    //! @todo maybe return error
-                    ComponentsPerPixel_ = 1;
+                    DataType_=FLITR_PIX_DT_UINT8;
             }
         }
         
         uint32_t Width_;
         uint32_t Height_;
+        
         PixelFormat PixelFormat_;
         uint32_t BytesPerPixel_;
         uint32_t ComponentsPerPixel_;
+        DataType DataType_;
+        
         bool flipV_;
         bool flipH_;
     };

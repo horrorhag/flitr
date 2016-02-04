@@ -415,6 +415,7 @@ ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
 ADD_SUBDIRECTORY(examples/morphological_filter)

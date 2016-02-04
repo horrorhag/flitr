@@ -67,7 +67,7 @@ bool FIPPhotometricEqualise::init()
         }
     }
     
-    lineSumArray_ = new float[maxHeight];
+    lineSumArray_ = new double[maxHeight];
     
     return rValue;
 }
@@ -79,7 +79,6 @@ bool FIPPhotometricEqualise::trigger()
         std::vector<Image**> imvRead=reserveReadSlot();
         std::vector<Image**> imvWrite=reserveWriteSlot();
         
-        //Start stats measurement event.
         ProcessorStats_->tick();
         
         for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
@@ -87,69 +86,147 @@ bool FIPPhotometricEqualise::trigger()
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
-            float const * const dataRead=(float const * const)imRead->data();
-            float * const dataWrite=(float * const )imWrite->data();
-            
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
+            const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
+            const ImageFormat::DataType pixelDataType=imFormat.getDataType();
             
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
-            const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
-            const size_t componentsPerLine=componentsPerPixel * width;
-            const size_t componentsPerImage=componentsPerLine * height;
+            const size_t componentsPerLine=imFormat.getComponentsPerPixel() * width;
             
-            int y=0;
+            if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_UINT8)
             {
+                process((uint8_t * const )imWrite->data(), (uint8_t const * const)imRead->data(),
+                        componentsPerLine, height);
+            } else
+                if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_UINT16)
                 {
-                    for (y=0; y<(int)height; y++)
+                    process((uint16_t * const )imWrite->data(), (uint16_t const * const)imRead->data(),
+                            componentsPerLine, height);
+                } else
+                    if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_FLOAT32)
                     {
-                        const size_t lineOffset=y * componentsPerLine;
-                        
-                        float *lineSum = lineSumArray_ + y;
-                        *lineSum=0;
-                        
-                        for (size_t compNum=0; compNum<componentsPerLine; compNum++)
-                        {
-                            (*lineSum)+=dataRead[lineOffset + compNum];
-                        }
+                        process((float * const )imWrite->data(), (float const * const)imRead->data(),
+                                componentsPerLine, height);
                     }
-                }
-            }
-            
-            
-            //Single thread!
-            uint32_t imageSum=0;
-            for (y=0; y<int(height); y++)
-                //for (y=0; y<height; y++)
-            {
-                imageSum+=lineSumArray_[y];
-            }
-            
-            
-            const float average = imageSum / ((float)componentsPerImage);
-            const float eScale=targetAverage_ / average;
-            
-            //std::cout << average << "\n";
-            //std::cout.flush();
-            
-            {
-                {
-                    for (y=0; y<(int)height; ++y)
-                    {
-                        const size_t lineOffset=y * componentsPerLine;
-                        
-                        for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
-                        {
-                            dataWrite[lineOffset + compNum]=dataRead[lineOffset + compNum] * eScale;
-                        }
-                    }
-                }
-            }
         }
         
         
         ++frameNumber_;
+        
+        //Stop stats measurement event.
+        ProcessorStats_->tock();
+        
+        releaseWriteSlot();
+        releaseReadSlot();
+        
+        return true;
+    }
+    
+    return false;
+}
 
+
+
+
+FIPLocalPhotometricEqualise::FIPLocalPhotometricEqualise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                                                         const float targetAverage, const size_t windowSize,
+                                                         uint32_t buffer_size) :
+ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+targetAverage_(targetAverage),
+windowSize_(windowSize|1)//Make sure that the window size is odd.
+{
+    
+    //Setup image format being produced to downstream.
+    for (uint32_t i=0; i<images_per_slot; i++) {
+        ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.
+    }
+    
+}
+
+FIPLocalPhotometricEqualise::~FIPLocalPhotometricEqualise()
+{}
+
+bool FIPLocalPhotometricEqualise::init()
+{
+    bool rValue=ImageProcessor::init();
+    //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
+    
+    size_t maxWidth=0;
+    size_t maxHeight=0;
+    
+    for (uint32_t i=0; i<ImagesPerSlot_; ++i)
+    {
+        const ImageFormat imFormat=getUpstreamFormat(i);//Downstream format is same as upstream format.
+        
+        const size_t width=imFormat.getWidth();
+        const size_t height=imFormat.getHeight();
+        
+        if (width>maxWidth) maxWidth=width;
+        if (height>maxHeight) maxHeight=height;
+    }
+    
+    integralImageData_=new double[maxWidth*maxHeight];
+    memset(integralImageData_, 0, maxWidth*maxHeight*sizeof(double));
+    
+    return rValue;
+}
+
+bool FIPLocalPhotometricEqualise::trigger()
+{
+    if ((getNumReadSlotsAvailable())&&(getNumWriteSlotsAvailable()))
+    {//There are images to consume and the downstream producer has space to produce.
+        std::vector<Image**> imvRead=reserveReadSlot();
+        std::vector<Image**> imvWrite=reserveWriteSlot();
+        
+        ProcessorStats_->tick();
+        
+        for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
+        {
+            Image const * const imRead = *(imvRead[imgNum]);
+            Image * const imWrite = *(imvWrite[imgNum]);
+            
+            const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
+            const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
+            const ImageFormat::DataType pixelDataType=imFormat.getDataType();
+            
+            const size_t width=imFormat.getWidth();
+            const size_t height=imFormat.getHeight();
+            const size_t halfWindowSize=windowSize_>>1;
+            const size_t widthMinusWindowSize=width - windowSize_;
+            const size_t heightMinusWindowSize=height - windowSize_;
+            const double recipWindowSizeSquared=1.0f / float(windowSize_*windowSize_);
+            
+            
+            uint8_t * const dataWrite=(uint8_t * const )imWrite->data();
+            uint8_t const * const dataRead=(uint8_t const * const)imRead->data();
+
+            //Calculate the integral image.
+            integralImage_.process(integralImageData_, dataRead, width, height);
+            
+            for (size_t y=1; y<heightMinusWindowSize; ++y)
+            {
+                const size_t lineOffsetUS=y * width;
+                const size_t lineOffsetDS=(y+halfWindowSize) * width + halfWindowSize;
+                
+                for (size_t x=1; x<widthMinusWindowSize; ++x)
+                {
+                    const double windowSum=integralImageData_[(lineOffsetUS+x) + (windowSize_-1) + (windowSize_-1)*width]
+                                        - integralImageData_[(lineOffsetUS+x) + (windowSize_-1) - width]
+                                        - integralImageData_[(lineOffsetUS+x) - 1 + (windowSize_-1)*width]
+                                        + integralImageData_[(lineOffsetUS+x) - 1 - width];
+                    
+                    const float windowAvrg=float(windowSum * recipWindowSizeSquared);
+                    
+                    const float eScale=targetAverage_ / windowAvrg;
+                    
+                    dataWrite[lineOffsetDS + x]=uint8_t(dataRead[lineOffsetDS + x] * eScale + 0.5f);
+                }
+            }
+        }
+        
+        ++frameNumber_;
+        
         //Stop stats measurement event.
         ProcessorStats_->tock();
         

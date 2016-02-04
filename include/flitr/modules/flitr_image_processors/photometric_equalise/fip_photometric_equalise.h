@@ -22,6 +22,7 @@
 #define FIP_PHOTOMETRIC_EQUALISE_H 1
 
 #include <flitr/image_processor.h>
+#include <flitr/image_processor_utils.h>
 
 namespace flitr {
     
@@ -33,6 +34,7 @@ namespace flitr {
         /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
+         *@param targetAverage The average image brightness the image is transformed to.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPPhotometricEqualise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                float targetAverage,
@@ -50,10 +52,94 @@ namespace flitr {
         virtual bool trigger();
         
     private:
-        float targetAverage_;
+        
+        //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated.
+        template<typename T>
+        void process(T * const dataWrite, T const * const dataRead,
+                     const size_t componentsPerLine, const size_t height)
+        {
+            
+            //Could be line parallel!
+            for (size_t y=0; y<height; y++)
+            {
+                const size_t lineOffset=y * componentsPerLine;
+                
+                double *lineSum = lineSumArray_ + y;
+                *lineSum=0.0;
+                
+                for (size_t compNum=0; compNum<componentsPerLine; compNum++)
+                {
+                    (*lineSum)+=dataRead[lineOffset + compNum];
+                }
+            }
+            
+            
+            double imageSum=0.0;
+            
+            //Single threaded!
+            for (size_t y=0; y<height; y++)
+            {
+                imageSum+=lineSumArray_[y];
+            }
+            
+            
+            const size_t componentsPerImage=componentsPerLine*height;
+            const float average = imageSum / ((double)componentsPerImage);
+            const float eScale=targetAverage_ / average;
+            
+            
+            //Could be pixel parallel.
+            for (size_t y=0; y<height; ++y)
+            {
+                const size_t lineOffset=y * componentsPerLine;
+                
+                for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
+                {
+                    dataWrite[lineOffset + compNum]=dataRead[lineOffset + compNum] * eScale;
+                }
+            }
+        }
+        
+        const float targetAverage_;
         
         /*! The sum per line in an image. */
-        float * lineSumArray_;
+        double * lineSumArray_;
+    };
+    
+    
+    /*! Applies LOCAL photometric equalisation to the image stream. */
+    class FLITR_EXPORT FIPLocalPhotometricEqualise : public ImageProcessor
+    {
+    public:
+        
+        /*! Constructor given the upstream producer.
+         *@param upStreamProducer The upstream image producer.
+         *@param images_per_slot The number of images per image slot from the upstream producer.
+         *@param targetAverage The average image brightness the image is transformed to.
+         *@param windowSize The local window size taken into account during equalisation of a pixel.
+         *@param buffer_size The size of the shared image buffer of the downstream producer.*/
+        FIPLocalPhotometricEqualise(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                                    const float targetAverage, const size_t windowSize,
+                                    uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+        
+        /*! Virtual destructor */
+        virtual ~FIPLocalPhotometricEqualise();
+        
+        /*! Method to initialise the object.
+         *@return Boolean result flag. True indicates successful initialisation.*/
+        virtual bool init();
+        
+        /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
+         *@sa ImageProcessor::startTriggerThread*/
+        virtual bool trigger();
+        
+    private:
+        
+        const float targetAverage_;
+        const size_t windowSize_;
+        
+        IntegralImage integralImage_;
+        double *integralImageData_;
     };
     
 }
