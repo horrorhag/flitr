@@ -486,19 +486,25 @@ void GaussianFilter::updateKernel1D()
     const float kernelCentre=kernelWidth_ * 0.5f;
     const float sigma=filterRadius_ * 0.5f;
     
+    const float twoSigmaSquared=2.0f * (sigma*sigma);
+    const float stdNorm=1.0f / (sqrt(2.0f*float(M_PI))*sigma);
+    
     float kernelSum=0.0f;
     
     for (size_t i=0; i<kernelWidth_; ++i)
     {
-        const float r=((i + 0.5f) - kernelCentre);
-        kernel1D_[i]=(1.0f/(sqrt(2.0f*float(M_PI))*sigma)) * exp(-(r*r)/(2.0f*sigma*sigma));
-        kernelSum+=kernel1D_[i];
+        const float r=(i + 0.5f) - kernelCentre;
+        const float g=stdNorm * exp(-(r*r)/twoSigmaSquared);
+        kernel1D_[i]=g;
+        kernelSum+=g;
     }
     
-    //=== Ensure that the kernel is normalised!
+    const float recipKernelSum=1.0f / kernelSum;
+    
+    //=== Ensure that the kernel is normalised within the specified kernel width!
     for (size_t i=0; i<kernelWidth_; ++i)
     {
-        kernel1D_[i]/=kernelSum;
+        kernel1D_[i] *= recipKernelSum;
     }
 }
 

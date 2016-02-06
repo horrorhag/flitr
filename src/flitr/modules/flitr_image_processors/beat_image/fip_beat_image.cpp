@@ -142,8 +142,8 @@ bool FIPBeatImage::trigger()
             } else
                 if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
                 {
-                    float const * const dataRead = (float const * const)imRead->data();
-                    float * const dataWrite = (float * const)imWrite->data();
+                    //float const * const dataRead = (float const * const)imRead->data();
+                    //float * const dataWrite = (float * const)imWrite->data();
                     
                 }
             

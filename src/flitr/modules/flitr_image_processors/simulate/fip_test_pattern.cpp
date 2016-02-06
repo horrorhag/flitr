@@ -45,7 +45,7 @@ bool FIPTestPattern::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    return true;
+    return rValue;
 }
 
 bool FIPTestPattern::trigger()
@@ -65,8 +65,8 @@ bool FIPTestPattern::trigger()
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
             
-            const float cx = width * 0.5f;
-            const float cy = height * 0.5f;
+            //const float cx = width * 0.5f;
+            //const float cy = height * 0.5f;
             
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);

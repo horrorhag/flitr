@@ -294,6 +294,11 @@ namespace flitr {
         void setFilterRadius(const float filterRadius);
         void setKernelWidth(const int kernelWidth);
         
+        float getStandardDeviation() const
+        {
+            return filterRadius_ * 0.5f;
+        }
+        
         /*!Synchronous process method for float pixel format..*/
         bool filter(float * const dataWriteDS, float const * const dataReadUS,
                     const size_t width, const size_t height,

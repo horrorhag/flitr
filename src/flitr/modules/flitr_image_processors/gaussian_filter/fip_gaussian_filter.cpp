@@ -66,6 +66,7 @@ bool FIPGaussianFilter::init()
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
     size_t maxScratchDataSize=0;
+    size_t maxScratchDataValues=0;
     
     for (uint32_t i=0; i<ImagesPerSlot_; i++)
     {
@@ -75,18 +76,25 @@ bool FIPGaussianFilter::init()
         const size_t height=imFormat.getHeight();
         
         const size_t bytesPerPixel=imFormat.getBytesPerPixel();
+        const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
         
         const size_t scratchDataSize = width * height * bytesPerPixel;
+        const size_t scratchDataValues = width * height * componentsPerPixel;
         
         if (scratchDataSize>maxScratchDataSize)
         {
             maxScratchDataSize=scratchDataSize;
         }
+        
+        if (scratchDataValues>maxScratchDataValues)
+        {
+            maxScratchDataValues=scratchDataValues;
+        }
     }
     
     //Allocate a buffer big enough for any of the image slots.
     scratchData_=new uint8_t[maxScratchDataSize];
-    intImageScratchData_=new double[maxScratchDataSize];
+    intImageScratchData_=new double[maxScratchDataValues];
     
     return rValue;
 }

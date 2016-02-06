@@ -135,6 +135,94 @@ namespace flitr {
         
     private:
         
+        //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated.
+        template<typename T>
+        void process(T * const dataWrite, T const * const dataRead,
+                     const size_t width, const size_t height)
+        {
+            const size_t halfWindowSize=windowSize_>>1;
+            const size_t widthMinusWindowSize=width - windowSize_;
+            const size_t heightMinusWindowSize=height - windowSize_;
+            const double recipWindowSizeSquared=1.0f / float(windowSize_*windowSize_);
+            
+            for (size_t y=1; y<heightMinusWindowSize; ++y)
+            {
+                const size_t lineOffsetUS=y * width;
+                const size_t lineOffsetDS=(y+halfWindowSize) * width + halfWindowSize;
+                
+                for (size_t x=1; x<widthMinusWindowSize; ++x)
+                {
+                    const double windowSum=integralImageData_[(lineOffsetUS+x) + (windowSize_-1) + (windowSize_-1)*width]
+                    - integralImageData_[(lineOffsetUS+x) + (windowSize_-1) - width]
+                    - integralImageData_[(lineOffsetUS+x) - 1 + (windowSize_-1)*width]
+                    + integralImageData_[(lineOffsetUS+x) - 1 - width];
+                    
+                    const float windowAvrg=float(windowSum * recipWindowSizeSquared);
+                    
+                    const float eScale=targetAverage_ / windowAvrg;
+                    
+                    dataWrite[lineOffsetDS + x]=uint8_t(dataRead[lineOffsetDS + x] * eScale + 0.5f);
+                }
+            }
+        }
+        
+        template<typename T>
+        void processRGB(T * const dataWrite, T const * const dataRead,
+                        const size_t width, const size_t height)
+        {
+            const size_t halfWindowSize=windowSize_>>1;
+            const size_t widthMinusWindowSize=width - windowSize_;
+            const size_t heightMinusWindowSize=height - windowSize_;
+            const double recipWindowSizeSquared=1.0f / float(windowSize_*windowSize_);
+            
+            for (size_t y=1; y<heightMinusWindowSize; ++y)
+            {
+                size_t lineOffsetTL=((y-1)*width + 0) * 3;
+                size_t lineOffsetTR=((y-1)*width + windowSize_) * 3;
+                size_t lineOffsetBL=((y-1)*width + windowSize_*width) * 3;
+                size_t lineOffsetBR=((y-1)*width + windowSize_*width + windowSize_) * 3;
+                
+                size_t lineOffset=((y+halfWindowSize) * width + halfWindowSize) * 3 + 3;
+                
+                for (size_t x=1; x<widthMinusWindowSize; ++x)
+                {
+                    const double windowSumR=integralImageData_[lineOffsetBR + 0]
+                    - integralImageData_[lineOffsetBL + 0]
+                    - integralImageData_[lineOffsetTR + 0]
+                    + integralImageData_[lineOffsetTL + 0];
+                    
+                    const double windowSumG=integralImageData_[lineOffsetBR + 1]
+                    - integralImageData_[lineOffsetBL + 1]
+                    - integralImageData_[lineOffsetTR + 1]
+                    + integralImageData_[lineOffsetTL + 1];
+                    
+                    const double windowSumB=integralImageData_[lineOffsetBR + 2]
+                    - integralImageData_[lineOffsetBL + 2]
+                    - integralImageData_[lineOffsetTR + 2]
+                    + integralImageData_[lineOffsetTL + 2];
+                    
+                    const float windowAvrgR=float(windowSumR * recipWindowSizeSquared);
+                    const float windowAvrgG=float(windowSumG * recipWindowSizeSquared);
+                    const float windowAvrgB=float(windowSumB * recipWindowSizeSquared);
+                    
+                    const float eScaleR=targetAverage_ / windowAvrgR;
+                    const float eScaleG=targetAverage_ / windowAvrgG;
+                    const float eScaleB=targetAverage_ / windowAvrgB;
+                    
+                    dataWrite[lineOffset + 0]=uint8_t(dataRead[lineOffset + 0] * eScaleR + 0.5f);
+                    dataWrite[lineOffset + 1]=uint8_t(dataRead[lineOffset + 1] * eScaleG + 0.5f);
+                    dataWrite[lineOffset + 2]=uint8_t(dataRead[lineOffset + 2] * eScaleB + 0.5f);
+                    
+                    lineOffset+=3;
+                    
+                    lineOffsetTL+=3;
+                    lineOffsetTR+=3;
+                    lineOffsetBL+=3;
+                    lineOffsetBR+=3;
+                }
+            }
+        }
+        
         const float targetAverage_;
         const size_t windowSize_;
         

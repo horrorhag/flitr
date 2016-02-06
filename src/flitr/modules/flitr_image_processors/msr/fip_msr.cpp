@@ -165,7 +165,7 @@ bool FIPMSR::trigger()
             for (size_t scaleIndex=0; scaleIndex<numScales; ++scaleIndex)
             {
                 const size_t kernelWidth=(imFormatUS.getWidth() / (GFScale_*(1<<(scaleIndex*1)))) | 1;
-                const size_t halfKernelWidth=kernelWidth >> 1;
+                //const size_t halfKernelWidth=kernelWidth >> 1;
                 
                 GF_.setKernelWidth(kernelWidth);
                 

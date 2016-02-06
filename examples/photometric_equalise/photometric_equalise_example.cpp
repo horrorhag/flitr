@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_RGB_8, 2));
     if (!ip->init())
     {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 #endif
     
     shared_ptr<FIPLocalPhotometricEqualise> equaliseImage(new FIPLocalPhotometricEqualise(*ip, 1,
-                                                                                          100, 64,
+                                                                                          80, 256,
                                                                                           5));
     if (!equaliseImage->init()) {
         std::cerr << "Could not initialise the equaliseImage image processor.\n";

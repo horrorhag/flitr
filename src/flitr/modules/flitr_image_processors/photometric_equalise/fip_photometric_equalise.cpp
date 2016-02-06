@@ -87,7 +87,7 @@ bool FIPPhotometricEqualise::trigger()
             Image * const imWrite = *(imvWrite[imgNum]);
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
-            const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
+            //const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
             const ImageFormat::DataType pixelDataType=imFormat.getDataType();
             
             const size_t width=imFormat.getWidth();
@@ -152,8 +152,7 @@ bool FIPLocalPhotometricEqualise::init()
     bool rValue=ImageProcessor::init();
     //Note: SharedImageBuffer of downstream producer is initialised with storage in ImageProcessor::init.
     
-    size_t maxWidth=0;
-    size_t maxHeight=0;
+    size_t maxDataValues=0;
     
     for (uint32_t i=0; i<ImagesPerSlot_; ++i)
     {
@@ -161,13 +160,13 @@ bool FIPLocalPhotometricEqualise::init()
         
         const size_t width=imFormat.getWidth();
         const size_t height=imFormat.getHeight();
+        const size_t dataValues=imFormat.getComponentsPerPixel() * width * height;
         
-        if (width>maxWidth) maxWidth=width;
-        if (height>maxHeight) maxHeight=height;
+        if (dataValues > maxDataValues) maxDataValues=dataValues;
     }
     
-    integralImageData_=new double[maxWidth*maxHeight];
-    memset(integralImageData_, 0, maxWidth*maxHeight*sizeof(double));
+    integralImageData_=new double[maxDataValues];
+    memset(integralImageData_, 0, maxDataValues*sizeof(double));
     
     return rValue;
 }
@@ -183,46 +182,49 @@ bool FIPLocalPhotometricEqualise::trigger()
         
         for (size_t imgNum=0; imgNum<ImagesPerSlot_; imgNum++)
         {
-            Image const * const imRead = *(imvRead[imgNum]);
-            Image * const imWrite = *(imvWrite[imgNum]);
+            Image const * const imReadUS = *(imvRead[imgNum]);
+            Image * const imWriteDS = *(imvWrite[imgNum]);
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
-            const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
-            const ImageFormat::DataType pixelDataType=imFormat.getDataType();
+            //const ImageFormat::PixelFormat pixelFormat=imFormat.getPixelFormat();
+            //const ImageFormat::DataType pixelDataType=imFormat.getDataType();
             
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
-            const size_t halfWindowSize=windowSize_>>1;
-            const size_t widthMinusWindowSize=width - windowSize_;
-            const size_t heightMinusWindowSize=height - windowSize_;
-            const double recipWindowSizeSquared=1.0f / float(windowSize_*windowSize_);
-            
-            
-            uint8_t * const dataWrite=(uint8_t * const )imWrite->data();
-            uint8_t const * const dataRead=(uint8_t const * const)imRead->data();
 
-            //Calculate the integral image.
-            integralImage_.process(integralImageData_, dataRead, width, height);
             
-            for (size_t y=1; y<heightMinusWindowSize; ++y)
+            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
             {
-                const size_t lineOffsetUS=y * width;
-                const size_t lineOffsetDS=(y+halfWindowSize) * width + halfWindowSize;
+                float const * const dataReadUS=(float const * const)imReadUS->data();
+                float * const dataWriteDS=(float * const)imWriteDS->data();
                 
-                for (size_t x=1; x<widthMinusWindowSize; ++x)
+                integralImage_.process(integralImageData_, dataReadUS, width, height);
+                this->process(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
+            } else
+                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
                 {
-                    const double windowSum=integralImageData_[(lineOffsetUS+x) + (windowSize_-1) + (windowSize_-1)*width]
-                                        - integralImageData_[(lineOffsetUS+x) + (windowSize_-1) - width]
-                                        - integralImageData_[(lineOffsetUS+x) - 1 + (windowSize_-1)*width]
-                                        + integralImageData_[(lineOffsetUS+x) - 1 - width];
+                    uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                    uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
                     
-                    const float windowAvrg=float(windowSum * recipWindowSizeSquared);
-                    
-                    const float eScale=targetAverage_ / windowAvrg;
-                    
-                    dataWrite[lineOffsetDS + x]=uint8_t(dataRead[lineOffsetDS + x] * eScale + 0.5f);
-                }
-            }
+                    integralImage_.process(integralImageData_, dataReadUS, width, height);
+                    this->process(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
+                } else
+                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                    {
+                        float const * const dataReadUS=(float const * const)imReadUS->data();
+                        float * const dataWriteDS=(float * const)imWriteDS->data();
+                        
+                        integralImage_.processRGB(integralImageData_, dataReadUS, width, height);
+                        this->processRGB(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
+                    } else
+                        if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                        {
+                            uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                            uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+                            
+                            integralImage_.processRGB(integralImageData_, dataReadUS, width, height);
+                            this->processRGB(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
+                        }
         }
         
         ++frameNumber_;
