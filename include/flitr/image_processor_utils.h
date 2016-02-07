@@ -23,6 +23,7 @@
 
 #include <cstdlib>
 #include <flitr/flitr_export.h>
+#include <math.h>
 
 namespace flitr {
     //! General purpose Integral image.
@@ -168,6 +169,16 @@ namespace flitr {
         
         void setKernelWidth(const int kernelWidth);
         
+        float getStandardDeviation() const
+        {
+            return sqrtf((kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
+        }
+        
+        size_t getKernelWidth() const
+        {
+            return kernelWidth_;
+        }
+        
         /*!Synchronous process method for float pixel format.*/
         bool filter(float * const dataWriteDS, float const * const dataReadUS,
                     const size_t width, const size_t height,
@@ -222,7 +233,20 @@ namespace flitr {
             return *this;
         }
         
+        //!Sets the width of the average filter.
         void setKernelWidth(const int kernelWidth);
+        
+        //!Gets the standard deviation of the average filter.
+        float getStandardDeviation() const
+        {
+            return sqrtf((kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
+        }
+        
+        //!Get the kernel width.
+        size_t getKernelWidth() const
+        {
+            return kernelWidth_;
+        }
         
         /*!Synchronous process method for float pixel format..*/
         bool filter(float * const dataWriteDS, float const * const dataReadUS,

@@ -30,11 +30,11 @@ FIPGaussianFilter::FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t i
                                      const short intImgApprox,
                                      uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+intImgApprox_(intImgApprox),
 scratchData_(nullptr),
 intImageScratchData_(nullptr),
 gaussianFilter_(filterRadius, kernelWidth),
-boxFilter_(kernelWidth),
-intImgApprox_(intImgApprox)
+boxFilter_(kernelWidth)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -58,6 +58,7 @@ void FIPGaussianFilter::setFilterRadius(const float filterRadius)
 void FIPGaussianFilter::setKernelWidth(const int kernelWidth)
 {
     gaussianFilter_.setKernelWidth(kernelWidth);
+    boxFilter_.setKernelWidth(kernelWidth);
 }
 
 bool FIPGaussianFilter::init()

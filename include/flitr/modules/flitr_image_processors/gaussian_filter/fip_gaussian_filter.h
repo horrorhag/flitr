@@ -23,6 +23,7 @@
 
 #include <flitr/image_processor.h>
 #include <flitr/image_processor_utils.h>
+#include <math.h>
 
 namespace flitr {
     
@@ -44,8 +45,26 @@ namespace flitr {
         /*! Virtual destructor */
         virtual ~FIPGaussianFilter();
         
+        /*!Sets the filter radius of the Gaussian filter. Has no effect if intImgApprox>0.
+        @sa getStandardDeviation */
         virtual void setFilterRadius(const float filterRadius);
+        
+        /*!Sets the kernel width of both the Gaussian and the approx BoxFilter Gaussian! Also affects the BoxFilter Gaussian's standard deviation
+         @sa getStandardDeviation */
         virtual void setKernelWidth(const int kernelWidth);
+        
+        //Returns the Gaussian standard deviation or approximate boxfilter Gaussian.
+        float getStandardDeviation() const
+        {
+            if (intImgApprox_==0)
+            {
+                return gaussianFilter_.getStandardDeviation();
+            } else
+            {//Gaussian approximated by multiple average filters.
+                const size_t kernelWidth_=boxFilter_.getKernelWidth();                
+                return sqrtf(intImgApprox_ * (kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
+            }
+        }
         
         /*! Method to initialise the object.
          *@return Boolean result flag. True indicates successful initialisation.*/
