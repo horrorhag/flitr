@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <flitr/flitr_export.h>
 #include <math.h>
+#include <stdint.h>
 
 namespace flitr {
     //! General purpose Integral image.
