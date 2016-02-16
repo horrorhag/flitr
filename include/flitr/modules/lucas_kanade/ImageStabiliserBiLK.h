@@ -6,7 +6,6 @@
 #endif
 
 #include <iostream>
-#include <boost/tr1/memory.hpp>
 
 using std::shared_ptr;
 

@@ -26,8 +26,7 @@
 #include "DSVL.h"
 #include "tinyxml.h"
 #include <sstream>
-
-#include <boost/lexical_cast.hpp>
+#include <string>
 
 #define IPF_USE_SWSCALE 1
 extern "C" {
@@ -204,8 +203,8 @@ VideoProducer::VideoProducer(flitr::ImageFormat::PixelFormat pixelFormat /*= fli
     , pixelFormat_(pixelFormat)
     , config_(config_default)
 {
-    SetConfigSetting(config_, "frame_width", boost::lexical_cast<std::string>(frameWidth));
-    SetConfigSetting(config_, "frame_height", boost::lexical_cast<std::string>(frameHeight));
+    SetConfigSetting(config_, "frame_width", std::to_string(frameWidth));
+    SetConfigSetting(config_, "frame_height", std::to_string(frameHeight));
     if (!deviceName.empty())
     {
         SetConfigSetting(config_, "device_name", deviceName);

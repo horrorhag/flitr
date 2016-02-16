@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     
     shared_ptr<FIPLocalPhotometricEqualise> equaliseImage(new FIPLocalPhotometricEqualise(*ip, 1,
                                                                                           80, 256,
-                                                                                          5));
+                                                                                          2));
     if (!equaliseImage->init()) {
         std::cerr << "Could not initialise the equaliseImage image processor.\n";
         exit(-1);

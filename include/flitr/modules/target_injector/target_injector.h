@@ -25,7 +25,6 @@
 
 #include <algorithm>
 
-//#include <boost/timer.hpp>
 
 namespace flitr {
 
@@ -203,7 +202,7 @@ private:
 
     float targetBrightness_;
     std::vector<SyntheticTarget> targetVector_;
-    double startTimeSec_;//boost::timer timer_;
+    double startTimeSec_;
 };
 
 }

@@ -87,14 +87,14 @@ int main(int argc, char *argv[])
                                                                                     1));
     
     
-    //===TOP HAT===//
+    //===WHITE TOP HAT===//
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
     //=== ===//
     
-    //===BLACK HAT===//
+    //===BLACK TOP HAT===//
     //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
     //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
     //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::MINUS_SOURCE);
