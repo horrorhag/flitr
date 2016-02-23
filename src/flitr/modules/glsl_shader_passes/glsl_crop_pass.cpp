@@ -3,6 +3,7 @@
 using namespace flitr;
 
 GLSLCropPass::GLSLCropPass(flitr::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU)
+    : GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU)
 {
     TextureWidth_ = xmax-xmin+1;//in_tex->getTextureWidth();
     TextureHeight_ = ymax-ymin+1;//in_tex->getTextureHeight();

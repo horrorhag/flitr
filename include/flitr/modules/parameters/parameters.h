@@ -28,6 +28,8 @@ namespace flitr {
 class Parameters
 {
 public:
+    virtual ~Parameters() = default;
+
     enum EParmType
     {
         PARM_UNDF,
@@ -38,10 +40,18 @@ public:
 	PARM_ENUM
     };
 
+    enum EPassType
+    {
+        CPU_PASS,
+        GLSL_PASS,
+    };
+
     virtual int getNumberOfParms() { return 0; }
 
     virtual EParmType getParmType(int id) { return PARM_UNDF;}
     virtual std::string getParmName(int id) { return std::string("PARM_UNDF");}
+
+    virtual EPassType getPassType() { return CPU_PASS; }
 
     virtual std::string getTitle() { return "Title"; }
 

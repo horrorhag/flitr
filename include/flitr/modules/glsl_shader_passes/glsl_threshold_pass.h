@@ -24,6 +24,8 @@
 #include <iostream>
 #include <string>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <flitr/flitr_export.h>
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
@@ -46,7 +48,7 @@ namespace flitr {
 *	Takes an input image and produces a binary output image where all values above a given
 *	threshold becomes 1 and everything else becomes 0.
 */
-class FLITR_EXPORT GLSLThresholdPass : public Parameters
+class FLITR_EXPORT GLSLThresholdPass : public GLSLImageProcessor
 {
   public:
     GLSLThresholdPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);

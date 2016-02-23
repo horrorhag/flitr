@@ -47,8 +47,15 @@ namespace flitr {
         /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
+
+        virtual std::string getTitle()
+        {
+            return Title_;
+        }
+
         
     private:
+        std::string Title_;
     };
     
 }

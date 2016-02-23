@@ -6,6 +6,7 @@
 using namespace flitr;
 
 GLSLGaussianFilterYPass::GLSLGaussianFilterYPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU) :
+    GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU),
     Title_("GaussianFilterX")
 {
     TextureWidth_ = in_tex->getTextureWidth();

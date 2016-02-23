@@ -155,6 +155,7 @@ SET(LIB_SOURCES
   src/flitr/image_consumer.cpp
   src/flitr/image_processor.cpp
   src/flitr/image_processor_utils.cpp
+  src/flitr/glsl_image_processor.cpp
   src/flitr/hud.cpp
   src/flitr/log_message.cpp
   src/flitr/manipulator_utils.cpp
@@ -250,6 +251,7 @@ SET(LIB_SOURCES
   include/flitr/flitr_export.h
   include/flitr/flitr_stdint.h
   include/flitr/high_resolution_time.h
+  include/flitr/glsl_image_processor.h
   include/flitr/image_consumer.h
   include/flitr/image_processor.h
   include/flitr/image_processor_utils.h
@@ -501,5 +503,4 @@ IF(FLITR_WITH_DOXYGEN)
 # uninstall target
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake" IMMEDIATE @ONLY)
 ADD_CUSTOM_TARGET(uninstall COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-
 

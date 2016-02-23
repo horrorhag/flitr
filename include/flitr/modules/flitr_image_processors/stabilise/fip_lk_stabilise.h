@@ -74,6 +74,10 @@ public:
         sumHy_*=fy;
     }
 
+    virtual std::string getTitle() {
+        return Title_;
+    }
+
 private:
     inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy) const
     {
@@ -81,6 +85,8 @@ private:
                 data[offsetLT] * ((1.0f-fx) * (1.0f-fy)) + data[offsetLT+((ptrdiff_t)1)] * (fx * (1.0f-fy)) +
                 data[offsetLT+width] * ((1.0f-fx) * fy) + data[offsetLT+(((ptrdiff_t)1)+width)] * (fx * fy);
     }
+
+    std::string Title_;
 
     size_t numLevels_;
 

@@ -3,6 +3,7 @@
 using namespace flitr;
 
 GLSLGammaPass::GLSLGammaPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU) :
+    GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU),
     GammaBeforeDisable_(1.0),
     Enabled_(true)
 {

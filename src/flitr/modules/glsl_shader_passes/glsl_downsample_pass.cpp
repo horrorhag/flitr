@@ -2,7 +2,8 @@
 
 using namespace flitr;
 
-GLSLDownsamplePass::GLSLDownsamplePass(flitr::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU)
+GLSLDownsamplePass::GLSLDownsamplePass(flitr::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU) :
+    GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth()/dsfactor;
     TextureHeight_ = in_tex->getTextureHeight()/dsfactor;

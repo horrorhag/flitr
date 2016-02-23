@@ -6,7 +6,7 @@
 using namespace flitr;
 
 GLSLMaskedGainPass::GLSLMaskedGainPass(flitr::TextureRectangle *in_tex, flitr::TextureRectangle *mask_tex, bool read_back_to_CPU) :
-    Title_("MaskedGain")
+    Title_(std::string("Masked Gain"))
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();

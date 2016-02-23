@@ -26,6 +26,7 @@ using std::shared_ptr;
 FIPConvertToRGBF32::FIPConvertToRGBF32(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                  uint32_t buffer_size) :
     ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
+  , Title_(std::string("Convert To RGB f32"))
 {
     
     //Setup image format being produced to downstream.

@@ -3,6 +3,8 @@
 using namespace flitr;
 
 GLSLShaderPass::GLSLShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
+    : GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU)
+    , Title_(std::string("GLSL Shader"))
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();

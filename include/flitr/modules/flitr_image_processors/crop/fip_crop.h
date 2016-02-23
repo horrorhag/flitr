@@ -52,12 +52,141 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
+        virtual void setStartX(const float f)
+        {
+            startX_ = std::min<float>(f,maxWidth_);
+        }
+
+        virtual float getStartX() {
+            return startX_;
+        }
+
+        virtual void setStartY(const float f)
+        {
+            startY_ = std::min<float>(f,maxHeight_);
+        }
+
+        virtual float getStartY() {
+            return startY_;
+        }
+
+
+        virtual void setWidth(const float f)
+        {
+            width_ = std::min<float>(f,maxWidth_);
+
+            //Setup image format being produced to downstream.
+            for (uint32_t i=0; i<ImagesPerSlot_; i++)
+            {
+                ImageFormat_[i].setWidth(width_);
+            }
+
+        }
+
+        virtual float getWidth() {
+            return width_;
+        }
+
+
+        virtual void setHeight(const float f)
+        {
+            height_ = std::min<float>(f,maxHeight_);
+
+            //Setup image format being produced to downstream.
+            for (uint32_t i=0; i<ImagesPerSlot_; i++)
+            {
+                ImageFormat_[i].setHeight(height_);
+            }
+
+        }
+
+        virtual float getHeight() {
+            return height_;
+        }
+
+
+        virtual int getNumberOfParms()
+        {
+            return 2;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+            return flitr::Parameters::PARM_FLOAT;
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+            case 0 :return std::string("Start X");
+            case 1 :return std::string("Start Y");
+            //case 2 :return std::string("Width");
+            //case 3 :return std::string("Height");
+
+            }
+            return std::string("???");
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            case 0 : return getStartX();
+            case 1 : return getStartY();
+            case 2 : return getWidth();
+            case 3 : return getHeight();
+            }
+
+            return 0.0f;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+            if (id==0 || id == 2)
+            {
+                low=0.0; high=maxWidth_;
+                return true;
+            }
+            if (id==1 || id == 3)
+            {
+                low=0.0; high=maxHeight_;
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+            case 0 : setStartX(v); return true;
+            case 1 : setStartY(v); return true;
+            //case 2 : setWidth(v); return true;
+            //case 3 : setHeight(v); return true;
+
+            }
+
+            return false;
+        }
+
+        virtual std::string getTitle() {
+            return Title_;
+        }
+
+
     private:
+        std::string Title_;
+
         size_t startX_;
         size_t startY_;
         
         size_t width_;
         size_t height_;
+
+        int maxWidth_;
+        int maxHeight_;
     };
 }
 

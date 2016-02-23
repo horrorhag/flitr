@@ -24,6 +24,8 @@
 #include <iostream>
 #include <string>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <flitr/flitr_export.h>
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
@@ -45,7 +47,7 @@ namespace flitr {
 /*!
 *	Takes an colour input image and produces a gray scale image
 */
-class FLITR_EXPORT GLSLGrayscalePass : public Parameters
+class FLITR_EXPORT GLSLGrayscalePass : public GLSLImageProcessor
 {
   public:
       GLSLGrayscalePass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);

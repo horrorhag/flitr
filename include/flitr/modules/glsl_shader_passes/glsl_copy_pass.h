@@ -23,6 +23,8 @@
 #include <iostream>
 #include <string>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <flitr/flitr_export.h>
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
@@ -40,7 +42,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLCopyPass
+class FLITR_EXPORT GLSLCopyPass : public GLSLImageProcessor
 {
   public:
     GLSLCopyPass(flitr::TextureRectangle *in_tex, flitr::TextureRectangle *out_tex = 0, bool read_back_to_CPU = false);

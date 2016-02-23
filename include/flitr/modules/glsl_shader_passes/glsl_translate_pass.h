@@ -23,6 +23,8 @@
 #include <iostream>
 #include <string>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <flitr/flitr_export.h>
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
@@ -40,7 +42,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLTranslatePass
+class FLITR_EXPORT GLSLTranslatePass : public GLSLImageProcessor
 {
   public:
     GLSLTranslatePass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
@@ -51,6 +53,8 @@ class FLITR_EXPORT GLSLTranslatePass
 
     void setTranslation(osg::Vec2f translation);
     osg::Vec2f getTranslation() const;
+
+    virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::GLSL_PASS; }
 
   private:
     void setShader();

@@ -51,6 +51,71 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
+
+        virtual void setTargetAverage(const float f)
+        {
+            targetAverage_= std::min<float>(std::max<float>(f, 0.0f),1.0f);
+        }
+
+        virtual float getTargetAverage() {
+            return targetAverage_;
+        }
+
+        virtual int getNumberOfParms()
+        {
+            return 1;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+            return flitr::Parameters::PARM_FLOAT;
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+            case 0 :return std::string("Target Average");
+            }
+            return std::string("???");
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            case 0 : return getTargetAverage()*100.0f;
+            }
+
+            return 0.0f;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+            if (id==0)
+            {
+                low=1.0; high=100.0;
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+                case 0 : setTargetAverage(v/100.0f); return true;
+            }
+
+            return false;
+        }
+
+        virtual std::string getTitle()
+        {
+            return Title_;
+        }
+
     private:
         
         //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated.
@@ -100,8 +165,9 @@ namespace flitr {
             }
         }
         
-        const float targetAverage_;
-        
+        float targetAverage_;
+        std::string Title_;
+
         /*! The sum per line in an image. */
         double * lineSumArray_;
     };
@@ -132,7 +198,73 @@ namespace flitr {
         /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
-        
+
+
+        virtual void setTargetAverage(const float f)
+        {
+            targetAverage_= std::min<float>(std::max<float>(f, 0.0f),1.0f);
+        }
+
+        virtual float getTargetAverage() {
+            return targetAverage_;
+        }
+
+        virtual int getNumberOfParms()
+        {
+            return 1;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+            return flitr::Parameters::PARM_FLOAT;
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+            case 0 :return std::string("Target Average");
+            }
+            return std::string("???");
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            case 0 : return getTargetAverage()*100.0f;
+            }
+
+            return 0.0f;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+            if (id==0)
+            {
+                low=1.0; high=100.0;
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+                case 0 : setTargetAverage(v/100.0f); return true;
+            }
+
+            return false;
+        }
+
+        virtual std::string getTitle()
+        {
+            return Title_;
+        }
+
+
     private:
         
         //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated.
@@ -223,9 +355,10 @@ namespace flitr {
             }
         }
         
-        const float targetAverage_;
+        float targetAverage_;
         const size_t windowSize_;
-        
+        std::string Title_;
+
         IntegralImage integralImage_;
         double *integralImageData_;
     };

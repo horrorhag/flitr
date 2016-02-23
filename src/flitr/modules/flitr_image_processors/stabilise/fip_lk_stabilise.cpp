@@ -36,6 +36,7 @@ FIPLKStabilise::FIPLKStabilise(ImageProducer& upStreamProducer, uint32_t images_
                                Mode outputMode,
                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+Title_(std::string("LK Stabilise")),
 numLevels_(0), //Setup numLevels_ automatically in init().
 scratchData_(0),
 outputMode_(outputMode),

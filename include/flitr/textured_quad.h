@@ -85,6 +85,14 @@ class FLITR_EXPORT TexturedQuad
         MatrixTransform_->setMatrix(m);
     }
     
+    int getWidth() {
+        return Width_;
+    }
+
+    int getHeight() {
+        return Height_;
+    }
+
     void flipTextureCoordsLeftToRight();
     void flipTextureCoordsTopToBottom();
 

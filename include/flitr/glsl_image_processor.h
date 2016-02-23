@@ -18,16 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GLSL_CROP_PASS_H
-#define GLSL_CROP_PASS_H 1
-#include <iostream>
-#include <string>
-
-#include <flitr/glsl_image_processor.h>
+#ifndef GLSL_IMAGE_PROCESSOR_H
+#define GLSL_IMAGE_PROCESSOR_H 1
 
 #include <flitr/flitr_export.h>
-#include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
+
+#include <flitr/modules/parameters/parameters.h>
 
 #include <osg/ref_ptr>
 #include <osg/Group>
@@ -42,36 +39,45 @@
 
 namespace flitr {
     
-    class FLITR_EXPORT GLSLCropPass : public GLSLImageProcessor
+    class GLSLImageProcessor;
+
+    class FLITR_EXPORT GLSLImageProcessor : virtual public Parameters
     {
+
+  private:
+
+
+
     public:
-        GLSLCropPass(flitr::TextureRectangle *in_tex,
-                     int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU = false);
         
-        ~GLSLCropPass();
+        GLSLImageProcessor(flitr::TextureRectangle *in_tex, flitr::TextureRectangle *out_tex, bool read_back_to_CPU);
         
-        osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
-        osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
-        osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
-        
+        /*! Virtual destructor */
+        virtual ~GLSLImageProcessor() = default;
+
+        virtual osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
+        virtual osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
+        virtual osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
+
     private:
-        void setShader();
+        virtual osg::ref_ptr<osg::Group> createTexturedQuad() = 0;
+        virtual void createOutputTexture(bool read_back_to_CPU) = 0;
+        virtual void setupCamera() = 0;
         
-        osg::ref_ptr<osg::Group> createTexturedQuad(int xmin, int ymin, int xmax, int ymax);
-        void createOutputTexture(bool read_back_to_CPU);
-        void setupCamera();
-        
+    protected:
         osg::ref_ptr<osg::Group> RootGroup_;
         osg::ref_ptr<osg::Camera> Camera_;
         osg::ref_ptr<flitr::TextureRectangle> InTexture_;
         osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
         osg::ref_ptr<osg::Image> OutImage_;
-        
+
         int TextureWidth_;
         int TextureHeight_;
-        
+
         osg::ref_ptr<osg::Program> FragmentProgram_;
         osg::ref_ptr<osg::StateSet> StateSet_;
+
     };
 }
-#endif //GLSL_CROP_PASS_H
+
+#endif //GLSL_IMAGE_PROCESSOR_H

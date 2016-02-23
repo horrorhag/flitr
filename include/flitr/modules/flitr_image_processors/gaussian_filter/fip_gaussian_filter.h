@@ -73,7 +73,108 @@ namespace flitr {
         /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
-        
+
+
+        void setTitle(const std::string &title)
+        {
+            Title_=title;
+        }
+
+        void setRadius(float r)//radius = sd * 2
+        {
+            FilterRadius_ = r;
+            setFilterRadius(FilterRadius_);
+        }
+
+        void setWidth(float r)
+        {
+            KernelWidth_ = r;
+            setKernelWidth(r);
+        }
+
+        float getRadius() const //radius = sd * 2
+        {
+            return FilterRadius_;
+        }
+
+        float getWidth() const
+        {
+            return KernelWidth_;
+        }
+
+        virtual int getNumberOfParms()
+        {
+            return 2;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+            return flitr::Parameters::PARM_FLOAT;
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+            case 0 :return std::string("Filter Radius");
+            case 1 :return std::string("Kernel Width");
+            }
+            return std::string("???");
+        }
+
+        virtual std::string getTitle()
+        {
+            return Title_;
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            case 0 : return getRadius();
+            case 1 : return getWidth();
+            }
+
+            return 0.0f;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+            if (id==0)
+            {
+                low=1.0; high=100.0;
+                return true;
+            }
+            if (id==1)
+            {
+                low=1.0; high=32.0;
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+                case 0 : setRadius(v); return true;
+                case 1 : setWidth(v); return true;
+            }
+
+            return false;
+        }
+
+        virtual void enable(bool state=true)
+        {
+            Enabled_ = state;
+        }
+
+        virtual bool isEnabled()
+        {
+            return Enabled_;
+        }
+
     private:
         short intImgApprox_;
         
@@ -84,6 +185,12 @@ namespace flitr {
         GaussianFilter gaussianFilter_; //No significant state associated with this.
 
         BoxFilterII boxFilter_; //No significant state associated with this.
+        
+        bool Enabled_;
+        std::string Title_;
+        float FilterRadius_;
+        float KernelWidth_;
+
     };
     
 }

@@ -30,12 +30,16 @@ FIPCrop::FIPCrop(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                  size_t height,
                  uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
+Title_(std::string("Crop")),
 startX_(startX),
 startY_(startY),
 width_(width),
 height_(height)
 {
     
+    maxWidth_ = upStreamProducer.getFormat().getWidth();
+    maxHeight_ = upStreamProducer.getFormat().getHeight();
+
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++)
     {

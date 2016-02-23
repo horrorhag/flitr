@@ -2,7 +2,8 @@
 
 using namespace flitr;
 
-HomographyShaderPass::HomographyShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU)
+HomographyShaderPass::HomographyShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU) :
+    GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();

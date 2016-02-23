@@ -21,6 +21,7 @@
 #ifndef IMAGE_PROCESSOR_H
 #define IMAGE_PROCESSOR_H 1
 
+#include <flitr/modules/parameters/parameters.h>
 #include <flitr/image_consumer.h>
 #include <flitr/image_producer.h>
 #include <flitr/stats_collector.h>
@@ -58,7 +59,7 @@ namespace flitr {
     };
     
     /*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.*/
-    class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer
+    class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer, virtual public Parameters
     {
         friend class ImageProcessorThread;
     public:

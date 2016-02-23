@@ -23,6 +23,8 @@
 #include <iostream>
 #include <string>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <flitr/flitr_export.h>
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
@@ -41,7 +43,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLGaussianFilterXPass  : public Parameters
+class FLITR_EXPORT GLSLGaussianFilterXPass : public GLSLImageProcessor
 {
 public:
     GLSLGaussianFilterXPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);

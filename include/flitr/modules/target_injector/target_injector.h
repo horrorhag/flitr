@@ -193,10 +193,68 @@ public:
         targetBrightness_=std::min<float>(std::max<float>(brightness, 0.0f),255.5f);
     }
 
+    virtual float getTargetBrightness() {
+        return targetBrightness_;
+    }
+
     virtual void addTarget(const SyntheticTarget &target)
     {
         targetVector_.push_back(target);
     }
+
+
+
+    virtual int getNumberOfParms()
+    {
+        return 1;
+    }
+
+    virtual flitr::Parameters::EParmType getParmType(int id)
+    {
+        return flitr::Parameters::PARM_FLOAT;
+    }
+
+    virtual std::string getParmName(int id)
+    {
+        switch (id)
+        {
+        case 0 :return std::string("Target Brightness");
+        }
+        return std::string("???");
+    }
+
+    virtual float getFloat(int id)
+    {
+        switch (id)
+        {
+        case 0 : return getTargetBrightness();
+        }
+
+        return 0.0f;
+    }
+
+    virtual bool getFloatRange(int id, float &low, float &high)
+    {
+        if (id==0)
+        {
+            low=1.0; high=255.0;
+            return true;
+        }
+
+        return false;
+    }
+
+    virtual bool setFloat(int id, float v)
+    {
+        switch (id)
+        {
+            case 0 : setTargetBrightness(v); return true;
+        }
+
+        return false;
+    }
+
+
 
 private:
 

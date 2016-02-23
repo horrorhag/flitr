@@ -3,6 +3,7 @@
 using namespace flitr;
 
 GLSLCopyPass::GLSLCopyPass(flitr::TextureRectangle *in_tex, flitr::TextureRectangle *out_tex, bool read_back_to_CPU)
+    : GLSLImageProcessor(in_tex, out_tex, read_back_to_CPU)
 {
     TextureWidth_ = in_tex->getTextureWidth();
     TextureHeight_ = in_tex->getTextureHeight();

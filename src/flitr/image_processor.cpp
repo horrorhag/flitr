@@ -88,6 +88,8 @@ bool ImageProcessor::stopTriggerThread()
         Thread_->setExit();
         Thread_->join();
         
+        delete Thread_;
+	Thread_ = 0;
         return true;
     }
 
@@ -106,4 +108,3 @@ bool ImageProcessor::startTriggerThread()
     
     return false;
 }
-

@@ -23,6 +23,8 @@
 #include <iostream>
 #include <string>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <flitr/flitr_export.h>
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
@@ -40,7 +42,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLShaderPass
+class FLITR_EXPORT GLSLShaderPass : public GLSLImageProcessor
 {
   public:
     GLSLShaderPass(flitr::TextureRectangle *in_tex, bool read_back_to_CPU = false);
@@ -51,7 +53,13 @@ class FLITR_EXPORT GLSLShaderPass
     void setShader(std::string filename);
 
     void setVariable1(float value);
-	
+    virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::GLSL_PASS; }
+
+    virtual std::string getTitle()
+    {
+        return Title_;
+    }
+
   private:
     osg::ref_ptr<osg::Group> createTexturedQuad();
     void createOutputTexture(bool read_back_to_CPU);
@@ -70,6 +78,8 @@ class FLITR_EXPORT GLSLShaderPass
     osg::ref_ptr<osg::StateSet> StateSet_;
 
     osg::ref_ptr<osg::Uniform> UniformVariable1_;
+
+    std::string Title_;
 };
 }
 #endif //GLSL_SHADER_PASS_H

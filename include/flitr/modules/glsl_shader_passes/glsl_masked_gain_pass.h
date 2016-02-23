@@ -27,6 +27,8 @@
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <osg/ref_ptr>
 #include <osg/Group>
 #include <osg/Switch>
@@ -41,7 +43,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLMaskedGainPass  : public Parameters
+class FLITR_EXPORT GLSLMaskedGainPass
 {
 public:
     GLSLMaskedGainPass(flitr::TextureRectangle *in_tex, TextureRectangle *mask_tex, bool read_back_to_CPU = false);
@@ -64,9 +66,9 @@ public:
         return 1;
     }
 
-    virtual EParmType getParmType(int id)
+    virtual flitr::Parameters::EParmType getParmType(int id)
     {
-        return PARM_FLOAT;
+        return flitr::Parameters::PARM_FLOAT;
     }
 
     virtual std::string getParmName(int id)

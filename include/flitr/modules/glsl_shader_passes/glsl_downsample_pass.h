@@ -27,6 +27,8 @@
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/texture.h>
 
+#include <flitr/glsl_image_processor.h>
+
 #include <osg/ref_ptr>
 #include <osg/Group>
 #include <osg/Camera>
@@ -40,7 +42,7 @@
 
 namespace flitr {
 
-class FLITR_EXPORT GLSLDownsamplePass
+class FLITR_EXPORT GLSLDownsamplePass : public GLSLImageProcessor
 {
   public:
     GLSLDownsamplePass(flitr::TextureRectangle *in_tex, int dsfactor, bool read_back_to_CPU = false);
