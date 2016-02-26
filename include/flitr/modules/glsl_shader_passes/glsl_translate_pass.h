@@ -43,8 +43,6 @@ class FLITR_EXPORT GLSLTranslatePass : public GLSLImageProcessor
     void setTranslation(osg::Vec2f translation);
     osg::Vec2f getTranslation() const;
 
-    virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::GLSL_PASS; }
-
   private:
     void setShader();
 

@@ -42,7 +42,6 @@ class FLITR_EXPORT GLSLShaderPass : public GLSLImageProcessor
     void setShader(std::string filename);
 
     void setVariable1(float value);
-    virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::GLSL_PASS; }
 
     virtual std::string getTitle()
     {

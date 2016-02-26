@@ -55,6 +55,9 @@ namespace flitr {
         virtual osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
         virtual osg::ref_ptr<osg::Image> getOSGImage() { return OutImage_; }
 
+        /*! Get the processor target for this image processor */
+        virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::GLSL_PASS; }
+
     private:
         virtual osg::ref_ptr<osg::Group> createTexturedQuad() = 0;
         virtual void createOutputTexture(bool read_back_to_CPU) = 0;

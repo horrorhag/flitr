@@ -100,7 +100,10 @@ namespace flitr {
         {
             return frameNumber_;
         }
-        
+
+        /*! Get the processor target for this image processor */
+        virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::CPU_PASS; }
+
     protected:
         const uint32_t ImagesPerSlot_;
         const uint32_t buffer_size_;

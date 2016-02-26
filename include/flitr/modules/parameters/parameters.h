@@ -51,8 +51,6 @@ public:
     virtual EParmType getParmType(int id) { return PARM_UNDF;}
     virtual std::string getParmName(int id) { return std::string("PARM_UNDF");}
 
-    virtual EPassType getPassType() { return CPU_PASS; }
-
     virtual std::string getTitle() { return "Title"; }
 
     virtual int getEnum(int id) { return 0; }
