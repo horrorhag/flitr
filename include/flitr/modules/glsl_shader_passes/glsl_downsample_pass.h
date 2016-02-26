@@ -29,17 +29,6 @@
 
 #include <flitr/glsl_image_processor.h>
 
-#include <osg/ref_ptr>
-#include <osg/Group>
-#include <osg/Camera>
-#include <osg/MatrixTransform>
-#include <osg/Projection>
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <osg/Texture2D>
-#include <osg/TextureRectangle>
-#include <osg/Image>
-
 namespace flitr {
 
 class FLITR_EXPORT GLSLDownsamplePass : public GLSLImageProcessor
@@ -67,17 +56,6 @@ class FLITR_EXPORT GLSLDownsamplePass : public GLSLImageProcessor
     void createOutputTexture(bool read_back_to_CPU);
     void setupCamera();
 
-    osg::ref_ptr<osg::Group> RootGroup_;
-    osg::ref_ptr<osg::Camera> Camera_;
-    osg::ref_ptr<flitr::TextureRectangle> InTexture_;
-    osg::ref_ptr<flitr::TextureRectangle> OutTexture_;
-    osg::ref_ptr<osg::Image> OutImage_;
-
-    int TextureWidth_;
-    int TextureHeight_;
-
-	osg::ref_ptr<osg::Program> FragmentProgram_;
-    osg::ref_ptr<osg::StateSet> StateSet_;
 
     osg::ref_ptr<osg::Uniform> UniformDSFactor_;
 };

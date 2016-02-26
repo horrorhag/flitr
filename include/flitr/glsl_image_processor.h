@@ -44,10 +44,6 @@ namespace flitr {
     class FLITR_EXPORT GLSLImageProcessor : virtual public Parameters
     {
 
-  private:
-
-
-
     public:
         
         GLSLImageProcessor(flitr::TextureRectangle *in_tex, flitr::TextureRectangle *out_tex, bool read_back_to_CPU);
