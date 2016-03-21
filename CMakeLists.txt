@@ -57,6 +57,7 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 
 
 # === find Boost ===
+#BOOST no longer needed for FLITr.
     #SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
     #SET(Boost_NO_SYSTEM_PATHS OFF CACHE BOOL "Search only BOOST_ROOT.")
     #SET(BOOST_ROOT "" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
@@ -76,6 +77,12 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     #ENDIF(NOT Boost_FOUND)
 # ==================
 
+#=== Find LIBTIFF ===# 
+OPTION(FLITR_USE_LIBTIFF "Include LibTiff and LibTiffProducer." OFF)
+IF(FLITR_USE_LIBTIFF)
+	#Note: Assuming for the moment that libTiff, if present, is installed amongst the default system includes and libs.
+ENDIF(FLITR_USE_LIBTIFF)
+#====================#
 
 # === Find OSG ===#
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
@@ -140,6 +147,7 @@ ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
 
 
 SET(LIB_SOURCES
+  src/flitr/libtiff_producer.cpp
   src/flitr/multi_raw_video_file_consumer.cpp
   src/flitr/raw_video_file_writer.cpp
   src/flitr/raw_video_file_reader.cpp
@@ -235,6 +243,7 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
+  include/flitr/libtiff_producer.h
   include/flitr/raw_video_file_utils.h
   include/flitr/multi_raw_video_file_consumer.h
   include/flitr/raw_video_file_writer.h
@@ -411,11 +420,19 @@ IF(FLITR_WITH_OSGCUDA)
 ENDIF()
 
 
+IF(FLITR_USE_LIBTIFF)
+  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} tiff)
+ENDIF()
+
+
 SET_TARGET_PROPERTIES(flitr PROPERTIES COMPILE_FLAGS "-DFLITR_SHARED_LIBRARY")
 
 
 ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
+
+
+ADD_SUBDIRECTORY(apps/viewer_colour_night)
 
 
 ADD_SUBDIRECTORY(examples/msr)
