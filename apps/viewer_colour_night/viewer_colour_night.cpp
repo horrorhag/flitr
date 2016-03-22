@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
         std::cout << "Usage: " << argv[0] << " video_file0  video_file1 video_file2\n";
         return 1;
     }
-
+    
     
     std::vector<std::string> fileVec;
     
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
-
+    
     
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ip, fileVec.size()));
     
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
-
+    
     
     osg::Group *root_node = new osg::Group;
     
@@ -67,26 +67,26 @@ int main(int argc, char *argv[])
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
-
+    
     viewer.setUpViewInWindow(480+40, 40, 640, 480);
     viewer.realize();
-
+    
     const int use_trackball = 0;
     if (use_trackball) {
         osgGA::TrackballManipulator* tb = new osgGA::TrackballManipulator;
         viewer.setCameraManipulator(tb);
         adjustCameraManipulatorHomeForYUp(tb);
     } else {
-
+        
         ImageFormat imf = ip->getFormat(0);
         OrthoTextureManipulator* om = new OrthoTextureManipulator(imf.getWidth(), imf.getHeight());
         viewer.setCameraManipulator(om);
     }
-
+    
     uint32_t frameRate=10;
     double framePeriodNS=1.0e9 / frameRate;
     double nextFrameTimeNS=currentTimeNanoSec()+framePeriodNS;
-
+    
     while(!viewer.done())
     {
         if (currentTimeNanoSec()>=nextFrameTimeNS)
@@ -94,11 +94,15 @@ int main(int argc, char *argv[])
             ip->seek(0xFFFFFFFF);//Seek to end of file for live multipage view...
             //OR
             //ip->trigger();//Read every slot...
-
+            
             if (osgc->getNext())
             {
                 viewer.frame();
                 nextFrameTimeNS+=framePeriodNS;
+                
+                multiTexQuad->rotateTexture(250.0, 250.0,
+                                            1.0,
+                                            0);
             }
         }
         else
@@ -106,6 +110,6 @@ int main(int argc, char *argv[])
             OpenThreads::Thread::microSleep(1000);
         }
     }
-
+    
     return 0;
 }

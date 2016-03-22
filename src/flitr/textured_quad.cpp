@@ -329,6 +329,8 @@ void MultiTexturedQuad::init(const size_t numTextures)
     {
         std::string maskUnifName=std::string("colourMask") + std::to_string(maskID);
         ColourMaskUniformVec_.push_back(new osg::Uniform(maskUnifName.c_str(), osg::Vec4f(1.0f, 1.0f, 1.0f, 1.0f)));
+        
+        texCoordVec_.push_back(new osg::Vec2Array());
     }
     
     RootGroup_->addChild(MatrixTransform_.get());
@@ -363,21 +365,21 @@ void MultiTexturedQuad::replaceGeom(bool use_normalised_coordinates)
     
     for (size_t textureID=0; textureID<numTextures; ++textureID)
     {
-        osg::ref_ptr<osg::Vec2Array> tcoords = new osg::Vec2Array; // texture coords
+        texCoordVec_[textureID]->clear();
         
         if (use_normalised_coordinates) {
-            tcoords->push_back(osg::Vec2(0.0, 1.0));
-            tcoords->push_back(osg::Vec2(1.0, 1.0));
-            tcoords->push_back(osg::Vec2(1.0, 0.0));
-            tcoords->push_back(osg::Vec2(0.0, 0.0));
+            texCoordVec_[textureID]->push_back(osg::Vec2(0.0, 1.0));
+            texCoordVec_[textureID]->push_back(osg::Vec2(1.0, 1.0));
+            texCoordVec_[textureID]->push_back(osg::Vec2(1.0, 0.0));
+            texCoordVec_[textureID]->push_back(osg::Vec2(0.0, 0.0));
         } else {
-            tcoords->push_back(osg::Vec2(0.0, HeightVec_[textureID]));
-            tcoords->push_back(osg::Vec2(WidthVec_[textureID], HeightVec_[textureID]));
-            tcoords->push_back(osg::Vec2(WidthVec_[textureID], 0.0));
-            tcoords->push_back(osg::Vec2(0.0, 0.0));
+            texCoordVec_[textureID]->push_back(osg::Vec2(0.0, HeightVec_[textureID]));
+            texCoordVec_[textureID]->push_back(osg::Vec2(WidthVec_[textureID], HeightVec_[textureID]));
+            texCoordVec_[textureID]->push_back(osg::Vec2(WidthVec_[textureID], 0.0));
+            texCoordVec_[textureID]->push_back(osg::Vec2(0.0, 0.0));
         }
         
-        Geom_->setTexCoordArray(textureID, tcoords.get());
+        Geom_->setTexCoordArray(textureID, texCoordVec_[textureID].get());
     }
     
     
