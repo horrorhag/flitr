@@ -115,18 +115,18 @@ class FLITR_EXPORT TexturedQuad
 };
 
     
-/*! Textured quad similar to TexturedQuad, but with two textures which may be masked/combined with the user applied shader.*/
-class FLITR_EXPORT TexturedQuadAB
+/*! Textured quad similar to TexturedQuad, but with multiple textures which may be masked/combined with the user applied shader.*/
+class FLITR_EXPORT MultiTexturedQuad
 {
   public:
-    TexturedQuadAB(osg::Image* in_image_A, osg::Image* in_image_B);
-    TexturedQuadAB(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B);
-    TexturedQuadAB(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B);
-    ~TexturedQuadAB();
+    MultiTexturedQuad(const std::vector<osg::Image *> &inImageVec);
+    MultiTexturedQuad(const std::vector<osg::TextureRectangle *> &inTexVec);
+    MultiTexturedQuad(const std::vector<osg::Texture2D *> &inTexVec);
+    ~MultiTexturedQuad();
 
-    void setTextures(osg::Image* in_image_A, osg::Image* in_image_B);
-    void setTextures(osg::TextureRectangle* in_tex_A, osg::TextureRectangle* in_tex_B);
-    void setTextures(osg::Texture2D* in_tex_A, osg::Texture2D* in_tex_B);
+    void setTextures(const std::vector<osg::Image *> &inImageVec);
+    void setTextures(const std::vector<osg::TextureRectangle *> &inTexVec);
+    void setTextures(const std::vector<osg::Texture2D *> &inTexVec);
 
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
@@ -134,20 +134,18 @@ class FLITR_EXPORT TexturedQuadAB
     
     void setShader(const std::string &filename);
 
-    void setColourMaskA(const osg::Vec4f &colourMask)
+    void setColourMask(const osg::Vec4f &colourMask, const size_t maskID)
     {
-        ColourMaskAUniform_->set(colourMask);
-    }
-
-    void setColourMaskB(const osg::Vec4f &colourMask)
-    {
-        ColourMaskBUniform_->set(colourMask);
+        if (maskID < ColourMaskUniformVec_.size())
+        {
+            ColourMaskUniformVec_[maskID]->set(colourMask);
+        }
     }
 
   private:
-    void init();
+    void init(const size_t numTextures);
 
-    void replaceGeom(bool use_normalised_coordinates);
+    void replaceGeom(bool useNormalisedCoordinates);
 
     osg::ref_ptr<osg::Group> RootGroup_;
     osg::ref_ptr<osg::MatrixTransform> MatrixTransform_;
@@ -157,14 +155,9 @@ class FLITR_EXPORT TexturedQuadAB
     osg::ref_ptr<osg::StateSet> GeomStateSet_;
     osg::ref_ptr<osg::Program> FragmentProgram_;
 
-    osg::ref_ptr<osg::Uniform> ColourMaskAUniform_;
-    osg::ref_ptr<osg::Uniform> ColourMaskBUniform_;
-
-    int Width_A_;
-    int Height_A_;
-
-    int Width_B_;
-    int Height_B_;
+    std::vector<osg::ref_ptr<osg::Uniform>> ColourMaskUniformVec_;
+    std::vector<int> WidthVec_;
+    std::vector<int> HeightVec_;
 };
 }
 

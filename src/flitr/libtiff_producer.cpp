@@ -24,46 +24,57 @@ using namespace flitr;
 using std::shared_ptr;
 
 
-LibTiffProducer::LibTiffProducer(const std::string filename, const uint32_t buffer_size) :
-filename_(filename),
+MultiLibTiffProducer::MultiLibTiffProducer(const std::vector<std::string> &fileVec, const uint32_t buffer_size) :
+fileVec_(fileVec),
 buffer_size_(buffer_size)
 {
-    tif_ = TIFFOpen(filename_.c_str(), "r");
-    
-    currentDir_=0;
-    currentImage_=-1;
-    tifScanLine_=nullptr;
-    
-    if (tif_)
+    for (auto & filename : fileVec_)
     {
-        uint32 width, height;
+        tifVec_.push_back(TIFFOpen(filename.c_str(), "r"));
         
-        TIFFGetField(tif_, TIFFTAG_IMAGEWIDTH, &width);
-        TIFFGetField(tif_, TIFFTAG_IMAGELENGTH, &height);
+        currentDir_=0;
+        currentImage_=-1;
         
-        tifScanLine_ = (uint8_t*) _TIFFmalloc(TIFFScanlineSize(tif_));
-        
-        ImageFormat imf(width, height, flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_Y_8);
-        ImageFormat_.push_back(imf);
-        
-        TIFFClose(tif_);
+        if (tifVec_.back())
+        {
+            uint32 width, height;
+            
+            TIFFGetField(tifVec_.back(), TIFFTAG_IMAGEWIDTH, &width);
+            TIFFGetField(tifVec_.back(), TIFFTAG_IMAGELENGTH, &height);
+            
+            tifScanLineVec_.push_back((uint8_t*) _TIFFmalloc(TIFFScanlineSize(tifVec_.back())));
+            
+            ImageFormat imf(width, height, flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_Y_8);
+            ImageFormat_.push_back(imf);
+            
+            TIFFClose(tifVec_.back());
+        } else
+        {
+            tifScanLineVec_.push_back(nullptr);
+            
+            ImageFormat imf(0, 0, flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_Y_8);
+            ImageFormat_.push_back(imf);
+        }
     }
 }
 
-LibTiffProducer::~LibTiffProducer()
+MultiLibTiffProducer::~MultiLibTiffProducer()
 {
-    _TIFFfree(tifScanLine_);
+    for (auto scanLine : tifScanLineVec_)
+    {
+        _TIFFfree(scanLine);
+    }
 }
 
-bool LibTiffProducer::setAutoLoadMetaData(std::shared_ptr<ImageMetadata> defaultMetadata)
+bool MultiLibTiffProducer::setAutoLoadMetaData(std::shared_ptr<ImageMetadata> defaultMetadata)
 {
     DefaultMetadata_=std::shared_ptr<ImageMetadata>(defaultMetadata->clone());
     
-    const size_t posOfDot=filename_.find_last_of('.');
+    const size_t posOfDot=fileVec_[0].find_last_of('.');
     if (posOfDot!=std::string::npos)
     {
         std::string metadataFilename=".meta";
-        metadataFilename.insert(0,filename_,0,posOfDot);
+        metadataFilename.insert(0,fileVec_[0],0,posOfDot);
         
         MetadataReader_=std::shared_ptr<MetadataReader>(new MetadataReader(metadataFilename));
         
@@ -75,100 +86,122 @@ bool LibTiffProducer::setAutoLoadMetaData(std::shared_ptr<ImageMetadata> default
     }
 }
 
-bool LibTiffProducer::init()
+bool MultiLibTiffProducer::init()
 {
-    tif_ = TIFFOpen(filename_.c_str(), "r");
-    if (!tif_) return false;
-    TIFFClose(tif_);
+    const size_t numFiles=fileVec_.size();
+    
+    for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
+    {
+        tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
+        if (!tifVec_[fileNum]) return false;
+        TIFFClose(tifVec_[fileNum]);
+    }
     
     // Allocate storage
-    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, 1));
+    SharedImageBuffer_ = shared_ptr<SharedImageBuffer>(new SharedImageBuffer(*this, buffer_size_, numFiles));
     SharedImageBuffer_->initWithStorage();
     
     return true;
 }
 
-bool LibTiffProducer::trigger()
+bool MultiLibTiffProducer::trigger()
 {
     return seek(currentDir_ + 1);
 }
 
-bool LibTiffProducer::seek(uint32_t position)
+bool MultiLibTiffProducer::seek(uint32_t position)
 {
-    tif_ = TIFFOpen(filename_.c_str(), "r");
+    const size_t numFiles=fileVec_.size();
     
-    const uint16_t numDirs=TIFFNumberOfDirectories(tif_);
-    const uint16_t dirPosition=position % numDirs;
+    //Open files and go to appropriate tiff page...
+    for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
+    {
+        tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
+        
+        uint16_t numDirs=TIFFNumberOfDirectories(tifVec_[fileNum]);
+        if (numDirs>1) --numDirs;//I don't trust the last directory of live multipage tifs.
+        
+        const uint16_t dirPosition=(position < numDirs) ? position : (numDirs-1);
+        
+        if ((TIFFSetDirectory(tifVec_[fileNum], dirPosition)) && (fileNum==0)) currentDir_=dirPosition;
+    }
     
-    TIFFSetDirectory(tif_, dirPosition);
-    currentDir_=dirPosition;
     
-    bool rvalue=readImage();
+    //Read images and close files.
+    const bool rvalue=readSlot();
     
-    TIFFClose(tif_);
+    for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
+    {
+        TIFFClose(tifVec_[fileNum]);
+    }
     
     return rvalue;
 }
 
-uint32_t LibTiffProducer::getNumImages()
+uint32_t MultiLibTiffProducer::getNumImages()
 {
-    tif_ = TIFFOpen(filename_.c_str(), "r");
+    tifVec_[0] = TIFFOpen(fileVec_[0].c_str(), "r");
     
-    const uint16_t numDirs=TIFFNumberOfDirectories(tif_);
+    const uint16_t numPages=TIFFNumberOfDirectories(tifVec_[0]);
     
-    TIFFClose(tif_);
+    TIFFClose(tifVec_[0]);
     
-    return numDirs;
+    return numPages;
 }
 
-
-bool LibTiffProducer::readImage()
+bool MultiLibTiffProducer::readSlot()
 {
     std::vector<Image**> imv = reserveWriteSlot();
     
-    if (imv.size() != 1)
+    if (imv.size() == 0)
     {
         // no storage available
         return false;
     }
     
-    Image * const image=*(imv[0]);
-    const uint32_t width=ImageFormat_[0].getWidth();
-    const uint32_t height=ImageFormat_[0].getHeight();
+    const size_t numImages=imv.size();
     
+    currentImage_=currentDir_;
     
+    for (size_t imageNum=0; imageNum<numImages; ++imageNum)
     {
-        currentImage_=currentDir_;
+        Image * const image=*(imv[imageNum]);
+        const uint32_t width=ImageFormat_[imageNum].getWidth();
+        const uint32_t height=ImageFormat_[imageNum].getHeight();
+        
         uint8_t * const downStreamData=image->data();
         
         for (size_t y=0; y<height; ++y)
         {
-            TIFFReadScanline(tif_, tifScanLine_, y);
+            TIFFReadScanline(tifVec_[imageNum], tifScanLineVec_[imageNum], y);
+            
+            uint16_t * const scanLineData=(uint16_t *)tifScanLineVec_[imageNum];
             const size_t dsLineOffset=y*width;
             
             for (size_t x=0; x<width; ++x)
             {
-                downStreamData[dsLineOffset + x] = (((uint16_t *)tifScanLine_)[x]) >> 0;
+                downStreamData[dsLineOffset + x] = (scanLineData[x]) >> 0;
             }
         }
         
-        // If there is a create meta data function, then use it to stay backwards compatible with uses before the setAutoLoadMetaData method was added.
-        // Otherwise use the MetaDataReader_ as set up by setAutoLoadMetaData(...)
-        if (CreateMetadataFunction_)
+        
+        if (imageNum==0)
         {
-            image->setMetadata(CreateMetadataFunction_());
-        } else
-            if ((MetadataReader_)&&(DefaultMetadata_))
+            // If there is a create meta data function, then use it to stay backwards compatible with uses before the setAutoLoadMetaData method was added.
+            // Otherwise use the MetaDataReader_ as set up by setAutoLoadMetaData(...)
+            if (CreateMetadataFunction_)
             {
-                // set default meta data which also gives access to the desired metadata class' readFromStream method.
-                image->setMetadata(std::shared_ptr<ImageMetadata>(DefaultMetadata_->clone()));
-                
-                // update with the meta data's virtual readFromStream() method via the meta data reader.
-                MetadataReader_->readFrame(*image, currentImage_);
-                
-                //           std::cout << "FFmpegProducer: " << image->metadata()->getString();
-                //           std::cout.flush();
-            }
+                image->setMetadata(CreateMetadataFunction_());
+            } else
+                if ((MetadataReader_)&&(DefaultMetadata_))
+                {
+                    // set default meta data which also gives access to the desired metadata class' readFromStream method.
+                    image->setMetadata(std::shared_ptr<ImageMetadata>(DefaultMetadata_->clone()));
+                    
+                    // update with the meta data's virtual readFromStream() method via the meta data reader.
+                    MetadataReader_->readFrame(*image, currentImage_);
+                }
+        }
     }
     
     releaseWriteSlot();

@@ -18,36 +18,57 @@ using namespace flitr;
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
-        std::cout << "Usage: " << argv[0] << " video_file\n";
+    if (argc < 2) {
+        std::cout << "Usage: " << argv[0] << " video_file0  video_file1 video_file2\n";
         return 1;
     }
 
-    shared_ptr<LibTiffProducer> ip(new LibTiffProducer(argv[1]));
+    
+    std::vector<std::string> fileVec;
+    
+    for (size_t arg=1; arg<argc; ++arg)
+    {
+        fileVec.emplace_back(argv[arg]);
+    }
+    
+    
+    shared_ptr<MultiLibTiffProducer> ip(new MultiLibTiffProducer(fileVec));
+    
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
 
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ip,1));
+    
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ip, fileVec.size()));
+    
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
 
+    
     osg::Group *root_node = new osg::Group;
     
-    shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
-    //quad->flipTextureCoordsLeftToRight();
-    //quad->flipTextureCoordsTopToBottom();
-    root_node->addChild(quad->getRoot().get());
-
+    std::vector<osg::TextureRectangle *> inTexVec;
+    inTexVec.push_back(osgc->getOutputTexture(0));
+    inTexVec.push_back(osgc->getOutputTexture(1));
+    inTexVec.push_back(osgc->getOutputTexture(2));
+    
+    shared_ptr<MultiTexturedQuad> multiTexQuad(new MultiTexturedQuad(inTexVec));
+    multiTexQuad->setColourMask(osg::Vec4f(1.0, 0.0, 0.0, 0.0), 0);
+    multiTexQuad->setColourMask(osg::Vec4f(0.0, 1.0, 0.0, 0.0), 1);
+    multiTexQuad->setColourMask(osg::Vec4f(0.0, 0.0, 1.0, 0.0), 2);
+    multiTexQuad->setShader("fuse.frag");
+    root_node->addChild(multiTexQuad->getRoot().get());
+    
+    
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
 
-    //viewer.setUpViewInWindow(480+40, 40, 640, 480);
+    viewer.setUpViewInWindow(480+40, 40, 640, 480);
     viewer.realize();
 
     const int use_trackball = 0;
@@ -57,7 +78,7 @@ int main(int argc, char *argv[])
         adjustCameraManipulatorHomeForYUp(tb);
     } else {
 
-        ImageFormat imf = ip->getFormat();
+        ImageFormat imf = ip->getFormat(0);
         OrthoTextureManipulator* om = new OrthoTextureManipulator(imf.getWidth(), imf.getHeight());
         viewer.setCameraManipulator(om);
     }
@@ -70,14 +91,10 @@ int main(int argc, char *argv[])
     {
         if (currentTimeNanoSec()>=nextFrameTimeNS)
         {
-            const uint32_t numTifPages=ip->getNumImages();
-            
-            //ip->seek(numTifPages>=2 ? numTifPages-2 : 0);
-            ip->trigger();
-            
-            std::cout << numTifPages << "\n";
-            std::cout.flush();
-            
+            ip->seek(0xFFFFFFFF);//Seek to end of file for live multipage view...
+            //OR
+            //ip->trigger();//Read every slot...
+
             if (osgc->getNext())
             {
                 viewer.frame();
@@ -86,14 +103,9 @@ int main(int argc, char *argv[])
         }
         else
         {
-            OpenThreads::Thread::microSleep(5000);
+            OpenThreads::Thread::microSleep(1000);
         }
     }
-
-#ifdef USE_BACKGROUND_TRIGGER_THREAD
-    btt->setExit();
-    btt->join();
-#endif   
 
     return 0;
 }

@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LIBTIFF_PRODUCER_H
-#define LIBTIFF_PRODUCER_H 1
+#ifndef MULTILIBTIFF_PRODUCER_H
+#define MULTILIBTIFF_PRODUCER_H 1
 
 #include <tiffio.h>
 
@@ -31,7 +31,7 @@ namespace flitr {
 /**
  * Simple producer to read multipage tiff files.
  */
-class FLITR_EXPORT LibTiffProducer : public ImageProducer {
+class FLITR_EXPORT MultiLibTiffProducer : public ImageProducer {
   public:
     /** 
      * Constructs the producer.
@@ -39,9 +39,9 @@ class FLITR_EXPORT LibTiffProducer : public ImageProducer {
      * \param filename Video or image file name.
      *
      */
-    LibTiffProducer(std::string filename, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+    MultiLibTiffProducer(const std::vector<std::string> &fileVec, uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
 
-    ~LibTiffProducer();
+    ~MultiLibTiffProducer();
 
     bool setAutoLoadMetaData(std::shared_ptr<ImageMetadata> defaultMetadata);
 
@@ -54,47 +54,44 @@ class FLITR_EXPORT LibTiffProducer : public ImageProducer {
     bool init();
     
     /** 
-     * Reads the next frame from the file and make it available. If
-     * the file reached the end, reading is resumed from the start.
+     * Reads the next page from the file and make it available. This producer does not loop back to the beginning!
      * 
-     * \return True if a frame was successfully read.
+     * \return True if a page was successfully read.
      */
     bool trigger();
     
     /** 
-     * Reads a specified frame from the file.
+     * Reads a specified page from the files.
      *
-     * \param position Frame number to read (0 based).
+     * \param position Page number to read (0 based).
      * 
-     * \return True if a frame was successfully read.
+     * \return True if a page was successfully read.
      */
     bool seek(uint32_t position);
     
     /** 
-     * Returns the number of frames in the file.
+     * Returns the number of pages in the first tif file.
      * 
-     * \return Number of frames.
+     * \return Number of pages.
      */
     uint32_t getNumImages();
     
     /** 
-     * Returns the number of the last correctly read image.
+     * Returns the number of the last correctly read page.
      * 
-     * \return 0 to getNumImages()-1 for valid frames or -1 when not
-     * successfully triggered.
+     * \return 0 to getNumImages()-1
      */
     int32_t getCurrentImage() {return currentImage_;}
 
     
   protected:
-    //!Read current tiff image and write to shared image buffer.
-    bool readImage();
+    //!Read current tiff directory images/pages and write to shared image buffer.
+    bool readSlot();
 
-    const std::string filename_;
+    const std::vector<std::string> fileVec_;
 
-    TIFF* tif_;
-    uint8_t* tifScanLine_;
-
+    std::vector<TIFF*> tifVec_;
+    std::vector<uint8_t*> tifScanLineVec_;
     
     //!Current directory of tif_;
     uint16_t currentDir_;

@@ -293,7 +293,7 @@ namespace flitr {
                     
                     const float eScale=targetAverage_ / windowAvrg;
                     
-                    dataWrite[lineOffsetDS + x]=uint8_t(dataRead[lineOffsetDS + x] * eScale + 0.5f);
+                    dataWrite[lineOffsetDS + x]=dataRead[lineOffsetDS + x] * eScale;
                 }
             }
         }
@@ -341,9 +341,9 @@ namespace flitr {
                     const float eScaleG=targetAverage_ / windowAvrgG;
                     const float eScaleB=targetAverage_ / windowAvrgB;
                     
-                    dataWrite[lineOffset + 0]=uint8_t(dataRead[lineOffset + 0] * eScaleR + 0.5f);
-                    dataWrite[lineOffset + 1]=uint8_t(dataRead[lineOffset + 1] * eScaleG + 0.5f);
-                    dataWrite[lineOffset + 2]=uint8_t(dataRead[lineOffset + 2] * eScaleB + 0.5f);
+                    dataWrite[lineOffset + 0]=dataRead[lineOffset + 0] * eScaleR;
+                    dataWrite[lineOffset + 1]=dataRead[lineOffset + 1] * eScaleG;
+                    dataWrite[lineOffset + 2]=dataRead[lineOffset + 2] * eScaleB;
                     
                     lineOffset+=3;
                     
