@@ -34,7 +34,7 @@ buffer_size_(buffer_size)
         //Get image dimensions and scan line size (in bytes)...
         tifVec_.push_back(TIFFOpen(filename.c_str(), "r"));
         
-        currentDir_=0;
+        currentPage_=0;
         currentImage_=-1;
         
         if (tifVec_.back())
@@ -113,7 +113,7 @@ bool MultiLibTiffProducer::init()
 
 bool MultiLibTiffProducer::trigger()
 {
-    return seek(currentDir_ + 1);
+    return seek((currentPage_<0xFFFFFFFF) ? (currentPage_ + 1) : 0xFFFFFFFF);
 }
 
 bool MultiLibTiffProducer::seek(uint32_t position)
@@ -166,13 +166,14 @@ bool MultiLibTiffProducer::seek(uint32_t position)
         
         if ((rvalue!=0) && (fileNum==0))
         {
-            currentDir_=position;
+            currentPage_=position;
         }
     }
     
     
-    //Read images...
+    //Read image slot...
     const bool rvalue=readSlot();
+    
     
     //Close files.
     for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
@@ -224,7 +225,7 @@ bool MultiLibTiffProducer::readSlot()
     
     const size_t numImages=imv.size();
     
-    currentImage_=currentDir_;
+    currentImage_=currentPage_;
     
     for (size_t imageNum=0; imageNum<numImages; ++imageNum)
     {

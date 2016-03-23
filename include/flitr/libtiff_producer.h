@@ -96,7 +96,7 @@ namespace flitr
         std::vector<uint8_t*> tifScanLineVec_;
         
         //!Current directory of tif_;
-        uint16_t currentDir_;
+        uint32_t currentPage_;
         
         //!Last correctly read frame.
         int32_t currentImage_;
