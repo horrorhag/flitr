@@ -229,6 +229,8 @@ int main(int argc, char *argv[])
     double framePeriodNS=1.0e9 / frameRate;
     double nextFrameTimeNS=currentTimeNanoSec()+framePeriodNS;
     
+    //int numPages=ip->getNumImages(0);
+    
     while(!viewer.done())
     {
         const int textureID=kbHandler->getTextureID();

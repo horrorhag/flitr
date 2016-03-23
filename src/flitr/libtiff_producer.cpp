@@ -20,6 +20,7 @@
 
 #include <flitr/libtiff_producer.h>
 
+
 using namespace flitr;
 using std::shared_ptr;
 
@@ -124,14 +125,49 @@ bool MultiLibTiffProducer::seek(uint32_t position)
     {
         //!ToDo scan through base, X2, X3, etc. until position's chunk or last chunk reached...
         
+        uint32_t numPages=0;
+
         tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
+        if (position!=0xFFFFFFFF)
+        {//Short circuit the tif page count if seeking to end of last chunk.
+            numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
+        }
+        uint32_t chunkStartPage=0;
         
-        uint16_t numDirs=TIFFNumberOfDirectories(tifVec_[fileNum]);
-        if (numDirs>1) --numDirs;//I don't trust the last directory of live multipage tifs.
+        const size_t dotPos=fileVec_[fileNum].find_last_of('.');
+        const std::string baseFileName=fileVec_[fileNum].substr(0, dotPos);
+        const std::string extension=fileVec_[fileNum].substr(dotPos);
         
-        const uint16_t dirPosition=(position < numDirs) ? position : (numDirs-1);
+        TIFF* tifNextChunk=nullptr;
+        int chunkID=2;
         
-        if ((TIFFSetDirectory(tifVec_[fileNum], dirPosition)) && (fileNum==0)) currentDir_=dirPosition;
+        while ((position>numPages) &&
+               (tifNextChunk = TIFFOpen((baseFileName+std::string("_X")+std::to_string(chunkID)+extension).c_str(), "r")) )
+        {
+            TIFFClose(tifVec_[fileNum]);//Close the previous chunk.
+            
+            tifVec_[fileNum]=tifNextChunk;
+            
+            if (position!=0xFFFFFFFF)
+            {//Short circuit the tif page count if seeking to end of last chunk.
+                chunkStartPage=numPages;
+                numPages+=TIFFNumberOfDirectories(tifVec_[fileNum]);
+            }
+            
+            ++chunkID;
+        }
+        
+        if (position==0xFFFFFFFF)
+        {//If we're seeking to end of file then get the numPages in current open file. chunkStartPage is still zero.
+            numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
+        }
+        
+        int rvalue=TIFFSetDirectory(tifVec_[fileNum], (position>=numPages) ? ((numPages-1)-chunkStartPage) : (position-chunkStartPage));
+        
+        if ((rvalue!=0) && (fileNum==0))
+        {
+            currentDir_=position;
+        }
     }
     
     
@@ -151,13 +187,25 @@ bool MultiLibTiffProducer::seek(uint32_t position)
 
 uint32_t MultiLibTiffProducer::getNumImages(const size_t fileNum)
 {
+    //Open first tiff chunk.
     tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
-    
-    uint16_t numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
-    
-    //!ToDo Add pages in X2,X3, etc. to numPages.
-    
+    uint32_t numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
     TIFFClose(tifVec_[fileNum]);
+
+    const size_t dotPos=fileVec_[fileNum].find_last_of('.');
+    const std::string baseFileName=fileVec_[fileNum].substr(0, dotPos);
+    const std::string extension=fileVec_[fileNum].substr(dotPos);
+    
+    //!Add num pages from _X2, _X3, etc. if they exist.
+    int chunkID=2;
+    while ( (tifVec_[fileNum] = TIFFOpen((baseFileName+std::string("_X")+std::to_string(chunkID)+extension).c_str(), "r")) )
+    {
+        numPages+=TIFFNumberOfDirectories(tifVec_[fileNum]);
+        TIFFClose(tifVec_[fileNum]);
+        
+        ++chunkID;
+    }
+    
     tifVec_[fileNum]=nullptr;
     
     return numPages;

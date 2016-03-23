@@ -72,7 +72,7 @@ namespace flitr
         bool seek(uint32_t position);
         
         /**
-         * Returns the number of pages in the first tif file.
+         * Returns the number of pages in the first tif file. THIS IS A SLOW OPERATION THAT FOLLOWS THE DIRECTORY CHAINS THROUGH THE TIFF FILES TO COUNT THE NUMBER OF PAGES.
          *
          * \return Number of pages.
          */
