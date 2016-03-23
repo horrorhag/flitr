@@ -30,9 +30,8 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 base2WindowLength_(base2WindowLength),
 windowLength_((uint32_t)(powf(2.0f, base2WindowLength_)+0.5f)),
 recipWindowLength_(1.0f/((float)windowLength_)),
-oldestHistorySlot_(0),
-Title_(std::string("Average Image"))
-
+Title_(std::string("Average Image")),
+oldestHistorySlot_(0)
 {
     
     //Setup image format being produced to downstream.

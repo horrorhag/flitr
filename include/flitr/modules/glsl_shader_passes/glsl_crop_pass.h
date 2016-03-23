@@ -46,7 +46,7 @@ namespace flitr {
     private:
         void setShader();
         
-        osg::ref_ptr<osg::Group> createTexturedQuad(int xmin, int ymin, int xmax, int ymax);
+        virtual osg::ref_ptr<osg::Group> createTexturedQuad(int xmin, int ymin, int xmax, int ymax);
         void createOutputTexture(bool read_back_to_CPU);
         void setupCamera();
 

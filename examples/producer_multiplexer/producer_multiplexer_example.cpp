@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     //viewer.setUpViewInWindow(480+40, 40, 640, 480);
     viewer.realize();
 
-        ImageFormat imf = ffp01->getFormat();
+        //ImageFormat imf = ffp01->getFormat();
         OrthoTextureManipulator* om = new OrthoTextureManipulator(imageMultiplexer->getDownstreamFormat().getWidth(),
                                                                   imageMultiplexer->getDownstreamFormat().getHeight());
         viewer.setCameraManipulator(om);

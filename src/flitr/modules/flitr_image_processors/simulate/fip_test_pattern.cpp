@@ -68,12 +68,12 @@ bool FIPTestPattern::trigger()
             //const float cx = width * 0.5f;
             //const float cy = height * 0.5f;
             
-            Image const * const imRead = *(imvRead[imgNum]);
+            //Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
             
             if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
             {//Image format float32.
-                float const * const dataRead=(float const * const)imRead->data();
+                //float const * const dataRead=(float const * const)imRead->data();
                 float * const dataWrite=(float * const )imWrite->data();
                 
                 for (size_t y=0; y<height; ++y)

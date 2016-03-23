@@ -59,7 +59,7 @@ namespace flitr {
         virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::GLSL_PASS; }
 
     private:
-        virtual osg::ref_ptr<osg::Group> createTexturedQuad() = 0;
+        //virtual osg::ref_ptr<osg::Group> createTexturedQuad() = 0;
         virtual void createOutputTexture(bool read_back_to_CPU) = 0;
         virtual void setupCamera() = 0;
         

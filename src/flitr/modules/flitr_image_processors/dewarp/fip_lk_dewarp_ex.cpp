@@ -384,8 +384,8 @@ bool FIPLKDewarpEx::trigger()
                             {
                                 const size_t levelIndex=1;//(numLevels_-1) - 5;
                                 
-                                const float i=imgVec_[levelIndex][offset];
-                                const float r=refImgVec_[levelIndex][offset];
+                                //const float i=imgVec_[levelIndex][offset];
+                                //const float r=refImgVec_[levelIndex][offset];
                                 const float hx=hxVec_[levelIndex][offset];
                                 const float hy=hyVec_[levelIndex][offset];
                                 
@@ -397,8 +397,8 @@ bool FIPLKDewarpEx::trigger()
                                 hyAVec_[levelIndex][offset]*=fc;
                                 hyAVec_[levelIndex][offset]+=hy*(1.0f-fc);
                                 
-                                const float hxA=hxAVec_[levelIndex][offset];
-                                const float hyA=hyAVec_[levelIndex][offset];
+                                //const float hxA=hxAVec_[levelIndex][offset];
+                                //const float hyA=hyAVec_[levelIndex][offset];
                                 
                                 const float dhx=(hx);//-hxA);
                                 const float dhy=(hy);//-hyA);

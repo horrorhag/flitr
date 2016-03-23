@@ -200,7 +200,7 @@ void FollowBorder(int idx, int width, int size, int w, int h, int &left, int &ri
 
 bool Intersect(const CPUFindDiscreetObjectsPass::Rect& r1, const CPUFindDiscreetObjectsPass::Rect& r2)
 {
-    return ( (abs(r1.centerX - r2.centerX) <= (r1.width/2 + r2.width/2) )
-        && ( abs(r1.centerY - r2.centerY) <= (r1.height/2 + r2.height/2)) );
+    return ( (abs(int(r1.centerX) - int(r2.centerX)) <= (r1.width/2 + r2.width/2) )
+        && ( abs(int(r1.centerY) - int(r2.centerY)) <= (r1.height/2 + r2.height/2)) );
 
 }

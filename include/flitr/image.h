@@ -73,6 +73,7 @@ class FLITR_EXPORT Image {
         }
         deepCopy(rh);
     }
+    
     //! Assignment operator
     Image& operator=(const Image& rh)
     {
@@ -82,6 +83,7 @@ class FLITR_EXPORT Image {
         }
        
         uint8_t* new_data = (uint8_t*)av_malloc(rh.Format_.getBytesPerImage());
+        
         if (new_data != 0)
         {
             av_free(Data_);
@@ -95,13 +97,22 @@ class FLITR_EXPORT Image {
         return *this;
     }
     
-    ImageFormat * const format() { return &Format_; }
+    //!Get a const pointer to the image format.
     ImageFormat const * const format() const { return &Format_; }
 
+    //!Get a non-const pointer to the image format. (Legacy method - included for older code that didn't use a const pointer to hold the return.)
+    ImageFormat * const format() { return &Format_; }
+    
+    //!Get the image mata data.
     const std::shared_ptr<ImageMetadata> metadata() { return Metadata_; }
-    void setMetadata(std::shared_ptr<ImageMetadata> md) { Metadata_ = md; } 
+    
+    //!Set the image mata data.
+    void setMetadata(std::shared_ptr<ImageMetadata> md) { Metadata_ = md; }
 
+    //!Get a pointer to the image data for reading and writing.
     uint8_t * const data() { return &(Data_[0]); }
+    
+    //!Get a pointer to const image data for reading.
     uint8_t const * const data() const { return &(Data_[0]); }
 
   private:
@@ -122,6 +133,7 @@ class FLITR_EXPORT Image {
         // assume allocation was done
         memcpy(Data_, rh.Data_, Format_.getBytesPerImage());
     }
+    
     void outOfMem()
     {
         logMessage(LOG_CRITICAL) << "Out of memory in Image.\n";

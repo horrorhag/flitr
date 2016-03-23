@@ -196,7 +196,10 @@ int main(int argc, char *argv[])
         bool renderFrame=false;
         
         if (osgc->getNext()) renderFrame=true;
-        if (osgcOrig->getNext()) ;//renderFrame=true;
+        if (osgcOrig->getNext())
+        {
+            //renderFrame=true;
+        }
 
         if (renderFrame)
         {

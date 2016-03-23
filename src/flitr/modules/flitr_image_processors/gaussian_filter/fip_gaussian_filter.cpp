@@ -35,9 +35,9 @@ scratchData_(nullptr),
 intImageScratchData_(nullptr),
 gaussianFilter_(filterRadius, kernelWidth),
 boxFilter_(kernelWidth),
-KernelWidth_(kernelWidth),
+Title_(std::string("Gaussian Filter")),
 FilterRadius_(filterRadius),
-Title_(std::string("Gaussian Filter"))
+KernelWidth_(kernelWidth)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {

@@ -518,7 +518,7 @@ bool FIPLKDewarp::trigger()
                             {
                                 const size_t levelIndex=3;//(numLevels_-1) - 5;
                                 const size_t offsetB=(x>>levelIndex) + (y>>levelIndex)*(croppedWidth>>levelIndex);
-                                const float i=imgVec_[levelIndex][offsetB];
+                                //const float i=imgVec_[levelIndex][offsetB];
                                 const float hxB=hxVec_[levelIndex][offsetB];
                                 const float hyB=hyVec_[levelIndex][offsetB];
                                 finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*1.0f;

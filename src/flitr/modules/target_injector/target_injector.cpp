@@ -119,7 +119,9 @@ bool TargetInjector::trigger()
                         case ImageFormat::FLITR_PIX_FMT_Y_F32 :
                             offset=y*width*4;
                             break;
-                            
+                        case ImageFormat::FLITR_PIX_FMT_RGB_F32 :
+                            //Not handled yet.
+                            break;
                             
                         case ImageFormat::FLITR_PIX_FMT_UNDF:
                             //Should not happen.
@@ -165,6 +167,9 @@ bool TargetInjector::trigger()
                                 break;                                
                             case ImageFormat::FLITR_PIX_FMT_Y_F32 :
                                 *((float *)(dataWrite+offset))=(dataRead[offset]*(1.0f-targetSupportDensity)+targetBrightness_*targetSupportDensity+0.5f)/256.0f;
+                                break;
+                            case ImageFormat::FLITR_PIX_FMT_RGB_F32 :
+                                //Not handled yet.
                                 break;
                                 
                             case ImageFormat::FLITR_PIX_FMT_UNDF:

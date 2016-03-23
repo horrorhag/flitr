@@ -212,6 +212,8 @@ FFmpeg_FIND(LIBAVDEVICE avdevice avdevice.h)
 FFmpeg_FIND(LIBAVCODEC  avcodec  avcodec.h)
 FFmpeg_FIND(LIBAVUTIL   avutil   avutil.h)
 FFmpeg_FIND(LIBSWSCALE  swscale  swscale.h)
+
+#NOTE!: libresample is for later version of ffmpeg, please comment out the below line if not found on your system.
 #FFmpeg_FIND(LIBSWRESAMPLE  swresample  swresample.h)
 
 
@@ -227,6 +229,7 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
         ${FFmpeg_LIBAVCODEC_INCLUDE_DIRS} #${FFmpeg_LIBAVCODEC_INCLUDE_DIRS}/libavcodec
         ${FFmpeg_LIBAVUTIL_INCLUDE_DIRS} #${FFmpeg_LIBAVUTIL_INCLUDE_DIRS}/libavutil
         ${FFmpeg_LIBSWSCALE_INCLUDE_DIRS} #${FFmpeg_LIBSWSCALE_INCLUDE_DIRS}/libswscale
+#NOTE!: libresample is for later version of ffmpeg, please comment out the below line if not found on your system.
 #        ${FFmpeg_LIBSWRESAMPLE_INCLUDE_DIRS} #${FFmpeg_LIBSWRESAMPLE_INCLUDE_DIRS}/libswresample
         #CACHE STRING  "docstring"
     )
@@ -240,6 +243,7 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
             #${FFmpeg_STDINT_INCLUDE_DIR}/libavcodec
             #${FFmpeg_STDINT_INCLUDE_DIR}/libavutil
             #${FFmpeg_STDINT_INCLUDE_DIR}/libswscale
+#NOTE!: libresample is for later version of ffmpeg, please comment out the below line if not found on your system.
             #${FFmpeg_STDINT_INCLUDE_DIR}/libswresample
             #CACHE  STRING  "docstring"
         )
@@ -251,6 +255,7 @@ IF(FFmpeg_LIBAVFORMAT_FOUND AND FFmpeg_LIBAVDEVICE_FOUND AND FFmpeg_LIBAVCODEC_F
         ${FFmpeg_LIBAVCODEC_LIBRARIES}
         ${FFmpeg_LIBAVUTIL_LIBRARIES}
         ${FFmpeg_LIBSWSCALE_LIBRARIES}
+#NOTE!: libresample is for later version of ffmpeg, please comment out the below line if not found on your system.
 #        ${FFmpeg_LIBSWRESAMPLE_LIBRARIES}
         #CACHE  STRING  "docstring"
     )

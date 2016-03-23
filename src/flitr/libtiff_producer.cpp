@@ -30,6 +30,7 @@ buffer_size_(buffer_size)
 {
     for (auto & filename : fileVec_)
     {
+        //Get image dimensions and scan line size (in bytes)...
         tifVec_.push_back(TIFFOpen(filename.c_str(), "r"));
         
         currentDir_=0;
@@ -48,6 +49,7 @@ buffer_size_(buffer_size)
             ImageFormat_.push_back(imf);
             
             TIFFClose(tifVec_.back());
+            tifVec_.back()=nullptr;
         } else
         {
             tifScanLineVec_.push_back(nullptr);
@@ -92,9 +94,13 @@ bool MultiLibTiffProducer::init()
     
     for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
     {
+        //Check again if file can be opened so that false can be returned if not.
         tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
+        
         if (!tifVec_[fileNum]) return false;
+        
         TIFFClose(tifVec_[fileNum]);
+        tifVec_[fileNum]=nullptr;
     }
     
     // Allocate storage
@@ -116,6 +122,8 @@ bool MultiLibTiffProducer::seek(uint32_t position)
     //Open files and go to appropriate tiff page...
     for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
     {
+        //!ToDo scan through base, X2, X3, etc. until position's chunk or last chunk reached...
+        
         tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
         
         uint16_t numDirs=TIFFNumberOfDirectories(tifVec_[fileNum]);
@@ -127,27 +135,34 @@ bool MultiLibTiffProducer::seek(uint32_t position)
     }
     
     
-    //Read images and close files.
+    //Read images...
     const bool rvalue=readSlot();
     
+    //Close files.
     for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
     {
         TIFFClose(tifVec_[fileNum]);
+        tifVec_[fileNum]=nullptr;
     }
     
     return rvalue;
 }
 
-uint32_t MultiLibTiffProducer::getNumImages()
+
+uint32_t MultiLibTiffProducer::getNumImages(const size_t fileNum)
 {
-    tifVec_[0] = TIFFOpen(fileVec_[0].c_str(), "r");
+    tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
     
-    const uint16_t numPages=TIFFNumberOfDirectories(tifVec_[0]);
+    uint16_t numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
     
-    TIFFClose(tifVec_[0]);
+    //!ToDo Add pages in X2,X3, etc. to numPages.
+    
+    TIFFClose(tifVec_[fileNum]);
+    tifVec_[fileNum]=nullptr;
     
     return numPages;
 }
+
 
 bool MultiLibTiffProducer::readSlot()
 {
