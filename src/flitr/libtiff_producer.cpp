@@ -141,7 +141,7 @@ bool MultiLibTiffProducer::seek(uint32_t position)
         TIFF* tifNextChunk=nullptr;
         int chunkID=2;
         
-        while ((position>numPages) &&
+        while ((position>=numPages) &&
                (tifNextChunk = TIFFOpen((baseFileName+std::string("_X")+std::to_string(chunkID)+extension).c_str(), "r")) )
         {
             TIFFClose(tifVec_[fileNum]);//Close the previous chunk.
@@ -159,7 +159,7 @@ bool MultiLibTiffProducer::seek(uint32_t position)
         
         if (position==0xFFFFFFFF)
         {//If we're seeking to end of file then get the numPages in current open file. chunkStartPage is still zero.
-            numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
+            numPages=TIFFNumberOfDirectories(tifVec_[fileNum]) - 1;
         }
         
         int rvalue=TIFFSetDirectory(tifVec_[fileNum], (position>=numPages) ? ((numPages-1)-chunkStartPage) : (position-chunkStartPage));
