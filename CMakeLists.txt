@@ -147,7 +147,6 @@ ADD_DEFINITIONS(-D__STDC_CONSTANT_MACROS)
 
 
 SET(LIB_SOURCES
-  src/flitr/libtiff_producer.cpp
   src/flitr/multi_raw_video_file_consumer.cpp
   src/flitr/raw_video_file_writer.cpp
   src/flitr/raw_video_file_reader.cpp
@@ -243,7 +242,6 @@ SET(LIB_SOURCES
   src/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.cpp
 
   #find include/ | grep .h | grep -v .svn | sort
-  include/flitr/libtiff_producer.h
   include/flitr/raw_video_file_utils.h
   include/flitr/multi_raw_video_file_consumer.h
   include/flitr/raw_video_file_writer.h
@@ -356,13 +354,19 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_threshold_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.h
-  
 )
+
+IF(FLITR_USE_LIBTIFF)
+SET(LIB_SOURCES ${LIB_SOURCES}
+    src/flitr/libtiff_producer.cpp
+    include/flitr/libtiff_producer.h
+)
+ENDIF(FLITR_USE_LIBTIFF)
+
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
 IF(NOT APPLE)
-  SET(LIB_SOURCES
-    ${LIB_SOURCES}
+  SET(LIB_SOURCES ${LIB_SOURCES}
     src/flitr/screen_capture_producer.cpp
     src/flitr/texture_capture_producer.cpp
     include/flitr/screen_capture_producer.h
