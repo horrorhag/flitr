@@ -280,6 +280,10 @@ int main(int argc, char *argv[])
     KeyPressedHandler *kbHandler=new KeyPressedHandler();
     viewer.addEventHandler(kbHandler);
     
+    osgViewer::ScreenCaptureHandler *scHandler=new osgViewer::ScreenCaptureHandler();
+    scHandler->setKeyEventTakeScreenShot('s');
+    viewer.addEventHandler(scHandler);
+
     viewer.setSceneData(root_node);
     
     viewer.setUpViewInWindow(480+40, 40, 640, 480);

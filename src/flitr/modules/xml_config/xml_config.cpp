@@ -1,6 +1,7 @@
 #include <flitr/modules/xml_config/xml_config.h>
 #include <string>
 #include <iomanip>
+#include <limits>
 
 using namespace flitr;
 
