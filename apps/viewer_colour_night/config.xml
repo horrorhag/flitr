@@ -1,0 +1,5 @@
+<viewer_colour_night>
+    <channel_setup filename="/home/bltnuc/blt_share/5636.tif" x="0.0" y="0.0" scale="1.0" angle="0.0" r="1.0" g="0.0" b="0.0"/>
+    <channel_setup filename="/home/bltnuc/blt_share/5584.tif" x="0.0" y="0.0" scale="1.0" angle="0.0" r="0.0" g="1.0" b="0.0"/>
+    <channel_setup filename="/home/bltnuc/blt_share/5582.tif" x="0.0" y="0.0" scale="1.0" angle="0.0" r="0.0" g="0.0" b="1.0"/>
+</viewer_colour_night>
