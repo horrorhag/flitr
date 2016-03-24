@@ -18,10 +18,6 @@
 #include <atomic>
 
 
-using std::shared_ptr;
-using namespace flitr;
-
-
 class KeyPressedHandler : public osgGA::GUIEventHandler
 {
 public:
@@ -123,7 +119,7 @@ public:
     {
         return rotateEvents_.exchange(0);
     }
-
+    
     //! Get the upscale (positive) vs. downscale (negative) change AROUND ZERO!
     int getScaleEvents()
     {
@@ -139,31 +135,90 @@ private:
 };
 
 
+
+
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << " video_file0  video_file1 video_file2\n";
+        std::cout << "Usage: " << argv[0] << " config_file\n";
         return 1;
     }
     
+    std::string configFileName(argv[1]);
     
-    std::vector<std::string> fileVec;
+    std::shared_ptr<flitr::XMLConfig> cfg(new flitr::XMLConfig());
     
-    for (size_t arg=1; arg<argc; ++arg)
+    if (!cfg->init(configFileName))
     {
-        fileVec.emplace_back(argv[arg]);
+        std::cerr << "Could not open configuration file." << std::endl;
+        return 1;
+    }
+    
+    const auto channelElementVec=cfg->getAttributeVector("channel_setup");
+    const size_t numChannels=channelElementVec.size();
+    
+    std::vector<std::string> fileVec(numChannels, "");
+    std::vector<float> xVec(numChannels, 0.0);
+    std::vector<float> yVec(numChannels, 0.0);
+    std::vector<float> scaleVec(numChannels, 1.0);
+    std::vector<float> angleVec(numChannels, 0.0);
+    std::vector<float> rVec(numChannels, 0.0);
+    std::vector<float> gVec(numChannels, 0.0);
+    std::vector<float> bVec(numChannels, 0.0);
+    
+    
+    for (size_t channelNum=0; channelNum<numChannels; ++channelNum)
+    {
+        const auto &channelElement=channelElementVec[channelNum];
+        
+        for (const auto channelAttribute : channelElement)
+        {
+            if (channelAttribute.first == "filename")
+            {
+                fileVec[channelNum]=channelAttribute.second;
+            } else
+                if (channelAttribute.first == "x")
+                {
+                    xVec[channelNum]=std::stof(channelAttribute.second);
+                } else
+                    if (channelAttribute.first == "y")
+                    {
+                        yVec[channelNum]=std::stof(channelAttribute.second);
+                    } else
+                        if (channelAttribute.first == "scale")
+                        {
+                            scaleVec[channelNum]=std::stof(channelAttribute.second);
+                        } else
+                            if (channelAttribute.first == "angle")
+                            {
+                                angleVec[channelNum]=std::stof(channelAttribute.second);
+                            } else
+                                if (channelAttribute.first == "r")
+                                {
+                                    rVec[channelNum]=std::stof(channelAttribute.second);
+                                } else
+                                    if (channelAttribute.first == "g")
+                                    {
+                                        gVec[channelNum]=std::stof(channelAttribute.second);
+                                    } else
+                                        if (channelAttribute.first == "b")
+                                        {
+                                            bVec[channelNum]=std::stof(channelAttribute.second);
+                                        }
+        }
     }
     
     
-    shared_ptr<MultiLibTiffProducer> ip(new MultiLibTiffProducer(fileVec));
+    
+    std::shared_ptr<flitr::MultiLibTiffProducer> ip(new flitr::MultiLibTiffProducer(fileVec));
     
     if (!ip->init()) {
-        std::cerr << "Could not load " << argv[1] << "\n";
+        std::cerr << "Could not load tif files." << "\n";
         exit(-1);
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*ip, fileVec.size()));
+    std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*ip, fileVec.size()));
     
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
@@ -174,32 +229,48 @@ int main(int argc, char *argv[])
     osg::Group *root_node = new osg::Group;
     
     std::vector<osg::TextureRectangle *> inTexVec;
-    inTexVec.push_back(osgc->getOutputTexture(0));
-    inTexVec.push_back(osgc->getOutputTexture(1));
-    inTexVec.push_back(osgc->getOutputTexture(2));
+    for (size_t channelNum=0; channelNum<numChannels; ++channelNum)
+    {
+        inTexVec.push_back(osgc->getOutputTexture(channelNum));
+    }
     
-    shared_ptr<MultiTexturedQuad> multiTexQuad(new MultiTexturedQuad(inTexVec));
-    multiTexQuad->setColourMask(osg::Vec4f(1.0, 0.0, 0.0, 0.0), 0);
-    multiTexQuad->setColourMask(osg::Vec4f(0.0, 1.0, 0.0, 0.0), 1);
-    multiTexQuad->setColourMask(osg::Vec4f(0.0, 0.0, 1.0, 0.0), 2);
+    std::shared_ptr<flitr::MultiTexturedQuad> multiTexQuad(new flitr::MultiTexturedQuad(inTexVec));
+    for (size_t channelNum=0; channelNum<numChannels; ++channelNum)
+    {
+        multiTexQuad->setColourMask(osg::Vec4f(rVec[channelNum], gVec[channelNum], gVec[channelNum], 1.0), channelNum);
+    }
+    
+    for (size_t channelNum=0; channelNum<numChannels; ++channelNum)
+    {
+        multiTexQuad->translateTexture(xVec[channelNum], yVec[channelNum], channelNum);
+        multiTexQuad->rotateTexture(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                    osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                    angleVec[channelNum], channelNum);
+        multiTexQuad->scaleTexture(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                    osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                    scaleVec[channelNum], scaleVec[channelNum], channelNum);
+    }
+
     multiTexQuad->setShader("fuse.frag");
+    
     root_node->addChild(multiTexQuad->getRoot().get());
     
     //=== Cross-hair ===//
-    CrosshairOverlay* ch0 = new CrosshairOverlay(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
-                                                 osgc->getOutputTexture(0)->getTextureHeight()*0.5,
-                                                 49,49);
-    ch0->setLineWidth(1);
-    ch0->setColour(osg::Vec4d(1.0, 1.0, 1.0, 0.5));
-    root_node->addChild(ch0);
+    flitr::CrosshairOverlay* cr0 = new flitr::CrosshairOverlay(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                                               osgc->getOutputTexture(0)->getTextureHeight()*0.5,
+                                                               49,49);
+    cr0->setLineWidth(1);
+    cr0->setColour(osg::Vec4d(1.0, 1.0, 1.0, 0.5));
+    root_node->addChild(cr0);
     
-    CrosshairOverlay* ch1 = new CrosshairOverlay(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
-                                                 osgc->getOutputTexture(0)->getTextureHeight()*0.5,
-                                                 50,50);
-    ch1->setLineWidth(3);
-    ch1->setColour(osg::Vec4d(1.0, 0.0, 0.0, 0.5));
-    root_node->addChild(ch1);
+    flitr::CrosshairOverlay* cr1 = new flitr::CrosshairOverlay(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                                               osgc->getOutputTexture(0)->getTextureHeight()*0.5,
+                                                               50,50);
+    cr1->setLineWidth(3);
+    cr1->setColour(osg::Vec4d(1.0, 0.0, 0.0, 0.5));
+    root_node->addChild(cr1);
     //=== ===//
+    
     
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
@@ -214,15 +285,17 @@ int main(int argc, char *argv[])
     viewer.setUpViewInWindow(480+40, 40, 640, 480);
     viewer.realize();
     
+    
     const int use_trackball = 0;
+    
     if (use_trackball) {
         osgGA::TrackballManipulator* tb = new osgGA::TrackballManipulator;
         viewer.setCameraManipulator(tb);
-        adjustCameraManipulatorHomeForYUp(tb);
+        flitr::adjustCameraManipulatorHomeForYUp(tb);
     } else {
         
-        ImageFormat imf = ip->getFormat(0);
-        OrthoTextureManipulator* om = new OrthoTextureManipulator(imf.getWidth(), imf.getHeight());
+        flitr::ImageFormat imf = ip->getFormat(0);
+        flitr::OrthoTextureManipulator* om = new flitr::OrthoTextureManipulator(imf.getWidth(), imf.getHeight());
         viewer.setCameraManipulator(om);
     }
     
@@ -258,10 +331,10 @@ int main(int argc, char *argv[])
         if (scaleEvents)
         {
             multiTexQuad->scaleTexture(osgc->getOutputTexture(0)->getTextureWidth()*0.5,
-                                        osgc->getOutputTexture(0)->getTextureWidth()*0.5,
-                                        1.0+scaleEvents*0.005,
-                                        1.0+scaleEvents*0.005,
-                                        textureID);
+                                       osgc->getOutputTexture(0)->getTextureWidth()*0.5,
+                                       1.0+scaleEvents*0.005,
+                                       1.0+scaleEvents*0.005,
+                                       textureID);
         }
         
         
