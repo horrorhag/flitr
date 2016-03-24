@@ -61,8 +61,9 @@ class FLITR_EXPORT XMLConfig
     */
     std::vector<std::string> getStringVector(std::string element, std::string attribute);
 
+    
     /**
-       \brief Get a vector of element attributes from the configuration file.
+       \brief Get a vector of elements (and each's attributes) with specified name from the configuration file.
        \param element The XML element to look for.
        \return Configuration string values. Returns all attributes of elements matching element.
     */
@@ -70,13 +71,14 @@ class FLITR_EXPORT XMLConfig
 
 
     /**
-       \brief Write a vector of element attributes to the configuration file.
+       \brief Write a vector of elements (and each's attributes) to the configuration file.
        \param element The XML element to look for.
        \param Configuration string values. With all attributes of elements belonging to name element.
        \return True on success, false on failure.
     */
     bool writeAttributeVector(const std::string &element, const std::vector<std::vector<std::pair<std::string, std::string> > > &vecvec);
 
+    
     /**
        \brief Set the value of attribute in the configuration file.
        \param element The XML element to find or create.
