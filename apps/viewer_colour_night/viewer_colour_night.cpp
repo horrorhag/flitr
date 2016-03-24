@@ -6,6 +6,7 @@
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
 #include <flitr/modules/geometry_overlays/crosshair_overlay.h>
+#include <flitr/modules/xml_config/xml_config.h>
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>

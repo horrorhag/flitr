@@ -175,6 +175,11 @@ SET(LIB_SOURCES
   src/flitr/ortho_texture_manipulator.cpp
   src/flitr/image_multiplexer.cpp
 
+  src/flitr/modules/xml_config/tinyxml.cpp
+  src/flitr/modules/xml_config/tinyxmlerror.cpp
+  src/flitr/modules/xml_config/tinyxmlparser.cpp
+  src/flitr/modules/xml_config/xml_config.cpp
+
   src/flitr/modules/geometry_overlays/crosshair_overlay.cpp
   src/flitr/modules/geometry_overlays/geometry_overlay.cpp
   src/flitr/modules/geometry_overlays/points_overlay.cpp
@@ -277,6 +282,9 @@ SET(LIB_SOURCES
   include/flitr/ortho_texture_manipulator.h
   include/flitr/image_multiplexer.h
 
+  include/flitr/modules/xml_config/tinyxml.h
+  include/flitr/modules/xml_config/xml_config.h
+
   include/flitr/modules/parameters/parameters.h
 
   include/flitr/modules/geometry_overlays/crosshair_overlay.h
@@ -374,8 +382,6 @@ IF(NOT APPLE)
   )
 ENDIF() 
 
-# tinyxml
-ADD_SUBDIRECTORY(src/flitr/tinyxml)
   
 # Video
 if(WIN32)

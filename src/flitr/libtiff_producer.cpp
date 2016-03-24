@@ -128,10 +128,12 @@ bool MultiLibTiffProducer::seek(uint32_t position)
         uint32_t numPages=0;
 
         tifVec_[fileNum] = TIFFOpen(fileVec_[fileNum].c_str(), "r");
+        
         if (position!=0xFFFFFFFF)
         {//Short circuit the tif page count if seeking to end of last chunk.
             numPages=TIFFNumberOfDirectories(tifVec_[fileNum]);
         }
+        
         uint32_t chunkStartPage=0;
         
         const size_t dotPos=fileVec_[fileNum].find_last_of('.');
@@ -139,7 +141,9 @@ bool MultiLibTiffProducer::seek(uint32_t position)
         const std::string extension=fileVec_[fileNum].substr(dotPos);
         
         TIFF* tifNextChunk=nullptr;
+        
         int chunkID=2;
+        //!@todo - optimise seeking to 0xFFFFFFFF and to next frame by starting at a last know good chunkID and chunkStartPage!
         
         while ((position>=numPages) &&
                (tifNextChunk = TIFFOpen((baseFileName+std::string("_X")+std::to_string(chunkID)+extension).c_str(), "r")) )
@@ -158,7 +162,9 @@ bool MultiLibTiffProducer::seek(uint32_t position)
         }
         
         if (position==0xFFFFFFFF)
-        {//If we're seeking to end of file then get the numPages in current open file. chunkStartPage is still zero.
+        {//If we're seeking to end of file then get the numPages in current open file.
+         //    TIFFNumberOfDirectories was previously shorted out.
+         //    chunkStartPage is still zero.
             numPages=TIFFNumberOfDirectories(tifVec_[fileNum]) - 1;
         }
         
@@ -171,11 +177,11 @@ bool MultiLibTiffProducer::seek(uint32_t position)
     }
     
     
-    //Read image slot...
+    //Read image slot and convert pixel format...
     const bool rvalue=readSlot();
     
     
-    //Close files.
+    //Close files...
     for (size_t fileNum=0; fileNum<numFiles; ++fileNum)
     {
         TIFFClose(tifVec_[fileNum]);
