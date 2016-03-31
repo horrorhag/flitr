@@ -1,5 +1,5 @@
 <map id="flitr::SMultiFFmpegProducer::trigger" name="flitr::SMultiFFmpegProducer::trigger">
-<area shape="rect" id="node3" href="$classflitr_1_1_s_multi_f_fmpeg_producer.html#a905d9e1ce3492c2ca174197577796efd" title="flitr::SMultiFFmpegProducer\l::seek" alt="" coords="241,39,425,86"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="475,5,611,51"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="475,74,611,121"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_s_multi_f_fmpeg_producer.html#a905d9e1ce3492c2ca174197577796efd" title="flitr::SMultiFFmpegProducer\l::seek" alt="" coords="241,39,429,80"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="477,5,616,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="477,71,616,112"/>
 </map>

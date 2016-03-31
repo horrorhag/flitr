@@ -1,26 +1,26 @@
 <map id="flitr::TiXmlNode::CopyTo" name="flitr::TiXmlNode::CopyTo">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="237,103,368,145"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_document.html#af69deeb984e060bd00f668460dec8ef2" title="flitr::TiXmlDocument\l::CopyTo" alt="" coords="231,299,374,341"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_comment.html#a3175b2f27628f4fb7a043897930cd934" title="flitr::TiXmlComment\l::CopyTo" alt="" coords="233,495,372,537"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_text.html#adcec7d9b6fccfc5777452bb97e6031c1" title="flitr::TiXmlText::CopyTo" alt="" coords="221,619,384,645"/>
-<area shape="rect" id="node18" href="$classflitr_1_1_ti_xml_declaration.html#a9d08959f935421a593032bd3efb30c38" title="flitr::TiXmlDeclaration\l::CopyTo" alt="" coords="229,778,377,819"/>
-<area shape="rect" id="node22" href="$classflitr_1_1_ti_xml_unknown.html#a08ca7b225a2bcb604d3c72e199d33408" title="flitr::TiXmlUnknown\l::CopyTo" alt="" coords="234,974,371,1015"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="455,5,585,46"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="455,70,585,111"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="455,135,585,177"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_document.html#a323a7486e7da6099cdc19a5ff7e74b07" title="flitr::TiXmlDocument\l::TiXmlDocument" alt="" coords="449,201,591,242"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_document.html#aafbfacc3414008f619b1345775ef12a4" title="flitr::TiXmlDocument\l::operator=" alt="" coords="449,266,591,307"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#ac9e8f09b23454d953b32d1b65cd1409e" title="flitr::TiXmlDocument\l::Clone" alt="" coords="449,331,591,373"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_ti_xml_comment.html#afaec41ac2760ce946ba1590eb5708e50" title="flitr::TiXmlComment\l::TiXmlComment" alt="" coords="451,397,589,438"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_comment.html#a46373f99b65cb960637dccb1f126bd49" title="flitr::TiXmlComment\l::operator=" alt="" coords="451,462,589,503"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_comment.html#a4f6590c9c9a2b63a48972655b78eb853" title="Returns a copy of this Comment. " alt="" coords="451,527,589,569"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_text.html#af9d1cfc4ed3839ae4bee4bb8aff40af2" title="flitr::TiXmlText::TiXmlText" alt="" coords="432,593,608,620"/>
-<area shape="rect" id="node16" href="$classflitr_1_1_ti_xml_text.html#a9fa072951db4d6d8d3af178ff5013e95" title="flitr::TiXmlText::operator=" alt="" coords="435,644,605,671"/>
-<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_text.html#adde1869dfb029be50713fbfd8ce4d21f" title="[internal use] Creates a new Element and returns it. " alt="" coords="445,695,595,721"/>
-<area shape="rect" id="node19" href="$classflitr_1_1_ti_xml_declaration.html#a58ac9042c342f7845c8491da0bb091e8" title="flitr::TiXmlDeclaration\l::TiXmlDeclaration" alt="" coords="446,746,594,787"/>
-<area shape="rect" id="node20" href="$classflitr_1_1_ti_xml_declaration.html#a0fedc57539af9049be8db2d7d9d9ba33" title="flitr::TiXmlDeclaration\l::operator=" alt="" coords="446,811,594,853"/>
-<area shape="rect" id="node21" href="$classflitr_1_1_ti_xml_declaration.html#aff8231266d735943d8a7514a9c9822b9" title="Creates a copy of this Declaration and returns it. " alt="" coords="446,877,594,918"/>
-<area shape="rect" id="node23" href="$classflitr_1_1_ti_xml_unknown.html#ace1289f2ec757a86a5c5d498e896d5d7" title="flitr::TiXmlUnknown\l::TiXmlUnknown" alt="" coords="451,942,589,983"/>
-<area shape="rect" id="node24" href="$classflitr_1_1_ti_xml_unknown.html#a0ae4184c0bcf56f14c68e74457898314" title="flitr::TiXmlUnknown\l::operator=" alt="" coords="451,1007,589,1049"/>
-<area shape="rect" id="node25" href="$classflitr_1_1_ti_xml_unknown.html#a675c4b2684af35e4c7649b7fd5ae598d" title="Creates a copy of this Unknown and returns it. " alt="" coords="451,1073,589,1114"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="235,104,366,145"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_document.html#af69deeb984e060bd00f668460dec8ef2" title="flitr::TiXmlDocument\l::CopyTo" alt="" coords="229,300,372,341"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_comment.html#a3175b2f27628f4fb7a043897930cd934" title="flitr::TiXmlComment\l::CopyTo" alt="" coords="231,496,370,537"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_text.html#adcec7d9b6fccfc5777452bb97e6031c1" title="flitr::TiXmlText::CopyTo" alt="" coords="220,619,381,646"/>
+<area shape="rect" id="node18" href="$classflitr_1_1_ti_xml_declaration.html#a9d08959f935421a593032bd3efb30c38" title="flitr::TiXmlDeclaration\l::CopyTo" alt="" coords="226,779,375,820"/>
+<area shape="rect" id="node22" href="$classflitr_1_1_ti_xml_unknown.html#a08ca7b225a2bcb604d3c72e199d33408" title="flitr::TiXmlUnknown\l::CopyTo" alt="" coords="232,975,369,1016"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="451,5,582,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="451,71,582,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="451,136,582,177"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_document.html#a323a7486e7da6099cdc19a5ff7e74b07" title="flitr::TiXmlDocument\l::TiXmlDocument" alt="" coords="445,201,588,243"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_document.html#aafbfacc3414008f619b1345775ef12a4" title="flitr::TiXmlDocument\l::operator=" alt="" coords="445,267,588,308"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#ac9e8f09b23454d953b32d1b65cd1409e" title="flitr::TiXmlDocument\l::Clone" alt="" coords="445,332,588,373"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_ti_xml_comment.html#afaec41ac2760ce946ba1590eb5708e50" title="flitr::TiXmlComment\l::TiXmlComment" alt="" coords="447,397,586,439"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_comment.html#a46373f99b65cb960637dccb1f126bd49" title="flitr::TiXmlComment\l::operator=" alt="" coords="447,463,586,504"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_comment.html#a4f6590c9c9a2b63a48972655b78eb853" title="Returns a copy of this Comment. " alt="" coords="447,528,586,569"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_text.html#af9d1cfc4ed3839ae4bee4bb8aff40af2" title="flitr::TiXmlText::TiXmlText" alt="" coords="429,594,604,621"/>
+<area shape="rect" id="node16" href="$classflitr_1_1_ti_xml_text.html#a9fa072951db4d6d8d3af178ff5013e95" title="flitr::TiXmlText::operator=" alt="" coords="431,645,603,671"/>
+<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_text.html#adde1869dfb029be50713fbfd8ce4d21f" title="[internal use] Creates a new Element and returns it. " alt="" coords="442,695,591,722"/>
+<area shape="rect" id="node19" href="$classflitr_1_1_ti_xml_declaration.html#a58ac9042c342f7845c8491da0bb091e8" title="flitr::TiXmlDeclaration\l::TiXmlDeclaration" alt="" coords="442,747,591,788"/>
+<area shape="rect" id="node20" href="$classflitr_1_1_ti_xml_declaration.html#a0fedc57539af9049be8db2d7d9d9ba33" title="flitr::TiXmlDeclaration\l::operator=" alt="" coords="442,812,591,853"/>
+<area shape="rect" id="node21" href="$classflitr_1_1_ti_xml_declaration.html#aff8231266d735943d8a7514a9c9822b9" title="Creates a copy of this Declaration and returns it. " alt="" coords="442,877,591,919"/>
+<area shape="rect" id="node23" href="$classflitr_1_1_ti_xml_unknown.html#ace1289f2ec757a86a5c5d498e896d5d7" title="flitr::TiXmlUnknown\l::TiXmlUnknown" alt="" coords="448,943,585,984"/>
+<area shape="rect" id="node24" href="$classflitr_1_1_ti_xml_unknown.html#a0ae4184c0bcf56f14c68e74457898314" title="flitr::TiXmlUnknown\l::operator=" alt="" coords="448,1008,585,1049"/>
+<area shape="rect" id="node25" href="$classflitr_1_1_ti_xml_unknown.html#a675c4b2684af35e4c7649b7fd5ae598d" title="Creates a copy of this Unknown and returns it. " alt="" coords="448,1073,585,1115"/>
 </map>

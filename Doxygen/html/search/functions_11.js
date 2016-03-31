@@ -6,7 +6,7 @@ var searchData=
   ['rawvideofilewriter',['RawVideoFileWriter',['../classflitr_1_1_raw_video_file_writer.html#a6c49576103fa4ab9660331d34ded6ea1',1,'flitr::RawVideoFileWriter']]],
   ['rawvideofilewriterexception',['RawVideoFileWriterException',['../structflitr_1_1_raw_video_file_writer_exception.html#a70ad6da720b19a65016fb64becafa46c',1,'flitr::RawVideoFileWriterException']]],
   ['readframe',['readFrame',['../classflitr_1_1_metadata_reader.html#a7e5e621ed429a4ad490cda9eae456770',1,'flitr::MetadataReader']]],
-  ['readfromstream',['readFromStream',['../classflitr_1_1_image_metadata.html#a1692274e1351af3d6f5b018071058a60',1,'flitr::ImageMetadata::readFromStream()'],['../classflitr_1_1_default_texture_capture_metadata.html#a35355854a39c11ed4c0636fdd1985da6',1,'flitr::DefaultTextureCaptureMetadata::readFromStream()']]],
+  ['readfromstream',['readFromStream',['../classflitr_1_1_image_metadata.html#a8147d67807bf6cdeffd8eb28837e42e6',1,'flitr::ImageMetadata::readFromStream()'],['../classflitr_1_1_default_texture_capture_metadata.html#a35355854a39c11ed4c0636fdd1985da6',1,'flitr::DefaultTextureCaptureMetadata::readFromStream()']]],
   ['readname',['ReadName',['../classflitr_1_1_ti_xml_base.html#a1c21a6ab5f7b503acd91f35f183734b3',1,'flitr::TiXmlBase']]],
   ['readpixels',['readPixels',['../classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#ae7b020fd14ecd7dec7822f95879acce5',1,'flitr::ScreenCaptureProducer::ScreenCaptureCallback']]],
   ['readslot',['readSlot',['../classflitr_1_1_multi_lib_tiff_producer.html#a9883e1ecc59f8a6e6c643248f4095ea5',1,'flitr::MultiLibTiffProducer']]],

@@ -1,4 +1,4 @@
 <map id="flitr::HUD::HUD" name="flitr::HUD::HUD">
-<area shape="rect" id="node3" href="$classflitr_1_1_h_u_d.html#a74a29cd62e624bb1751be8da7923bda2" title="flitr::HUD::setMinMax" alt="" coords="192,5,341,35"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_h_u_d.html#a70ee363e1f905d30418d8300e0f88967" title="flitr::HUD::getResizeHandler" alt="" coords="172,59,361,88"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_h_u_d.html#a74a29cd62e624bb1751be8da7923bda2" title="flitr::HUD::setMinMax" alt="" coords="186,5,334,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_h_u_d.html#a70ee363e1f905d30418d8300e0f88967" title="flitr::HUD::getResizeHandler" alt="" coords="165,56,355,83"/>
 </map>

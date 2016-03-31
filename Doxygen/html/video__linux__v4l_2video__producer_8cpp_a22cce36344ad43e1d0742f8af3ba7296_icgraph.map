@@ -1,8 +1,8 @@
 <map id="xioctl" name="xioctl">
-<area shape="rect" id="node2" href="$classflitr_1_1_video_producer_1_1_video_producer_thread.html#a13ea67b5315d600f24e7c7ae0fcdf7fa" title="flitr::VideoProducer\l::VideoProducerThread::run" alt="" coords="107,5,288,46"/>
-<area shape="rect" id="node3" href="$video__linux__v4l_2video__producer_8cpp.html#a5c4420489659974b6ac0e1914c3bdecf" title="open_device" alt="" coords="338,84,433,111"/>
-<area shape="rect" id="node5" href="$video__linux__v4l_2video__producer_8cpp.html#a124b294ff237795262ca4962bdbf090f" title="init_device" alt="" coords="343,147,427,173"/>
-<area shape="rect" id="node6" href="$video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde" title="vc_init_mmap" alt="" coords="146,172,249,199"/>
-<area shape="rect" id="node7" href="$video__linux__v4l_2video__producer_8cpp.html#afaad2920044ecdb10a854a521595caad" title="start_capture" alt="" coords="336,209,435,236"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_video_producer.html#a3a83fb5cc5db86f50e6e825739e488f1" title="flitr::VideoProducer\l::init" alt="" coords="483,139,616,181"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_video_producer_1_1_video_producer_thread.html#a13ea67b5315d600f24e7c7ae0fcdf7fa" title="flitr::VideoProducer\l::VideoProducerThread::run" alt="" coords="105,5,292,47"/>
+<area shape="rect" id="node3" href="$video__linux__v4l_2video__producer_8cpp.html#a5c4420489659974b6ac0e1914c3bdecf" title="open_device" alt="" coords="341,85,439,111"/>
+<area shape="rect" id="node5" href="$video__linux__v4l_2video__producer_8cpp.html#a124b294ff237795262ca4962bdbf090f" title="init_device" alt="" coords="347,147,433,174"/>
+<area shape="rect" id="node6" href="$video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde" title="vc_init_mmap" alt="" coords="147,173,251,199"/>
+<area shape="rect" id="node7" href="$video__linux__v4l_2video__producer_8cpp.html#afaad2920044ecdb10a854a521595caad" title="start_capture" alt="" coords="340,210,440,237"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_video_producer.html#a3a83fb5cc5db86f50e6e825739e488f1" title="flitr::VideoProducer\l::init" alt="" coords="488,140,624,181"/>
 </map>

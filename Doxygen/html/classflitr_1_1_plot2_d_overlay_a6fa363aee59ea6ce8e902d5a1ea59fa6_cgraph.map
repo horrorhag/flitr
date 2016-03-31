@@ -1,6 +1,6 @@
 <map id="flitr::Plot2DOverlay::Plot2DOverlay" name="flitr::Plot2DOverlay::Plot2DOverlay">
-<area shape="rect" id="node3" href="$classflitr_1_1_plot2_d_overlay.html#a228f49b5568d3300ddf2d86289fd91b0" title="flitr::Plot2DOverlay\l::create" alt="" coords="196,5,329,51"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="188,74,337,121"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_plot2_d_overlay.html#a45bf97a95ec25c57b6c318028556ea7d" title="flitr::Plot2DOverlay\l::setAxisColour" alt="" coords="196,143,329,190"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_plot2_d_overlay.html#a1d7e39dc54b5bf61c699154c363fb293" title="flitr::Plot2DOverlay\l::update" alt="" coords="387,5,520,51"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_plot2_d_overlay.html#a228f49b5568d3300ddf2d86289fd91b0" title="flitr::Plot2DOverlay\l::create" alt="" coords="196,5,329,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="187,71,339,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_plot2_d_overlay.html#a45bf97a95ec25c57b6c318028556ea7d" title="flitr::Plot2DOverlay\l::setAxisColour" alt="" coords="196,136,329,177"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_plot2_d_overlay.html#a1d7e39dc54b5bf61c699154c363fb293" title="flitr::Plot2DOverlay\l::update" alt="" coords="387,5,520,47"/>
 </map>

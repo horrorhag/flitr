@@ -1,4 +1,4 @@
 <map id="flitr::FileHeader" name="flitr::FileHeader">
-<area shape="rect" id="node2" href="$structflitr_1_1_info_header.html" title="{flitr::InfoHeader\n|+ startChar\l+ versionMajor\l+ versionMinor\l+ dataSize\l+ stopChar\l|+ InfoHeader()\l}" alt="" coords="25,205,136,341"/>
-<area shape="rect" id="node3" href="$structflitr_1_1_image_format_data.html" title="{flitr::ImageFormatData\n|+ imageHeight\l+ imageWidth\l+ pixelFormat\l+ frameRate\l+ numberFrames\l|}" alt="" coords="5,5,157,141"/>
+<area shape="rect" id="node2" href="$structflitr_1_1_info_header.html" title="{flitr::InfoHeader\n|+ startChar\l+ versionMajor\l+ versionMinor\l+ dataSize\l+ stopChar\l|+ InfoHeader()\l}" alt="" coords="26,204,139,340"/>
+<area shape="rect" id="node3" href="$structflitr_1_1_image_format_data.html" title="{flitr::ImageFormatData\n|+ imageHeight\l+ imageWidth\l+ pixelFormat\l+ frameRate\l+ numberFrames\l|}" alt="" coords="5,5,160,141"/>
 </map>

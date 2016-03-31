@@ -1,4 +1,4 @@
 <map id="flitr::SharedImageBuffer::reserveWriteSlot" name="flitr::SharedImageBuffer::reserveWriteSlot">
-<area shape="rect" id="node3" href="$classflitr_1_1_shared_image_buffer.html#a72664737877581da89cda45bbf07956a" title="Returns true if there is no more space in the buffer for writing." alt="" coords="213,5,373,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_shared_image_buffer.html#a786218cf02230d38313d7afd7d40155f" title="Returns the space &#39;filled&#39; in the buffer." alt="" coords="421,5,581,51"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_shared_image_buffer.html#a72664737877581da89cda45bbf07956a" title="Returns true if there is no more space in the buffer for writing. " alt="" coords="216,5,379,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_shared_image_buffer.html#a786218cf02230d38313d7afd7d40155f" title="Returns the space &#39;filled&#39; in the buffer. " alt="" coords="427,5,589,47"/>
 </map>

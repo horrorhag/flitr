@@ -1,6 +1,6 @@
 <map id="GLSLKeepHistoryPass::GLSLKeepHistoryPass" name="GLSLKeepHistoryPass::GLSLKeepHistoryPass">
-<area shape="rect" id="node2" href="$class_g_l_s_l_keep_history_pass.html#a2af38dcb34ade48e36785782b919d681" title="GLSLKeepHistoryPass\l::createOutputTextures" alt="" coords="219,5,376,46"/>
-<area shape="rect" id="node3" href="$class_g_l_s_l_keep_history_pass.html#a33339ed5ca29c0075148e2016aa467ca" title="GLSLKeepHistoryPass\l::setupCamera" alt="" coords="219,70,376,111"/>
-<area shape="rect" id="node4" href="$class_g_l_s_l_keep_history_pass.html#a9e6f8df0f717a5b1bb3f4cdd9744c287" title="GLSLKeepHistoryPass\l::createTexturedQuad" alt="" coords="219,135,376,177"/>
-<area shape="rect" id="node5" href="$class_g_l_s_l_keep_history_pass.html#a6b0ab01c2ba6579648f10e1c8bd69e2c" title="GLSLKeepHistoryPass\l::setShader" alt="" coords="219,201,376,242"/>
+<area shape="rect" id="node2" href="$class_g_l_s_l_keep_history_pass.html#a2af38dcb34ade48e36785782b919d681" title="GLSLKeepHistoryPass\l::createOutputTextures" alt="" coords="219,5,377,47"/>
+<area shape="rect" id="node3" href="$class_g_l_s_l_keep_history_pass.html#a33339ed5ca29c0075148e2016aa467ca" title="GLSLKeepHistoryPass\l::setupCamera" alt="" coords="219,71,377,112"/>
+<area shape="rect" id="node4" href="$class_g_l_s_l_keep_history_pass.html#a9e6f8df0f717a5b1bb3f4cdd9744c287" title="GLSLKeepHistoryPass\l::createTexturedQuad" alt="" coords="219,136,377,177"/>
+<area shape="rect" id="node5" href="$class_g_l_s_l_keep_history_pass.html#a6b0ab01c2ba6579648f10e1c8bd69e2c" title="GLSLKeepHistoryPass\l::setShader" alt="" coords="219,201,377,243"/>
 </map>

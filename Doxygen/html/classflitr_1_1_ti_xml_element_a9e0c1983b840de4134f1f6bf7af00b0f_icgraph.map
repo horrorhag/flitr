@@ -1,5 +1,5 @@
 <map id="flitr::TiXmlElement::CopyTo" name="flitr::TiXmlElement::CopyTo">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="184,5,315,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="184,70,315,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="184,135,315,177"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="184,5,315,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="184,71,315,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="184,136,315,177"/>
 </map>

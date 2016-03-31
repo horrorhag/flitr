@@ -1,10 +1,10 @@
 <map id="flitr::RawVideoFileWriter::openVideoFile" name="flitr::RawVideoFileWriter::openVideoFile">
 <area shape="rect" id="node2" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="242,56,361,83"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="239,107,364,149"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="239,173,364,214"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="239,238,364,279"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_raw_video_file_writer.html#a0747e300f482831c2084dc3e5d646f7c" title="Write the file header to the file. " alt="" coords="219,303,383,345"/>
-<area shape="rect" id="node3" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="432,56,571,83"/>
-<area shape="rect" id="node4" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="655,5,779,32"/>
-<area shape="rect" id="node5" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="619,56,815,83"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="238,107,365,149"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="238,173,365,214"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="238,238,365,279"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_raw_video_file_writer.html#a0747e300f482831c2084dc3e5d646f7c" title="Write the file header to the file. " alt="" coords="219,303,384,345"/>
+<area shape="rect" id="node3" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="432,56,572,83"/>
+<area shape="rect" id="node4" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="657,5,783,32"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="620,56,820,83"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="flitr::ImageStabiliserBiLK::getDeltaTransformationMatrix" name="flitr::ImageStabiliserBiLK::getDeltaTransformationMatrix">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_stabiliser_bi_l_k.html#a875a8ead74638013502df6a2d94d4216" title="flitr::ImageStabiliserBi\lLK::updateOutputQuadTransform" alt="" coords="273,19,487,61"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image_stabiliser_bi_l_k_1_1_post_bi_l_k_iteration___camera_post_draw_callback.html#aea4f539632de3ea03f26b8082f05f9ee" title="flitr::ImageStabiliserBi\lLK::PostBiLKIteration\l_CameraPostDrawCallback\l::operator()" alt="" coords="536,5,720,75"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_stabiliser_bi_l_k.html#a875a8ead74638013502df6a2d94d4216" title="flitr::ImageStabiliserBi\lLK::updateOutputQuadTransform" alt="" coords="275,20,495,61"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_stabiliser_bi_l_k_1_1_post_bi_l_k_iteration___camera_post_draw_callback.html#aea4f539632de3ea03f26b8082f05f9ee" title="flitr::ImageStabiliserBi\lLK::PostBiLKIteration\l_CameraPostDrawCallback\l::operator()" alt="" coords="543,5,728,76"/>
 </map>

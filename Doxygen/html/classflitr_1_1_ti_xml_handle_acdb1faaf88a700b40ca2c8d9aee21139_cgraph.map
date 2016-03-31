@@ -1,4 +1,4 @@
 <map id="flitr::TiXmlHandle::FirstChild" name="flitr::TiXmlHandle::FirstChild">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="177,5,354,32"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_handle.html#a62b2035b16311ca8c00d7528b3a673ae" title="Create a handle from any node (at any depth of the tree.) This can be a null pointer. " alt="" coords="204,57,327,98"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="177,5,355,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_handle.html#a62b2035b16311ca8c00d7528b3a673ae" title="Create a handle from any node (at any depth of the tree.) This can be a null pointer. " alt="" coords="204,57,328,98"/>
 </map>

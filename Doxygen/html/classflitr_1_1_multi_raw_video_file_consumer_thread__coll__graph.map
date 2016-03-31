@@ -1,21 +1,21 @@
 <map id="flitr::MultiRawVideoFileConsumerThread" name="flitr::MultiRawVideoFileConsumerThread">
-<area shape="rect" id="node3" href="$classflitr_1_1_multi_raw_video_file_consumer.html" title="{flitr::MultiRawVideoFile\lConsumer\n|# ImagesPerSlot_\l# WritingMutex_\l# Writing_\l# MultiWriteStats_\l|+ MultiRawVideoFileConsumer()\l+ ~MultiRawVideoFileConsumer()\l+ init()\l+ openFiles()\l+ openFiles()\l+ openFiles()\l+ startWriting()\l+ stopWriting()\l+ closeFiles()\l}" alt="" coords="596,2037,815,2291"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html" title="{flitr::ImageConsumer\n||+ ImageConsumer()\l+ ~ImageConsumer()\l+ getNumReadSlotsAvailable()\l+ getNumReadSlotsReserved()\l+ reserveReadSlot()\l+ releaseReadSlot()\l+ init()\l+ getFormat()\l# setSharedImageBuffer()\l}" alt="" coords="164,1779,369,1973"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# removeConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="311,1432,544,1715"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_shared_image_buffer.html" title="Class for passing images between producers and consumers. " alt="" coords="225,2385,459,2799"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="389,661,571,1003"/>
-<area shape="rect" id="node16" href="$classflitr_1_1_raw_video_file_writer.html" title="{flitr::RawVideoFileWriter\n|&#45; FrameRate_\l&#45; WrittenFrameCount_\l&#45; WriteFrameStats_\l&#45; VideoFrameSize_\l&#45; File_\l|+ RawVideoFileWriter()\l+ ~RawVideoFileWriter()\l+ writeVideoFrame()\l&#45; openVideoFile()\l&#45; closeVideoFile()\l&#45; writeFileHeader()\l}" alt="" coords="638,1081,804,1290"/>
-<area shape="rect" id="node8" title="STL class. " alt="" coords="887,793,1003,871"/>
-<area shape="rect" id="node13" title="STL class. " alt="" coords="112,793,235,871"/>
-<area shape="rect" id="node17" href="$structflitr_1_1_file_header.html" title="{flitr::FileHeader\n|+ startChar\l+ stopChar\l|+ FileHeader()\l}" alt="" coords="659,786,769,878"/>
-<area shape="rect" id="node18" href="$structflitr_1_1_info_header.html" title="{flitr::InfoHeader\n|+ startChar\l+ versionMajor\l+ versionMinor\l+ dataSize\l+ stopChar\l|+ InfoHeader()\l}" alt="" coords="659,461,769,597"/>
-<area shape="rect" id="node19" href="$structflitr_1_1_image_format_data.html" title="{flitr::ImageFormatData\n|+ imageHeight\l+ imageWidth\l+ pixelFormat\l+ frameRate\l+ numberFrames\l|}" alt="" coords="638,261,791,397"/>
-<area shape="rect" id="node20" title="STL class. " alt="" coords="1189,793,1268,871"/>
-<area shape="rect" id="node23" href="$classflitr_1_1_metadata_writer.html" title="{flitr::MetadataWriter\n||+ MetadataWriter()\l+ ~MetadataWriter()\l+ writeFrame()\l# openFile()\l# closeFile()\l}" alt="" coords="1347,1117,1485,1253"/>
-<area shape="rect" id="node21" title="STL class. " alt="" coords="1166,483,1292,575"/>
-<area shape="rect" id="node24" title="STL class. " alt="" coords="1503,793,1601,871"/>
-<area shape="rect" id="node25" title="STL class. " alt="" coords="1483,483,1620,575"/>
-<area shape="rect" id="node26" title="STL class. " alt="" coords="1485,283,1619,375"/>
-<area shape="rect" id="node27" title="STL class. " alt="" coords="1475,133,1628,211"/>
-<area shape="rect" id="node28" title="STL class. " alt="" coords="1502,5,1601,83"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_raw_video_file_consumer.html" title="{flitr::MultiRawVideoFile\lConsumer\n|# ImagesPerSlot_\l# WritingMutex_\l# Writing_\l# MultiWriteStats_\l|+ MultiRawVideoFileConsumer()\l+ ~MultiRawVideoFileConsumer()\l+ init()\l+ openFiles()\l+ openFiles()\l+ openFiles()\l+ startWriting()\l+ stopWriting()\l+ closeFiles()\l}" alt="" coords="599,2027,822,2280"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html" title="{flitr::ImageConsumer\n||+ ImageConsumer()\l+ ~ImageConsumer()\l+ getNumReadSlotsAvailable()\l+ getNumReadSlotsReserved()\l+ reserveReadSlot()\l+ releaseReadSlot()\l+ init()\l+ getFormat()\l# setSharedImageBuffer()\l}" alt="" coords="164,1769,372,1964"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# removeConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="313,1424,551,1707"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_shared_image_buffer.html" title="Class for passing images between producers and consumers. " alt="" coords="227,2372,464,2787"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="389,656,576,997"/>
+<area shape="rect" id="node16" href="$classflitr_1_1_raw_video_file_writer.html" title="{flitr::RawVideoFileWriter\n|&#45; FrameRate_\l&#45; WrittenFrameCount_\l&#45; WriteFrameStats_\l&#45; VideoFrameSize_\l&#45; File_\l|+ RawVideoFileWriter()\l+ ~RawVideoFileWriter()\l+ writeVideoFrame()\l&#45; openVideoFile()\l&#45; closeVideoFile()\l&#45; writeFileHeader()\l}" alt="" coords="645,1075,813,1284"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="900,788,1015,865"/>
+<area shape="rect" id="node13" title="STL class. " alt="" coords="115,788,235,865"/>
+<area shape="rect" id="node17" href="$structflitr_1_1_file_header.html" title="{flitr::FileHeader\n|+ startChar\l+ stopChar\l|+ FileHeader()\l}" alt="" coords="665,781,777,873"/>
+<area shape="rect" id="node18" href="$structflitr_1_1_info_header.html" title="{flitr::InfoHeader\n|+ startChar\l+ versionMajor\l+ versionMinor\l+ dataSize\l+ stopChar\l|+ InfoHeader()\l}" alt="" coords="665,457,778,593"/>
+<area shape="rect" id="node19" href="$structflitr_1_1_image_format_data.html" title="{flitr::ImageFormatData\n|+ imageHeight\l+ imageWidth\l+ pixelFormat\l+ frameRate\l+ numberFrames\l|}" alt="" coords="644,259,799,395"/>
+<area shape="rect" id="node20" title="STL class. " alt="" coords="1201,788,1281,865"/>
+<area shape="rect" id="node23" href="$classflitr_1_1_metadata_writer.html" title="{flitr::MetadataWriter\n||+ MetadataWriter()\l+ ~MetadataWriter()\l+ writeFrame()\l# openFile()\l# closeFile()\l}" alt="" coords="1348,1111,1489,1247"/>
+<area shape="rect" id="node21" title="STL class. " alt="" coords="1178,479,1305,571"/>
+<area shape="rect" id="node24" title="STL class. " alt="" coords="1507,788,1605,865"/>
+<area shape="rect" id="node25" title="STL class. " alt="" coords="1487,479,1625,571"/>
+<area shape="rect" id="node26" title="STL class. " alt="" coords="1489,281,1623,373"/>
+<area shape="rect" id="node27" title="STL class. " alt="" coords="1479,132,1633,209"/>
+<area shape="rect" id="node28" title="STL class. " alt="" coords="1506,5,1606,83"/>
 </map>

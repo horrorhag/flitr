@@ -12,8 +12,8 @@ var _d_s_v_l___graph_manager_8h =
     [ "ASYNC_INPUT_FLAGS", "_d_s_v_l___graph_manager_8h.html#a4772dc5dfd9ebc1e03abde22ebf42dfd", null ],
     [ "CP_INTERFACE", "_d_s_v_l___graph_manager_8h.html#a07a65dbbecc4413e266990a0f182d97c", null ],
     [ "DS_MEDIA_FORMAT", "_d_s_v_l___graph_manager_8h.html#ad9edcfbf4bf4c96011ce3b16d9bad3d6", null ],
-    [ "PTR_SimpleUserCallback", "_d_s_v_l___graph_manager_8h.html#aab8a10258f60bb51f3c5542f65f594c2", null ],
-    [ "PTR_UserCallback", "_d_s_v_l___graph_manager_8h.html#ab87beddb3d00103f6dc020730688588b", null ],
+    [ "PTR_SimpleUserCallback", "_d_s_v_l___graph_manager_8h.html#a71a637d42bb49494ca901f82ee3dea71", null ],
+    [ "PTR_UserCallback", "_d_s_v_l___graph_manager_8h.html#a80e6ad3ead3808a92c4dd20f941f479e", null ],
     [ "VIDEO_INPUT_DEVICE", "_d_s_v_l___graph_manager_8h.html#ac8a9ba2ffd3d71adcc13d802f1a79f90", null ],
     [ "VIDEO_INPUT_FLAGS", "_d_s_v_l___graph_manager_8h.html#a2bfbff72151718f0bf70e02e5f69546b", null ],
     [ "_ASYNC_INPUT_FLAGS", "_d_s_v_l___graph_manager_8h.html#ae238df2d8dbfc9b2c2183930e9ad27d1", [

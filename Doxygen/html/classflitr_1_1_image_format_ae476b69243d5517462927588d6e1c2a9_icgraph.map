@@ -1,3 +1,11 @@
 <map id="flitr::ImageFormat::getComponentsPerPixel" name="flitr::ImageFormat::getComponentsPerPixel">
-<area shape="rect" id="node3" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html#acccdac29b5ca600265e885dcf22a2699" title="flitr::MultiCPUHistogram\lConsumerThread::run" alt="" coords="224,5,389,51"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_average_image.html#a47a994e6f6415ee0ac3615add2a52c4d" title="flitr::FIPAverageImage\l::init" alt="" coords="250,5,405,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#af6fd514c79605e61ac422f1341395754" title="flitr::FIPAverageImageIIR\l::init" alt="" coords="241,71,413,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_beat_image.html#ac74acac7061dc61232eb8ab6ab337085" title="flitr::FIPBeatImage\l::init" alt="" coords="261,136,393,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_gaussian_downsample.html#ac3fa1726c07e925c6909b183a0374de3" title="flitr::FIPGaussianDownsample\l::init" alt="" coords="227,201,428,243"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_gaussian_filter.html#a59690cf8f8b358a9e67b28c0e07a65e1" title="flitr::FIPGaussianFilter\l::init" alt="" coords="251,267,404,308"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_f_i_p_photometric_equalise.html#a213d8150a79885e5d25c9127b3a6645d" title="flitr::FIPPhotometricEqualise\l::trigger" alt="" coords="232,332,423,373"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_f_i_p_local_photometric_equalise.html#ada3e4a67f3c663f6c4c00c9826a79e3d" title="flitr::FIPLocalPhotometric\lEqualise::init" alt="" coords="242,397,413,439"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_f_i_p_unsharp_mask.html#a8bdac0fbc0f5da5ec441d3737d1a89f0" title="flitr::FIPUnsharpMask\l::init" alt="" coords="252,463,403,504"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html#acccdac29b5ca600265e885dcf22a2699" title="flitr::MultiCPUHistogram\lConsumerThread::run" alt="" coords="245,528,409,569"/>
 </map>

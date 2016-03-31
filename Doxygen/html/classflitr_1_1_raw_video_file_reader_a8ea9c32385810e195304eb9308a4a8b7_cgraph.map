@@ -1,7 +1,7 @@
 <map id="flitr::RawVideoFileReader::openVideoFile" name="flitr::RawVideoFileReader::openVideoFile">
-<area shape="rect" id="node2" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="234,56,353,83"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a5cfb1060f2daa01d9f2d6841cfe7d829" title="flitr::ImageFormat\l::getBytesPerImage" alt="" coords="224,107,363,149"/>
-<area shape="rect" id="node3" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="411,56,549,83"/>
-<area shape="rect" id="node4" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="634,5,758,32"/>
-<area shape="rect" id="node5" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="598,56,794,83"/>
+<area shape="rect" id="node2" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="237,56,355,83"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a5cfb1060f2daa01d9f2d6841cfe7d829" title="flitr::ImageFormat\l::getBytesPerImage" alt="" coords="227,107,365,149"/>
+<area shape="rect" id="node3" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="413,56,553,83"/>
+<area shape="rect" id="node4" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="639,5,764,32"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="601,56,801,83"/>
 </map>

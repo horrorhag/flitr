@@ -1,5 +1,5 @@
 <map id="flitr::CPUPaletteRemap_Shader::setHistogramEqualisationMap" name="flitr::CPUPaletteRemap_Shader::setHistogramEqualisationMap">
-<area shape="rect" id="node2" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#a4b0f9e169e7488267c23ae848254be5a" title="flitr::MultiCPUHistogram\lConsumer::calcHistogramMatchMap" alt="" coords="307,5,541,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#aae40b7649f92d6847648bc23dae27ad2" title="flitr::MultiCPUHistogram\lConsumer::calcRefHistogramFor\lEqualisation" alt="" coords="317,69,531,125"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_c_p_u_palette_remap___shader.html#a27e184cec15ada087e5c43fea8b3d975" title="flitr::CPUPaletteRemap\l_Shader::setPaletteMap" alt="" coords="343,149,505,190"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#a4b0f9e169e7488267c23ae848254be5a" title="flitr::MultiCPUHistogram\lConsumer::calcHistogramMatchMap" alt="" coords="311,5,548,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#aae40b7649f92d6847648bc23dae27ad2" title="flitr::MultiCPUHistogram\lConsumer::calcRefHistogramFor\lEqualisation" alt="" coords="321,71,537,127"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_c_p_u_palette_remap___shader.html#a27e184cec15ada087e5c43fea8b3d975" title="flitr::CPUPaletteRemap\l_Shader::setPaletteMap" alt="" coords="347,152,512,193"/>
 </map>

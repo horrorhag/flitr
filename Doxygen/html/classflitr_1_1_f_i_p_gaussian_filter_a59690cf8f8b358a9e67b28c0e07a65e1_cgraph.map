@@ -1,10 +1,10 @@
 <map id="flitr::FIPGaussianFilter::init" name="flitr::FIPGaussianFilter::init">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="222,5,365,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="220,70,367,111"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="231,135,356,177"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="231,201,356,242"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#af517f805ff737ad2fad633b4cd64813b" title="flitr::ImageFormat\l::getBytesPerPixel" alt="" coords="228,266,359,307"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_image_format.html#ae476b69243d5517462927588d6e1c2a9" title="flitr::ImageFormat\l::getComponentsPerPixel" alt="" coords="208,331,379,373"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="427,70,571,111"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="619,70,755,111"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="221,5,365,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="219,71,367,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="230,136,357,177"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="230,201,357,243"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#af517f805ff737ad2fad633b4cd64813b" title="flitr::ImageFormat\l::getBytesPerPixel" alt="" coords="228,267,359,308"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_image_format.html#ae476b69243d5517462927588d6e1c2a9" title="flitr::ImageFormat\l::getComponentsPerPixel" alt="" coords="207,332,380,373"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="428,71,573,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="621,71,760,112"/>
 </map>

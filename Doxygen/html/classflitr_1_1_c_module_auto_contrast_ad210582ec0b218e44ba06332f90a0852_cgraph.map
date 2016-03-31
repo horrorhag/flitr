@@ -1,4 +1,4 @@
 <map id="flitr::CModuleAutoContrast::launch" name="flitr::CModuleAutoContrast::launch">
-<area shape="rect" id="node3" href="$cuda__auto__contrast__pass_8cpp.html#ac52fd1884559bb065986aad7e78cb7fd" title="cu_histeq" alt="" coords="263,5,340,35"/>
-<area shape="rect" id="node5" href="$cuda__auto__contrast__pass_8cpp.html#acd251b1302cf4b2ccb6a9df6b8e1eece" title="cu_contrast_stretch" alt="" coords="233,59,369,88"/>
+<area shape="rect" id="node2" href="$cuda__auto__contrast__pass_8cpp.html#ac52fd1884559bb065986aad7e78cb7fd" title="cu_histeq" alt="" coords="262,5,341,32"/>
+<area shape="rect" id="node3" href="$cuda__auto__contrast__pass_8cpp.html#acd251b1302cf4b2ccb6a9df6b8e1eece" title="cu_contrast_stretch" alt="" coords="232,56,371,83"/>
 </map>

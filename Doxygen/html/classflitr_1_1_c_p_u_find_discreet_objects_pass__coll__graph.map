@@ -1,5 +1,5 @@
 <map id="flitr::CPUFindDiscreetObjectsPass" name="flitr::CPUFindDiscreetObjectsPass">
-<area shape="rect" id="node2" href="$classflitr_1_1_c_p_u_shader_pass_1_1_c_p_u_shader.html" title="{flitr::CPUShaderPass\l::CPUShader\n||}" alt="" coords="61,346,208,438"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="134,5,292,229"/>
-<area shape="rect" id="node5" href="$structflitr_1_1_c_p_u_find_discreet_objects_pass_1_1_rect.html" title="{flitr::CPUFindDiscreetObjects\lPass::Rect\n|+ left\l+ right\l+ top\l+ bottom\l+ centerX\l+ centerY\l+ width\l+ height\l+ area\l|+ Rect()\l+ Rect()\l}" alt="" coords="233,280,428,504"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_c_p_u_shader_pass_1_1_c_p_u_shader.html" title="{flitr::CPUShaderPass\l::CPUShader\n||}" alt="" coords="62,345,210,437"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="134,5,295,229"/>
+<area shape="rect" id="node5" href="$structflitr_1_1_c_p_u_find_discreet_objects_pass_1_1_rect.html" title="{flitr::CPUFindDiscreetObjects\lPass::Rect\n|+ left\l+ right\l+ top\l+ bottom\l+ centerX\l+ centerY\l+ width\l+ height\l+ area\l|+ Rect()\l+ Rect()\l}" alt="" coords="234,279,430,503"/>
 </map>

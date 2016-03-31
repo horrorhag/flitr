@@ -1,12 +1,12 @@
 <map id="flitr::VideoProducer::init" name="flitr::VideoProducer::init">
-<area shape="rect" id="node2" href="$video__linux__v4l_2video__producer_8cpp.html#a5c4420489659974b6ac0e1914c3bdecf" title="open_device" alt="" coords="399,228,494,255"/>
-<area shape="rect" id="node3" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="547,76,666,103"/>
-<area shape="rect" id="node8" href="$video__linux__v4l_2video__producer_8cpp.html#a124b294ff237795262ca4962bdbf090f" title="init_device" alt="" coords="225,115,309,141"/>
-<area shape="rect" id="node10" href="$namespaceflitr.html#a041bb1e4e5d19f66fe6e008b83750a95" title="flitr::allocFFmpegFrame" alt="" coords="187,216,347,243"/>
-<area shape="rect" id="node11" href="$video__linux__v4l_2video__producer_8cpp.html#afaad2920044ecdb10a854a521595caad" title="start_capture" alt="" coords="397,25,496,52"/>
-<area shape="rect" id="node7" href="$video__linux__v4l_2video__producer_8cpp.html#a22cce36344ad43e1d0742f8af3ba7296" title="xioctl" alt="" coords="580,152,633,179"/>
-<area shape="rect" id="node4" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="715,76,853,103"/>
-<area shape="rect" id="node5" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="938,25,1062,52"/>
-<area shape="rect" id="node6" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="902,76,1098,103"/>
-<area shape="rect" id="node9" href="$video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde" title="vc_init_mmap" alt="" coords="395,127,498,153"/>
+<area shape="rect" id="node2" href="$video__linux__v4l_2video__producer_8cpp.html#a5c4420489659974b6ac0e1914c3bdecf" title="open_device" alt="" coords="403,228,501,255"/>
+<area shape="rect" id="node3" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="552,76,671,103"/>
+<area shape="rect" id="node8" href="$video__linux__v4l_2video__producer_8cpp.html#a124b294ff237795262ca4962bdbf090f" title="init_device" alt="" coords="228,115,313,141"/>
+<area shape="rect" id="node10" href="$namespaceflitr.html#a041bb1e4e5d19f66fe6e008b83750a95" title="flitr::allocFFmpegFrame" alt="" coords="189,216,352,243"/>
+<area shape="rect" id="node11" href="$video__linux__v4l_2video__producer_8cpp.html#afaad2920044ecdb10a854a521595caad" title="start_capture" alt="" coords="402,25,502,52"/>
+<area shape="rect" id="node7" href="$video__linux__v4l_2video__producer_8cpp.html#a22cce36344ad43e1d0742f8af3ba7296" title="xioctl" alt="" coords="585,152,637,179"/>
+<area shape="rect" id="node4" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="719,76,859,103"/>
+<area shape="rect" id="node5" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="944,25,1069,52"/>
+<area shape="rect" id="node6" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="907,76,1107,103"/>
+<area shape="rect" id="node9" href="$video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde" title="vc_init_mmap" alt="" coords="400,127,504,153"/>
 </map>

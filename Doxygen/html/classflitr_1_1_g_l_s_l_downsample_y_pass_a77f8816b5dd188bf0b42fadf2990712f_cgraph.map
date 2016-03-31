@@ -1,6 +1,6 @@
 <map id="flitr::GLSLDownsampleYPass::GLSLDownsampleYPass" name="flitr::GLSLDownsampleYPass::GLSLDownsampleYPass">
-<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#a0f86dd408cae90906ed4260ec43eaec7" title="flitr::GLSLDownsampleYPass\l::createOutputTexture" alt="" coords="251,5,447,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#a79eb8e55540180dbccbf952b12ee1c17" title="flitr::GLSLDownsampleYPass\l::setupCamera" alt="" coords="251,70,447,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#a48da8b745a8e4adbf368dc6b21589320" title="flitr::GLSLDownsampleYPass\l::createTexturedQuad" alt="" coords="251,135,447,177"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#ab9c001b1da1d0af9d6e1d2552b6c1bb2" title="flitr::GLSLDownsampleYPass\l::setShader" alt="" coords="251,201,447,242"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#a0f86dd408cae90906ed4260ec43eaec7" title="flitr::GLSLDownsampleYPass\l::createOutputTexture" alt="" coords="251,5,448,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#a79eb8e55540180dbccbf952b12ee1c17" title="flitr::GLSLDownsampleYPass\l::setupCamera" alt="" coords="251,71,448,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#a48da8b745a8e4adbf368dc6b21589320" title="flitr::GLSLDownsampleYPass\l::createTexturedQuad" alt="" coords="251,136,448,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_g_l_s_l_downsample_y_pass.html#ab9c001b1da1d0af9d6e1d2552b6c1bb2" title="flitr::GLSLDownsampleYPass\l::setShader" alt="" coords="251,201,448,243"/>
 </map>

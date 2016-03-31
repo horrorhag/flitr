@@ -1,9 +1,9 @@
 <map id="flitr::TiXmlAttribute::Next" name="flitr::TiXmlAttribute::Next">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#ad9d0c008866982ab8d9aafae7e14d692" title="flitr::TiXmlElement\l::Print" alt="" coords="213,5,344,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="213,70,344,111"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_printer.html#a6dccaf5ee4979f13877690afe28721e8" title="Visit an element. " alt="" coords="219,135,339,177"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_x_m_l_config.html#a7866e6e4e7cac32ad0313bd69e13487e" title="Get a vector of elements (and each&#39;s attributes) with specified name from the configuration file..." alt="" coords="185,201,373,242"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="421,5,552,46"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="421,70,552,111"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="421,135,552,177"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#ad9d0c008866982ab8d9aafae7e14d692" title="flitr::TiXmlElement\l::Print" alt="" coords="213,5,344,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="213,71,344,112"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_printer.html#a6dccaf5ee4979f13877690afe28721e8" title="Visit an element. " alt="" coords="219,136,339,177"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_x_m_l_config.html#a7866e6e4e7cac32ad0313bd69e13487e" title="Get a vector of elements (and each&#39;s attributes) with specified name from the configuration file..." alt="" coords="184,201,373,243"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="421,5,552,47"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="421,71,552,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="421,136,552,177"/>
 </map>

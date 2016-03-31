@@ -4,7 +4,7 @@
 \tableofcontents
 
 \section sec_main_introduction Introduction
-FLITr is...
+FLITr is a Framework for Live Image Transformation. Images are produces by ImageProducers, consumed by ImageConsumers and transformed by ImageProcessors (which is both a consumer and a producer).
 
 \section sec_main_build Building FLITr on Linux
 This section describe the process to build the FLITr framework. Before building make sure that all required tools
@@ -20,12 +20,11 @@ Tool/Library  | Min Version | Comment
 Git           |             | To get the FLITr sources
 CMake         | 2.6.3       | \n
 C++ Compiler  | C++11       | C++ compiler with full C++11 support
-*Boost        |             | <em>Seems like boost is not needed any more</em>
 OpenSceneGraph| 3.4.0       | \n
 FFmpeg        | 2.8.6       | \n
 Doxygen       | 1.8.7       | If building documentation
 LZMA          | 5.1.0       | Command line compression library development files
-TIFF          |             | <em>Not yet sure when needed</em>
+TIFF          |             | <em>Optional dependency selectable during cmake process.</em>
 
 To install most most of the needed tools the following commands can be used. 
 \code
@@ -73,7 +72,7 @@ $ #Check if correct Qt was detected
 $ cat CMakeCache.txt | grep Qt
 $ make -j6
 $ sudo make install
-$ # If the following error is encountered during install: "libicui18n.so.53 not found", do the following
+$ # If the following error is encountered during install: "libicui18n.so.53 not found", do the following ...
 $ make install # should complete linking but fail to install due to admin privileges
 $ sudo make install # should go through this time
 \endcode

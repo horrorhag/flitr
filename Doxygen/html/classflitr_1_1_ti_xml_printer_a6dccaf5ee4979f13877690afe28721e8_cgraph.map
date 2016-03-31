@@ -1,11 +1,11 @@
 <map id="flitr::TiXmlPrinter::VisitEnter" name="flitr::TiXmlPrinter::VisitEnter">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_printer.html#abf7b0ea789c2374993cc9a91118db317" title="flitr::TiXmlPrinter\l::DoIndent" alt="" coords="203,5,323,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="185,71,340,97"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_attribute.html#a776478980776a024f7c2846eec640f65" title="Get the next sibling attribute in the DOM. Returns null at end. " alt="" coords="197,122,328,163"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_attribute.html#afde51126fc5faad0af41fb7d24429765" title="flitr::TiXmlAttribute\l::Print" alt="" coords="197,187,328,229"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="174,253,351,280"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_printer.html#a5bb344a7fd4558ec1dcddb880eb03f1d" title="flitr::TiXmlPrinter\l::DoLineBreak" alt="" coords="203,305,323,346"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_node.html#a5db70b845325d0cb032804be0db8782f" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="181,371,344,397"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_node.html#a956f3eb090a2f1535917995399c2a4ac" title="flitr::TiXmlNode::LastChild" alt="" coords="175,421,351,448"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_text.html#ac69b527affdea2963fc497991ea42686" title="Queries whether this represents text using a CDATA section. " alt="" coords="181,472,344,499"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_printer.html#abf7b0ea789c2374993cc9a91118db317" title="flitr::TiXmlPrinter\l::DoIndent" alt="" coords="202,5,322,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="185,71,339,98"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_attribute.html#a776478980776a024f7c2846eec640f65" title="Get the next sibling attribute in the DOM. Returns null at end. " alt="" coords="197,123,327,164"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_attribute.html#afde51126fc5faad0af41fb7d24429765" title="flitr::TiXmlAttribute\l::Print" alt="" coords="197,188,327,229"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="173,254,351,281"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_printer.html#a5bb344a7fd4558ec1dcddb880eb03f1d" title="flitr::TiXmlPrinter\l::DoLineBreak" alt="" coords="202,305,322,347"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_node.html#a5db70b845325d0cb032804be0db8782f" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="181,371,343,398"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_node.html#a956f3eb090a2f1535917995399c2a4ac" title="flitr::TiXmlNode::LastChild" alt="" coords="174,422,350,449"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_text.html#ac69b527affdea2963fc497991ea42686" title="Queries whether this represents text using a CDATA section. " alt="" coords="182,473,342,499"/>
 </map>

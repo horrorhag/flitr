@@ -1,10 +1,26 @@
-<map id="include/flitr/ffmpeg_writer.h" name="include/flitr/ffmpeg_writer.h">
-<area shape="rect" id="node3" href="$render__to__video_8h.html" title="examples/glsl_shader\l_pass/render_to_video.h" alt="" coords="220,102,383,149"/>
-<area shape="rect" id="node7" href="$multi__cpuhistogram__consumer_8h.html" title="include/flitr/multi\l_cpuhistogram_consumer.h" alt="" coords="9,102,191,149"/>
-<area shape="rect" id="node11" href="$multi__ffmpeg__consumer_8h.html" title="include/flitr/multi\l_ffmpeg_consumer.h" alt="" coords="407,102,551,149"/>
-<area shape="rect" id="node18" href="$ffmpeg__writer_8cpp.html" title="src/flitr/ffmpeg_writer.cpp" alt="" coords="575,111,745,140"/>
-<area shape="rect" id="node5" href="$glsl__shader__pass_8cpp.html" title="examples/glsl_shader\l_pass/glsl_shader_pass.cpp" alt="" coords="208,198,395,245"/>
-<area shape="rect" id="node9" href="$multi__cpuhistogram__consumer_8cpp.html" title="src/flitr/multi_cpuhistogram\l_consumer.cpp" alt="" coords="5,198,184,245"/>
-<area shape="rect" id="node14" href="$screen__capture_8cpp.html" title="examples/screen_capture\l/screen_capture.cpp" alt="" coords="419,198,589,245"/>
-<area shape="rect" id="node16" href="$multi__ffmpeg__consumer_8cpp.html" title="src/flitr/multi_ffmpeg\l_consumer.cpp" alt="" coords="613,198,755,245"/>
+<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/ffmpeg_writer.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/ffmpeg_writer.h">
+<area shape="rect" id="node2" href="$multi__cpuhistogram__consumer_8h.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/include\l/flitr/multi_cpuhistogram\l_consumer.h" alt="" coords="297,109,488,180"/>
+<area shape="rect" id="node7" href="$multi__ffmpeg__consumer_8h.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/include\l/flitr/multi_ffmpeg_consumer.h" alt="" coords="2423,117,2623,173"/>
+<area shape="rect" id="node25" href="$ffmpeg__writer_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/ffmpeg_writer.cpp" alt="" coords="2648,117,2839,173"/>
+<area shape="rect" id="node3" href="$cpu__shader__pass__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/cpu_shader_pass/cpu_shader\l_pass_example.cpp" alt="" coords="5,361,209,432"/>
+<area shape="rect" id="node4" href="$cpu__palette__remap__shader_8h.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/include\l/flitr/modules/cpu_shader\l_passes/cpu_palette_remap_shader.h" alt="" coords="145,235,395,306"/>
+<area shape="rect" id="node6" href="$multi__cpuhistogram__consumer_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/multi_cpuhistogram\l_consumer.cpp" alt="" coords="419,235,609,306"/>
+<area shape="rect" id="node5" href="$lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration/lucas\l_kanade_test.cpp" alt="" coords="233,361,427,432"/>
+<area shape="rect" id="node8" href="$average__image__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/average_image/average_image\l_example.cpp" alt="" coords="634,235,847,306"/>
+<area shape="rect" id="node9" href="$beat__image__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/beat_image/beat_image_example.cpp" alt="" coords="872,243,1124,299"/>
+<area shape="rect" id="node10" href="$de__motion__blur__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/de_motion_blur/de_motion\l_blur_example.cpp" alt="" coords="1148,235,1339,306"/>
+<area shape="rect" id="node11" href="$dpt_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/DPT/dpt.cpp" alt="" coords="1363,243,1553,299"/>
+<area shape="rect" id="node12" href="$gaussian__filter__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/gaussian_filter/gaussian\l_filter_example.cpp" alt="" coords="1577,235,1768,306"/>
+<area shape="rect" id="node13" href="$glsl__shader__pass__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/glsl_shader_pass/glsl_shader\l_pass_example.cpp" alt="" coords="1792,235,1993,306"/>
+<area shape="rect" id="node14" href="$lk__dewarp__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_dewarp_cpu/lk_dewarp_example.cpp" alt="" coords="2018,243,2287,299"/>
+<area shape="rect" id="node15" href="$cpu_2lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration_cpu\l/lucas_kanade_test.cpp" alt="" coords="2312,235,2503,306"/>
+<area shape="rect" id="node16" href="$morphological__filter__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/morphological_filter/morphological\l_filter_example.cpp" alt="" coords="2527,235,2755,306"/>
+<area shape="rect" id="node17" href="$main_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/msr/main.cpp" alt="" coords="2779,243,2969,299"/>
+<area shape="rect" id="node18" href="$photometric__equalise__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/photometric_equalise/photometric\l_equalise_example.cpp" alt="" coords="2993,235,3219,306"/>
+<area shape="rect" id="node19" href="$producer__multiplexer__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/producer_multiplexer/producer\l_multiplexer_example.cpp" alt="" coords="3243,235,3449,306"/>
+<area shape="rect" id="node20" href="$save__texture__to__video__file__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/save_texture_to_video_file\l/save_texture_to_video_file\l_example.cpp" alt="" coords="3473,228,3664,313"/>
+<area shape="rect" id="node21" href="$screen__capture_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/screen_capture/screen_capture.cpp" alt="" coords="3688,243,3927,299"/>
+<area shape="rect" id="node22" href="$target__injector__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/target_injector/target_injector\l_example.cpp" alt="" coords="3951,235,4149,306"/>
+<area shape="rect" id="node23" href="$video__producer__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/video_producer/video_producer\l_example.cpp" alt="" coords="4174,235,4387,306"/>
+<area shape="rect" id="node24" href="$multi__ffmpeg__consumer_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/multi_ffmpeg_consumer.cpp" alt="" coords="4412,243,4627,299"/>
 </map>

@@ -1,8 +1,8 @@
 <map id="flitr::TiXmlBase::GetChar" name="flitr::TiXmlBase::GetChar">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#aa646c74921aa33156968b802bbf5566e" title="flitr::TiXmlBase::ReadText" alt="" coords="225,62,402,89"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_attribute.html#ad62774421b814894b995af3b5d231dda" title="flitr::TiXmlAttribute\l::Parse" alt="" coords="461,24,592,65"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_text.html#a8d2dcfa41fc73d3e62dacc2fcf633819" title="flitr::TiXmlText::Parse" alt="" coords="451,93,602,119"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="848,28,979,69"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="651,24,799,65"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_element.html#ac786bce103042d3837c4cc2ff6967d41" title="flitr::TiXmlElement\l::ReadValue" alt="" coords="660,89,791,131"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#aa646c74921aa33156968b802bbf5566e" title="flitr::TiXmlBase::ReadText" alt="" coords="223,64,400,90"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_attribute.html#ad62774421b814894b995af3b5d231dda" title="flitr::TiXmlAttribute\l::Parse" alt="" coords="457,26,588,67"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_text.html#a8d2dcfa41fc73d3e62dacc2fcf633819" title="flitr::TiXmlText::Parse" alt="" coords="448,94,597,121"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="843,30,973,71"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="645,26,795,67"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_element.html#ac786bce103042d3837c4cc2ff6967d41" title="flitr::TiXmlElement\l::ReadValue" alt="" coords="655,91,785,132"/>
 </map>

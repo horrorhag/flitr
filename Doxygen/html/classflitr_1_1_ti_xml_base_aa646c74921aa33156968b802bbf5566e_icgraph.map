@@ -1,7 +1,7 @@
 <map id="flitr::TiXmlBase::ReadText" name="flitr::TiXmlBase::ReadText">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_attribute.html#ad62774421b814894b995af3b5d231dda" title="flitr::TiXmlAttribute\l::Parse" alt="" coords="243,24,373,65"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_text.html#a8d2dcfa41fc73d3e62dacc2fcf633819" title="flitr::TiXmlText::Parse" alt="" coords="233,93,383,119"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="629,28,760,69"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="433,24,581,65"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#ac786bce103042d3837c4cc2ff6967d41" title="flitr::TiXmlElement\l::ReadValue" alt="" coords="441,89,572,131"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_attribute.html#ad62774421b814894b995af3b5d231dda" title="flitr::TiXmlAttribute\l::Parse" alt="" coords="240,26,371,67"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_text.html#a8d2dcfa41fc73d3e62dacc2fcf633819" title="flitr::TiXmlText::Parse" alt="" coords="231,94,380,121"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="625,30,756,71"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="428,26,577,67"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#ac786bce103042d3837c4cc2ff6967d41" title="flitr::TiXmlElement\l::ReadValue" alt="" coords="437,91,568,132"/>
 </map>

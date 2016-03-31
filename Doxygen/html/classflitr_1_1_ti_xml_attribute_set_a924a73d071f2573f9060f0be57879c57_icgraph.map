@@ -1,6 +1,6 @@
 <map id="flitr::TiXmlAttributeSet::Remove" name="flitr::TiXmlAttributeSet::Remove">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a56979767deca794376b1dfa69a525b2a" title="flitr::TiXmlElement\l::RemoveAttribute" alt="" coords="205,5,336,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a5670933ec2d7d9763b9891acc05d7f7d" title="flitr::TiXmlElement\l::ClearThis" alt="" coords="205,70,336,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="384,37,515,78"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#aa049a47c5081c0d021968666360da261" title="flitr::TiXmlElement\l::~TiXmlElement" alt="" coords="384,102,515,143"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a56979767deca794376b1dfa69a525b2a" title="flitr::TiXmlElement\l::RemoveAttribute" alt="" coords="204,5,335,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a5670933ec2d7d9763b9891acc05d7f7d" title="flitr::TiXmlElement\l::ClearThis" alt="" coords="204,71,335,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="383,37,513,79"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#aa049a47c5081c0d021968666360da261" title="flitr::TiXmlElement\l::~TiXmlElement" alt="" coords="383,103,513,144"/>
 </map>

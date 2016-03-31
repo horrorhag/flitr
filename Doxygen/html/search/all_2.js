@@ -5,6 +5,7 @@ var searchData=
   ['base2numimages_5f',['base2NumImages_',['../class_c_p_u_a_v_r_g_i_m_g___shader.html#a501ba5a2c5ec8c52981720d51db40743',1,'CPUAVRGIMG_Shader']]],
   ['base2windowlength_5f',['base2WindowLength_',['../classflitr_1_1_f_i_p_average_image.html#a7bf9447718775733455b76b5a8e285f7',1,'flitr::FIPAverageImage::base2WindowLength_()'],['../classflitr_1_1_f_i_p_beat_image.html#a62a34f5872c983be3fcc0e734059bb8e',1,'flitr::FIPBeatImage::base2WindowLength_()']]],
   ['beat_5fimage_5fexample_2ecpp',['beat_image_example.cpp',['../beat__image__example_8cpp.html',1,'']]],
+  ['beat_5fimage_5fexample_2ed',['beat_image_example.d',['../beat__image__example_8d.html',1,'']]],
   ['beatimagevec_5f',['beatImageVec_',['../classflitr_1_1_f_i_p_beat_image.html#afb85ae73da633ffc4f0eb8beea95bfcc',1,'flitr::FIPBeatImage']]],
   ['begin',['begin',['../classpitched__2d__range.html#ac911da3a37271c8bfd56330032aa0c53',1,'pitched_2d_range']]],
   ['biheight',['biHeight',['../struct___d_s___m_e_d_i_a___f_o_r_m_a_t.html#a064a0ad6e1c39136eeb2bac90bf9b271',1,'_DS_MEDIA_FORMAT']]],

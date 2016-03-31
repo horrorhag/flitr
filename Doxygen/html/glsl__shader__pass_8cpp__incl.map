@@ -1,22 +1,8 @@
-<map id="examples/glsl_shader_pass/glsl_shader_pass.cpp" name="examples/glsl_shader_pass/glsl_shader_pass.cpp">
-<area shape="rect" id="node15" href="$ffmpeg__producer_8h.html" title="flitr/ffmpeg_producer.h" alt="" coords="377,111,529,140"/>
-<area shape="rect" id="node72" href="$multi__ffmpeg__consumer_8h.html" title="flitr/multi_ffmpeg\l_consumer.h" alt="" coords="1994,102,2112,149"/>
-<area shape="rect" id="node104" href="$multi__osg__consumer_8h.html" title="flitr/multi_osg_consumer.h" alt="" coords="2136,111,2309,140"/>
-<area shape="rect" id="node115" href="$textured__quad_8h.html" title="flitr/textured_quad.h" alt="" coords="3421,111,3557,140"/>
-<area shape="rect" id="node131" href="$manipulator__utils_8h.html" title="flitr/manipulator_utils.h" alt="" coords="3894,111,4046,140"/>
-<area shape="rect" id="node136" href="$include_2flitr_2simple__shader__pass_8h.html" title="flitr/simple_shader\l_pass.h" alt="" coords="3002,102,3130,149"/>
-<area shape="rect" id="node153" href="$render__to__video_8h.html" title="render_to_video.h" alt="" coords="2333,111,2458,140"/>
-<area shape="rect" id="node19" href="$ffmpeg__reader_8h.html" title="flitr/ffmpeg_reader.h" alt="" coords="1126,197,1265,227"/>
-<area shape="rect" id="node54" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="377,197,529,227"/>
-<area shape="rect" id="node62" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="174,197,321,227"/>
-<area shape="rect" id="node21" href="$image_8h.html" title="flitr/image.h" alt="" coords="626,371,717,400"/>
-<area shape="rect" id="node23" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="922,448,1053,477"/>
-<area shape="rect" id="node29" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="2432,284,2570,313"/>
-<area shape="rect" id="node32" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="3464,371,3578,400"/>
-<area shape="rect" id="node34" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="2469,371,2584,400"/>
-<area shape="rect" id="node66" href="$shared__image__buffer_8h.html" title="flitr/shared_image\l_buffer.h" alt="" coords="354,275,480,322"/>
-<area shape="rect" id="node74" href="$ffmpeg__utils_8h.html" title="flitr/ffmpeg_utils.h" alt="" coords="2232,284,2357,313"/>
-<area shape="rect" id="node77" href="$image__consumer_8h.html" title="flitr/image_consumer.h" alt="" coords="604,197,758,227"/>
-<area shape="rect" id="node80" href="$ffmpeg__writer_8h.html" title="flitr/ffmpeg_writer.h" alt="" coords="1981,197,2114,227"/>
-<area shape="rect" id="node94" href="$metadata__writer_8h.html" title="flitr/metadata_writer.h" alt="" coords="833,197,980,227"/>
+<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp">
+<area shape="rect" id="node2" href="$glsl__shader__pass_8h.html" title="flitr/modules/glsl\l_shader_passes/glsl\l_shader_pass.h" alt="" coords="238,124,382,180"/>
+<area shape="rect" id="node5" href="$glsl__image__processor_8h.html" title="flitr/glsl_image_processor.h" alt="" coords="887,228,1071,255"/>
+<area shape="rect" id="node6" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="343,310,461,337"/>
+<area shape="rect" id="node7" href="$texture_8h.html" title="flitr/texture.h" alt="" coords="485,310,581,337"/>
+<area shape="rect" id="node10" href="$parameters_8h.html" title="flitr/modules/parameters\l/parameters.h" alt="" coords="154,303,319,344"/>
+<area shape="rect" id="node9" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="475,392,591,419"/>
 </map>

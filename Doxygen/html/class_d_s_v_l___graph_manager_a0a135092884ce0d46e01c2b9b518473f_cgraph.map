@@ -1,5 +1,5 @@
 <map id="DSVL_GraphManager::EnableMemoryBuffer" name="DSVL_GraphManager::EnableMemoryBuffer">
-<area shape="rect" id="node2" href="$_d_s_v_l___helpers_8cpp.html#acd18d145f3382f9eff3d113eddd6543f" title="getPin" alt="" coords="260,5,319,32"/>
-<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a35e6ac9f9d0c20a8c6d06b82bafeee38" title="DSVL_GraphManager::\lQueryInterface" alt="" coords="211,57,368,98"/>
-<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a566ee64efab04670b21b9adfa376b03c" title="DSVL_GraphManager::\lAddRef" alt="" coords="416,57,573,98"/>
+<area shape="rect" id="node2" href="$_d_s_v_l___helpers_8cpp.html#acd18d145f3382f9eff3d113eddd6543f" title="getPin" alt="" coords="265,5,325,32"/>
+<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a35e6ac9f9d0c20a8c6d06b82bafeee38" title="DSVL_GraphManager::\lQueryInterface" alt="" coords="215,57,376,98"/>
+<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a566ee64efab04670b21b9adfa376b03c" title="DSVL_GraphManager::\lAddRef" alt="" coords="424,57,585,98"/>
 </map>

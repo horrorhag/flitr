@@ -1,5 +1,5 @@
 <map id="flitr::MultiFFmpegConsumerThread::run" name="flitr::MultiFFmpegConsumerThread::run">
-<area shape="rect" id="node3" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="237,5,381,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image.html#a2bcec747b309a766a3d087f9351cba16" title="flitr::Image::data" alt="" coords="251,75,368,104"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="237,127,381,174"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="240,5,385,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="254,71,371,98"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="240,123,385,164"/>
 </map>

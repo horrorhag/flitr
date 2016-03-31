@@ -1,6 +1,7 @@
 <map id="flitr::TextureCaptureProducer::init" name="flitr::TextureCaptureProducer::init">
-<area shape="rect" id="node3" href="$classflitr_1_1_texture_capture_producer.html#a4b35477078ab8da5daf55a02aa7c5884" title="flitr::TextureCaptureProducer\l::createTextures" alt="" coords="247,5,436,51"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_texture_capture_producer.html#a21d0ab171b23ab758b96114c424e7a2b" title="flitr::TextureCaptureProducer\l::setupCamera" alt="" coords="247,74,436,121"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_texture_capture_producer.html#a8ed3c93598a2e5b41e544ca10fb4931d" title="flitr::TextureCaptureProducer\l::createTexturedQuad" alt="" coords="247,143,436,190"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="485,5,611,51"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="488,38,615,79"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#aff80d161bdd950b65403353ef0e8f5c2" title="flitr::ImageFormat\l::setPixelFormat" alt="" coords="280,34,407,75"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_texture_capture_producer.html#a4b35477078ab8da5daf55a02aa7c5884" title="flitr::TextureCaptureProducer\l::createTextures" alt="" coords="247,99,440,140"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_texture_capture_producer.html#a21d0ab171b23ab758b96114c424e7a2b" title="flitr::TextureCaptureProducer\l::setupCamera" alt="" coords="247,164,440,206"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_texture_capture_producer.html#a8ed3c93598a2e5b41e544ca10fb4931d" title="flitr::TextureCaptureProducer\l::createTexturedQuad" alt="" coords="247,230,440,271"/>
 </map>

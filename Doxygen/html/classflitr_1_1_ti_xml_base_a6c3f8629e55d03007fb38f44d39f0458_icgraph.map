@@ -1,16 +1,16 @@
 <map id="flitr::TiXmlBase::IsWhiteSpace" name="flitr::TiXmlBase::IsWhiteSpace">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="219,239,399,281"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_base.html#aa646c74921aa33156968b802bbf5566e" title="flitr::TiXmlBase::ReadText" alt="" coords="449,108,626,135"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_attribute.html#ad62774421b814894b995af3b5d231dda" title="flitr::TiXmlAttribute\l::Parse" alt="" coords="685,109,816,150"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="882,50,1030,91"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_text.html#a1c120428e3b3cf24d79706e6d2b65aa6" title="flitr::TiXmlText::Blank" alt="" coords="235,440,384,467"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="1085,414,1216,455"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_element.html#ac786bce103042d3837c4cc2ff6967d41" title="flitr::TiXmlElement\l::ReadValue" alt="" coords="891,414,1021,455"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#a789ad2f06f93d52bdb5570b2f3670289" title="flitr::TiXmlDocument\l::Parse" alt="" coords="679,298,822,339"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_node.html#ac1e3a8e7578be463b04617786120c2bb" title="flitr::TiXmlNode::Identify" alt="" coords="455,393,619,420"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_unknown.html#aa51c2694e4177b5f0b5429ee5a81b58d" title="flitr::TiXmlUnknown\l::Parse" alt="" coords="469,210,606,251"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_comment.html#a43bddc18ac057734b41d84653b71d3e0" title="flitr::TiXmlComment\l::Parse" alt="" coords="468,327,607,369"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_text.html#a8d2dcfa41fc73d3e62dacc2fcf633819" title="flitr::TiXmlText::Parse" alt="" coords="675,196,826,223"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_document.html#a41f6fe7200864d1dca663d230caf8db6" title="flitr::TiXmlDocument\l::LoadFile" alt="" coords="885,334,1027,375"/>
-<area shape="rect" id="node11" href="$namespaceanonymous__namespace_02video__producer_8cpp_03.html#a356eb44e99aa18edd32131d698a84c85" title="anonymous_namespace\l\{video_producer::cpp\}\l::SetConfigSetting" alt="" coords="875,255,1037,311"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="217,239,396,280"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_base.html#aa646c74921aa33156968b802bbf5566e" title="flitr::TiXmlBase::ReadText" alt="" coords="444,107,621,134"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_attribute.html#ad62774421b814894b995af3b5d231dda" title="flitr::TiXmlAttribute\l::Parse" alt="" coords="679,108,809,149"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="875,49,1025,91"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_text.html#a1c120428e3b3cf24d79706e6d2b65aa6" title="flitr::TiXmlText::Blank" alt="" coords="233,439,381,466"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="1081,413,1212,455"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_element.html#ac786bce103042d3837c4cc2ff6967d41" title="flitr::TiXmlElement\l::ReadValue" alt="" coords="885,413,1015,455"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#a789ad2f06f93d52bdb5570b2f3670289" title="flitr::TiXmlDocument\l::Parse" alt="" coords="673,297,815,339"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_node.html#ac1e3a8e7578be463b04617786120c2bb" title="flitr::TiXmlNode::Identify" alt="" coords="451,393,615,419"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_unknown.html#aa51c2694e4177b5f0b5429ee5a81b58d" title="flitr::TiXmlUnknown\l::Parse" alt="" coords="464,209,601,251"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_comment.html#a43bddc18ac057734b41d84653b71d3e0" title="flitr::TiXmlComment\l::Parse" alt="" coords="463,327,602,368"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_text.html#a8d2dcfa41fc73d3e62dacc2fcf633819" title="flitr::TiXmlText::Parse" alt="" coords="669,195,819,222"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_document.html#a41f6fe7200864d1dca663d230caf8db6" title="flitr::TiXmlDocument\l::LoadFile" alt="" coords="879,333,1021,375"/>
+<area shape="rect" id="node11" href="$namespaceanonymous__namespace_02video__producer_8cpp_03.html#a356eb44e99aa18edd32131d698a84c85" title="anonymous_namespace\l\{video_producer::cpp\}\l::SetConfigSetting" alt="" coords="867,253,1033,309"/>
 </map>

@@ -1,4 +1,4 @@
 <map id="flitr::TiXmlBase" name="flitr::TiXmlBase">
-<area shape="rect" id="node2" href="$structflitr_1_1_ti_xml_cursor.html" title="{flitr::TiXmlCursor\n|+ row\l+ col\l|+ TiXmlCursor()\l+ Clear()\l}" alt="" coords="5,5,125,112"/>
-<area shape="rect" id="node3" href="$structflitr_1_1_ti_xml_base_1_1_entity.html" title="{flitr::TiXmlBase::Entity\n|+ str\l+ strLength\l+ chr\l|}" alt="" coords="151,5,304,112"/>
+<area shape="rect" id="node2" href="$structflitr_1_1_ti_xml_cursor.html" title="{flitr::TiXmlCursor\n|+ row\l+ col\l|+ TiXmlCursor()\l+ Clear()\l}" alt="" coords="5,5,127,112"/>
+<area shape="rect" id="node3" href="$structflitr_1_1_ti_xml_base_1_1_entity.html" title="{flitr::TiXmlBase::Entity\n|+ str\l+ strLength\l+ chr\l|}" alt="" coords="151,5,303,112"/>
 </map>

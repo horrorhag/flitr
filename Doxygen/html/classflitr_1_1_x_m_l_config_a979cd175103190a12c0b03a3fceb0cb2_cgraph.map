@@ -1,9 +1,9 @@
 <map id="flitr::XMLConfig::elementTextToSStream" name="flitr::XMLConfig::elementTextToSStream">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="222,82,399,123"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#aa6dedd8a146acf3b1bc0903deb2d411a" title="flitr::TiXmlElement\l::GetText" alt="" coords="245,165,376,206"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="454,131,631,157"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="449,29,637,56"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="451,80,635,107"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_node.html#a5db70b845325d0cb032804be0db8782f" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="461,181,624,208"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="465,232,620,259"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="221,82,399,123"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#aa6dedd8a146acf3b1bc0903deb2d411a" title="flitr::TiXmlElement\l::GetText" alt="" coords="245,165,375,206"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="452,131,629,157"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="447,29,635,56"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="448,80,633,107"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_node.html#a5db70b845325d0cb032804be0db8782f" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="459,181,622,208"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="463,232,618,259"/>
 </map>

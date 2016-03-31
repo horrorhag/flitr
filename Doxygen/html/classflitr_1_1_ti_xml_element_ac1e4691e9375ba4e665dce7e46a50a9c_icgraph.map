@@ -1,6 +1,6 @@
 <map id="flitr::TiXmlElement::Attribute" name="flitr::TiXmlElement::Attribute">
 <area shape="rect" id="node2" href="$classflitr_1_1_x_m_l_config.html#a2e4e28718f630931bc1f38e653493ef2" title="Get a string variable from the configuration file. " alt="" coords="188,5,361,32"/>
 <area shape="rect" id="node3" href="$classflitr_1_1_x_m_l_config.html#a8ee45437f0cdf143302b5ab56e80c112" title="Get a vector of string variables from the configuration file. " alt="" coords="188,57,361,98"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_x_m_l_config.html#a0397e7a2748304317da85c8bcad4718d" title="Get a double floating point variable from the configuration file. " alt="" coords="185,123,365,149"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_x_m_l_config.html#a0397e7a2748304317da85c8bcad4718d" title="Get a double floating point variable from the configuration file. " alt="" coords="184,123,365,149"/>
 <area shape="rect" id="node5" href="$classflitr_1_1_x_m_l_config.html#a5be024e03dbcf37cfd5a13e5d82e9b89" title="Obtain a vector from an xml file. " alt="" coords="186,173,363,200"/>
 </map>

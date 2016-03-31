@@ -1,8 +1,8 @@
 <map id="flitr::XMLConfig::save" name="flitr::XMLConfig::save">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_document.html#a21c0aeb0d0a720169ad4ac89523ebe93" title="Save a file using the current document value. Returns true if successful. " alt="" coords="203,5,346,46"/>
-<area shape="rect" id="node4" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="215,71,334,97"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="395,12,549,39"/>
-<area shape="rect" id="node5" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="403,71,541,97"/>
-<area shape="rect" id="node6" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="634,20,758,47"/>
-<area shape="rect" id="node7" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="598,71,794,97"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_document.html#a21c0aeb0d0a720169ad4ac89523ebe93" title="Save a file using the current document value. Returns true if successful. " alt="" coords="203,5,345,47"/>
+<area shape="rect" id="node4" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="215,71,333,98"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="393,13,548,39"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="401,71,541,98"/>
+<area shape="rect" id="node6" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="633,21,759,47"/>
+<area shape="rect" id="node7" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="596,71,796,98"/>
 </map>

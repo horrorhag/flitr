@@ -1,8 +1,8 @@
 <map id="flitr::RawVideoFileWriter" name="flitr::RawVideoFileWriter">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="5,405,187,747"/>
-<area shape="rect" id="node3" href="$structflitr_1_1_file_header.html" title="{flitr::FileHeader\n|+ startChar\l+ stopChar\l|+ FileHeader()\l}" alt="" coords="211,530,321,622"/>
-<area shape="rect" id="node4" href="$structflitr_1_1_info_header.html" title="{flitr::InfoHeader\n|+ startChar\l+ versionMajor\l+ versionMinor\l+ dataSize\l+ stopChar\l|+ InfoHeader()\l}" alt="" coords="201,205,312,341"/>
-<area shape="rect" id="node5" href="$structflitr_1_1_image_format_data.html" title="{flitr::ImageFormatData\n|+ imageHeight\l+ imageWidth\l+ pixelFormat\l+ frameRate\l+ numberFrames\l|}" alt="" coords="181,5,333,141"/>
-<area shape="rect" id="node6" title="STL class. " alt="" coords="359,537,437,615"/>
-<area shape="rect" id="node7" title="STL class. " alt="" coords="338,227,464,319"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="5,403,192,744"/>
+<area shape="rect" id="node3" href="$structflitr_1_1_file_header.html" title="{flitr::FileHeader\n|+ startChar\l+ stopChar\l|+ FileHeader()\l}" alt="" coords="216,527,328,619"/>
+<area shape="rect" id="node4" href="$structflitr_1_1_info_header.html" title="{flitr::InfoHeader\n|+ startChar\l+ versionMajor\l+ versionMinor\l+ dataSize\l+ stopChar\l|+ InfoHeader()\l}" alt="" coords="206,204,319,340"/>
+<area shape="rect" id="node5" href="$structflitr_1_1_image_format_data.html" title="{flitr::ImageFormatData\n|+ imageHeight\l+ imageWidth\l+ pixelFormat\l+ frameRate\l+ numberFrames\l|}" alt="" coords="185,5,340,141"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="364,535,444,612"/>
+<area shape="rect" id="node7" title="STL class. " alt="" coords="343,226,470,318"/>
 </map>

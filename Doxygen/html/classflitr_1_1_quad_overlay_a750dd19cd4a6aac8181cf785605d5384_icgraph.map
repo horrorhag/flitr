@@ -1,8 +1,8 @@
 <map id="flitr::QuadOverlay::updateQuad" name="flitr::QuadOverlay::updateQuad">
-<area shape="rect" id="node3" href="$classflitr_1_1_quad_overlay.html#ac1448dde342631f31121c2723845bd53" title="flitr::QuadOverlay\l::makeQuad" alt="" coords="180,5,303,51"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_quad_overlay.html#a492cfdde734d94456fa2f8c1db0194aa" title="flitr::QuadOverlay\l::setCenter" alt="" coords="180,74,303,121"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_quad_overlay.html#a472c2e17f0c3f2eb4b088258286d0394" title="flitr::QuadOverlay\l::setWidth" alt="" coords="180,143,303,190"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_quad_overlay.html#a6fb8814b49b121666d364ef21469cbcd" title="flitr::QuadOverlay\l::setHeight" alt="" coords="180,213,303,259"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_quad_overlay.html#a188d0172ddb90f635c20ff8653b01cc7" title="flitr::QuadOverlay\l::QuadOverlay" alt="" coords="353,5,476,51"/>
-<area shape="rect" id="node9" href="$hud__overlay_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="389,152,440,181"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_quad_overlay.html#ac1448dde342631f31121c2723845bd53" title="flitr::QuadOverlay\l::makeQuad" alt="" coords="179,5,304,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_quad_overlay.html#a492cfdde734d94456fa2f8c1db0194aa" title="flitr::QuadOverlay\l::setCenter" alt="" coords="179,71,304,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_quad_overlay.html#a472c2e17f0c3f2eb4b088258286d0394" title="flitr::QuadOverlay\l::setWidth" alt="" coords="179,136,304,177"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_quad_overlay.html#a6fb8814b49b121666d364ef21469cbcd" title="flitr::QuadOverlay\l::setHeight" alt="" coords="179,201,304,243"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_quad_overlay.html#a188d0172ddb90f635c20ff8653b01cc7" title="flitr::QuadOverlay\l::QuadOverlay" alt="" coords="352,5,477,47"/>
+<area shape="rect" id="node5" href="$hud__overlay_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="389,143,440,170"/>
 </map>

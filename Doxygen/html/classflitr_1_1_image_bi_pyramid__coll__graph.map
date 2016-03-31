@@ -1,4 +1,4 @@
 <map id="flitr::ImageBiPyramid" name="flitr::ImageBiPyramid">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_bi_pyramid_1_1_pyramid_rebuilt___camera_post_draw_callback.html" title="{flitr::ImageBiPyramid\l::PyramidRebuilt_CameraPost\lDrawCallback\n||+ PyramidRebuilt_CameraPost\lDrawCallback()\l+ operator()()\l}" alt="" coords="29,147,232,283"/>
-<area shape="rect" id="node4" href="$class_post_render_callback.html" title="{PostRenderCallback\n||+ callback()\l}" alt="" coords="134,5,276,83"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_bi_pyramid_1_1_pyramid_rebuilt___camera_post_draw_callback.html" title="{flitr::ImageBiPyramid\l::PyramidRebuilt_CameraPost\lDrawCallback\n||+ PyramidRebuilt_CameraPost\lDrawCallback()\l+ operator()()\l}" alt="" coords="28,145,233,281"/>
+<area shape="rect" id="node4" href="$class_post_render_callback.html" title="{PostRenderCallback\n||+ callback()\l}" alt="" coords="133,5,277,83"/>
 </map>

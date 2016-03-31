@@ -1,4 +1,4 @@
 <map id="flitr::FIPCameraShake::init" name="flitr::FIPCameraShake::init">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="210,5,353,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_camera_shake.html#a507df68801f8e7fa9dd65000520a9324" title="flitr::FIPCameraShake\l::updateKernel" alt="" coords="205,70,357,111"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="211,5,355,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_camera_shake.html#a507df68801f8e7fa9dd65000520a9324" title="flitr::FIPCameraShake\l::updateKernel" alt="" coords="207,71,360,112"/>
 </map>

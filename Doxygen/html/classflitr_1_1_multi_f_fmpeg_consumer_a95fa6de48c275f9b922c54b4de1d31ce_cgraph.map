@@ -1,5 +1,5 @@
 <map id="flitr::MultiFFmpegConsumer::~MultiFFmpegConsumer" name="flitr::MultiFFmpegConsumer::~MultiFFmpegConsumer">
-<area shape="rect" id="node3" href="$classflitr_1_1_multi_f_fmpeg_consumer.html#a9b2734515291a9087fbfeee4c2a078d9" title="flitr::MultiFFmpegConsumer\l::closeFiles" alt="" coords="237,5,421,51"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_multi_f_fmpeg_consumer_thread.html#af79715fb593dbdf18c391ed4513a4ad6" title="flitr::MultiFFmpegConsumer\lThread::setExit" alt="" coords="237,74,421,121"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_multi_f_fmpeg_consumer.html#ae7a4f21fba1733f027204beb21041129" title="flitr::MultiFFmpegConsumer\l::stopWriting" alt="" coords="469,5,653,51"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_multi_f_fmpeg_consumer.html#ab705e41f6eda45c9e84f6ae21f311e32" title="flitr::MultiFFmpegConsumer\l::closeFiles" alt="" coords="240,5,427,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_multi_f_fmpeg_consumer_thread.html#af79715fb593dbdf18c391ed4513a4ad6" title="flitr::MultiFFmpegConsumer\lThread::setExit" alt="" coords="240,71,427,112"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_f_fmpeg_consumer.html#ae7a4f21fba1733f027204beb21041129" title="flitr::MultiFFmpegConsumer\l::stopWriting" alt="" coords="475,5,661,47"/>
 </map>

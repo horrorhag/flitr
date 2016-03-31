@@ -1,16 +1,16 @@
 <map id="flitr::TiXmlAttribute::SetValue" name="flitr::TiXmlAttribute::SetValue">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#abf0b3bd7f0e4c746a89ec6e7f101fc32" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="184,245,315,286"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_attribute.html#a7e065df640116a62ea4f4b7da5449cc8" title="Set the value from an integer. " alt="" coords="184,433,315,474"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_attribute.html#a0316da31373496c4368ad549bf711394" title="Set the value from a double. " alt="" coords="184,498,315,539"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="397,70,528,111"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_x_m_l_config.html#a626bc14f2a5bc5dbb71ea74508b08ea2" title="Write a vector of elements (and each&#39;s attributes) to the configuration file. " alt="" coords="363,135,562,177"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_x_m_l_config.html#a2b016a16589418d3209c35719132259c" title="Set the value of attribute in the configuration file. " alt="" coords="376,201,549,228"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_x_m_l_config.html#a8b7f2e42bf7fb585ced2460cb982dd75" title="Set the value of attribute in the configuration file. " alt="" coords="385,252,540,279"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_x_m_l_config.html#a38ec33d25396af1c2b6451fa43d1115a" title="Set the value of attribute in the configuration file. " alt="" coords="373,303,553,329"/>
-<area shape="rect" id="node11" href="$namespaceanonymous__namespace_02video__producer_8cpp_03.html#a356eb44e99aa18edd32131d698a84c85" title="anonymous_namespace\l\{video_producer::cpp\}\l::SetConfigSetting" alt="" coords="381,353,544,409"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="611,5,741,46"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="611,70,741,111"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="611,135,741,177"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_element.html#ace6f4be75e373726d4774073d666d1a7" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="397,433,528,474"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_element.html#a0d1dd975d75496778177e35abfe0ec0b" title="flitr::TiXmlElement\l::SetDoubleAttribute" alt="" coords="393,498,533,539"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#abf0b3bd7f0e4c746a89ec6e7f101fc32" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="184,245,315,287"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_attribute.html#a7e065df640116a62ea4f4b7da5449cc8" title="Set the value from an integer. " alt="" coords="184,435,315,476"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_attribute.html#a0316da31373496c4368ad549bf711394" title="Set the value from a double. " alt="" coords="184,500,315,541"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="397,71,527,112"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_x_m_l_config.html#a626bc14f2a5bc5dbb71ea74508b08ea2" title="Write a vector of elements (and each&#39;s attributes) to the configuration file. " alt="" coords="363,136,561,177"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_x_m_l_config.html#a2b016a16589418d3209c35719132259c" title="Set the value of attribute in the configuration file. " alt="" coords="375,202,549,229"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_x_m_l_config.html#a8b7f2e42bf7fb585ced2460cb982dd75" title="Set the value of attribute in the configuration file. " alt="" coords="385,253,539,279"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_x_m_l_config.html#a38ec33d25396af1c2b6451fa43d1115a" title="Set the value of attribute in the configuration file. " alt="" coords="372,303,552,330"/>
+<area shape="rect" id="node11" href="$namespaceanonymous__namespace_02video__producer_8cpp_03.html#a356eb44e99aa18edd32131d698a84c85" title="anonymous_namespace\l\{video_producer::cpp\}\l::SetConfigSetting" alt="" coords="379,354,545,410"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="609,5,740,47"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="609,71,740,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="609,136,740,177"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_element.html#ace6f4be75e373726d4774073d666d1a7" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="397,435,527,476"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_element.html#a0d1dd975d75496778177e35abfe0ec0b" title="flitr::TiXmlElement\l::SetDoubleAttribute" alt="" coords="391,500,533,541"/>
 </map>

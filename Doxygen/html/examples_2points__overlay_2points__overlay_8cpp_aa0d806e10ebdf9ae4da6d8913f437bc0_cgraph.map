@@ -1,4 +1,4 @@
 <map id="updatePoints" name="updatePoints">
-<area shape="rect" id="node3" href="$classflitr_1_1_points_overlay.html#a7ee2e19160c12156b903b39be1db55b6" title="flitr::PointsOverlay\l::setVertices" alt="" coords="152,5,283,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_points_overlay.html#ac17d3adf8b6129cd2d92d9c7d99a05cb" title="flitr::PointsOverlay\l::addVertex" alt="" coords="152,74,283,121"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_points_overlay.html#a7ee2e19160c12156b903b39be1db55b6" title="flitr::PointsOverlay\l::setVertices" alt="" coords="153,5,284,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_points_overlay.html#ac17d3adf8b6129cd2d92d9c7d99a05cb" title="flitr::PointsOverlay\l::addVertex" alt="" coords="153,71,284,112"/>
 </map>

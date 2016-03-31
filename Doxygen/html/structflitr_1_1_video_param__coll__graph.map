@@ -1,7 +1,7 @@
 <map id="flitr::VideoParam" name="flitr::VideoParam">
-<area shape="rect" id="node2" href="$class_d_s_v_l___video_source.html" title="{DSVL_VideoSource\n|&#45; p_graphManager\l|+ DSVL_VideoSource()\l+ ~DSVL_VideoSource()\l+ BuildGraphFromXMLString()\l+ BuildGraphFromXMLFile()\l+ ReleaseGraph()\l+ EnableMemoryBuffer()\l+ DisableMemoryBuffer()\l+ IsGraphInitialized()\l+ WaitForNextSample()\l+ CheckoutMemoryBuffer()\land 6 more...\l}" alt="" coords="5,149,203,373"/>
-<area shape="rect" id="node3" href="$structflitr_1_1vc__buffer.html" title="{flitr::vc_buffer\n|+ start\l+ length\l|}" alt="" coords="227,215,329,307"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="364,223,443,300"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="341,6,467,98"/>
-<area shape="rect" id="node6" href="$struct_memory_buffer_handle.html" title="{MemoryBufferHandle\n|+ n\l+ t\l|}" alt="" coords="469,215,613,307"/>
+<area shape="rect" id="node2" href="$class_d_s_v_l___video_source.html" title="{DSVL_VideoSource\n|&#45; p_graphManager\l|+ DSVL_VideoSource()\l+ ~DSVL_VideoSource()\l+ BuildGraphFromXMLString()\l+ BuildGraphFromXMLFile()\l+ ReleaseGraph()\l+ EnableMemoryBuffer()\l+ DisableMemoryBuffer()\l+ IsGraphInitialized()\l+ WaitForNextSample()\l+ CheckoutMemoryBuffer()\land 6 more...\l}" alt="" coords="5,147,208,371"/>
+<area shape="rect" id="node3" href="$structflitr_1_1vc__buffer.html" title="{flitr::vc_buffer\n|+ start\l+ length\l|}" alt="" coords="233,213,335,305"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="369,220,449,297"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="346,5,473,97"/>
+<area shape="rect" id="node6" href="$struct_memory_buffer_handle.html" title="{MemoryBufferHandle\n|+ n\l+ t\l|}" alt="" coords="474,213,622,305"/>
 </map>

@@ -1,7 +1,7 @@
 <map id="flitr::FIPGradientXImage::init" name="flitr::FIPGradientXImage::init">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="218,5,361,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="216,70,363,111"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="227,135,352,177"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="411,70,555,111"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="603,70,739,111"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="221,5,365,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="219,71,367,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="229,136,356,177"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="415,71,560,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="608,71,747,112"/>
 </map>

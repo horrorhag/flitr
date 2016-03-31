@@ -1,25 +1,25 @@
 <map id="flitr::TiXmlDocument::LoadFile" name="flitr::TiXmlDocument::LoadFile">
 <area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_document.html#a735c23e318597b920c94eae77fa206de" title="flitr::TiXmlDocument\l::SetError" alt="" coords="678,102,821,143"/>
 <area shape="rect" id="node3" href="$structflitr_1_1_ti_xml_cursor.html#a2bbe619009168473e7e12abf2d05d287" title="flitr::TiXmlCursor\l::Clear" alt="" coords="937,34,1058,75"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_node.html#a708e7f953df61d4d2d12f73171550a4b" title="Delete all the children of this node. Does not affect &#39;this&#39;. " alt="" coords="197,365,349,392"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_document.html#a789ad2f06f93d52bdb5570b2f3670289" title="flitr::TiXmlDocument\l::Parse" alt="" coords="202,299,345,341"/>
-<area shape="rect" id="node24" href="$classflitr_1_1_ti_xml_document.html#a842f06267538cb28a0a91a203810c578" title="flitr::TiXmlDocument\l::Error" alt="" coords="202,417,345,458"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_node.html#a708e7f953df61d4d2d12f73171550a4b" title="Delete all the children of this node. Does not affect &#39;this&#39;. " alt="" coords="196,365,348,392"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_document.html#a789ad2f06f93d52bdb5570b2f3670289" title="flitr::TiXmlDocument\l::Parse" alt="" coords="201,299,343,341"/>
+<area shape="rect" id="node24" href="$classflitr_1_1_ti_xml_document.html#a842f06267538cb28a0a91a203810c578" title="flitr::TiXmlDocument\l::Error" alt="" coords="201,417,343,458"/>
 <area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_parsing_data.html#a65cee8ab77a36c605db08c84b4c30a7d" title="flitr::TiXmlParsingData\l::Stamp" alt="" coords="920,99,1075,141"/>
 <area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_parsing_data.html#ab05a433fe00c616f944f6bc2ee659b99" title="flitr::TiXmlParsingData\l::Cursor" alt="" coords="920,165,1075,206"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_document.html#a05d62af1e367cb0bcc4737375043a6f7" title="flitr::TiXmlDocument\l::ClearError" alt="" coords="427,551,570,593"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#a830e1e42aef76ce8d0cafcf6d49af410" title="flitr::TiXmlDocument\l::TabSize" alt="" coords="427,617,570,658"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="659,497,839,538"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_node.html#ac1e3a8e7578be463b04617786120c2bb" title="flitr::TiXmlNode::Identify" alt="" coords="417,449,581,476"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_base.html#a51631e6986179558b9e5850723ed165a" title="flitr::TiXmlBase::String\lEqual" alt="" coords="672,621,827,662"/>
-<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_base.html#a26d6863ac4aae250d2b651591ef4129e" title="flitr::TiXmlBase::Parse" alt="" coords="421,281,576,308"/>
-<area shape="rect" id="node18" href="$classflitr_1_1_ti_xml_node.html#a1a881212554b759865f6cac79a851d38" title="flitr::TiXmlNode::LinkEnd\lChild" alt="" coords="415,215,583,257"/>
-<area shape="rect" id="node22" href="$classflitr_1_1_ti_xml_node.html#aacb33714ed5a3e6a9948d65152c5622b" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="397,332,600,359"/>
-<area shape="rect" id="node23" href="$classflitr_1_1_ti_xml_declaration.html#ac41e8e1807a61c196d8d005ac3f0916a" title="Encoding. Will return an empty string if none was found. " alt="" coords="425,383,573,425"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_ti_xml_base.html#a6c3f8629e55d03007fb38f44d39f0458" title="flitr::TiXmlBase::IsWhite\lSpace" alt="" coords="915,497,1080,538"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_text.html#a87120a82b554589fc4aa5c368f87d124" title="Turns on or off a CDATA representation of text. " alt="" coords="658,445,841,472"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_document.html#a05d62af1e367cb0bcc4737375043a6f7" title="flitr::TiXmlDocument\l::ClearError" alt="" coords="427,551,569,593"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#a830e1e42aef76ce8d0cafcf6d49af410" title="flitr::TiXmlDocument\l::TabSize" alt="" coords="427,617,569,658"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="660,497,839,538"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_node.html#ac1e3a8e7578be463b04617786120c2bb" title="flitr::TiXmlNode::Identify" alt="" coords="416,449,580,476"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_base.html#a51631e6986179558b9e5850723ed165a" title="flitr::TiXmlBase::String\lEqual" alt="" coords="673,621,826,662"/>
+<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_base.html#a26d6863ac4aae250d2b651591ef4129e" title="flitr::TiXmlBase::Parse" alt="" coords="421,281,575,308"/>
+<area shape="rect" id="node18" href="$classflitr_1_1_ti_xml_node.html#a1a881212554b759865f6cac79a851d38" title="flitr::TiXmlNode::LinkEnd\lChild" alt="" coords="413,215,583,257"/>
+<area shape="rect" id="node22" href="$classflitr_1_1_ti_xml_node.html#aacb33714ed5a3e6a9948d65152c5622b" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="396,332,600,359"/>
+<area shape="rect" id="node23" href="$classflitr_1_1_ti_xml_declaration.html#ac41e8e1807a61c196d8d005ac3f0916a" title="Encoding. Will return an empty string if none was found. " alt="" coords="423,383,573,425"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_ti_xml_base.html#a6c3f8629e55d03007fb38f44d39f0458" title="flitr::TiXmlBase::IsWhite\lSpace" alt="" coords="915,497,1079,538"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_text.html#a87120a82b554589fc4aa5c368f87d124" title="Turns on or off a CDATA representation of text. " alt="" coords="659,445,839,472"/>
 <area shape="rect" id="node16" href="$classflitr_1_1_ti_xml_base.html#ae22522b2e8e1ac43102d16394f639fc8" title="flitr::TiXmlBase::IsAlpha" alt="" coords="667,395,831,421"/>
 <area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_base.html#a5b8d99b874fd7005de1d3b4cc4809746" title="flitr::TiXmlBase::ToLower" alt="" coords="912,628,1083,655"/>
 <area shape="rect" id="node19" href="$classflitr_1_1_ti_xml_node.html#aa66f4ebcd175204a168ed7c2d7b43071" title="flitr::TiXmlNode::GetDocument" alt="" coords="648,272,851,299"/>
 <area shape="rect" id="node21" href="$classflitr_1_1_ti_xml_node.html#aae5ee24b998219a223a2c1fedacd0ff6" title="flitr::TiXmlNode::Type" alt="" coords="674,221,825,248"/>
-<area shape="rect" id="node20" href="$classflitr_1_1_ti_xml_node.html#a377cc60ac5cd6b6db76b35be5187f3dc" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="899,272,1095,299"/>
+<area shape="rect" id="node20" href="$classflitr_1_1_ti_xml_node.html#a377cc60ac5cd6b6db76b35be5187f3dc" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="899,272,1096,299"/>
 </map>

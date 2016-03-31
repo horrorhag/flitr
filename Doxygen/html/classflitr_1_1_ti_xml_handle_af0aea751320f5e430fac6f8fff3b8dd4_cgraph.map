@@ -1,7 +1,7 @@
 <map id="flitr::TiXmlHandle::FirstChildElement" name="flitr::TiXmlHandle::FirstChildElement">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="190,73,367,114"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_handle.html#a62b2035b16311ca8c00d7528b3a673ae" title="Create a handle from any node (at any depth of the tree.) This can be a null pointer. " alt="" coords="217,138,340,179"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="422,5,599,32"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="417,80,605,107"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="419,131,603,157"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="188,73,365,114"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_handle.html#a62b2035b16311ca8c00d7528b3a673ae" title="Create a handle from any node (at any depth of the tree.) This can be a null pointer. " alt="" coords="215,138,339,179"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="419,5,596,32"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="413,80,601,107"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="415,131,600,157"/>
 </map>

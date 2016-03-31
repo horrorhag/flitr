@@ -1,6 +1,6 @@
 <map id="main" name="main">
-<area shape="rect" id="node3" href="$namespaceflitr.html#a22315eaf9685063d90b911f7ee4b1467" title="flitr::adjustCameraManipulator\lHomeForYUp" alt="" coords="105,5,300,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="140,74,265,121"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="140,143,265,190"/>
-<area shape="rect" id="node9" href="$high__resolution__time_8h.html#af08a3eb67336f2748e169a5da39d2846" title="Sole purpose is to provide currentTimeNanoSec() for a platform." alt="" coords="131,213,275,243"/>
+<area shape="rect" id="node2" href="$namespaceflitr.html#a22315eaf9685063d90b911f7ee4b1467" title="flitr::adjustCameraManipulator\lHomeForYUp" alt="" coords="104,5,304,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="141,71,267,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="141,136,267,177"/>
+<area shape="rect" id="node5" href="$high__resolution__time_8h.html#a43cacd26d60597d0659a098d56029f5d" title="Returns nanoseconds since the epoch! " alt="" coords="130,202,278,229"/>
 </map>

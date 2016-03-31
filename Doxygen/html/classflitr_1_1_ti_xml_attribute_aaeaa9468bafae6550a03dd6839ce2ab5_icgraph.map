@@ -1,11 +1,11 @@
 <map id="flitr::TiXmlAttribute::Name" name="flitr::TiXmlAttribute::Name">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="211,103,341,145"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_attribute_set.html#a745e50ddaae3bee93e4589321e0b9c1a" title="flitr::TiXmlAttributeSet::Add" alt="" coords="185,215,367,241"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="427,266,557,307"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="427,5,557,46"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="427,70,557,111"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="427,135,557,177"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_attribute_set.html#a5e28f5d32f048fba85d04dc317495bdc" title="flitr::TiXmlAttributeSet\l::FindOrCreate" alt="" coords="417,201,567,242"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_element.html#ace6f4be75e373726d4774073d666d1a7" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="621,167,752,209"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_element.html#a0d1dd975d75496778177e35abfe0ec0b" title="flitr::TiXmlElement\l::SetDoubleAttribute" alt="" coords="617,233,757,274"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="210,104,341,145"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_attribute_set.html#a745e50ddaae3bee93e4589321e0b9c1a" title="flitr::TiXmlAttributeSet::Add" alt="" coords="184,215,367,242"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_element.html#af95c9165159fd9dfdcc5b894a3fcf85b" title="flitr::TiXmlElement\l::Parse" alt="" coords="425,267,555,308"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="425,5,555,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="425,71,555,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="425,136,555,177"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_attribute_set.html#a5e28f5d32f048fba85d04dc317495bdc" title="flitr::TiXmlAttributeSet\l::FindOrCreate" alt="" coords="415,201,565,243"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_element.html#ace6f4be75e373726d4774073d666d1a7" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="619,168,749,209"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_element.html#a0d1dd975d75496778177e35abfe0ec0b" title="flitr::TiXmlElement\l::SetDoubleAttribute" alt="" coords="613,233,755,275"/>
 </map>

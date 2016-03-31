@@ -1,7 +1,7 @@
 <map id="main" name="main">
-<area shape="rect" id="node3" href="$classflitr_1_1_c_u_d_a_auto_contrast_pass.html#a50bd9e1b9123082f2a47190747e0cf2e" title="flitr::CUDAAutoContrastPass\l::getRoot" alt="" coords="105,5,300,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_c_u_d_a_auto_contrast_pass.html#a7bcd2ad4cd0129d1d5f1090fdf64d8f9" title="flitr::CUDAAutoContrastPass\l::getOutputTexture" alt="" coords="105,74,300,121"/>
-<area shape="rect" id="node7" href="$namespaceflitr.html#a22315eaf9685063d90b911f7ee4b1467" title="flitr::adjustCameraManipulator\lHomeForYUp" alt="" coords="105,143,300,190"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="140,213,265,259"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="140,282,265,329"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_c_u_d_a_auto_contrast_pass.html#a50bd9e1b9123082f2a47190747e0cf2e" title="flitr::CUDAAutoContrastPass\l::getRoot" alt="" coords="108,5,300,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_c_u_d_a_auto_contrast_pass.html#a7bcd2ad4cd0129d1d5f1090fdf64d8f9" title="flitr::CUDAAutoContrastPass\l::getOutputTexture" alt="" coords="108,71,300,112"/>
+<area shape="rect" id="node4" href="$namespaceflitr.html#a22315eaf9685063d90b911f7ee4b1467" title="flitr::adjustCameraManipulator\lHomeForYUp" alt="" coords="104,136,304,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="141,201,267,243"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="141,267,267,308"/>
 </map>

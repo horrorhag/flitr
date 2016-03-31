@@ -1,6 +1,7 @@
 var searchData=
 [
   ['f32imagevec_5f',['F32ImageVec_',['../classflitr_1_1_f_i_p_average_image_i_i_r.html#ac0e5881a3942be8025669b58bc049650',1,'flitr::FIPAverageImageIIR']]],
+  ['features',['features',['../build_2_c_make_files_2feature__tests_8c.html#a1582568e32f689337602a16bf8a5bff0',1,'features():&#160;feature_tests.c'],['../build_2_c_make_files_2feature__tests_8cxx.html#a1582568e32f689337602a16bf8a5bff0',1,'features():&#160;feature_tests.cxx'],['../xcode_2_c_make_files_2feature__tests_8c.html#a1582568e32f689337602a16bf8a5bff0',1,'features():&#160;feature_tests.c'],['../xcode_2_c_make_files_2feature__tests_8cxx.html#a1582568e32f689337602a16bf8a5bff0',1,'features():&#160;feature_tests.cxx']]],
   ['ffmpegwriters_5f',['FFmpegWriters_',['../classflitr_1_1_multi_f_fmpeg_consumer.html#acf079ecf4d7957aaaf737b94522cc809',1,'flitr::MultiFFmpegConsumer']]],
   ['file_5f',['File_',['../classflitr_1_1_raw_video_file_reader.html#aed60850b28c6eff4a7354a4dfa7fdf4d',1,'flitr::RawVideoFileReader::File_()'],['../classflitr_1_1_raw_video_file_writer.html#a9dcaeca526422b5382883e3ffc8f7ee3',1,'flitr::RawVideoFileWriter::File_()']]],
   ['file_5fend_5fchar',['FILE_END_CHAR',['../namespaceflitr.html#ac21b7c49a16c4d647dcc5f053059bd1c',1,'flitr']]],

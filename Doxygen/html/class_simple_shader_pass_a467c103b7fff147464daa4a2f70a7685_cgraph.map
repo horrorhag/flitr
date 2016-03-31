@@ -1,5 +1,5 @@
 <map id="SimpleShaderPass::SimpleShaderPass" name="SimpleShaderPass::SimpleShaderPass">
-<area shape="rect" id="node3" href="$class_simple_shader_pass.html#ade66d90f50ca44704f37efe09ea87993" title="SimpleShaderPass::create\lOutputTexture" alt="" coords="256,5,432,51"/>
-<area shape="rect" id="node5" href="$class_simple_shader_pass.html#a8a4f637a66de516e7fb35272a60f77f0" title="SimpleShaderPass::setupCamera" alt="" coords="235,75,453,104"/>
-<area shape="rect" id="node7" href="$class_simple_shader_pass.html#ae381390ca7b3c67895448ca6806310e1" title="SimpleShaderPass::create\lTexturedQuad" alt="" coords="256,127,432,174"/>
+<area shape="rect" id="node2" href="$class_simple_shader_pass.html#ade66d90f50ca44704f37efe09ea87993" title="SimpleShaderPass::create\lOutputTexture" alt="" coords="259,5,439,47"/>
+<area shape="rect" id="node3" href="$class_simple_shader_pass.html#a8a4f637a66de516e7fb35272a60f77f0" title="SimpleShaderPass::setupCamera" alt="" coords="237,71,460,98"/>
+<area shape="rect" id="node4" href="$class_simple_shader_pass.html#ae381390ca7b3c67895448ca6806310e1" title="SimpleShaderPass::create\lTexturedQuad" alt="" coords="259,123,439,164"/>
 </map>

@@ -1,7 +1,7 @@
 <map id="RoundDouble" name="RoundDouble">
-<area shape="rect" id="node2" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="155,20,285,47"/>
-<area shape="rect" id="node6" href="$_d_s_v_l___helpers_8cpp.html#a4e34da0fd0a713b30cf5fa4b8ee365e6" title="avg2fps" alt="" coords="186,71,254,97"/>
-<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="333,38,517,79"/>
-<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="566,5,743,46"/>
-<area shape="rect" id="node5" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="573,70,737,111"/>
+<area shape="rect" id="node2" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="157,21,288,47"/>
+<area shape="rect" id="node6" href="$_d_s_v_l___helpers_8cpp.html#a4e34da0fd0a713b30cf5fa4b8ee365e6" title="avg2fps" alt="" coords="188,71,257,98"/>
+<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="336,39,525,80"/>
+<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="573,5,756,47"/>
+<area shape="rect" id="node5" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="580,71,749,112"/>
 </map>

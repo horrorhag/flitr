@@ -1,8 +1,8 @@
 <map id="flitr::FFmpegWriter::writeVideoFrame" name="flitr::FFmpegWriter::writeVideoFrame">
-<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="184,5,309,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="184,74,309,121"/>
-<area shape="rect" id="node7" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log." alt="" coords="188,144,305,173"/>
-<area shape="rect" id="node9" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags." alt="" coords="357,144,496,173"/>
-<area shape="rect" id="node11" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="581,91,704,120"/>
-<area shape="rect" id="node13" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags." alt="" coords="545,144,740,173"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="185,5,312,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="185,71,312,112"/>
+<area shape="rect" id="node4" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="189,137,308,163"/>
+<area shape="rect" id="node5" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="360,137,500,163"/>
+<area shape="rect" id="node6" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="585,86,711,113"/>
+<area shape="rect" id="node7" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="548,137,748,163"/>
 </map>

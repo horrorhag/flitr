@@ -1,4 +1,4 @@
 <map id="flitr::FIPGaussianDownsample::FIPGaussianDownsample" name="flitr::FIPGaussianDownsample::FIPGaussianDownsample">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="259,5,395,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#aa044734093ef3a04b53575a68795cfbb" title="Down sample the image format by a factor 2. " alt="" coords="253,70,400,111"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="259,5,397,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#aa044734093ef3a04b53575a68795cfbb" title="Down sample the image format by a factor 2. " alt="" coords="255,71,401,112"/>
 </map>

@@ -1,7 +1,7 @@
 <map id="flitr::GaussianDownsample::updateKernel1D" name="flitr::GaussianDownsample::updateKernel1D">
-<area shape="rect" id="node2" href="$classflitr_1_1_gaussian_downsample.html#a1848248f4e15938d1fd55051589e165a" title="flitr::GaussianDownsample\l::GaussianDownsample" alt="" coords="232,5,411,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_gaussian_downsample.html#a9bc820162dfce14e8ca4df59cefeda90" title="flitr::GaussianDownsample\l::setFilterRadius" alt="" coords="232,70,411,111"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_gaussian_downsample.html#ac31130420d334893ec902300dccc4143" title="flitr::GaussianDownsample\l::setKernelWidth" alt="" coords="232,135,411,177"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_gaussian_downsample.html#a1af2116d679e76b8e6c27bdfc97e054d" title="flitr::FIPGaussianDownsample\l::setFilterRadius" alt="" coords="459,70,659,111"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_gaussian_downsample.html#a3e986b1aa8eb778f2201c6fe79e6b7f1" title="flitr::FIPGaussianDownsample\l::setKernelWidth" alt="" coords="459,135,659,177"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_gaussian_downsample.html#a1848248f4e15938d1fd55051589e165a" title="flitr::GaussianDownsample\l::GaussianDownsample" alt="" coords="233,5,413,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_gaussian_downsample.html#a9bc820162dfce14e8ca4df59cefeda90" title="flitr::GaussianDownsample\l::setFilterRadius" alt="" coords="233,71,413,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_gaussian_downsample.html#ac31130420d334893ec902300dccc4143" title="flitr::GaussianDownsample\l::setKernelWidth" alt="" coords="233,136,413,177"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_gaussian_downsample.html#a1af2116d679e76b8e6c27bdfc97e054d" title="flitr::FIPGaussianDownsample\l::setFilterRadius" alt="" coords="461,71,663,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_gaussian_downsample.html#a3e986b1aa8eb778f2201c6fe79e6b7f1" title="flitr::FIPGaussianDownsample\l::setKernelWidth" alt="" coords="461,136,663,177"/>
 </map>

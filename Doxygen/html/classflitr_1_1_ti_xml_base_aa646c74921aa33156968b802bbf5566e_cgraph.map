@@ -1,7 +1,7 @@
 <map id="flitr::TiXmlBase::ReadText" name="flitr::TiXmlBase::ReadText">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#a51631e6986179558b9e5850723ed165a" title="flitr::TiXmlBase::String\lEqual" alt="" coords="245,5,400,46"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_base.html#a26576940685d2a2c627f5e0bd9e818c7" title="flitr::TiXmlBase::GetChar" alt="" coords="238,71,407,97"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="233,122,413,163"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_base.html#a6c3f8629e55d03007fb38f44d39f0458" title="flitr::TiXmlBase::IsWhite\lSpace" alt="" coords="464,151,629,193"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_base.html#a5b8d99b874fd7005de1d3b4cc4809746" title="flitr::TiXmlBase::ToLower" alt="" coords="461,12,632,39"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#a51631e6986179558b9e5850723ed165a" title="flitr::TiXmlBase::String\lEqual" alt="" coords="243,5,397,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_base.html#a26576940685d2a2c627f5e0bd9e818c7" title="flitr::TiXmlBase::GetChar" alt="" coords="235,71,405,98"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="231,123,409,164"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_base.html#a6c3f8629e55d03007fb38f44d39f0458" title="flitr::TiXmlBase::IsWhite\lSpace" alt="" coords="461,152,625,193"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_base.html#a5b8d99b874fd7005de1d3b4cc4809746" title="flitr::TiXmlBase::ToLower" alt="" coords="457,13,628,39"/>
 </map>

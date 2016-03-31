@@ -1,6 +1,6 @@
 <map id="flitr::GLSLGammaPass::GLSLGammaPass" name="flitr::GLSLGammaPass::GLSLGammaPass">
-<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#a5777fdefbcc694396f9c2fc806faec8e" title="flitr::GLSLGammaPass\l::createOutputTexture" alt="" coords="211,5,368,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#af47d8557c10911bc792a354ff70acbd9" title="flitr::GLSLGammaPass\l::setupCamera" alt="" coords="211,70,368,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#a86bdd75be5a0c24a7d1d7116caed1ea9" title="flitr::GLSLGammaPass\l::createTexturedQuad" alt="" coords="211,135,368,177"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#af1f16fa578ebd3c75cfd2778804cc403" title="flitr::GLSLGammaPass\l::setShader" alt="" coords="211,201,368,242"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#a5777fdefbcc694396f9c2fc806faec8e" title="flitr::GLSLGammaPass\l::createOutputTexture" alt="" coords="212,5,371,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#af47d8557c10911bc792a354ff70acbd9" title="flitr::GLSLGammaPass\l::setupCamera" alt="" coords="212,71,371,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#a86bdd75be5a0c24a7d1d7116caed1ea9" title="flitr::GLSLGammaPass\l::createTexturedQuad" alt="" coords="212,136,371,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_g_l_s_l_gamma_pass.html#af1f16fa578ebd3c75cfd2778804cc403" title="flitr::GLSLGammaPass\l::setShader" alt="" coords="212,201,371,243"/>
 </map>

@@ -1,5 +1,5 @@
 <map id="flitr::ScreenCaptureProducer::ScreenCaptureCallback::ScreenCaptureCallback" name="flitr::ScreenCaptureProducer::ScreenCaptureCallback::ScreenCaptureCallback">
-<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a9495277a8122ec0f7cfb63dc83ceb955" title="flitr::ImageProducer\l::getFormat" alt="" coords="240,5,376,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="245,74,371,121"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="245,143,371,190"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="244,5,383,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="250,71,377,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="250,136,377,177"/>
 </map>

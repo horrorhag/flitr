@@ -1,5 +1,5 @@
 <map id="flitr::CUDAAutoContrastPass::CUDAAutoContrastPass" name="flitr::CUDAAutoContrastPass::CUDAAutoContrastPass">
-<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="283,5,408,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="283,74,408,121"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_c_u_d_a_auto_contrast_pass.html#ab7ea28c64470ca2a9d5c0589c1e2932b" title="flitr::CUDAAutoContrastPass\l::setupComputation" alt="" coords="248,143,443,190"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="278,5,405,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="278,71,405,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_c_u_d_a_auto_contrast_pass.html#ab7ea28c64470ca2a9d5c0589c1e2932b" title="flitr::CUDAAutoContrastPass\l::setupComputation" alt="" coords="245,136,437,177"/>
 </map>

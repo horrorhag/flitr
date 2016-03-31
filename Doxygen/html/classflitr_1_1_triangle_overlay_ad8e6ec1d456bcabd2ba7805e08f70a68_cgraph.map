@@ -1,5 +1,5 @@
 <map id="flitr::TriangleOverlay::TriangleOverlay" name="flitr::TriangleOverlay::TriangleOverlay">
-<area shape="rect" id="node2" href="$classflitr_1_1_triangle_overlay.html#a36ed58b2ac9c8344a789c1f0e8ffb5c0" title="flitr::TriangleOverlay\l::makeQuad" alt="" coords="199,5,337,46"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="193,70,343,111"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_triangle_overlay.html#aece7c9f928233db13668c73e802ebbef" title="flitr::TriangleOverlay\l::updateQuad" alt="" coords="392,5,531,46"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_triangle_overlay.html#a36ed58b2ac9c8344a789c1f0e8ffb5c0" title="flitr::TriangleOverlay\l::makeQuad" alt="" coords="200,5,341,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="195,71,347,112"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_triangle_overlay.html#aece7c9f928233db13668c73e802ebbef" title="flitr::TriangleOverlay\l::updateQuad" alt="" coords="395,5,536,47"/>
 </map>

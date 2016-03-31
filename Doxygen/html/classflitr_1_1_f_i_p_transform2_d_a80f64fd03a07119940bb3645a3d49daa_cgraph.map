@@ -1,16 +1,16 @@
 <map id="flitr::FIPTransform2D::trigger" name="flitr::FIPTransform2D::trigger">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html#aa8d2103df0dac8755b1a0fdc206932f7" title="flitr::ImageConsumer\l::getNumReadSlotsAvailable" alt="" coords="201,5,391,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a5b34bbd15e5e3f50cec63bb4b7180356" title="flitr::ImageProducer\l::getNumWriteSlotsAvailable" alt="" coords="201,70,391,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="224,135,368,177"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="228,201,364,242"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="237,267,355,293"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="223,318,369,359"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_image_processor.html#ae792570e0124ad90ffb250f7676af1dc" title="flitr::ImageProcessor\l::getDownstreamFormat" alt="" coords="440,381,603,422"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="233,435,359,477"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="233,501,359,542"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_image_format.html#af517f805ff737ad2fad633b4cd64813b" title="flitr::ImageFormat\l::getBytesPerPixel" alt="" coords="231,566,361,607"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="228,631,364,673"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="224,697,368,738"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="449,315,593,357"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="651,349,787,390"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html#aa8d2103df0dac8755b1a0fdc206932f7" title="flitr::ImageConsumer\l::getNumReadSlotsAvailable" alt="" coords="199,5,391,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a5b34bbd15e5e3f50cec63bb4b7180356" title="flitr::ImageProducer\l::getNumWriteSlotsAvailable" alt="" coords="199,71,390,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="222,136,367,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="225,201,364,243"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="236,267,353,294"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="221,319,369,360"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_image_processor.html#ae792570e0124ad90ffb250f7676af1dc" title="flitr::ImageProcessor\l::getDownstreamFormat" alt="" coords="439,381,604,423"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="231,436,358,477"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="231,501,358,543"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_image_format.html#af517f805ff737ad2fad633b4cd64813b" title="flitr::ImageFormat\l::getBytesPerPixel" alt="" coords="229,567,360,608"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="225,632,364,673"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="222,697,367,739"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="449,316,594,357"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="652,349,791,391"/>
 </map>

@@ -1,18 +1,18 @@
 <map id="flitr::TiXmlNode::Value" name="flitr::TiXmlNode::Value">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab5f722624113c8203227de4f56576d31" title="flitr::TiXmlNode::FirstChild" alt="" coords="214,5,391,32"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#acdd3fdc436aa7433023310a041e5e63f" title="flitr::TiXmlNode::LastChild" alt="" coords="215,56,391,83"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#acaf9dc17531ac041f602f9ad579573ea" title="Navigate to a sibling node with the given &#39;value&#39;. " alt="" coords="209,107,397,133"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#abbb3b8c1f38fa7b9e52d584a4aeca795" title="Navigate to a sibling node. " alt="" coords="217,158,389,199"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="237,223,368,265"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_element.html#aa6dedd8a146acf3b1bc0903deb2d411a" title="flitr::TiXmlElement\l::GetText" alt="" coords="237,289,368,330"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#a4c852a889c02cf251117fd1d9fe1845f" title="flitr::TiXmlDocument\l::LoadFile" alt="" coords="231,354,374,395"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_document.html#a21c0aeb0d0a720169ad4ac89523ebe93" title="Save a file using the current document value. Returns true if successful. " alt="" coords="231,419,374,461"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_printer.html#a6dccaf5ee4979f13877690afe28721e8" title="Visit an element. " alt="" coords="243,485,363,526"/>
-<area shape="rect" id="node16" href="$classflitr_1_1_ti_xml_printer.html#ae6a1df8271df4bf62d7873c38e34aa69" title="Visit an element. " alt="" coords="243,550,363,591"/>
-<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_printer.html#a0857c5d32c59b9a257f9a49cb9411df5" title="Visit a text node. " alt="" coords="243,615,363,657"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_x_m_l_config.html#a979cd175103190a12c0b03a3fceb0cb2" title="flitr::XMLConfig::element\lTextToSStream" alt="" coords="446,237,613,278"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_document.html#a879cdf5e981b8b2d2ef82f2546dd28fb" title="Load a file using the given filename. Returns true if successful. " alt="" coords="458,302,601,343"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_x_m_l_config.html#a55031d91b60e59283bfafc9976930822" title="Read the configuration file specified and create an XML structure in memory. " alt="" coords="460,368,599,395"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_document.html#ae869f5ebf7fc54c4a1d737fb4689fd44" title="Save a file using the given filename. Returns true if successful. " alt="" coords="458,419,601,461"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_x_m_l_config.html#af3f71e17b0db3a09a62d1d9855829ca6" title="Save the configuration structure in memory to the specified file. " alt="" coords="455,485,604,512"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab5f722624113c8203227de4f56576d31" title="flitr::TiXmlNode::FirstChild" alt="" coords="213,5,391,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#acdd3fdc436aa7433023310a041e5e63f" title="flitr::TiXmlNode::LastChild" alt="" coords="214,56,390,83"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#acaf9dc17531ac041f602f9ad579573ea" title="Navigate to a sibling node with the given &#39;value&#39;. " alt="" coords="208,107,396,133"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#abbb3b8c1f38fa7b9e52d584a4aeca795" title="Navigate to a sibling node. " alt="" coords="216,158,388,199"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="237,223,367,265"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_element.html#aa6dedd8a146acf3b1bc0903deb2d411a" title="flitr::TiXmlElement\l::GetText" alt="" coords="237,289,367,330"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_document.html#a4c852a889c02cf251117fd1d9fe1845f" title="flitr::TiXmlDocument\l::LoadFile" alt="" coords="231,354,373,395"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_document.html#a21c0aeb0d0a720169ad4ac89523ebe93" title="Save a file using the current document value. Returns true if successful. " alt="" coords="231,419,373,461"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_printer.html#a6dccaf5ee4979f13877690afe28721e8" title="Visit an element. " alt="" coords="242,485,362,526"/>
+<area shape="rect" id="node16" href="$classflitr_1_1_ti_xml_printer.html#ae6a1df8271df4bf62d7873c38e34aa69" title="Visit an element. " alt="" coords="242,550,362,591"/>
+<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_printer.html#a0857c5d32c59b9a257f9a49cb9411df5" title="Visit a text node. " alt="" coords="242,615,362,657"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_x_m_l_config.html#a979cd175103190a12c0b03a3fceb0cb2" title="flitr::XMLConfig::element\lTextToSStream" alt="" coords="444,237,612,278"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_document.html#a879cdf5e981b8b2d2ef82f2546dd28fb" title="Load a file using the given filename. Returns true if successful. " alt="" coords="457,302,599,343"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_x_m_l_config.html#a55031d91b60e59283bfafc9976930822" title="Read the configuration file specified and create an XML structure in memory. " alt="" coords="459,368,597,395"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_document.html#ae869f5ebf7fc54c4a1d737fb4689fd44" title="Save a file using the given filename. Returns true if successful. " alt="" coords="457,419,599,461"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_x_m_l_config.html#af3f71e17b0db3a09a62d1d9855829ca6" title="Save the configuration structure in memory to the specified file. " alt="" coords="453,485,603,512"/>
 </map>

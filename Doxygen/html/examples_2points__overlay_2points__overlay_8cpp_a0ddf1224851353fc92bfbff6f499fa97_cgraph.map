@@ -1,9 +1,9 @@
 <map id="main" name="main">
-<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="117,5,243,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="117,74,243,121"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_geometry_overlay.html#ad16f2fa7656523c7c1653a2a1ce5ba50" title="flitr::GeometryOverlay\l::setPointSize" alt="" coords="105,143,255,190"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="105,213,255,259"/>
-<area shape="rect" id="node11" href="$examples_2points__overlay_2points__overlay_8cpp.html#aa0d806e10ebdf9ae4da6d8913f437bc0" title="updatePoints" alt="" coords="131,283,229,312"/>
-<area shape="rect" id="node13" href="$classflitr_1_1_points_overlay.html#a7ee2e19160c12156b903b39be1db55b6" title="flitr::PointsOverlay\l::setVertices" alt="" coords="304,239,435,286"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_points_overlay.html#ac17d3adf8b6129cd2d92d9c7d99a05cb" title="flitr::PointsOverlay\l::addVertex" alt="" coords="304,309,435,355"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="117,5,243,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="117,71,243,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#ad16f2fa7656523c7c1653a2a1ce5ba50" title="flitr::GeometryOverlay\l::setPointSize" alt="" coords="104,136,256,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="104,201,256,243"/>
+<area shape="rect" id="node6" href="$examples_2points__overlay_2points__overlay_8cpp.html#aa0d806e10ebdf9ae4da6d8913f437bc0" title="updatePoints" alt="" coords="130,267,230,294"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_points_overlay.html#a7ee2e19160c12156b903b39be1db55b6" title="flitr::PointsOverlay\l::setVertices" alt="" coords="304,227,435,268"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_points_overlay.html#ac17d3adf8b6129cd2d92d9c7d99a05cb" title="flitr::PointsOverlay\l::addVertex" alt="" coords="304,292,435,333"/>
 </map>

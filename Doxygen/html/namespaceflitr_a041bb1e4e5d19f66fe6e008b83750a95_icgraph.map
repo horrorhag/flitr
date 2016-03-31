@@ -1,4 +1,5 @@
 <map id="flitr::allocFFmpegFrame" name="flitr::allocFFmpegFrame">
-<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_reader.html#a924554005adc915c2b8f04e21965ad0e" title="flitr::FFmpegReader\l::FFmpegReader" alt="" coords="213,5,352,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_f_fmpeg_writer.html#a25759e64b010b266cee27b2f7fa6c338" title="flitr::FFmpegWriter\l::FFmpegWriter" alt="" coords="217,74,348,121"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_fmpeg_reader.html#a924554005adc915c2b8f04e21965ad0e" title="flitr::FFmpegReader\l::FFmpegReader" alt="" coords="216,5,356,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_writer.html#a25759e64b010b266cee27b2f7fa6c338" title="flitr::FFmpegWriter\l::FFmpegWriter" alt="" coords="220,71,352,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_video_producer.html#a3a83fb5cc5db86f50e6e825739e488f1" title="flitr::VideoProducer\l::init" alt="" coords="218,136,354,177"/>
 </map>

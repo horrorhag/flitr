@@ -1,7 +1,7 @@
 <map id="start_capture" name="start_capture">
-<area shape="rect" id="node2" href="$video__linux__v4l_2video__producer_8cpp.html#a22cce36344ad43e1d0742f8af3ba7296" title="xioctl" alt="" coords="185,5,239,32"/>
-<area shape="rect" id="node3" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="153,56,271,83"/>
-<area shape="rect" id="node4" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="320,56,459,83"/>
-<area shape="rect" id="node5" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="543,5,667,32"/>
-<area shape="rect" id="node6" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="507,56,703,83"/>
+<area shape="rect" id="node2" href="$video__linux__v4l_2video__producer_8cpp.html#a22cce36344ad43e1d0742f8af3ba7296" title="xioctl" alt="" coords="187,5,239,32"/>
+<area shape="rect" id="node3" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="153,56,272,83"/>
+<area shape="rect" id="node4" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="320,56,460,83"/>
+<area shape="rect" id="node5" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="545,5,671,32"/>
+<area shape="rect" id="node6" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="508,56,708,83"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="flitr::MultiLibTiffProducer::readSlot" name="flitr::MultiLibTiffProducer::readSlot">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="233,5,369,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="243,71,360,97"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_image.html#a03ee2b506064a1f1f3424f435e05c7b5" title="Set the image mata data. " alt="" coords="219,121,383,148"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="233,173,369,214"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="232,5,371,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="243,71,360,98"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image.html#a03ee2b506064a1f1f3424f435e05c7b5" title="Set the image mata data. " alt="" coords="219,122,384,149"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="232,173,371,215"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="fps2avg" name="fps2avg">
-<area shape="rect" id="node2" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="123,45,253,72"/>
-<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="301,38,485,79"/>
-<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="534,5,711,46"/>
-<area shape="rect" id="node5" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="541,70,705,111"/>
+<area shape="rect" id="node2" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="123,46,253,73"/>
+<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="301,39,491,80"/>
+<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="539,5,721,47"/>
+<area shape="rect" id="node5" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="545,71,715,112"/>
 </map>

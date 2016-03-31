@@ -1,6 +1,6 @@
 <map id="flitr::GeometryOverlay::setName" name="flitr::GeometryOverlay::setName">
-<area shape="rect" id="node2" href="$classflitr_1_1_circle_overlay.html#a82e9638c8786d3872307eb8ef2536a0d" title="flitr::CircleOverlay\l::setName" alt="" coords="211,5,338,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_quad_overlay.html#a9d38f3ddda43b0271cae17f42fcda708" title="flitr::QuadOverlay\l::setName" alt="" coords="213,70,337,111"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_triangle_overlay.html#a898fbc686a4f7c4635e08c261f3eac06" title="flitr::TriangleOverlay\l::setName" alt="" coords="205,135,344,177"/>
-<area shape="rect" id="node4" href="$ortho__pick__overlay_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="392,77,443,104"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_circle_overlay.html#a82e9638c8786d3872307eb8ef2536a0d" title="flitr::CircleOverlay\l::setName" alt="" coords="213,5,339,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_quad_overlay.html#a9d38f3ddda43b0271cae17f42fcda708" title="flitr::QuadOverlay\l::setName" alt="" coords="213,71,339,112"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_triangle_overlay.html#a898fbc686a4f7c4635e08c261f3eac06" title="flitr::TriangleOverlay\l::setName" alt="" coords="205,136,347,177"/>
+<area shape="rect" id="node4" href="$ortho__pick__overlay_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="395,78,445,105"/>
 </map>

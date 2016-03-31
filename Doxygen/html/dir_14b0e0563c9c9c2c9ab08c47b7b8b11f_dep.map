@@ -1,6 +1,6 @@
-<map id="/opt/FLITr/trunk/src/flitr/modules/flitr_image_processors/gaussian_downsample" name="/opt/FLITr/trunk/src/flitr/modules/flitr_image_processors/gaussian_downsample">
-<area shape="rect" id="node1" href="dir_14b0e0563c9c9c2c9ab08c47b7b8b11f.html" title="gaussian_downsample" alt="" coords="27,52,180,100"/>
-<area shape="rect" id="node2" href="dir_d44c64559bbebec7f509842c48db8b23.html" title="include" alt="" coords="68,148,140,196"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000087_000043.html" title="1" alt="" coords="108,122,116,137"/>
-<area shape="rect" id="clust1" href="dir_565082a375ccb87384ae489651ccd28d.html" title="flitr_image_processors" alt="" coords="16,16,192,111"/>
+<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/modules/flitr_image_processors/gaussian_downsample" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/modules/flitr_image_processors/gaussian_downsample">
+<area shape="rect" id="node1" href="dir_14b0e0563c9c9c2c9ab08c47b7b8b11f.html" title="gaussian_downsample" alt="" coords="27,52,184,100"/>
+<area shape="rect" id="node2" href="dir_d44c64559bbebec7f509842c48db8b23.html" title="include" alt="" coords="69,148,141,196"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000087_000043.html" title="1" alt="" coords="110,122,118,137"/>
+<area shape="rect" id="clust1" href="dir_565082a375ccb87384ae489651ccd28d.html" title="flitr_image_processors" alt="" coords="16,16,195,111"/>
 </map>

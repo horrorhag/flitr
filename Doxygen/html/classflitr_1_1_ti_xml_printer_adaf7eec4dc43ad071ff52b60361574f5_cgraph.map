@@ -1,5 +1,5 @@
 <map id="flitr::TiXmlPrinter::Visit" name="flitr::TiXmlPrinter::Visit">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_printer.html#abf7b0ea789c2374993cc9a91118db317" title="flitr::TiXmlPrinter\l::DoIndent" alt="" coords="188,5,308,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_declaration.html#aa5ab32ec19d4eeecff4a9238c6c90565" title="flitr::TiXmlDeclaration\l::Print" alt="" coords="174,70,322,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_printer.html#a5bb344a7fd4558ec1dcddb880eb03f1d" title="flitr::TiXmlPrinter\l::DoLineBreak" alt="" coords="188,135,308,177"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_printer.html#abf7b0ea789c2374993cc9a91118db317" title="flitr::TiXmlPrinter\l::DoIndent" alt="" coords="188,5,308,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_declaration.html#aa5ab32ec19d4eeecff4a9238c6c90565" title="flitr::TiXmlDeclaration\l::Print" alt="" coords="173,71,323,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_printer.html#a5bb344a7fd4558ec1dcddb880eb03f1d" title="flitr::TiXmlPrinter\l::DoLineBreak" alt="" coords="188,136,308,177"/>
 </map>

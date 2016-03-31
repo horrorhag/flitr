@@ -1,6 +1,6 @@
 <map id="flitr::CPUPaletteRemap_Shader" name="flitr::CPUPaletteRemap_Shader">
-<area shape="rect" id="node2" href="$classflitr_1_1_c_p_u_shader_pass_1_1_c_p_u_shader.html" title="{flitr::CPUShaderPass\l::CPUShader\n||}" alt="" coords="139,281,287,373"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="134,5,292,229"/>
-<area shape="rect" id="node5" title="STL class. " alt="" coords="325,288,404,365"/>
-<area shape="rect" id="node6" title="STL class. " alt="" coords="317,71,443,163"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_c_p_u_shader_pass_1_1_c_p_u_shader.html" title="{flitr::CPUShaderPass\l::CPUShader\n||}" alt="" coords="141,279,289,371"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="134,5,295,229"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="328,286,408,363"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="319,71,446,163"/>
 </map>

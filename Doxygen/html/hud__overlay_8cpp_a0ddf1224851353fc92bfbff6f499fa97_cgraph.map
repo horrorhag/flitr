@@ -1,13 +1,13 @@
 <map id="main" name="main">
-<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="139,5,264,51"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="139,74,264,121"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_geometry_overlay.html#a6076e63d2cf42f6c13f9a9161ea7963b" title="flitr::GeometryOverlay\l::setLineWidth" alt="" coords="127,143,276,190"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_h_u_d.html#a6e1cc672eef406ce967aa504bdfc4c7b" title="flitr::HUD::setAspectMode" alt="" coords="113,213,289,243"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="127,266,276,313"/>
-<area shape="rect" id="node13" href="$class_pick_handler.html#ae40417e047ae3b9452b80bc7d1c56145" title="PickHandler::getPickLocation" alt="" coords="104,336,299,365"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_quad_overlay.html#a492cfdde734d94456fa2f8c1db0194aa" title="flitr::QuadOverlay\l::setCenter" alt="" coords="140,389,263,435"/>
-<area shape="rect" id="node19" href="$class_pick_handler.html#a1f7257a5c194bc6b974e408bcbf2a098" title="PickHandler::getPickSize" alt="" coords="116,459,287,488"/>
-<area shape="rect" id="node21" href="$classflitr_1_1_quad_overlay.html#a472c2e17f0c3f2eb4b088258286d0394" title="flitr::QuadOverlay\l::setWidth" alt="" coords="140,511,263,558"/>
-<area shape="rect" id="node24" href="$classflitr_1_1_quad_overlay.html#a6fb8814b49b121666d364ef21469cbcd" title="flitr::QuadOverlay\l::setHeight" alt="" coords="140,581,263,627"/>
-<area shape="rect" id="node17" href="$classflitr_1_1_quad_overlay.html#a750dd19cd4a6aac8181cf785605d5384" title="flitr::QuadOverlay\l::updateQuad" alt="" coords="348,511,471,558"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="139,5,265,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="139,71,265,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#a6076e63d2cf42f6c13f9a9161ea7963b" title="flitr::GeometryOverlay\l::setLineWidth" alt="" coords="126,136,278,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_h_u_d.html#a6e1cc672eef406ce967aa504bdfc4c7b" title="flitr::HUD::setAspectMode" alt="" coords="114,202,290,229"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="126,253,278,295"/>
+<area shape="rect" id="node7" href="$class_pick_handler.html#ae40417e047ae3b9452b80bc7d1c56145" title="PickHandler::getPickLocation" alt="" coords="104,319,300,346"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_quad_overlay.html#a492cfdde734d94456fa2f8c1db0194aa" title="flitr::QuadOverlay\l::setCenter" alt="" coords="139,371,265,412"/>
+<area shape="rect" id="node10" href="$class_pick_handler.html#a1f7257a5c194bc6b974e408bcbf2a098" title="PickHandler::getPickSize" alt="" coords="117,437,287,463"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_quad_overlay.html#a472c2e17f0c3f2eb4b088258286d0394" title="flitr::QuadOverlay\l::setWidth" alt="" coords="139,488,265,529"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_quad_overlay.html#a6fb8814b49b121666d364ef21469cbcd" title="flitr::QuadOverlay\l::setHeight" alt="" coords="139,553,265,595"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_quad_overlay.html#a750dd19cd4a6aac8181cf785605d5384" title="flitr::QuadOverlay\l::updateQuad" alt="" coords="348,488,473,529"/>
 </map>

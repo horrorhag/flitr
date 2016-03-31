@@ -1,6 +1,6 @@
 <map id="flitr::TiXmlComment::Clone" name="flitr::TiXmlComment::Clone">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_comment.html#af48b27bfa13f9b5919749da25d658463" title="Constructs an empty comment. " alt="" coords="192,5,331,46"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_comment.html#a3175b2f27628f4fb7a043897930cd934" title="flitr::TiXmlComment\l::CopyTo" alt="" coords="192,70,331,111"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#ab6056978923ad8350fb5164af32d8038" title="flitr::TiXmlNode::CopyTo" alt="" coords="379,77,546,104"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#a5698f8832c1c3761933068f46a969677" title="flitr::TiXmlNode::SetValue" alt="" coords="595,77,770,104"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_comment.html#af48b27bfa13f9b5919749da25d658463" title="Constructs an empty comment. " alt="" coords="192,5,331,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_comment.html#a3175b2f27628f4fb7a043897930cd934" title="flitr::TiXmlComment\l::CopyTo" alt="" coords="192,71,331,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#ab6056978923ad8350fb5164af32d8038" title="flitr::TiXmlNode::CopyTo" alt="" coords="379,78,545,105"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#a5698f8832c1c3761933068f46a969677" title="flitr::TiXmlNode::SetValue" alt="" coords="593,78,768,105"/>
 </map>

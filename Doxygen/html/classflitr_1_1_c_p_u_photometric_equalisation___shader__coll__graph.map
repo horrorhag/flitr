@@ -1,4 +1,4 @@
 <map id="flitr::CPUPhotometricEqualisation_Shader" name="flitr::CPUPhotometricEqualisation_Shader">
-<area shape="rect" id="node2" href="$classflitr_1_1_c_p_u_shader_pass_1_1_c_p_u_shader.html" title="{flitr::CPUShaderPass\l::CPUShader\n||}" alt="" coords="61,278,208,370"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="134,5,292,229"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_c_p_u_shader_pass_1_1_c_p_u_shader.html" title="{flitr::CPUShaderPass\l::CPUShader\n||}" alt="" coords="62,277,210,369"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="134,5,295,229"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="AMErrorMessage" name="AMErrorMessage">
-<area shape="rect" id="node2" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="360,38,544,79"/>
-<area shape="rect" id="node5" href="$_d_s_v_l___helpers_8h.html#af81460be3824b0ae4656c986cc7cd20e" title="FindCaptureDevice" alt="" coords="177,71,311,97"/>
-<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="593,5,770,46"/>
-<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="599,70,763,111"/>
+<area shape="rect" id="node2" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="363,39,552,80"/>
+<area shape="rect" id="node5" href="$_d_s_v_l___helpers_8h.html#af81460be3824b0ae4656c986cc7cd20e" title="FindCaptureDevice" alt="" coords="179,71,315,98"/>
+<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="600,5,783,47"/>
+<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="607,71,776,112"/>
 </map>

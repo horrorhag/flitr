@@ -1,5 +1,5 @@
 <map id="flitr::IntegralImage::processRGB" name="flitr::IntegralImage::processRGB">
-<area shape="rect" id="node2" href="$classflitr_1_1_box_filter_i_i.html#a0baf0c587336ce4dfe79f5f71744bf22" title="flitr::BoxFilterII\l::filterRGB" alt="" coords="213,5,321,46"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_local_photometric_equalise.html#a9792d6f1a3deba8e462e53b3040894dc" title="flitr::FIPLocalPhotometric\lEqualise::trigger" alt="" coords="181,70,352,111"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="401,5,554,46"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_box_filter_i_i.html#a0baf0c587336ce4dfe79f5f71744bf22" title="flitr::BoxFilterII\l::filterRGB" alt="" coords="215,5,321,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_local_photometric_equalise.html#a9792d6f1a3deba8e462e53b3040894dc" title="flitr::FIPLocalPhotometric\lEqualise::trigger" alt="" coords="183,71,353,112"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="401,5,555,47"/>
 </map>

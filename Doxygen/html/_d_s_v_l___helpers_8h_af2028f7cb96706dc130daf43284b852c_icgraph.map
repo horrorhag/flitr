@@ -1,9 +1,9 @@
 <map id="FreeMediaType" name="FreeMediaType">
-<area shape="rect" id="node2" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="517,49,701,91"/>
-<area shape="rect" id="node5" href="$_d_s_v_l___helpers_8h.html#a6ad1961a43d6a08fcbf3ae24b3296ce8" title="DeleteMediaType" alt="" coords="166,57,290,83"/>
-<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="750,16,927,57"/>
-<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="757,81,921,123"/>
-<area shape="rect" id="node6" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="339,31,469,58"/>
-<area shape="rect" id="node7" href="$_d_s_v_l___helpers_8h.html#ab131c6ae889417896d285a07a412138b" title="CanDeliverVideo" alt="" coords="344,82,464,109"/>
-<area shape="rect" id="node8" href="$_d_s_v_l___helpers_8h.html#ac2e124b61defc24aa0978897b0f07572" title="CanDeliverDV" alt="" coords="351,133,457,159"/>
+<area shape="rect" id="node2" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="523,49,712,91"/>
+<area shape="rect" id="node5" href="$_d_s_v_l___helpers_8h.html#a6ad1961a43d6a08fcbf3ae24b3296ce8" title="DeleteMediaType" alt="" coords="169,57,296,83"/>
+<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="760,16,943,57"/>
+<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="767,81,936,123"/>
+<area shape="rect" id="node6" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="344,31,475,58"/>
+<area shape="rect" id="node7" href="$_d_s_v_l___helpers_8h.html#ab131c6ae889417896d285a07a412138b" title="CanDeliverVideo" alt="" coords="348,82,471,109"/>
+<area shape="rect" id="node8" href="$_d_s_v_l___helpers_8h.html#ac2e124b61defc24aa0978897b0f07572" title="CanDeliverDV" alt="" coords="356,133,463,159"/>
 </map>

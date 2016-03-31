@@ -1,9 +1,9 @@
 <map id="flitr::TiXmlNode::Clear" name="flitr::TiXmlNode::Clear">
-<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a5670933ec2d7d9763b9891acc05d7f7d" title="flitr::TiXmlElement\l::ClearThis" alt="" coords="215,37,345,78"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_document.html#aafbfacc3414008f619b1345775ef12a4" title="flitr::TiXmlDocument\l::operator=" alt="" coords="209,102,351,143"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_document.html#a41f6fe7200864d1dca663d230caf8db6" title="flitr::TiXmlDocument\l::LoadFile" alt="" coords="209,167,351,209"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_comment.html#a46373f99b65cb960637dccb1f126bd49" title="flitr::TiXmlComment\l::operator=" alt="" coords="211,233,349,274"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_declaration.html#a0fedc57539af9049be8db2d7d9d9ba33" title="flitr::TiXmlDeclaration\l::operator=" alt="" coords="206,298,354,339"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="403,5,533,46"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#aa049a47c5081c0d021968666360da261" title="flitr::TiXmlElement\l::~TiXmlElement" alt="" coords="403,70,533,111"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#a5670933ec2d7d9763b9891acc05d7f7d" title="flitr::TiXmlElement\l::ClearThis" alt="" coords="215,37,345,79"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_document.html#aafbfacc3414008f619b1345775ef12a4" title="flitr::TiXmlDocument\l::operator=" alt="" coords="209,103,351,144"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_document.html#a41f6fe7200864d1dca663d230caf8db6" title="flitr::TiXmlDocument\l::LoadFile" alt="" coords="209,168,351,209"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_comment.html#a46373f99b65cb960637dccb1f126bd49" title="flitr::TiXmlComment\l::operator=" alt="" coords="211,233,349,275"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_declaration.html#a0fedc57539af9049be8db2d7d9d9ba33" title="flitr::TiXmlDeclaration\l::operator=" alt="" coords="205,299,355,340"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="403,5,533,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_element.html#aa049a47c5081c0d021968666360da261" title="flitr::TiXmlElement\l::~TiXmlElement" alt="" coords="403,71,533,112"/>
 </map>
