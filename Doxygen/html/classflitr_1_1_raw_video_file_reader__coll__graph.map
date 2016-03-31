@@ -1,0 +1,5 @@
+<map id="flitr::RawVideoFileReader" name="flitr::RawVideoFileReader">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="5,149,187,491"/>
+<area shape="rect" id="node3" title="STL class. " alt="" coords="212,281,291,359"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="189,6,315,98"/>
+</map>

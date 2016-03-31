@@ -1,0 +1,13 @@
+<map id="/opt/FLITr/trunk/include/flitr/test_pattern_producer.h" name="/opt/FLITr/trunk/include/flitr/test_pattern_producer.h">
+<area shape="rect" id="node2" href="$average__image__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/average_image/average\l_image_example.cpp" alt="" coords="5,96,176,152"/>
+<area shape="rect" id="node3" href="$beat__image__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/beat_image/beat_image\l_example.cpp" alt="" coords="201,96,372,152"/>
+<area shape="rect" id="node4" href="$dpt_8cpp.html" title="/opt/FLITr/trunk/examples\l/DPT/dpt.cpp" alt="" coords="397,103,568,145"/>
+<area shape="rect" id="node5" href="$gaussian__filter__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/gaussian_filter/gaussian\l_filter_example.cpp" alt="" coords="593,96,764,152"/>
+<area shape="rect" id="node6" href="$lk__dewarp__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/LK_dewarp_cpu/lk_dewarp\l_example.cpp" alt="" coords="789,96,971,152"/>
+<area shape="rect" id="node7" href="$lucas__kanade__test_8cpp.html" title="/opt/FLITr/trunk/examples\l/LK_image_registration\l/lucas_kanade_test.cpp" alt="" coords="995,96,1167,152"/>
+<area shape="rect" id="node8" href="$cpu_2lucas__kanade__test_8cpp.html" title="/opt/FLITr/trunk/examples\l/LK_image_registration\l_cpu/lucas_kanade_test.cpp" alt="" coords="1191,96,1379,152"/>
+<area shape="rect" id="node9" href="$morphological__filter__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/morphological_filter/morphological\l_filter_example.cpp" alt="" coords="1403,96,1625,152"/>
+<area shape="rect" id="node10" href="$main_8cpp.html" title="/opt/FLITr/trunk/examples\l/msr/main.cpp" alt="" coords="1650,103,1821,145"/>
+<area shape="rect" id="node11" href="$photometric__equalise__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/photometric_equalise/photometric\l_equalise_example.cpp" alt="" coords="1847,96,2068,152"/>
+<area shape="rect" id="node12" href="$test__pattern__producer_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/test_pattern_producer.cpp" alt="" coords="2093,103,2291,145"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="/opt/FLITr/trunk/include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h" name="/opt/FLITr/trunk/include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h">
+<area shape="rect" id="node2" href="$cpu__shader__pass__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/cpu_shader_pass/cpu_shader\l_pass_example.cpp" alt="" coords="145,237,343,293"/>
+<area shape="rect" id="node3" href="$lucas__kanade__test_8cpp.html" title="/opt/FLITr/trunk/examples\l/LK_image_registration\l/lucas_kanade_test.cpp" alt="" coords="598,237,770,293"/>
+<area shape="rect" id="node4" href="$cpu__find__discreet__objects__pass_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/cpu_shader\l_passes/cpu_find_discreet\l_objects_pass.h" alt="" coords="1014,110,1191,181"/>
+<area shape="rect" id="node6" href="$cpu__local__photometric__equalisation_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/cpu_shader\l_passes/cpu_local_photometric\l_equalisation.h" alt="" coords="32,110,238,181"/>
+<area shape="rect" id="node7" href="$cpu__palette__remap__shader_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/cpu_shader\l_passes/cpu_palette_remap\l_shader.h" alt="" coords="262,110,447,181"/>
+<area shape="rect" id="node8" href="$cpu__photometric__equalisation_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/cpu_shader\l_passes/cpu_photometric_equalisation.h" alt="" coords="472,117,730,173"/>
+<area shape="rect" id="node9" href="$cpu__uniform__noise__shader_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/cpu_shader\l_passes/cpu_uniform_noise\l_shader.h" alt="" coords="806,110,990,181"/>
+<area shape="rect" id="node10" href="$cpu__shader__pass_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/cpu_shader\l_passes/cpu_shader_pass.cpp" alt="" coords="1216,117,1419,173"/>
+<area shape="rect" id="node5" href="$cpu__find__discreet__objects__pass_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/cpu_shader\l_passes/cpu_find_discreet\l_objects_pass.cpp" alt="" coords="1014,230,1191,301"/>
+</map>

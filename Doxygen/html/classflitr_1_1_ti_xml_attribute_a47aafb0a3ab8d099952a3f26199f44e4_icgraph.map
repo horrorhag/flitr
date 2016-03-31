@@ -1,0 +1,12 @@
+<map id="flitr::TiXmlAttribute::Value" name="flitr::TiXmlAttribute::Value">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_element.html#ac1e4691e9375ba4e665dce7e46a50a9c" title="flitr::TiXmlElement\l::Attribute" alt="" coords="193,115,324,157"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_element.html#a9e0c1983b840de4134f1f6bf7af00b0f" title="flitr::TiXmlElement\l::CopyTo" alt="" coords="193,258,324,299"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_ti_xml_declaration.html#a9839ea97ed687a2b7342fd7b0f04361b" title="flitr::TiXmlDeclaration\l::Parse" alt="" coords="185,323,333,365"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_x_m_l_config.html#a2e4e28718f630931bc1f38e653493ef2" title="Get a string variable from the configuration file. " alt="" coords="385,5,559,32"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_x_m_l_config.html#a8ee45437f0cdf143302b5ab56e80c112" title="Get a vector of string variables from the configuration file. " alt="" coords="385,57,559,98"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_x_m_l_config.html#a0397e7a2748304317da85c8bcad4718d" title="Get a double floating point variable from the configuration file. " alt="" coords="382,123,562,149"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_x_m_l_config.html#a5be024e03dbcf37cfd5a13e5d82e9b89" title="Obtain a vector from an xml file. " alt="" coords="383,173,561,200"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_element.html#a1ca4465f3c2eac6a60e641cd7f1d9f7e" title="flitr::TiXmlElement\l::TiXmlElement" alt="" coords="407,225,537,266"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_element.html#af5cd4156e082ef3bf23adfe0ed173340" title="flitr::TiXmlElement\l::operator=" alt="" coords="407,290,537,331"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_element.html#a13f6df105ebb1e8dc636e75cc883be32" title="Creates a new Element and returns it &#45; the returned element is a copy. " alt="" coords="407,355,537,397"/>
+</map>

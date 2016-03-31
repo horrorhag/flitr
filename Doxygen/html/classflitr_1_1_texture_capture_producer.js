@@ -1,7 +1,7 @@
 var classflitr_1_1_texture_capture_producer =
 [
     [ "TextureCaptureDrawCallback", "structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html", "structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback" ],
-    [ "TextureCaptureProducer", "classflitr_1_1_texture_capture_producer.html#a8216c141d3a3f08ce94d15e9961d36d4", null ],
+    [ "TextureCaptureProducer", "classflitr_1_1_texture_capture_producer.html#a4d07a48cd0aea7d3863c0e2588b7d0c2", null ],
     [ "createTexturedQuad", "classflitr_1_1_texture_capture_producer.html#a8ed3c93598a2e5b41e544ca10fb4931d", null ],
     [ "createTextures", "classflitr_1_1_texture_capture_producer.html#a4b35477078ab8da5daf55a02aa7c5884", null ],
     [ "getOutputTexture", "classflitr_1_1_texture_capture_producer.html#a258fb1b00f2d80d7b96a5ff923a56eaf", null ],
@@ -11,6 +11,7 @@ var classflitr_1_1_texture_capture_producer =
     [ "setEnable", "classflitr_1_1_texture_capture_producer.html#a39b853cf0dbd4a233b8f8b404f325a49", null ],
     [ "setShader", "classflitr_1_1_texture_capture_producer.html#ab19f1573138e8b9d7a934002937f1c75", null ],
     [ "setupCamera", "classflitr_1_1_texture_capture_producer.html#a21d0ab171b23ab758b96114c424e7a2b", null ],
+    [ "blocking_", "classflitr_1_1_texture_capture_producer.html#a5856a493b9f42cc89accb30a4f7591eb", null ],
     [ "BufferSize_", "classflitr_1_1_texture_capture_producer.html#a9c16460d9f2cf43f626e9a6b61a30887", null ],
     [ "Camera_", "classflitr_1_1_texture_capture_producer.html#afab24cdb80e322c5244d0ea7c2c4841c", null ],
     [ "enabled_", "classflitr_1_1_texture_capture_producer.html#ab5532443fbceef2795188952d551035e", null ],

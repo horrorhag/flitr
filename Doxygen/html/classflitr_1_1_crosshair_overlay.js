@@ -1,7 +1,7 @@
 var classflitr_1_1_crosshair_overlay =
 [
     [ "CrosshairOverlay", "classflitr_1_1_crosshair_overlay.html#ae5d5defab2e7797d1616738253c972e8", null ],
-    [ "~CrosshairOverlay", "classflitr_1_1_crosshair_overlay.html#a89b15f2821221f714e8528e1c2fcd088", null ],
+    [ "~CrosshairOverlay", "classflitr_1_1_crosshair_overlay.html#a44df7dc9fc81fc85ec49a2ab61b9d6aa", null ],
     [ "makeCrosshair", "classflitr_1_1_crosshair_overlay.html#a674bffbb848634481f191570093600dd", null ],
     [ "setCenter", "classflitr_1_1_crosshair_overlay.html#ae5d7efba9925e4a0a7ff110265b887eb", null ],
     [ "setHeight", "classflitr_1_1_crosshair_overlay.html#a4e95a487f13484d911f52fa40603fe77", null ],

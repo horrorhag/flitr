@@ -1,0 +1,7 @@
+<map id="flitr::TiXmlElement::Accept" name="flitr::TiXmlElement::Accept">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_visitor.html#a2974d22439c9dcbb19db4c2fb08b28aa" title="Visit a document. " alt="" coords="219,5,338,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_attribute_set.html#a45f3c773bba1104da12b2e0e51316f08" title="flitr::TiXmlAttributeSet\l::First" alt="" coords="203,70,354,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="190,136,367,163"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="185,211,373,237"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_visitor.html#ab14cf8157b25368521c6d75400436830" title="Visit a document. " alt="" coords="219,262,338,303"/>
+</map>

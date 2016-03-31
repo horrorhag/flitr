@@ -1,0 +1,5 @@
+<map id="flitr::TiXmlDocument::SaveFile" name="flitr::TiXmlDocument::SaveFile">
+<area shape="rect" id="node2" href="$namespaceflitr.html#a10bcb0c3d92e163149a46177bbe4037c" title="flitr::TiXmlFOpen" alt="" coords="209,5,330,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_document.html#a21c0aeb0d0a720169ad4ac89523ebe93" title="Save a file using the current document value. Returns true if successful. " alt="" coords="198,57,341,98"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="389,64,544,91"/>
+</map>

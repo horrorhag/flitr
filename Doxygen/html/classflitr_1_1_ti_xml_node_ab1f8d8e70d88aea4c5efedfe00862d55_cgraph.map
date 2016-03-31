@@ -1,0 +1,5 @@
+<map id="flitr::TiXmlNode::FirstChildElement" name="flitr::TiXmlNode::FirstChildElement">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="238,5,415,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="233,80,421,107"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="235,131,419,157"/>
+</map>

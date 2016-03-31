@@ -1,0 +1,6 @@
+<map id="flitr::GLSLGrayscalePass::GLSLGrayscalePass" name="flitr::GLSLGrayscalePass::GLSLGrayscalePass">
+<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_grayscale_pass.html#acfc7398aa4fcec769f5ad6d03b227c07" title="flitr::GLSLGrayscalePass\l::createOutputTexture" alt="" coords="224,5,395,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_g_l_s_l_grayscale_pass.html#afbf6dd3126a21b2c729519e8dc808c15" title="flitr::GLSLGrayscalePass\l::setupCamera" alt="" coords="224,70,395,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_g_l_s_l_grayscale_pass.html#a4e78ceadf7b3177791ec968a3617f249" title="flitr::GLSLGrayscalePass\l::createTexturedQuad" alt="" coords="224,135,395,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_g_l_s_l_grayscale_pass.html#a69eb705d49701d5f3ce808219e0e8cf6" title="flitr::GLSLGrayscalePass\l::setShader" alt="" coords="224,201,395,242"/>
+</map>

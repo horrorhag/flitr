@@ -1,0 +1,4 @@
+<map id="flitr::TiXmlDocument::LoadFile" name="flitr::TiXmlDocument::LoadFile">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_document.html#a879cdf5e981b8b2d2ef82f2546dd28fb" title="Load a file using the given filename. Returns true if successful. " alt="" coords="198,5,341,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_x_m_l_config.html#a55031d91b60e59283bfafc9976930822" title="Read the configuration file specified and create an XML structure in memory. " alt="" coords="200,71,339,97"/>
+</map>

@@ -2,8 +2,10 @@ var classflitr_1_1_multi_f_fmpeg_consumer =
 [
     [ "MultiFFmpegConsumer", "classflitr_1_1_multi_f_fmpeg_consumer.html#a16ef68c85f14b667db39dfd8597b2f78", null ],
     [ "~MultiFFmpegConsumer", "classflitr_1_1_multi_f_fmpeg_consumer.html#a95fa6de48c275f9b922c54b4de1d31ce", null ],
-    [ "closeFiles", "classflitr_1_1_multi_f_fmpeg_consumer.html#a9b2734515291a9087fbfeee4c2a078d9", null ],
+    [ "closeFiles", "classflitr_1_1_multi_f_fmpeg_consumer.html#ab705e41f6eda45c9e84f6ae21f311e32", null ],
+    [ "getNumImages", "classflitr_1_1_multi_f_fmpeg_consumer.html#a6feb90988e091b951a7e99058ccbeba8", null ],
     [ "init", "classflitr_1_1_multi_f_fmpeg_consumer.html#afdac7353742e267b645056e93b017690", null ],
+    [ "isWriting", "classflitr_1_1_multi_f_fmpeg_consumer.html#a70b37ac823de8b3d34a3405ed0ea9adb", null ],
     [ "openFiles", "classflitr_1_1_multi_f_fmpeg_consumer.html#a93532fa6830089f3e3d940b0567e9ff8", null ],
     [ "openFiles", "classflitr_1_1_multi_f_fmpeg_consumer.html#a0b0cd37997d969e087faebc7cc9cd982", null ],
     [ "openFiles", "classflitr_1_1_multi_f_fmpeg_consumer.html#a39231777a4690ffebd3a9e4b04f1db01", null ],
@@ -19,7 +21,7 @@ var classflitr_1_1_multi_f_fmpeg_consumer =
     [ "ImageFormat_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a406418d0f3e847ed16f9cb959aef0c51", null ],
     [ "ImagesPerSlot_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a6b4ca6cee90ac94dc41045050ce444af", null ],
     [ "MetadataWriters_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a21441e12a4bd7e67629d176f6097f087", null ],
-    [ "MultiWriteStats_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a01c6c52a8f9b0f9de5a55e87d1eda27f", null ],
+    [ "MultiWriteStats_", "classflitr_1_1_multi_f_fmpeg_consumer.html#aa657d8438b44fab1506b24392a2771a9", null ],
     [ "Thread_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a314eba7940e677ab71f1740e94c13ae8", null ],
     [ "Writing_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a8c62cbb38486b01e9dc0954111159193", null ],
     [ "WritingMutex_", "classflitr_1_1_multi_f_fmpeg_consumer.html#a73dabe4ea776decdb22fce9809dd5fd1", null ]

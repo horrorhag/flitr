@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classflitr_1_1_ti_xml_base.html" title="flitr::TiXmlBase" alt="" coords="5,107,117,133"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_attribute.html" title="flitr::TiXmlAttribute" alt="" coords="165,81,296,108"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html" title="flitr::TiXmlNode" alt="" coords="174,132,287,159"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_comment.html" title="flitr::TiXmlComment" alt="" coords="349,5,488,32"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_declaration.html" title="flitr::TiXmlDeclaration" alt="" coords="345,56,493,83"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_document.html" title="flitr::TiXmlDocument" alt="" coords="347,107,490,133"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_element.html" title="flitr::TiXmlElement" alt="" coords="353,157,484,184"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_text.html" title="flitr::TiXmlText" alt="" coords="365,208,473,235"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_unknown.html" title="flitr::TiXmlUnknown" alt="" coords="350,259,487,285"/>
+</map>

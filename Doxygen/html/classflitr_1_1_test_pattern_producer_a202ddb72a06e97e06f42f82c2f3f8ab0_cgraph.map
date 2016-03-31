@@ -1,0 +1,5 @@
+<map id="flitr::TestPatternProducer::trigger" name="flitr::TestPatternProducer::trigger">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="221,5,357,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="231,71,348,97"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="221,122,357,163"/>
+</map>

@@ -1,0 +1,16 @@
+<map id="/opt/FLITr/trunk/src/flitr/raw_video_file_producer.cpp" name="/opt/FLITr/trunk/src/flitr/raw_video_file_producer.cpp">
+<area shape="rect" id="node2" href="$raw__video__file__producer_8h.html" title="flitr/raw_video_file\l_producer.h" alt="" coords="709,110,835,151"/>
+<area shape="rect" id="node3" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="696,283,848,309"/>
+<area shape="rect" id="node20" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="495,200,641,227"/>
+<area shape="rect" id="node26" href="$raw__video__file__reader_8h.html" title="flitr/raw_video_file\l_reader.h" alt="" coords="906,275,1032,317"/>
+<area shape="rect" id="node4" href="$image_8h.html" title="flitr/image.h" alt="" coords="523,365,613,392"/>
+<area shape="rect" id="node13" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="843,448,975,475"/>
+<area shape="rect" id="node5" href="$image__format_8h.html" title="flitr/image_format.h" alt="" coords="685,448,819,475"/>
+<area shape="rect" id="node9" href="$image__metadata_8h.html" title="flitr/image_metadata.h" alt="" coords="510,448,660,475"/>
+<area shape="rect" id="node6" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="937,531,1048,557"/>
+<area shape="rect" id="node8" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="797,531,912,557"/>
+<area shape="rect" id="node21" href="$shared__image__buffer_8h.html" title="flitr/shared_image\l_buffer.h" alt="" coords="277,275,403,317"/>
+<area shape="rect" id="node27" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="1097,365,1236,392"/>
+<area shape="rect" id="node28" href="$high__resolution__time_8h.html" title="flitr/high_resolution\l_time.h" alt="" coords="1101,441,1231,482"/>
+<area shape="rect" id="node32" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="1307,448,1421,475"/>
+</map>

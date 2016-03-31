@@ -1,0 +1,11 @@
+<map id="flitr::ImageProcessor::getDownstreamFormat" name="flitr::ImageProcessor::getDownstreamFormat">
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_crop.html#a394662f0e8b874e1de3a67273a44c367" title="flitr::FIPCrop::trigger" alt="" coords="245,5,387,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_d_p_t.html#a1128dad8d55773e99786970fc2c15911" title="flitr::FIPDPT::trigger" alt="" coords="246,56,386,83"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_gaussian_downsample.html#a7f90941b5cc82109c361464910e780bc" title="flitr::FIPGaussianDownsample\l::trigger" alt="" coords="216,107,416,149"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="239,173,393,214"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_median.html#a6a67b6427c2cd29db91c1499fe3d95ed" title="flitr::FIPMedian::trigger" alt="" coords="239,239,393,265"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_f_i_p_morphological_filter.html#a239febdb76441d61068c12bfcdbebcaa" title="flitr::FIPMorphologicalFilter\l::trigger" alt="" coords="227,290,405,331"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_f_i_p_rotate.html#a7ba435dd2e56e39c46088818fa52e0ed" title="flitr::FIPRotate::trigger" alt="" coords="240,356,392,383"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_f_i_p_transform2_d.html#a80f64fd03a07119940bb3645a3d49daa" title="flitr::FIPTransform2D\l::trigger" alt="" coords="243,407,389,449"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_f_i_p_unsharp_mask.html#aba076ee2fb184b92d5fcf32d4fbb2a32" title="flitr::FIPUnsharpMask\l::trigger" alt="" coords="241,473,391,514"/>
+</map>

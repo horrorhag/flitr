@@ -1,0 +1,10 @@
+<map id="flitr::XMLConfig::setRootElement" name="flitr::XMLConfig::setRootElement">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#a1a881212554b759865f6cac79a851d38" title="flitr::TiXmlNode::LinkEnd\lChild" alt="" coords="221,55,389,97"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#aa66f4ebcd175204a168ed7c2d7b43071" title="flitr::TiXmlNode::GetDocument" alt="" coords="437,8,640,35"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#aae5ee24b998219a223a2c1fedacd0ff6" title="flitr::TiXmlNode::Type" alt="" coords="463,63,614,89"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_document.html#a735c23e318597b920c94eae77fa206de" title="flitr::TiXmlDocument\l::SetError" alt="" coords="467,121,610,162"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a377cc60ac5cd6b6db76b35be5187f3dc" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="689,5,885,32"/>
+<area shape="rect" id="node7" href="$structflitr_1_1_ti_xml_cursor.html#a2bbe619009168473e7e12abf2d05d287" title="flitr::TiXmlCursor\l::Clear" alt="" coords="726,57,847,98"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_parsing_data.html#a65cee8ab77a36c605db08c84b4c30a7d" title="flitr::TiXmlParsingData\l::Stamp" alt="" coords="709,122,864,163"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_parsing_data.html#ab05a433fe00c616f944f6bc2ee659b99" title="flitr::TiXmlParsingData\l::Cursor" alt="" coords="709,187,864,229"/>
+</map>

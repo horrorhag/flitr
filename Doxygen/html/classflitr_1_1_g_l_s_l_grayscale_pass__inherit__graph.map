@@ -1,0 +1,4 @@
+<map id="flitr::GLSLGrayscalePass" name="flitr::GLSLGrayscalePass">
+<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_image_processor.html" title="{flitr::GLSLImageProcessor\n|# RootGroup_\l# Camera_\l# InTexture_\l# OutTexture_\l# OutImage_\l# TextureWidth_\l# TextureHeight_\l# FragmentProgram_\l# StateSet_\l|+ GLSLImageProcessor()\l+ ~GLSLImageProcessor()\l+ getRoot()\l+ getOutputTexture()\l+ getOSGImage()\l+ getPassType()\l&#45; createOutputTexture()\l&#45; setupCamera()\l}" alt="" coords="5,278,184,575"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_parameters.html" title="{flitr::Parameters\n||+ ~Parameters()\l+ getNumberOfParms()\l+ getParmType()\l+ getParmName()\l+ getTitle()\l+ getEnum()\l+ getEnumText()\l+ getInt()\l+ getFloat()\l+ getDouble()\land 14 more...\l}" alt="" coords="15,5,173,229"/>
+</map>

@@ -1,7 +1,7 @@
 var classflitr_1_1_quad_overlay =
 [
     [ "QuadOverlay", "classflitr_1_1_quad_overlay.html#a188d0172ddb90f635c20ff8653b01cc7", null ],
-    [ "~QuadOverlay", "classflitr_1_1_quad_overlay.html#a2c5099b0efc3f5c009c7bdaf38fdb0db", null ],
+    [ "~QuadOverlay", "classflitr_1_1_quad_overlay.html#a832c9e0c6fc8f51ad362e1a4d749ae15", null ],
     [ "getCenter", "classflitr_1_1_quad_overlay.html#adf42bc42ff7e494cedaacec5666e2865", null ],
     [ "getHeight", "classflitr_1_1_quad_overlay.html#af4bc431724f2537c54a0d36181855dbe", null ],
     [ "getWidth", "classflitr_1_1_quad_overlay.html#a6b2de8de7f05b840e8b3205dd94d3f8b", null ],

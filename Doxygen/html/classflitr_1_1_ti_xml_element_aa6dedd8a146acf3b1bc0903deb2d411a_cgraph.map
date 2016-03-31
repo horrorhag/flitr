@@ -1,0 +1,5 @@
+<map id="flitr::TiXmlElement::GetText" name="flitr::TiXmlElement::GetText">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="185,5,362,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#a5db70b845325d0cb032804be0db8782f" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="192,56,355,83"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a2ad8932492c66efda9a6068542efc9f9" title="flitr::TiXmlNode::Value" alt="" coords="196,107,351,133"/>
+</map>

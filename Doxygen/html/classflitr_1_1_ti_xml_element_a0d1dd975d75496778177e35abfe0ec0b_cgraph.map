@@ -1,0 +1,9 @@
+<map id="flitr::TiXmlElement::SetDoubleAttribute" name="flitr::TiXmlElement::SetDoubleAttribute">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_attribute_set.html#a5e28f5d32f048fba85d04dc317495bdc" title="flitr::TiXmlAttributeSet\l::FindOrCreate" alt="" coords="195,70,346,111"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_attribute.html#a0316da31373496c4368ad549bf711394" title="Set the value from a double. " alt="" coords="205,150,336,191"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_attribute_set.html#af3675cc2bfd0aea153cda1cfcdd1f77e" title="flitr::TiXmlAttributeSet\l::Find" alt="" coords="627,5,778,46"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_attribute_set.html#a745e50ddaae3bee93e4589321e0b9c1a" title="flitr::TiXmlAttributeSet::Add" alt="" coords="395,63,578,89"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_attribute.html#a124b2c44aa8eb8b33f40878b07c4cbc4" title="Set the name of this attribute. " alt="" coords="421,114,552,155"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_attribute.html#aaeaa9468bafae6550a03dd6839ce2ab5" title="Return the name of this attribute. " alt="" coords="637,70,768,111"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_attribute.html#a88aed4f87aa94979b6fdfba5111f0abc" title="Set the value. " alt="" coords="421,179,552,221"/>
+</map>

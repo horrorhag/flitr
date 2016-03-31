@@ -1,0 +1,6 @@
+<map id="flitr::GLSLTranslatePass::GLSLTranslatePass" name="flitr::GLSLTranslatePass::GLSLTranslatePass">
+<area shape="rect" id="node2" href="$classflitr_1_1_g_l_s_l_translate_pass.html#a281121adec41cbac7022eb6893fa36f7" title="flitr::GLSLTranslatePass\l::createOutputTexture" alt="" coords="219,5,384,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_g_l_s_l_translate_pass.html#ac06f4bd6d326c214b90cd46775122fb2" title="flitr::GLSLTranslatePass\l::setupCamera" alt="" coords="219,70,384,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_g_l_s_l_translate_pass.html#a2b760794a3340eba06aa00d101f771b3" title="flitr::GLSLTranslatePass\l::createTexturedQuad" alt="" coords="219,135,384,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_g_l_s_l_translate_pass.html#ab81948f1894299c8c32c2156bfe4e82a" title="flitr::GLSLTranslatePass\l::setShader" alt="" coords="219,201,384,242"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="main" name="main">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="123,5,248,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="123,70,248,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#a6076e63d2cf42f6c13f9a9161ea7963b" title="flitr::GeometryOverlay\l::setLineWidth" alt="" coords="110,135,261,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="110,201,261,242"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_geometry_overlay.html#a75f86375f92e36c0f2cab6fa90a20c31" title="flitr::GeometryOverlay\l::flipVerticalCoordinates" alt="" coords="105,266,266,307"/>
+<area shape="rect" id="node8" href="$class_pick_handler.html#a442e619a62f02ceff0ca17fb5ebf860c" title="PickHandler::getPick" alt="" coords="113,332,258,359"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_crosshair_overlay.html#ae5d7efba9925e4a0a7ff110265b887eb" title="flitr::CrosshairOverlay\l::setCenter" alt="" coords="111,383,260,425"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_geometry_overlay.html#a77648c3fd1ab1cf20eae10a3bc518fee" title="flitr::GeometryOverlay\l::setCoordinateTransform" alt="" coords="315,266,485,307"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_crosshair_overlay.html#ab7c5e02d2de6e420651e49444419d4bb" title="flitr::CrosshairOverlay\l::updateCrosshair" alt="" coords="325,383,475,425"/>
+</map>

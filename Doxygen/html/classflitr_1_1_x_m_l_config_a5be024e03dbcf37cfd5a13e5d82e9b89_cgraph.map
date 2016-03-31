@@ -1,0 +1,9 @@
+<map id="flitr::XMLConfig::getVector" name="flitr::XMLConfig::getVector">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="233,95,410,137"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#ac1e4691e9375ba4e665dce7e46a50a9c" title="flitr::TiXmlElement\l::Attribute" alt="" coords="256,182,387,223"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="465,5,642,32"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="459,80,647,107"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="461,131,645,157"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_attribute_set.html#af3675cc2bfd0aea153cda1cfcdd1f77e" title="flitr::TiXmlAttributeSet\l::Find" alt="" coords="478,182,629,223"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_attribute.html#a47aafb0a3ab8d099952a3f26199f44e4" title="Return the value of this attribute. " alt="" coords="488,247,619,289"/>
+</map>

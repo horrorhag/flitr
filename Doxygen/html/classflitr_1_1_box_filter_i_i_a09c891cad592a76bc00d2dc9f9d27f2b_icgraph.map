@@ -1,0 +1,5 @@
+<map id="flitr::BoxFilterII::setKernelWidth" name="flitr::BoxFilterII::setKernelWidth">
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#a5b5151fdd4fb47f3497bed349cb2d04e" title="flitr::FIPAverageImageIIR\l::trigger" alt="" coords="173,5,344,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="182,70,335,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_m_s_r.html#a1cdcd646613ebc8d3bfff69582143cad" title="flitr::FIPMSR::trigger" alt="" coords="187,136,330,163"/>
+</map>

@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['g_5fhandle',['g_Handle',['../structflitr_1_1_video_param.html#a47660c2bfedd38564fa22f09ced20e98',1,'flitr::VideoParam']]],
+  ['g_5flogmessagecategory',['g_LogMessageCategory',['../log__message_8cpp.html#a562e9f0e9c3a443ffb8da89a9b9537f2',1,'log_message.cpp']]],
+  ['g_5ftimestamp',['g_Timestamp',['../structflitr_1_1_video_param.html#a4f3ca28a923d529c7fecfa80ad9fb78b',1,'flitr::VideoParam']]],
+  ['gain_5f',['gain_',['../classflitr_1_1_f_i_p_unsharp_mask.html#a637a4d942eea337bc248433405393af6',1,'flitr::FIPUnsharpMask']]],
+  ['gainuniform_5f',['GainUniform_',['../classflitr_1_1_g_l_s_l_masked_gain_pass.html#a085befad7487babff1441869cb4e56cc',1,'flitr::GLSLMaskedGainPass']]],
+  ['gammabeforedisable_5f',['GammaBeforeDisable_',['../classflitr_1_1_g_l_s_l_gamma_pass.html#a87a09443b656690d1f7dbfa18cb49a01',1,'flitr::GLSLGammaPass']]],
+  ['gaussiandownsample_5f',['gaussianDownsample_',['../classflitr_1_1_f_i_p_l_k_dewarp.html#a1c923ee983893ec757eb2488ef1e4bc7',1,'flitr::FIPLKDewarp::gaussianDownsample_()'],['../classflitr_1_1_f_i_p_gaussian_downsample.html#a862e630ae508ef52ef799b6849de89d3',1,'flitr::FIPGaussianDownsample::gaussianDownsample_()']]],
+  ['gaussianfilter_5f',['gaussianFilter_',['../classflitr_1_1_f_i_p_l_k_dewarp.html#aefe0c27affdf5b2b48e3a61477b3e949',1,'flitr::FIPLKDewarp::gaussianFilter_()'],['../classflitr_1_1_f_i_p_l_k_dewarp_ex.html#ac84288f8a8a6c646d2207c2086de4bf2',1,'flitr::FIPLKDewarpEx::gaussianFilter_()'],['../classflitr_1_1_f_i_p_gaussian_filter.html#ae7b0c778df27acf3ccc53ee848e7eff2',1,'flitr::FIPGaussianFilter::gaussianFilter_()'],['../classflitr_1_1_f_i_p_unsharp_mask.html#ab335b14002cfb64a9ebd99ee89e19049',1,'flitr::FIPUnsharpMask::gaussianFilter_()']]],
+  ['gaussianregufilter_5f',['gaussianReguFilter_',['../classflitr_1_1_f_i_p_l_k_dewarp.html#a8bb57d242db40f239143db51a71563d2',1,'flitr::FIPLKDewarp::gaussianReguFilter_()'],['../classflitr_1_1_f_i_p_l_k_dewarp_ex.html#a02bbe9b17fad5233be6901d17ac09e42',1,'flitr::FIPLKDewarpEx::gaussianReguFilter_()']]],
+  ['geode_5f',['Geode_',['../classflitr_1_1_textured_quad.html#acf399760d56ab7fc15d44a8432435185',1,'flitr::TexturedQuad::Geode_()'],['../classflitr_1_1_multi_textured_quad.html#a2134a96cdf318167fa936d9fd75f78cd',1,'flitr::MultiTexturedQuad::Geode_()']]],
+  ['geom_5f',['Geom_',['../classflitr_1_1_textured_quad.html#afe7befcb23f7b213b5994ff10a5cb5a5',1,'flitr::TexturedQuad::Geom_()'],['../classflitr_1_1_multi_textured_quad.html#ac468066893a4aff234ba23f005c95941',1,'flitr::MultiTexturedQuad::Geom_()']]],
+  ['geomstateset_5f',['GeomStateSet_',['../classflitr_1_1_textured_quad.html#a9c6f797474b5487ed0df0ef99b80c2e9',1,'flitr::TexturedQuad::GeomStateSet_()'],['../classflitr_1_1_multi_textured_quad.html#a6a8211f41d6b23a4a04f0ed9cad94091',1,'flitr::MultiTexturedQuad::GeomStateSet_()']]],
+  ['getimagestats_5f',['GetImageStats_',['../classflitr_1_1_f_fmpeg_reader.html#a96f513caf9d79f7a8bc1f40c3a134862',1,'flitr::FFmpegReader::GetImageStats_()'],['../classflitr_1_1_raw_video_file_reader.html#aeec0c1de2e32d3dbfdb18af963b41184',1,'flitr::RawVideoFileReader::GetImageStats_()']]],
+  ['gf_5f',['GF_',['../classflitr_1_1_f_i_p_average_image_i_i_r.html#a5f2f2b939f27d0797bdbbe76ce125605',1,'flitr::FIPAverageImageIIR::GF_()'],['../classflitr_1_1_f_i_p_m_s_r.html#a5f1550461a917ab614e28113b495b898',1,'flitr::FIPMSR::GF_()']]],
+  ['gfimagevec_5f',['gfImageVec_',['../classflitr_1_1_f_i_p_average_image_i_i_r.html#a63e0ffcd291c7db0365a43efbcb84e8b',1,'flitr::FIPAverageImageIIR']]],
+  ['gfscale_5f',['GFScale_',['../class_key_pressed_handler.html#a694277c0a11c6bd413390b23afec3422',1,'KeyPressedHandler::GFScale_()'],['../classflitr_1_1_f_i_p_m_s_r.html#aeb3f614484da14a6ee207f3e06a845e1',1,'flitr::FIPMSR::GFScale_()']]],
+  ['gfscratchdata_5f',['GFScratchData_',['../classflitr_1_1_f_i_p_m_s_r.html#a515f23caa47c3b6e9587e54c5cc6790f',1,'flitr::FIPMSR']]],
+  ['grabberfilter',['grabberFilter',['../class_d_s_v_l___graph_manager.html#a92702a0b6148a237c8d509fad3f0a80c',1,'DSVL_GraphManager']]],
+  ['gradientsqthreshold_5f',['gradientSqThreshold_',['../classflitr_1_1_f_i_p_l_k_dewarp_ex.html#a8397a1a6eca5c23e7c55475c2eca9010',1,'flitr::FIPLKDewarpEx']]],
+  ['graphbuilder',['graphBuilder',['../class_d_s_v_l___graph_manager.html#ac656c83717bc70461c66132ee479e9c9',1,'DSVL_GraphManager']]],
+  ['graphmanager',['graphManager',['../structflitr_1_1_video_param.html#aa19447418bad0e35628d10901d1f71f0',1,'flitr::VideoParam']]],
+  ['gvid',['gVid',['../namespaceanonymous__namespace_02video__producer_8cpp_03.html#a7842b51684bda94d614a8e69f01d6e37',1,'anonymous_namespace{video_producer.cpp}::gVid()'],['../namespaceanonymous__namespace_02video__producer_8cpp_03.html#a7842b51684bda94d614a8e69f01d6e37',1,'anonymous_namespace{video_producer.cpp}::gVid()']]]
+];

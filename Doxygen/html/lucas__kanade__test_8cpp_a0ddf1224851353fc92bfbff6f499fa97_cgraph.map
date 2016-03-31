@@ -1,0 +1,16 @@
+<map id="main" name="main">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a51d1b158113da111164b83f4f20dde3a" title="flitr::ImageStabiliserMulti\lLK::init" alt="" coords="130,70,297,111"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a3cb677fe7635465b002c86669864563d" title="flitr::ImageStabiliserMulti\lLK::setAutoSwapCurrentPrevious" alt="" coords="104,135,323,177"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#aafab4838d70713e2c5e1715e8c705d1a" title="flitr::ImageStabiliserMulti\lLK::getOutputTexture" alt="" coords="130,201,297,242"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_geometry_overlay.html#ad16f2fa7656523c7c1653a2a1ce5ba50" title="flitr::GeometryOverlay\l::setPointSize" alt="" coords="138,266,289,307"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="138,331,289,373"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a330eeda449f36b7f4b87b094d92bf689" title="flitr::ImageStabiliserMulti\lLK::triggerInput" alt="" coords="130,397,297,438"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_points_overlay.html#ab1f003a6228a8656be31cee17babc1be" title="flitr::PointsOverlay\l::clearVertices" alt="" coords="148,462,279,503"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a64521f0db6f9cc9a4e23de832b379aa4" title="flitr::ImageStabiliserMulti\lLK::getNumPyramids" alt="" coords="130,527,297,569"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#ad46eb4d3d5bdc6385810ca1e9f5fc2ae" title="flitr::ImageStabiliserMulti\lLK::getTransformedROI_Centre" alt="" coords="110,593,317,634"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_points_overlay.html#ac17d3adf8b6129cd2d92d9c7d99a05cb" title="flitr::PointsOverlay\l::addVertex" alt="" coords="148,658,279,699"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a4dff8eed64af67bff3fb27ca3d6b768a" title="flitr::ImageStabiliserMulti\lLK::getDeltaTransformationMatrix" alt="" coords="104,723,323,765"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a4a48a36b19dc09ffb212b911a0011556" title="flitr::ImageFormat\l::setWidth" alt="" coords="371,5,496,46"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_format.html#a10db8f5910a6d611ceea25959faed054" title="flitr::ImageFormat\l::setHeight" alt="" coords="371,70,496,111"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#aff80d161bdd950b65403353ef0e8f5c2" title="flitr::ImageFormat\l::setPixelFormat" alt="" coords="371,135,496,177"/>
+</map>

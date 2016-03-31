@@ -1,0 +1,8 @@
+<map id="getPin" name="getPin">
+<area shape="rect" id="node2" href="$class_d_s_v_l___graph_manager.html#a0a135092884ce0d46e01c2b9b518473f" title="DSVL_GraphManager::\lEnableMemoryBuffer" alt="" coords="112,5,269,46"/>
+<area shape="rect" id="node3" href="$class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb" title="DSVL_GraphManager::\lBuildGraphFromXMLHandle" alt="" coords="317,114,501,155"/>
+<area shape="rect" id="node6" href="$_d_s_v_l___helpers_8h.html#a45c00eabc5acc20c8d73cc35b70dd35f" title="ConnectFilters" alt="" coords="137,121,244,148"/>
+<area shape="rect" id="node7" href="$_d_s_v_l___helpers_8h.html#a18a4f5f760cc9d29395a66988c82d929" title="AutoConnectFilters" alt="" coords="123,172,258,199"/>
+<area shape="rect" id="node4" href="$class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9" title="DSVL_GraphManager::\lBuildGraphFromXMLString" alt="" coords="550,81,727,122"/>
+<area shape="rect" id="node5" href="$class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe" title="DSVL_GraphManager::\lBuildGraphFromXMLFile" alt="" coords="557,146,721,187"/>
+</map>

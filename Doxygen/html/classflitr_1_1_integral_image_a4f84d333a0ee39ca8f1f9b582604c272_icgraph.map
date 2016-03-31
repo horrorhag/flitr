@@ -1,0 +1,7 @@
+<map id="flitr::IntegralImage::process" name="flitr::IntegralImage::process">
+<area shape="rect" id="node2" href="$classflitr_1_1_box_filter_i_i.html#a7e4e082fb93703d5fd63604ca6a96204" title="flitr::BoxFilterII\l::filter" alt="" coords="213,70,321,111"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_local_photometric_equalise.html#a9792d6f1a3deba8e462e53b3040894dc" title="flitr::FIPLocalPhotometric\lEqualise::trigger" alt="" coords="181,135,352,177"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#a5b5151fdd4fb47f3497bed349cb2d04e" title="flitr::FIPAverageImageIIR\l::trigger" alt="" coords="400,5,571,46"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="409,70,562,111"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_m_s_r.html#a1cdcd646613ebc8d3bfff69582143cad" title="flitr::FIPMSR::trigger" alt="" coords="414,136,557,163"/>
+</map>

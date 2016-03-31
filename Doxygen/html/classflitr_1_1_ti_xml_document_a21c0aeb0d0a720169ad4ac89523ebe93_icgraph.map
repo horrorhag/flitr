@@ -1,0 +1,4 @@
+<map id="flitr::TiXmlDocument::SaveFile" name="flitr::TiXmlDocument::SaveFile">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_document.html#ae869f5ebf7fc54c4a1d737fb4689fd44" title="Save a file using the given filename. Returns true if successful. " alt="" coords="201,5,343,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_x_m_l_config.html#af3f71e17b0db3a09a62d1d9855829ca6" title="Save the configuration structure in memory to the specified file. " alt="" coords="197,71,347,97"/>
+</map>

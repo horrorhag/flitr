@@ -1,0 +1,5 @@
+<map id="DSVL_GraphManager" name="DSVL_GraphManager">
+<area shape="rect" id="node4" href="$struct_memory_buffer_entry.html" title="{MemoryBufferEntry\n|+ use_count\l+ timestamp\l+ media_sample\l|}" alt="" coords="139,147,273,253"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="299,161,421,239"/>
+<area shape="rect" id="node8" href="$struct___d_s___m_e_d_i_a___f_o_r_m_a_t.html" title="{_DS_MEDIA_FORMAT\n|+ inputDevice\l+ biWidth\l+ biHeight\l+ frameRate\l+ subtype\l+ isInterlaced\l+ sourceFilterName\l+ isDeviceName\l+ inputFlags\l+ defaultInputFlags\l+ pixel_format\l+ ieee1394_id\l+ flipH\l+ flipV\l|}" alt="" coords="370,331,531,599"/>
+</map>

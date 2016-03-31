@@ -1,0 +1,16 @@
+<map id="flitr::FIPMorphologicalFilter::trigger" name="flitr::FIPMorphologicalFilter::trigger">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html#aa8d2103df0dac8755b1a0fdc206932f7" title="flitr::ImageConsumer\l::getNumReadSlotsAvailable" alt="" coords="233,5,423,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a5b34bbd15e5e3f50cec63bb4b7180356" title="flitr::ImageProducer\l::getNumWriteSlotsAvailable" alt="" coords="233,70,423,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="256,135,400,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="260,201,396,242"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_processor.html#ae792570e0124ad90ffb250f7676af1dc" title="flitr::ImageProcessor\l::getDownstreamFormat" alt="" coords="247,266,409,307"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="265,331,391,373"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="265,397,391,438"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="265,462,391,503"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="269,528,387,555"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_f_i_p_morphological_filter.html#af2e1e10bee94e01c51ccfa175e26647f" title="flitr::FIPMorphologicalFilter\l::doMorphoPasses" alt="" coords="239,579,417,621"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_f_i_p_morphological_filter.html#a911efe6efd3b6de8f618a9cf27cc7275" title="flitr::FIPMorphologicalFilter\l::doMorphoPassesRGB" alt="" coords="239,645,417,686"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="260,710,396,751"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="256,775,400,817"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="472,266,608,307"/>
+</map>

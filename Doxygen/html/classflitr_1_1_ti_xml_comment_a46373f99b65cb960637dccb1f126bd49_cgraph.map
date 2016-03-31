@@ -1,0 +1,6 @@
+<map id="flitr::TiXmlComment::operator=" name="flitr::TiXmlComment::operator=">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#a708e7f953df61d4d2d12f73171550a4b" title="Delete all the children of this node. Does not affect &#39;this&#39;. " alt="" coords="192,5,344,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_comment.html#a3175b2f27628f4fb7a043897930cd934" title="flitr::TiXmlComment\l::CopyTo" alt="" coords="199,57,337,98"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#ab6056978923ad8350fb5164af32d8038" title="flitr::TiXmlNode::CopyTo" alt="" coords="393,64,559,91"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#a5698f8832c1c3761933068f46a969677" title="flitr::TiXmlNode::SetValue" alt="" coords="609,64,783,91"/>
+</map>

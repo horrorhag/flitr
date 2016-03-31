@@ -1,0 +1,7 @@
+<map id="flitr::SMultiRawVideoFileProducer" name="flitr::SMultiRawVideoFileProducer">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# removeConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="75,816,308,1099"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="5,163,187,504"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="297,295,412,372"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="640,295,719,372"/>
+<area shape="rect" id="node10" title="STL class. " alt="" coords="617,6,743,98"/>
+</map>

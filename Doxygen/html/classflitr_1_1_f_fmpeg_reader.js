@@ -17,12 +17,12 @@ var classflitr_1_1_f_fmpeg_reader =
     [ "FileName_", "classflitr_1_1_f_fmpeg_reader.html#a862e6dec3261d18eeddeefb65f3b9a03", null ],
     [ "FormatContext_", "classflitr_1_1_f_fmpeg_reader.html#acef0c5bfc2b66530c84d5350fa2465f2", null ],
     [ "FrameRate_", "classflitr_1_1_f_fmpeg_reader.html#a313d487821ed807bb7a7bf3f1d6f9aed", null ],
-    [ "GetImageStats_", "classflitr_1_1_f_fmpeg_reader.html#aa070b138e6c8a0c9d6a6080968c9a676", null ],
+    [ "GetImageStats_", "classflitr_1_1_f_fmpeg_reader.html#a96f513caf9d79f7a8bc1f40c3a134862", null ],
     [ "ImageFormat_", "classflitr_1_1_f_fmpeg_reader.html#a0fe3dd6bcc21a3dd2bd066f8ae085a12", null ],
     [ "NumImages_", "classflitr_1_1_f_fmpeg_reader.html#a2b04ad9a4de8c9d827abb36dd3a2cafe", null ],
     [ "SingleFrameDone_", "classflitr_1_1_f_fmpeg_reader.html#a366b6a3d1c581babffbd5681c9821074", null ],
     [ "SingleFrameSource_", "classflitr_1_1_f_fmpeg_reader.html#acac6e27cf3ddd95c7f7c78fc4037f5f1", null ],
-    [ "SingleImage_", "classflitr_1_1_f_fmpeg_reader.html#ab3389340789a96e48c7a9400c09fdda2", null ],
-    [ "SwscaleStats_", "classflitr_1_1_f_fmpeg_reader.html#a2ce83711c47e4156e4b80f33df8a092a", null ],
+    [ "SingleImage_", "classflitr_1_1_f_fmpeg_reader.html#a251a8fef5d8687c0277596c297b42094", null ],
+    [ "SwscaleStats_", "classflitr_1_1_f_fmpeg_reader.html#ac0d3f1dc9203ab8f18dcf447a9a1faa1", null ],
     [ "VideoStreamIndex_", "classflitr_1_1_f_fmpeg_reader.html#a7884240cbe2686284a5407d6bdb8f43e", null ]
 ];

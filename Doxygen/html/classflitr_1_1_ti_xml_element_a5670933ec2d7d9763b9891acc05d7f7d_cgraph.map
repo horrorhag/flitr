@@ -1,0 +1,5 @@
+<map id="flitr::TiXmlElement::ClearThis" name="flitr::TiXmlElement::ClearThis">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#a708e7f953df61d4d2d12f73171550a4b" title="Delete all the children of this node. Does not affect &#39;this&#39;. " alt="" coords="184,5,336,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_attribute_set.html#a45f3c773bba1104da12b2e0e51316f08" title="flitr::TiXmlAttributeSet\l::First" alt="" coords="185,57,335,98"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_attribute_set.html#a924a73d071f2573f9060f0be57879c57" title="flitr::TiXmlAttributeSet\l::Remove" alt="" coords="185,122,335,163"/>
+</map>

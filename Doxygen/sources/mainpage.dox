@@ -1,0 +1,135 @@
+/*!
+\mainpage Framework for Live Image Transformation.
+
+\tableofcontents
+
+\section sec_main_introduction Introduction
+FLITr is...
+
+\section sec_main_build Building FLITr on Linux
+This section describe the process to build the FLITr framework. Before building make sure that all required tools
+and libraries are installed and set up. These steps were performed and tested on Ubuntu 14.04.
+
+The <tt>/opt/</tt> folder was used to simplify the process and to possibly make the installation available to other users on the system. If another location is preferred, make sure to change the steps accordingly.
+
+\subsection subsec_main_build_tools Tools and Pre-requisites 
+The following tools are required. There are possibly some other and not all needed are listed below:
+
+Tool/Library  | Min Version | Comment
+--------------|-------------|--------
+Git           |             | To get the FLITr sources
+CMake         | 2.6.3       | \n
+C++ Compiler  | C++11       | C++ compiler with full C++11 support
+*Boost        |             | <em>Seems like boost is not needed any more</em>
+OpenSceneGraph| 3.4.0       | \n
+FFmpeg        | 2.8.6       | \n
+Doxygen       | 1.8.7       | If building documentation
+LZMA          | 5.1.0       | Command line compression library development files
+TIFF          |             | <em>Not yet sure when needed</em>
+
+To install most most of the needed tools the following commands can be used. 
+\code
+$ sudo -S apt-get update
+$ sudo -S apt-get -y --force-yes install liblzma-dev libtiff-dev
+$ sudo -S apt-get -y --force-yes install yasm
+$ sudo -S apt-get -y --force-yes install freeglut3-dev
+$ sudo -S apt-get -y --force-yes build-dep openscenegraph
+$ sudo -S apt-get -y --force-yes install cmake git doxygen graphviz
+$ sudo -S apt-get -y --force-yes install build-essential
+\endcode
+
+\subsubsection subsub_main_build_tools_ffmpeg FFmpeg
+The following steps are used to build <a href="http://www.ffmpeg.org/">FFmpeg</a>:
+\code
+$ sudo mkdir /opt/FFmpeg
+$ sudo chown $(whoami):$(whoami) /opt/FFmpeg
+$ cd /opt/FFmpeg
+$ git clone git://git.videolan.org/ffmpeg.git 2.8.6
+$ cd 2.8.6
+$ git checkout n2.8.6
+$ ./configure --enable-shared --arch=x86_64 --disable-static --enable-pic
+$ make -j6
+$ sudo make install
+\endcode
+
+\subsubsection subsub_main_build_tools_osg OpenSceneGraph
+The following steps are used to build <a href="http://www.openscenegraph.org/">OpenSceneGraph</a>:
+
+\note Qt is not needed for FLITr, but if Qt is going to be used in the project it is 
+recommended to build OSG with Qt support. Qt 5 is used and the path needs to be set using the <tt>CMAKE_PREFIX_PATH</tt>
+variable when running cmake. Make sure to update the path to point to the correct location where Qt 5 was installed in the below
+commands. Qt 5 was installed into <tt>/opt/QtSDK/5.4</tt> for this setup.
+
+\code
+$ sudo mkdir /opt/OpenSceneGraph
+$ sudo chown $(whoami):$(whoami) /opt/OpenSceneGraph
+$ cd /opt/OpenSceneGraph
+$ git clone https://github.com/openscenegraph/OpenSceneGraph.git 3.4.0
+$ cd 3.4.0
+$ git checkout OpenSceneGraph-3.4.0
+$ mkdir build_release && cd build_release
+$ cmake ../ -DBUILD_OSG_EXAMPLES=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local -DDESIRED_QT_VERSION=5 -DBUILD_OPENTHREADS_WITH_QT=1 -DCMAKE_PREFIX_PATH=</opt/QtSDK/5.4/gcc_64/>
+$ #Check if correct Qt was detected
+$ cat CMakeCache.txt | grep Qt
+$ make -j6
+$ sudo make install
+$ # If the following error is encountered during install: "libicui18n.so.53 not found", do the following
+$ make install # should complete linking but fail to install due to admin privileges
+$ sudo make install # should go through this time
+\endcode
+Repeat steps above but for Debug 
+\code
+$ cd /opt/OpenSceneGraph/3.4.0/
+$ mkdir build_debug && cd build_debug
+$ cmake ../ -DBUILD_OSG_EXAMPLES=1 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/usr/local -DDESIRED_QT_VERSION=5 -DBUILD_OPENTHREADS_WITH_QT=1 -DCMAKE_PREFIX_PATH=</opt/QtSDK/5.4/gcc_64/>
+$ make -j6
+$ sudo make install
+\endcode
+
+\subsection subsec_main_build_steps Building FLITr
+
+Using command line, navigate to the location where FLITr will be build:
+If in <tt>/opt/</tt> the following commands can be used: \code
+$ cd /opt/
+$ sudo mkdir FLITr
+$ # Make the owner the user that will use FLITr
+$ sudo chown $(whoami):$(whoami) FLITr
+$ cd FLITr
+$ git clone https://github.com/bduvenhage/flitr.git trunk
+$ cd trunk
+$ mkdir build_debug && cd build_debug
+$ cmake ../ -DFLITR_WITH_DOXYGEN=true -DCMAKE_BUILD_TYPE=Debug
+$ make -j4
+Repeat steps above but for Release 
+\code
+$ cd /opt/FLITr/trunk
+$ mkdir build_release && cd build_release
+$ cmake ../ -DFLITR_WITH_DOXYGEN=true -DCMAKE_BUILD_TYPE=Release
+$ make -j4
+\endcode
+
+If required FLITr can be installed. Debug and Release builds can be installed alongside each other:
+\code
+$ cd /opt/FLITr/trunk/build_debug
+$ sudo make install
+$ cd /opt/FLITr/trunk/build_release
+$ sudo make install
+\endcode
+
+\subsection subsec_main_example Running an example
+If the previous commands completed successfully, the example applications should be able to execute. 
+The <tt>ortho_pick_overlay</tt> and <tt>points_overlay</tt> are good examples to start off with.
+This can be done as follow, given one have a video file to play:
+\code
+$ cd /opt/FLITr/trunk/build_debug/examples/ortho_pick_overlay
+$ ./flitr_ortho_pick_overlay /path/to/some/video.mp4
+\endcode
+
+While the above application runs, the following actions can be performed:
+- press the 's' key repeatedly to enable different statistics.
+- Press <tt>SHIFT + LEFT CLICK</tt> to place or move a crosshair.
+- Zoom in and out using the mouse wheel.
+- Drag the video with <tt>LEFT CLICK + RIGHT CLICK + DRAG</tt>.
+- Reset the view using <tt>SPACEBAR</tt>.
+- Press <tt>ESC</tt> to close the example.
+*/

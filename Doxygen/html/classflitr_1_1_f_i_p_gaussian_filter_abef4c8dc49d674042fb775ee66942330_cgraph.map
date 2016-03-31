@@ -1,0 +1,5 @@
+<map id="flitr::FIPGaussianFilter::setKernelWidth" name="flitr::FIPGaussianFilter::setKernelWidth">
+<area shape="rect" id="node2" href="$classflitr_1_1_gaussian_filter.html#a5c35cf4582a2d512ae06147f9ab344a7" title="flitr::GaussianFilter\l::setKernelWidth" alt="" coords="209,5,341,46"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_box_filter_i_i.html#a09c891cad592a76bc00d2dc9f9d27f2b" title="Sets the width of the average filter. " alt="" coords="215,70,334,111"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_gaussian_filter.html#aae02797d73dc3b9d40f7b0431b2879fe" title="flitr::GaussianFilter\l::updateKernel1D" alt="" coords="390,5,522,46"/>
+</map>

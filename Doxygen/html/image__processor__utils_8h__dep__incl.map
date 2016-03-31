@@ -1,0 +1,27 @@
+<map id="/opt/FLITr/trunk/include/flitr/image_processor_utils.h" name="/opt/FLITr/trunk/include/flitr/image_processor_utils.h">
+<area shape="rect" id="node2" href="$fip__average__image__iir_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/average_image\l/fip_average_image_iir.h" alt="" coords="495,110,680,181"/>
+<area shape="rect" id="node5" href="$fip__lk__dewarp_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/dewarp/fip_lk\l_dewarp.h" alt="" coords="1039,110,1213,181"/>
+<area shape="rect" id="node8" href="$fip__lk__dewarp__ex_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/dewarp/fip_lk\l_dewarp_ex.h" alt="" coords="1686,110,1860,181"/>
+<area shape="rect" id="node10" href="$fip__gaussian__downsample_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/gaussian_downsample\l/fip_gaussian_downsample.h" alt="" coords="1885,110,2115,181"/>
+<area shape="rect" id="node13" href="$fip__gaussian__filter_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/gaussian_filter\l/fip_gaussian_filter.h" alt="" coords="1239,110,1420,181"/>
+<area shape="rect" id="node17" href="$fip__morphological__filter_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/morphological\l_filter/fip_morphological_filter.h" alt="" coords="1449,110,1652,181"/>
+<area shape="rect" id="node19" href="$fip__msr_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/msr/fip_msr.h" alt="" coords="294,117,471,173"/>
+<area shape="rect" id="node21" href="$fip__photometric__equalise_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/photometric_equalise\l/fip_photometric_equalise.h" alt="" coords="2363,110,2583,181"/>
+<area shape="rect" id="node24" href="$fip__unsharp__mask_8h.html" title="/opt/FLITr/trunk/include\l/flitr/modules/flitr_image\l_processors/unsharp_mask/fip\l_unsharp_mask.h" alt="" coords="2139,110,2337,181"/>
+<area shape="rect" id="node26" href="$image__processor__utils_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/image_processor\l_utils.cpp" alt="" coords="2608,117,2755,173"/>
+<area shape="rect" id="node3" href="$main_8cpp.html" title="/opt/FLITr/trunk/examples\l/msr/main.cpp" alt="" coords="399,251,571,293"/>
+<area shape="rect" id="node4" href="$fip__average__image__iir_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/average\l_image/fip_average_image\l_iir.cpp" alt="" coords="190,229,375,315"/>
+<area shape="rect" id="node6" href="$lk__dewarp__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/LK_dewarp_cpu/lk_dewarp\l_example.cpp" alt="" coords="1909,244,2091,300"/>
+<area shape="rect" id="node7" href="$fip__lk__dewarp_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/dewarp\l/fip_lk_dewarp.cpp" alt="" coords="596,237,777,307"/>
+<area shape="rect" id="node9" href="$fip__lk__dewarp__ex_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/dewarp\l/fip_lk_dewarp_ex.cpp" alt="" coords="1703,237,1884,307"/>
+<area shape="rect" id="node11" href="$cpu_2lucas__kanade__test_8cpp.html" title="/opt/FLITr/trunk/examples\l/LK_image_registration\l_cpu/lucas_kanade_test.cpp" alt="" coords="2330,244,2517,300"/>
+<area shape="rect" id="node12" href="$fip__gaussian__downsample_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/gaussian\l_downsample/fip_gaussian\l_downsample.cpp" alt="" coords="2115,229,2305,315"/>
+<area shape="rect" id="node14" href="$gaussian__filter__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/gaussian_filter/gaussian\l_filter_example.cpp" alt="" coords="1017,244,1188,300"/>
+<area shape="rect" id="node15" href="$morphological__filter__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/morphological_filter/morphological\l_filter_example.cpp" alt="" coords="1213,244,1435,300"/>
+<area shape="rect" id="node16" href="$fip__gaussian__filter_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/gaussian\l_filter/fip_gaussian_filter.cpp" alt="" coords="802,237,992,307"/>
+<area shape="rect" id="node18" href="$fip__morphological__filter_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/morphological\l_filter/fip_morphological_filter.cpp" alt="" coords="1460,237,1679,307"/>
+<area shape="rect" id="node20" href="$fip__msr_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/msr\l/fip_msr.cpp" alt="" coords="5,237,165,307"/>
+<area shape="rect" id="node22" href="$photometric__equalise__example_8cpp.html" title="/opt/FLITr/trunk/examples\l/photometric_equalise/photometric\l_equalise_example.cpp" alt="" coords="3037,244,3259,300"/>
+<area shape="rect" id="node23" href="$fip__photometric__equalise_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/photometric\l_equalise/fip_photometric_equalise.cpp" alt="" coords="2763,237,3013,307"/>
+<area shape="rect" id="node25" href="$fip__unsharp__mask_8cpp.html" title="/opt/FLITr/trunk/src\l/flitr/modules/flitr\l_image_processors/unsharp\l_mask/fip_unsharp_mask.cpp" alt="" coords="2542,237,2737,307"/>
+</map>

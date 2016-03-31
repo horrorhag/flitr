@@ -1,0 +1,12 @@
+<map id="flitr::XMLConfig::getAttributeVector" name="flitr::XMLConfig::getAttributeVector">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="249,35,426,77"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_element.html#a9ac9b3947c660e4092b52936cb950481" title="Access the first attribute in this element. " alt="" coords="272,101,403,142"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_attribute.html#a3e8f93a9a9e4969308fe999fb93f506f" title="flitr::TiXmlAttribute\l::NameTStr" alt="" coords="272,166,403,207"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_attribute.html#a81c0b3b1b136fb6c164538e8e74a7f19" title="Return the value of this attribute. " alt="" coords="272,231,403,273"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_attribute.html#a776478980776a024f7c2846eec640f65" title="Get the next sibling attribute in the DOM. Returns null at end. " alt="" coords="272,297,403,338"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_node.html#a7667217e269e0da01d1f82aee94d1a3d" title="flitr::TiXmlNode::NextSibling\lElement" alt="" coords="243,362,431,403"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="486,5,663,32"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="481,80,669,107"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="483,205,667,232"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_ti_xml_node.html#afb420ecac13623fb293e9096bf0a7bcd" title="Navigate to a sibling node. " alt="" coords="481,369,669,396"/>
+</map>

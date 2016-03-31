@@ -1,0 +1,5 @@
+<map id="flitr::TextLabelOverlay::TextLabelOverlay" name="flitr::TextLabelOverlay::TextLabelOverlay">
+<area shape="rect" id="node2" href="$classflitr_1_1_text_label_overlay.html#a89a3ab005a47849f8f74b1266b66fe1d" title="flitr::TextLabelOverlay\l::makeLabel" alt="" coords="206,5,357,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_text_label_overlay.html#aac34b2536a06d4bbabd5e38416c978c9" title="flitr::TextLabelOverlay\l::setColour" alt="" coords="206,70,357,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#a4377c477e8393483b5afcfb5a0d4e83c" title="flitr::GeometryOverlay\l::setColour" alt="" coords="406,70,557,111"/>
+</map>

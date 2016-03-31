@@ -3,6 +3,7 @@ var classflitr_1_1_f_fmpeg_writer =
     [ "FFmpegWriter", "classflitr_1_1_f_fmpeg_writer.html#a25759e64b010b266cee27b2f7fa6c338", null ],
     [ "~FFmpegWriter", "classflitr_1_1_f_fmpeg_writer.html#a1ced1693723b252d09e8aeafdb1d3f3b", null ],
     [ "closeVideoFile", "classflitr_1_1_f_fmpeg_writer.html#a4697d02035d4fa89b70d7dfbf24b2033", null ],
+    [ "getNumImages", "classflitr_1_1_f_fmpeg_writer.html#a2bdf015c5d5132709392bef66ff92967", null ],
     [ "openVideoFile", "classflitr_1_1_f_fmpeg_writer.html#a891626553b3336d19380f82a9471130f", null ],
     [ "writeVideoFrame", "classflitr_1_1_f_fmpeg_writer.html#a49b9bad2025d723d5ed3a03e990e000c", null ],
     [ "AVCodec_", "classflitr_1_1_f_fmpeg_writer.html#a7ccf14b2379742f3a2564ddb759cd944", null ],
@@ -22,6 +23,6 @@ var classflitr_1_1_f_fmpeg_writer =
     [ "VideoEncodeBuffer_", "classflitr_1_1_f_fmpeg_writer.html#a2881314ec68555d6cd653d967e313b3f", null ],
     [ "VideoEncodeBufferSize_", "classflitr_1_1_f_fmpeg_writer.html#a80bc05cb484b247f76451a49b0f8290c", null ],
     [ "VideoStream_", "classflitr_1_1_f_fmpeg_writer.html#adc9b0359d8353701d511b306ccfbc6e6", null ],
-    [ "WriteFrameStats_", "classflitr_1_1_f_fmpeg_writer.html#aaee6049435ea8ac83504837b264a8a9c", null ],
+    [ "WriteFrameStats_", "classflitr_1_1_f_fmpeg_writer.html#a89d23cf97a515aa447eff1d64aec1e65", null ],
     [ "WrittenFrameCount_", "classflitr_1_1_f_fmpeg_writer.html#acaa7090e525708deeaaccdcf896e6292", null ]
 ];

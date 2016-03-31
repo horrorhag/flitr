@@ -1,0 +1,5 @@
+<map id="flitr::Image::metadata" name="flitr::Image::metadata">
+<area shape="rect" id="node2" href="$classflitr_1_1_metadata_reader.html#a7e5e621ed429a4ad490cda9eae456770" title="flitr::MetadataReader\l::readFrame" alt="" coords="215,5,359,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_metadata_writer.html#a754a2b4cd1627b3f3cb0e517e4bb197a" title="flitr::MetadataWriter\l::writeFrame" alt="" coords="218,70,355,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_t_multi_o_s_g_consumer.html#a39c9d76c54b5a488d8c0e896880d41d9" title="flitr::TMultiOSGConsumer\l::getNext" alt="" coords="200,135,373,177"/>
+</map>

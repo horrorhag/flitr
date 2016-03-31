@@ -1,0 +1,8 @@
+<map id="flitr::MultiLibTiffProducer::trigger" name="flitr::MultiLibTiffProducer::trigger">
+<area shape="rect" id="node2" href="$classflitr_1_1_multi_lib_tiff_producer.html#a6ffd632f6a4af1f82482247226da525d" title="flitr::MultiLibTiffProducer\l::seek" alt="" coords="219,89,383,130"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_lib_tiff_producer.html#a9883e1ecc59f8a6e6c643248f4095ea5" title="Read current (already open) tiff directory images/pages and write to shared image buffer..." alt="" coords="433,89,597,130"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="660,5,796,46"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="669,71,787,97"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image.html#a03ee2b506064a1f1f3424f435e05c7b5" title="Set the image mata data. " alt="" coords="646,121,810,148"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="660,173,796,214"/>
+</map>

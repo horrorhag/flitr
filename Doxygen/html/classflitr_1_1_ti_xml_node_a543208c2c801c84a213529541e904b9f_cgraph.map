@@ -1,0 +1,9 @@
+<map id="flitr::TiXmlNode::ReplaceChild" name="flitr::TiXmlNode::ReplaceChild">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#a377cc60ac5cd6b6db76b35be5187f3dc" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="475,5,671,32"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#aa66f4ebcd175204a168ed7c2d7b43071" title="flitr::TiXmlNode::GetDocument" alt="" coords="224,56,427,83"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_document.html#a735c23e318597b920c94eae77fa206de" title="flitr::TiXmlDocument\l::SetError" alt="" coords="254,107,397,149"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_node.html#af2e367d165c099fb17ed2fbfd6beffb8" title="flitr::TiXmlNode::Clone" alt="" coords="248,173,403,200"/>
+<area shape="rect" id="node5" href="$structflitr_1_1_ti_xml_cursor.html#a2bbe619009168473e7e12abf2d05d287" title="flitr::TiXmlCursor\l::Clear" alt="" coords="513,57,634,98"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_parsing_data.html#a65cee8ab77a36c605db08c84b4c30a7d" title="flitr::TiXmlParsingData\l::Stamp" alt="" coords="496,122,651,163"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_parsing_data.html#ab05a433fe00c616f944f6bc2ee659b99" title="flitr::TiXmlParsingData\l::Cursor" alt="" coords="496,187,651,229"/>
+</map>

@@ -1,0 +1,23 @@
+<map id="DSVL_GraphManager::BuildGraphFromXMLHandle" name="DSVL_GraphManager::BuildGraphFromXMLHandle">
+<area shape="rect" id="node2" href="$_d_s_v_l___graph_manager_8cpp.html#acc099dffe726b8f31bb48b125698603f" title="default_DS_MEDIA_FORMAT" alt="" coords="237,5,437,32"/>
+<area shape="rect" id="node3" href="$_d_s_v_l___pixel_format_8cpp.html#a61d4ad846cb5622948e693f3d95515eb" title="StringToPX" alt="" coords="293,56,382,83"/>
+<area shape="rect" id="node4" href="$_d_s_v_l___helpers_8cpp.html#a06a9c0f5fa4b4385f15a6164ce9547e9" title="AddToRot" alt="" coords="297,107,378,133"/>
+<area shape="rect" id="node5" href="$_d_s_v_l___pixel_format_8cpp.html#a57e0ff951af2aea66955b7e1846b631f" title="PXtoMEDIASUBTYPE" alt="" coords="259,157,416,184"/>
+<area shape="rect" id="node6" href="$_d_s_v_l___helpers_8cpp.html#ada0f10ca24b15e6cbd8d40300f1a7aa3" title="FindCaptureDevice" alt="" coords="270,259,405,285"/>
+<area shape="rect" id="node7" href="$_d_s_v_l___helpers_8cpp.html#a75eb2871233822b5f8d3c9d6e76b89ad" title="AMErrorMessage" alt="" coords="487,233,609,260"/>
+<area shape="rect" id="node8" href="$_d_s_v_l___helpers_8cpp.html#acd18d145f3382f9eff3d113eddd6543f" title="getPin" alt="" coords="519,360,577,387"/>
+<area shape="rect" id="node9" href="$_d_s_v_l___helpers_8cpp.html#ac2e124b61defc24aa0978897b0f07572" title="CanDeliverDV" alt="" coords="284,512,391,539"/>
+<area shape="rect" id="node11" href="$_d_s_v_l___helpers_8cpp.html#af2028f7cb96706dc130daf43284b852c" title="FreeMediaType" alt="" coords="659,487,771,513"/>
+<area shape="rect" id="node12" href="$_d_s_v_l___helpers_8cpp.html#a954ec811d6301f7e0fb8ac6bef5a2ceb" title="DisplayFilterProperties" alt="" coords="260,715,415,741"/>
+<area shape="rect" id="node13" href="$_d_s_v_l___graph_manager_8cpp.html#ac72075836ce1acae9ea58bcfbcb621c5" title="MatchMediaTypes" alt="" coords="273,613,402,640"/>
+<area shape="rect" id="node17" href="$_d_s_v_l___helpers_8cpp.html#ab4fdaa88158a65e269f31a2f405b4619" title="DisplayPinProperties" alt="" coords="265,765,409,792"/>
+<area shape="rect" id="node18" href="$_d_s_v_l___helpers_8cpp.html#a45c00eabc5acc20c8d73cc35b70dd35f" title="ConnectFilters" alt="" coords="284,360,391,387"/>
+<area shape="rect" id="node19" href="$_d_s_v_l___helpers_8cpp.html#ab131c6ae889417896d285a07a412138b" title="CanDeliverVideo" alt="" coords="277,563,397,589"/>
+<area shape="rect" id="node20" href="$_d_s_v_l___helpers_8cpp.html#a18a4f5f760cc9d29395a66988c82d929" title="AutoConnectFilters" alt="" coords="270,411,405,437"/>
+<area shape="rect" id="node21" href="$_d_s_v_l___graph_manager_8h.html#ad61f97c2c15fb9046d1e568a660d86f4" title="avg2fps" alt="" coords="303,664,371,691"/>
+<area shape="rect" id="node22" href="$_d_s_v_l___pixel_format_8cpp.html#ae5f135cdc8dfb1be51c8958ccb740e61" title="MEDIASUBTYPEtoPX" alt="" coords="259,816,416,843"/>
+<area shape="rect" id="node10" href="$_d_s_v_l___helpers_8cpp.html#a6ad1961a43d6a08fcbf3ae24b3296ce8" title="DeleteMediaType" alt="" coords="486,512,610,539"/>
+<area shape="rect" id="node14" href="$_d_s_v_l___helpers_8cpp.html#a6e34492acaf35925c5bea44d928e3bc5" title="CopyMediaType" alt="" coords="489,563,607,589"/>
+<area shape="rect" id="node15" href="$_d_s_v_l___graph_manager_8h.html#aafd31b3c2b9cc2ea77b776fa52964f0e" title="fps2avg" alt="" coords="514,613,582,640"/>
+<area shape="rect" id="node16" href="$_d_s_v_l___helpers_8cpp.html#adf400c1c049a5f0f196d9e038cc11107" title="RoundDouble" alt="" coords="497,664,599,691"/>
+</map>

@@ -16,7 +16,8 @@ var ffmpeg__writer_8h =
       [ "FLITR_FFV1_CODEC", "ffmpeg__writer_8h.html#a73acd9d15e5af340fa8bc3c507f2b493adbddfbf1f655eec610504c5bd44acc13", null ],
       [ "FLITR_MPEG4_CODEC", "ffmpeg__writer_8h.html#a73acd9d15e5af340fa8bc3c507f2b493aa787dff463e65da07f177008d979a5b6", null ],
       [ "FLITR_HUFFYUV_CODEC", "ffmpeg__writer_8h.html#a73acd9d15e5af340fa8bc3c507f2b493a4ff7326f072f9b156e46c176482322a6", null ],
-      [ "FLITR_THEORA_CODEC", "ffmpeg__writer_8h.html#a73acd9d15e5af340fa8bc3c507f2b493ac31e169e8ce371b6fd8d8603ceccbaca", null ]
+      [ "FLITR_THEORA_CODEC", "ffmpeg__writer_8h.html#a73acd9d15e5af340fa8bc3c507f2b493ac31e169e8ce371b6fd8d8603ceccbaca", null ],
+      [ "FLITR_DIRAC_CODEC", "ffmpeg__writer_8h.html#a73acd9d15e5af340fa8bc3c507f2b493a68b96b5054bc71193238425e3d7a6ff4", null ]
     ] ],
     [ "VideoContainer", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edba", [
       [ "FLITR_ANY_CONTAINER", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edbaa61972ff35efb866168daecc5240b8830", null ],

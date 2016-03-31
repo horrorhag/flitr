@@ -1,0 +1,7 @@
+<map id="flitr::ImageStabiliserBiLK::triggerInput" name="flitr::ImageStabiliserBiLK::triggerInput">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_stabiliser_bi_l_k.html#a3a436328687e8fed16cfaf08d41dc68c" title="flitr::ImageStabiliserBi\lLK::swapCurrentPrevious" alt="" coords="233,5,404,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_bi_pyramid.html#a3df6728fe6c98022d046e11f17251c5b" title="flitr::ImageBiPyramid\l::setRebuildSwitchOn" alt="" coords="244,70,393,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_bi_pyramid.html#a325a341bff1fce34d605ae30c3c6f53f" title="flitr::ImageBiPyramid\l::setRebuildSwitchOff" alt="" coords="243,135,394,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_bi_pyramid.html#ab1a2e28adbb5b8827eb2a474639d7c33" title="flitr::ImageBiPyramid\l::rebuildBiPyramidCPU" alt="" coords="240,201,397,242"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_stabiliser_bi_l_k_1_1_post_bi_pyramid_rebuilt_callback.html#af567dbd0b5126d28e7d8909fc953bb21" title="flitr::ImageStabiliserBi\lLK::PostBiPyramidRebuiltCallback\l::callback" alt="" coords="206,265,431,321"/>
+</map>

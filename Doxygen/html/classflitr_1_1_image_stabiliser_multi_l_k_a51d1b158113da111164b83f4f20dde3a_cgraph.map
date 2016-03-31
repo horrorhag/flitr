@@ -1,0 +1,5 @@
+<map id="flitr::ImageStabiliserMultiLK::init" name="flitr::ImageStabiliserMultiLK::init">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a4a48a36b19dc09ffb212b911a0011556" title="flitr::ImageFormat\l::setWidth" alt="" coords="221,5,347,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a10db8f5910a6d611ceea25959faed054" title="flitr::ImageFormat\l::setHeight" alt="" coords="221,70,347,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_format.html#aff80d161bdd950b65403353ef0e8f5c2" title="flitr::ImageFormat\l::setPixelFormat" alt="" coords="221,135,347,177"/>
+</map>

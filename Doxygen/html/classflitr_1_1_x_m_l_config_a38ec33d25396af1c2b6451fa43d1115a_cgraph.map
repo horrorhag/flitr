@@ -1,0 +1,23 @@
+<map id="flitr::XMLConfig::setDouble" name="flitr::XMLConfig::setDouble">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_node.html#ab1f8d8e70d88aea4c5efedfe00862d55" title="Convenience function to get through elements. " alt="" coords="235,98,413,139"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_node.html#af287a913ce46d8dbf7ef24fec69bbaf0" title="flitr::TiXmlNode::Insert\lEndChild" alt="" coords="247,291,401,333"/>
+<area shape="rect" id="node16" href="$classflitr_1_1_ti_xml_element.html#abf0b3bd7f0e4c746a89ec6e7f101fc32" title="flitr::TiXmlElement\l::SetAttribute" alt="" coords="259,469,389,510"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_node.html#af67ec4e5a952a27877b6b77ccacf4765" title="The first child of this node. Will be null if there are no children. " alt="" coords="467,5,645,32"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_node.html#a14e7843fc102bd3bd5089473b977fb82" title="STL std::string form. " alt="" coords="462,80,650,107"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_node.html#ab19953f82b72dbc1aa00b1199f41f0b1" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="464,131,648,157"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_node.html#aae5ee24b998219a223a2c1fedacd0ff6" title="flitr::TiXmlNode::Type" alt="" coords="725,185,875,212"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_ti_xml_node.html#aa66f4ebcd175204a168ed7c2d7b43071" title="flitr::TiXmlNode::GetDocument" alt="" coords="699,240,901,267"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_ti_xml_document.html#a735c23e318597b920c94eae77fa206de" title="flitr::TiXmlDocument\l::SetError" alt="" coords="729,333,871,374"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_ti_xml_node.html#af2e367d165c099fb17ed2fbfd6beffb8" title="flitr::TiXmlNode::Clone" alt="" coords="479,400,633,427"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_ti_xml_node.html#a1a881212554b759865f6cac79a851d38" title="flitr::TiXmlNode::LinkEnd\lChild" alt="" coords="472,233,640,274"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_ti_xml_node.html#a377cc60ac5cd6b6db76b35be5187f3dc" title="Cast to a more defined type. Will return null if not of the requested type. " alt="" coords="950,216,1146,243"/>
+<area shape="rect" id="node11" href="$structflitr_1_1_ti_xml_cursor.html#a2bbe619009168473e7e12abf2d05d287" title="flitr::TiXmlCursor\l::Clear" alt="" coords="987,267,1109,309"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_ti_xml_parsing_data.html#a65cee8ab77a36c605db08c84b4c30a7d" title="flitr::TiXmlParsingData\l::Stamp" alt="" coords="971,333,1125,374"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_ti_xml_parsing_data.html#ab05a433fe00c616f944f6bc2ee659b99" title="flitr::TiXmlParsingData\l::Cursor" alt="" coords="971,398,1125,439"/>
+<area shape="rect" id="node17" href="$classflitr_1_1_ti_xml_attribute_set.html#a5e28f5d32f048fba85d04dc317495bdc" title="flitr::TiXmlAttributeSet\l::FindOrCreate" alt="" coords="481,469,631,510"/>
+<area shape="rect" id="node22" href="$classflitr_1_1_ti_xml_attribute.html#a88aed4f87aa94979b6fdfba5111f0abc" title="Set the value. " alt="" coords="491,534,621,575"/>
+<area shape="rect" id="node18" href="$classflitr_1_1_ti_xml_attribute_set.html#af3675cc2bfd0aea153cda1cfcdd1f77e" title="flitr::TiXmlAttributeSet\l::Find" alt="" coords="973,463,1123,505"/>
+<area shape="rect" id="node19" href="$classflitr_1_1_ti_xml_attribute_set.html#a745e50ddaae3bee93e4589321e0b9c1a" title="flitr::TiXmlAttributeSet::Add" alt="" coords="709,512,891,539"/>
+<area shape="rect" id="node21" href="$classflitr_1_1_ti_xml_attribute.html#a124b2c44aa8eb8b33f40878b07c4cbc4" title="Set the name of this attribute. " alt="" coords="735,563,865,605"/>
+<area shape="rect" id="node20" href="$classflitr_1_1_ti_xml_attribute.html#aaeaa9468bafae6550a03dd6839ce2ab5" title="Return the name of this attribute. " alt="" coords="983,529,1113,570"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="flitr::TiXmlNode::Identify" name="flitr::TiXmlNode::Identify">
+<area shape="rect" id="node2" href="$classflitr_1_1_ti_xml_base.html#ac0c3d66d8a9e6996a1fa016275e16875" title="flitr::TiXmlBase::SkipWhite\lSpace" alt="" coords="221,5,401,46"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_ti_xml_base.html#a51631e6986179558b9e5850723ed165a" title="flitr::TiXmlBase::String\lEqual" alt="" coords="233,70,388,111"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_ti_xml_text.html#a87120a82b554589fc4aa5c368f87d124" title="Turns on or off a CDATA representation of text. " alt="" coords="219,136,402,163"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_ti_xml_base.html#ae22522b2e8e1ac43102d16394f639fc8" title="flitr::TiXmlBase::IsAlpha" alt="" coords="229,187,393,213"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_ti_xml_base.html#a6c3f8629e55d03007fb38f44d39f0458" title="flitr::TiXmlBase::IsWhite\lSpace" alt="" coords="453,5,619,46"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_ti_xml_base.html#a5b8d99b874fd7005de1d3b4cc4809746" title="flitr::TiXmlBase::ToLower" alt="" coords="451,77,621,104"/>
+</map>

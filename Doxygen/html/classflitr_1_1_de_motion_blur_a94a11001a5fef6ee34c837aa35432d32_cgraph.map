@@ -1,0 +1,8 @@
+<map id="flitr::DeMotionBlur::trigger" name="flitr::DeMotionBlur::trigger">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html#aa8d2103df0dac8755b1a0fdc206932f7" title="flitr::ImageConsumer\l::getNumReadSlotsAvailable" alt="" coords="182,5,373,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html#a5b34bbd15e5e3f50cec63bb4b7180356" title="flitr::ImageProducer\l::getNumWriteSlotsAvailable" alt="" coords="182,70,373,111"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="205,135,349,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a50cb5b2cd533974cddfa7561e2dd743a" title="flitr::ImageProducer\l::reserveWriteSlot" alt="" coords="209,201,345,242"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_producer.html#a5dd9a012d296b7bdb7df86d59f3f1b91" title="flitr::ImageProducer\l::releaseWriteSlot" alt="" coords="209,266,345,307"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="205,331,349,373"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="flitr::FIPLocalPhotometricEqualise::init" name="flitr::FIPLocalPhotometricEqualise::init">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#a7a85d4cbab890c6ae20900c2fab38e90" title="flitr::ImageProcessor\l::init" alt="" coords="238,5,381,46"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_processor.html#a98749a3787d276ed937838bcad388419" title="flitr::ImageProcessor\l::getUpstreamFormat" alt="" coords="236,70,383,111"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="247,135,372,177"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="247,201,372,242"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#ae476b69243d5517462927588d6e1c2a9" title="flitr::ImageFormat\l::getComponentsPerPixel" alt="" coords="224,266,395,307"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a54674bef94ad479d83e86318eb7063d6" title="flitr::ImageConsumer\l::getFormat" alt="" coords="443,70,587,111"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_producer.html#a70829218cf22e462e33637bb1af8a2e4" title="flitr::ImageProducer\l::getFormat" alt="" coords="635,70,771,111"/>
+</map>
