@@ -442,7 +442,9 @@ ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 
 
-ADD_SUBDIRECTORY(apps/viewer_colour_night)
+IF(FLITR_USE_LIBTIFF)
+  ADD_SUBDIRECTORY(apps/viewer_colour_night)
+ENDIF()
 
 
 ADD_SUBDIRECTORY(examples/msr)
