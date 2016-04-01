@@ -63,14 +63,24 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     //=== OutputFormat_ ===
     OutputFormat_=0;
 
-    if (Container_==FLITR_AVI_CONTAINER)
-    {//Select AVI container if requested.
+    switch(Container_) {
+    case FLITR_AVI_CONTAINER :
         OutputFormat_=av_guess_format("avi", NULL, NULL);
-    } else
-        if (Container_==FLITR_MKV_CONTAINER)
-        {//Select MKV container if requested.
-            OutputFormat_=av_guess_format("matroska", NULL, NULL);
-        }
+        break;
+    case FLITR_MKV_CONTAINER :
+        OutputFormat_=av_guess_format("matroska", NULL, NULL);
+        break;
+    case FLITR_RTSP_CONTAINER:
+        OutputFormat_ = av_guess_format("rtsp", NULL, NULL);
+        break;
+    default:
+        break;
+    }
+
+    if (!OutputFormat_)
+    {//If still no valid output format. Then attempt to guess from file name.
+        OutputFormat_ = av_guess_format(NULL, filename.c_str(), NULL);
+    }
 
     if (!OutputFormat_)
     {//If nothing requested or request failed. Then guess from pixel format.
@@ -79,11 +89,6 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         } else {
             OutputFormat_ = av_guess_format("avi", NULL, NULL);
         }
-    }
-
-    if (!OutputFormat_)
-    {//If still no valid output format. Then attempt to guess from file name.
-        OutputFormat_ = av_guess_format(NULL, filename.c_str(), NULL);
     }
 
     if (!OutputFormat_) {
@@ -260,9 +265,12 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
     if (bit_rate>0) AVCodecContext_->bit_rate = bit_rate;
 
+    SaveFrameWidth_  = ImageFormat_.getWidth();
+    SaveFrameHeight_ = ImageFormat_.getHeight();
+
     /* resolution must be a multiple of two */
-    AVCodecContext_->width = ImageFormat_.getWidth();;
-    AVCodecContext_->height = ImageFormat_.getHeight();
+    AVCodecContext_->width = SaveFrameWidth_;
+    AVCodecContext_->height = SaveFrameHeight_;
     AVCodecContext_->time_base.den= FrameRate_.num;
     AVCodecContext_->time_base.num= FrameRate_.den;
     AVCodecContext_->gop_size = 0;
@@ -309,7 +317,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
 
     InputFrame_ = allocFFmpegFrame(InputFrameFormat_, ImageFormat_.getWidth(), ImageFormat_.getHeight());
-    SaveFrame_ = allocFFmpegFrame(SaveFrameFormat_, ImageFormat_.getWidth(), ImageFormat_.getHeight());
+    SaveFrame_ = allocFFmpegFrame(SaveFrameFormat_, SaveFrameWidth_, SaveFrameHeight_);
 
 
     if (!InputFrame_ || !SaveFrame_) {
@@ -320,7 +328,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
 #if defined FLITR_USE_SWSCALE
     ConvertToSaveCtx_ = sws_getContext(ImageFormat_.getWidth(), ImageFormat_.getHeight(), InputFrameFormat_,
-                                       ImageFormat_.getWidth(), ImageFormat_.getHeight(), SaveFrameFormat_,
+                                       SaveFrameWidth_, SaveFrameHeight_, SaveFrameFormat_,
                                        SWS_BILINEAR, NULL, NULL, NULL);
 #endif
 
@@ -413,7 +421,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
     //printf("%d %d %d %d\n", test[0], test[1], test[2], test[3]);
     //fflush(stdout);
     sws_scale(ConvertToSaveCtx_,
-              InputFrame_->data, InputFrame_->linesize, 0, AVCodecContext_->height,
+              InputFrame_->data, InputFrame_->linesize, 0, ImageFormat_.getHeight(),
               SaveFrame_->data, SaveFrame_->linesize);
 #else
     img_convert((AVPicture *)SaveFrame_, AVCodecContext_->pix_fmt,

@@ -73,8 +73,11 @@ $ cat CMakeCache.txt | grep Qt
 $ make -j6
 $ sudo make install
 $ # If the following error is encountered during install: "libicui18n.so.53 not found", do the following ...
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:</opt/QtSDK/5.4/gcc_64/lib/> # Path to Qt lib folder
 $ make install # should complete linking but fail to install due to admin privileges
 $ sudo make install # should go through this time
+$ sudo make install_ld_conf # Make OSG libs available
+$ sudo ldconfig
 \endcode
 Repeat steps above but for Debug 
 \code
