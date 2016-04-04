@@ -1,6 +1,6 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h">
-<area shape="rect" id="node2" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="5,131,123,158"/>
-<area shape="rect" id="node3" href="$parameters_8h.html" title="flitr/modules/parameters\l/parameters.h" alt="" coords="147,124,312,165"/>
-<area shape="rect" id="node5" href="$texture_8h.html" title="flitr/texture.h" alt="" coords="387,131,483,158"/>
-<area shape="rect" id="node7" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="454,213,570,240"/>
+<map id="cpu_shader_pass.h" name="cpu_shader_pass.h">
+<area shape="rect" id="node2" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="5,87,123,114"/>
+<area shape="rect" id="node3" href="$parameters_8h.html" title="flitr/modules/parameters\l/parameters.h" alt="" coords="147,80,312,121"/>
+<area shape="rect" id="node5" href="$texture_8h.html" title="flitr/texture.h" alt="" coords="387,87,483,114"/>
+<area shape="rect" id="node7" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="454,169,570,196"/>
 </map>

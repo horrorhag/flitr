@@ -1,5 +1,5 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/lucas_kanade/ImageBiPyramid.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/lucas_kanade/ImageBiPyramid.h">
-<area shape="rect" id="node2" href="$_image_stabiliser_bi_l_k_8h.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/include\l/flitr/modules/lucas_kanade\l/ImageStabiliserBiLK.h" alt="" coords="5,124,196,195"/>
-<area shape="rect" id="node4" href="$_image_bi_pyramid_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/modules/lucas_kanade\l/ImageBiPyramid.cpp" alt="" coords="220,124,411,195"/>
-<area shape="rect" id="node3" href="$_image_stabiliser_bi_l_k_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/modules/lucas_kanade\l/ImageStabiliserBiLK.cpp" alt="" coords="5,243,196,313"/>
+<map id="ImageBiPyramid.h" name="ImageBiPyramid.h">
+<area shape="rect" id="node2" href="$_image_stabiliser_bi_l_k_8h.html" title="ImageStabiliserBiLK.h" alt="" coords="12,80,165,107"/>
+<area shape="rect" id="node4" href="$_image_bi_pyramid_8cpp.html" title="ImageBiPyramid.cpp" alt="" coords="189,80,335,107"/>
+<area shape="rect" id="node3" href="$_image_stabiliser_bi_l_k_8cpp.html" title="ImageStabiliserBiLK.cpp" alt="" coords="5,155,172,181"/>
 </map>

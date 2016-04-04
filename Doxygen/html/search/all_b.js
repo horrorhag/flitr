@@ -36,8 +36,5 @@ var searchData=
   ['logbase',['logbase',['../classflitr_1_1_image_bi_pyramid.html#ac53c205218bf36fb015baaf2c3ba525f',1,'flitr::ImageBiPyramid::logbase()'],['../classflitr_1_1_image_n_pyramid.html#aa8a2272cdb994f3d485b6182cb882ade',1,'flitr::ImageNPyramid::logbase()'],['../classflitr_1_1_image_stabiliser_bi_l_k.html#a70751ebd524dce4072b19e04c22cc1e4',1,'flitr::ImageStabiliserBiLK::logbase()'],['../classflitr_1_1_image_stabiliser_multi_l_k.html#a132a8981f6504f04e91c46b028a367b0',1,'flitr::ImageStabiliserMultiLK::logbase()']]],
   ['logmessage',['logMessage',['../namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2',1,'flitr::logMessage(const LogMessageCategory category)'],['../namespaceflitr.html#a18e2b73f800bf5b410ae94563af7ce09',1,'flitr::logMessage(void)']]],
   ['logmessagecategory',['LogMessageCategory',['../namespaceflitr.html#afd8f937af83b8a7523dccd3762971bf5',1,'flitr']]],
-  ['lucas_5fkanade_5ftest_2ecpp',['lucas_kanade_test.cpp',['../cpu_2lucas__kanade__test_8cpp.html',1,'']]],
-  ['lucas_5fkanade_5ftest_2ecpp',['lucas_kanade_test.cpp',['../lucas__kanade__test_8cpp.html',1,'']]],
-  ['lucas_5fkanade_5ftest_2ed',['lucas_kanade_test.d',['../cpu_2_f_l_i_tr_8build_2_debug_2flitr__lk__image__registration__cpu_8build_2_objects-normal_2x86__64_2lucas__kanade__test_8d.html',1,'']]],
-  ['lucas_5fkanade_5ftest_2ed',['lucas_kanade_test.d',['../_f_l_i_tr_8build_2_debug_2flitr__lk__image__registration_8build_2_objects-normal_2x86__64_2lucas__kanade__test_8d.html',1,'']]]
+  ['lucas_5fkanade_5ftest_2ecpp',['lucas_kanade_test.cpp',['../lucas__kanade__test_8cpp.html',1,'']]]
 ];

@@ -3,37 +3,37 @@
 <area shape="rect" id="node3" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="193,56,393,83"/>
 <area shape="rect" id="node4" href="$namespaceflitr.html#ab3fbd53938c2fa7f54ba85c64bf7f92d" title="Remove category/ies. " alt="" coords="195,107,391,133"/>
 <area shape="rect" id="node5" href="$namespaceflitr.html#ab8c99780fb062a99dcf4c62748ef5c88" title="Get the current flags. " alt="" coords="195,157,391,184"/>
-<area shape="rect" id="node8" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="234,921,353,948"/>
+<area shape="rect" id="node8" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="234,923,353,949"/>
 <area shape="rect" id="node6" href="$classflitr_1_1_f_fmpeg_reader.html#a924554005adc915c2b8f04e21965ad0e" title="flitr::FFmpegReader\l::FFmpegReader" alt="" coords="492,85,632,126"/>
 <area shape="rect" id="node7" href="$classflitr_1_1_f_fmpeg_writer.html#a25759e64b010b266cee27b2f7fa6c338" title="flitr::FFmpegWriter\l::FFmpegWriter" alt="" coords="496,150,628,191"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_image.html#a8180f49979648efeec9cf79aab1ebe06" title="flitr::Image::outOfMem" alt="" coords="485,535,639,561"/>
-<area shape="rect" id="node10" href="$namespaceflitr.html#a18e2b73f800bf5b410ae94563af7ce09" title="flitr::logMessage" alt="" coords="503,585,621,612"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#aa84017f7fb1d845a8d8eacbfd658c46f" title="flitr::ImageStabiliserMulti\lLK::transformLRCoordByROICentres" alt="" coords="441,637,683,678"/>
-<area shape="rect" id="node12" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a570819c295bdfa325a50a32e645265d2" title="flitr::ImageStabiliserMulti\lLK::updateOutputQuadTransform" alt="" coords="452,702,672,743"/>
-<area shape="rect" id="node13" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="460,768,664,824"/>
-<area shape="rect" id="node14" href="$classflitr_1_1_f_fmpeg_producer.html#a7b690142fd60cd615253bff0fb0f3ebc" title="flitr::FFmpegProducer\l::init" alt="" coords="487,849,637,890"/>
-<area shape="rect" id="node15" href="$classflitr_1_1_f_fmpeg_reader.html#a2453df4330e6e590abf4b41cf5fe3051" title="flitr::FFmpegReader\l::getImage" alt="" coords="492,914,632,955"/>
-<area shape="rect" id="node16" href="$classflitr_1_1_f_fmpeg_writer.html#a49b9bad2025d723d5ed3a03e990e000c" title="flitr::FFmpegWriter\l::writeVideoFrame" alt="" coords="496,979,628,1021"/>
-<area shape="rect" id="node17" href="$classflitr_1_1_image_stabiliser_bi_l_k.html#a6e25766375e62e61f5b706844a895964" title="flitr::ImageStabiliserBi\lLK::ImageStabiliserBiLK" alt="" coords="479,1045,645,1086"/>
-<area shape="rect" id="node18" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a1a279cd9921795daeaad7622dfb2041f" title="flitr::ImageStabiliserMulti\lLK::ImageStabiliserMultiLK" alt="" coords="471,1110,653,1151"/>
-<area shape="rect" id="node19" href="$classflitr_1_1_x_m_l_config.html#a55031d91b60e59283bfafc9976930822" title="Read the configuration file specified and create an XML structure in memory. " alt="" coords="493,1176,631,1203"/>
-<area shape="rect" id="node20" href="$classflitr_1_1_x_m_l_config.html#af3f71e17b0db3a09a62d1d9855829ca6" title="Save the configuration structure in memory to the specified file. " alt="" coords="487,1227,637,1253"/>
-<area shape="rect" id="node21" href="$classflitr_1_1_x_m_l_config.html#a6c1f5a35c40c596f20d4c99598604bea" title="Return a default and print a message about the missing element. " alt="" coords="471,1277,653,1304"/>
-<area shape="rect" id="node22" href="$classflitr_1_1_multi_f_fmpeg_producer.html#a1d037bc608bf8228241a1e5dd06efb07" title="flitr::MultiFFmpegProducer\l::init" alt="" coords="473,1329,651,1370"/>
-<area shape="rect" id="node23" href="$classflitr_1_1_ortho_texture_manipulator.html#a08ed7180ab7c9dd6d241a852aebc661a" title="flitr::OrthoTextureManipulator\l::initOrthoProjection" alt="" coords="464,1394,660,1435"/>
-<area shape="rect" id="node24" href="$classflitr_1_1_raw_video_file_producer.html#ac12c82e255f345f5db53af26c638ebba" title="flitr::RawVideoFileProducer\l::init" alt="" coords="470,1459,654,1501"/>
-<area shape="rect" id="node25" href="$classflitr_1_1_raw_video_file_reader.html#a8ea9c32385810e195304eb9308a4a8b7" title="flitr::RawVideoFileReader\l::openVideoFile" alt="" coords="475,1525,649,1566"/>
-<area shape="rect" id="node27" href="$classflitr_1_1_raw_video_file_writer.html#a292fe968735fbd86e012c64a1f7fe3b0" title="Open video file. " alt="" coords="479,1590,645,1631"/>
-<area shape="rect" id="node29" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#a3e7062397350f0460bc99be5862674bd" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback::\loperator()" alt="" coords="467,1656,657,1712"/>
-<area shape="rect" id="node30" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#ae7b020fd14ecd7dec7822f95879acce5" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback::\lreadPixels" alt="" coords="467,1736,657,1792"/>
-<area shape="rect" id="node31" href="$classflitr_1_1_s_multi_f_fmpeg_producer.html#a1a139fcac7a0a096bc0e964690010f57" title="flitr::SMultiFFmpegProducer\l::init" alt="" coords="468,1817,656,1858"/>
-<area shape="rect" id="node32" href="$classflitr_1_1_s_multi_raw_video_file_producer.html#a72f79b6411f31c083f20979ae022663e" title="flitr::SMultiRawVideoFile\lProducer::init" alt="" coords="479,1882,645,1923"/>
-<area shape="rect" id="node33" href="$classflitr_1_1_video_producer_1_1_video_producer_thread.html#a13ea67b5315d600f24e7c7ae0fcdf7fa" title="flitr::VideoProducer\l::VideoProducerThread::run" alt="" coords="469,215,655,257"/>
-<area shape="rect" id="node34" href="$classflitr_1_1_video_producer.html#a3a83fb5cc5db86f50e6e825739e488f1" title="flitr::VideoProducer\l::init" alt="" coords="952,401,1088,442"/>
-<area shape="rect" id="node35" href="$video__linux__v4l_2video__producer_8cpp.html#a5c4420489659974b6ac0e1914c3bdecf" title="open_device" alt="" coords="769,484,866,511"/>
-<area shape="rect" id="node36" href="$video__linux__v4l_2video__producer_8cpp.html#a124b294ff237795262ca4962bdbf090f" title="init_device" alt="" coords="775,383,860,409"/>
-<area shape="rect" id="node37" href="$video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde" title="vc_init_mmap" alt="" coords="510,332,614,359"/>
-<area shape="rect" id="node38" href="$video__linux__v4l_2video__producer_8cpp.html#afaad2920044ecdb10a854a521595caad" title="start_capture" alt="" coords="767,307,867,333"/>
-<area shape="rect" id="node26" href="$classflitr_1_1_raw_video_file_reader.html#ad0e11bdf96b9f64a3e0f4cf5abad1a7c" title="flitr::RawVideoFileReader\l::RawVideoFileReader" alt="" coords="731,1525,904,1566"/>
-<area shape="rect" id="node28" href="$classflitr_1_1_raw_video_file_writer.html#a6c49576103fa4ab9660331d34ded6ea1" title="flitr::RawVideoFileWriter\l::RawVideoFileWriter" alt="" coords="735,1590,900,1631"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_f_fmpeg_producer.html#a7b690142fd60cd615253bff0fb0f3ebc" title="flitr::FFmpegProducer\l::init" alt="" coords="487,537,637,578"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_f_fmpeg_reader.html#a2453df4330e6e590abf4b41cf5fe3051" title="flitr::FFmpegReader\l::getImage" alt="" coords="492,602,632,643"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_f_fmpeg_writer.html#a49b9bad2025d723d5ed3a03e990e000c" title="flitr::FFmpegWriter\l::writeVideoFrame" alt="" coords="496,667,628,709"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_image.html#a8180f49979648efeec9cf79aab1ebe06" title="flitr::Image::outOfMem" alt="" coords="485,733,639,760"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_image_stabiliser_bi_l_k.html#a6e25766375e62e61f5b706844a895964" title="flitr::ImageStabiliserBi\lLK::ImageStabiliserBiLK" alt="" coords="479,785,645,826"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a1a279cd9921795daeaad7622dfb2041f" title="flitr::ImageStabiliserMulti\lLK::ImageStabiliserMultiLK" alt="" coords="471,850,653,891"/>
+<area shape="rect" id="node15" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#aa84017f7fb1d845a8d8eacbfd658c46f" title="flitr::ImageStabiliserMulti\lLK::transformLRCoordByROICentres" alt="" coords="441,915,683,957"/>
+<area shape="rect" id="node16" href="$classflitr_1_1_image_stabiliser_multi_l_k.html#a570819c295bdfa325a50a32e645265d2" title="flitr::ImageStabiliserMulti\lLK::updateOutputQuadTransform" alt="" coords="452,981,672,1022"/>
+<area shape="rect" id="node17" href="$namespaceflitr.html#a18e2b73f800bf5b410ae94563af7ce09" title="flitr::logMessage" alt="" coords="503,1047,621,1073"/>
+<area shape="rect" id="node18" href="$classflitr_1_1_multi_f_fmpeg_producer.html#a1d037bc608bf8228241a1e5dd06efb07" title="flitr::MultiFFmpegProducer\l::init" alt="" coords="473,1098,651,1139"/>
+<area shape="rect" id="node19" href="$classflitr_1_1_ortho_texture_manipulator.html#a08ed7180ab7c9dd6d241a852aebc661a" title="flitr::OrthoTextureManipulator\l::initOrthoProjection" alt="" coords="464,1163,660,1205"/>
+<area shape="rect" id="node20" href="$classflitr_1_1_raw_video_file_producer.html#ac12c82e255f345f5db53af26c638ebba" title="flitr::RawVideoFileProducer\l::init" alt="" coords="470,1229,654,1270"/>
+<area shape="rect" id="node21" href="$classflitr_1_1_raw_video_file_reader.html#a8ea9c32385810e195304eb9308a4a8b7" title="flitr::RawVideoFileReader\l::openVideoFile" alt="" coords="475,318,649,359"/>
+<area shape="rect" id="node23" href="$classflitr_1_1_raw_video_file_writer.html#a292fe968735fbd86e012c64a1f7fe3b0" title="Open video file. " alt="" coords="479,1294,645,1335"/>
+<area shape="rect" id="node25" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#a3e7062397350f0460bc99be5862674bd" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback::\loperator()" alt="" coords="467,1411,657,1467"/>
+<area shape="rect" id="node26" href="$classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#ae7b020fd14ecd7dec7822f95879acce5" title="flitr::ScreenCaptureProducer\l::ScreenCaptureCallback::\lreadPixels" alt="" coords="467,1491,657,1547"/>
+<area shape="rect" id="node27" href="$classflitr_1_1_s_multi_f_fmpeg_producer.html#a1a139fcac7a0a096bc0e964690010f57" title="flitr::SMultiFFmpegProducer\l::init" alt="" coords="468,1571,656,1613"/>
+<area shape="rect" id="node28" href="$classflitr_1_1_s_multi_raw_video_file_producer.html#a72f79b6411f31c083f20979ae022663e" title="flitr::SMultiRawVideoFile\lProducer::init" alt="" coords="479,1637,645,1678"/>
+<area shape="rect" id="node29" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="460,1703,664,1759"/>
+<area shape="rect" id="node30" href="$classflitr_1_1_video_producer_1_1_video_producer_thread.html#a13ea67b5315d600f24e7c7ae0fcdf7fa" title="flitr::VideoProducer\l::VideoProducerThread::run" alt="" coords="469,1783,655,1825"/>
+<area shape="rect" id="node31" href="$classflitr_1_1_video_producer.html#a3a83fb5cc5db86f50e6e825739e488f1" title="flitr::VideoProducer\l::init" alt="" coords="952,806,1088,847"/>
+<area shape="rect" id="node32" href="$video__linux__v4l_2video__producer_8cpp.html#a5c4420489659974b6ac0e1914c3bdecf" title="open_device" alt="" coords="769,267,866,293"/>
+<area shape="rect" id="node33" href="$video__linux__v4l_2video__producer_8cpp.html#a124b294ff237795262ca4962bdbf090f" title="init_device" alt="" coords="775,1360,860,1387"/>
+<area shape="rect" id="node34" href="$video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde" title="vc_init_mmap" alt="" coords="510,1849,614,1876"/>
+<area shape="rect" id="node35" href="$video__linux__v4l_2video__producer_8cpp.html#afaad2920044ecdb10a854a521595caad" title="start_capture" alt="" coords="767,1655,867,1681"/>
+<area shape="rect" id="node36" href="$classflitr_1_1_x_m_l_config.html#a55031d91b60e59283bfafc9976930822" title="Read the configuration file specified and create an XML structure in memory. " alt="" coords="493,384,631,411"/>
+<area shape="rect" id="node37" href="$classflitr_1_1_x_m_l_config.html#af3f71e17b0db3a09a62d1d9855829ca6" title="Save the configuration structure in memory to the specified file. " alt="" coords="487,435,637,461"/>
+<area shape="rect" id="node38" href="$classflitr_1_1_x_m_l_config.html#a6c1f5a35c40c596f20d4c99598604bea" title="Return a default and print a message about the missing element. " alt="" coords="471,485,653,512"/>
+<area shape="rect" id="node22" href="$classflitr_1_1_raw_video_file_reader.html#ad0e11bdf96b9f64a3e0f4cf5abad1a7c" title="flitr::RawVideoFileReader\l::RawVideoFileReader" alt="" coords="731,318,904,359"/>
+<area shape="rect" id="node24" href="$classflitr_1_1_raw_video_file_writer.html#a6c49576103fa4ab9660331d34ded6ea1" title="flitr::RawVideoFileWriter\l::RawVideoFileWriter" alt="" coords="735,1294,900,1335"/>
 </map>

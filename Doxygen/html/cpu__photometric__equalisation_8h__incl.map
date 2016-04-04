@@ -1,11 +1,11 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h">
-<area shape="rect" id="node2" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="5,303,123,329"/>
-<area shape="rect" id="node3" href="$cpu__shader__pass_8h.html" title="flitr/modules/cpu_shader\l_passes/cpu_shader_pass.h" alt="" coords="1267,124,1459,165"/>
-<area shape="rect" id="node21" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="333,131,473,158"/>
-<area shape="rect" id="node4" href="$parameters_8h.html" title="flitr/modules/parameters\l/parameters.h" alt="" coords="544,213,709,255"/>
-<area shape="rect" id="node6" href="$texture_8h.html" title="flitr/texture.h" alt="" coords="1733,221,1829,247"/>
-<area shape="rect" id="node8" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="1218,303,1334,329"/>
-<area shape="rect" id="node22" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="243,303,355,329"/>
-<area shape="rect" id="node23" href="$high__resolution__time_8h.html" title="flitr/high_resolution\l_time.h" alt="" coords="336,213,469,255"/>
-<area shape="rect" id="node26" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="128,221,261,247"/>
+<map id="cpu_photometric_equalisation.h" name="cpu_photometric_equalisation.h">
+<area shape="rect" id="node2" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="5,259,123,285"/>
+<area shape="rect" id="node3" href="$cpu__shader__pass_8h.html" title="flitr/modules/cpu_shader\l_passes/cpu_shader_pass.h" alt="" coords="1267,80,1459,121"/>
+<area shape="rect" id="node21" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="333,87,473,114"/>
+<area shape="rect" id="node4" href="$parameters_8h.html" title="flitr/modules/parameters\l/parameters.h" alt="" coords="544,169,709,211"/>
+<area shape="rect" id="node6" href="$texture_8h.html" title="flitr/texture.h" alt="" coords="1733,177,1829,203"/>
+<area shape="rect" id="node8" href="$flitr__config_8h.html" title="flitr/flitr_config.h" alt="" coords="1218,259,1334,285"/>
+<area shape="rect" id="node22" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="243,259,355,285"/>
+<area shape="rect" id="node23" href="$high__resolution__time_8h.html" title="flitr/high_resolution\l_time.h" alt="" coords="336,169,469,211"/>
+<area shape="rect" id="node26" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="128,177,261,203"/>
 </map>

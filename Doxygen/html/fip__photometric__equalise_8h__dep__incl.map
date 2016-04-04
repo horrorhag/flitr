@@ -1,6 +1,6 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h">
-<area shape="rect" id="node2" href="$lk__dewarp__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_dewarp_cpu/lk_dewarp_example.cpp" alt="" coords="5,153,275,209"/>
-<area shape="rect" id="node3" href="$cpu_2lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration_cpu\l/lucas_kanade_test.cpp" alt="" coords="299,146,490,217"/>
-<area shape="rect" id="node4" href="$photometric__equalise__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/photometric_equalise/photometric\l_equalise_example.cpp" alt="" coords="514,146,739,217"/>
-<area shape="rect" id="node5" href="$fip__photometric__equalise_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/modules/flitr_image\l_processors/photometric_equalise\l/fip_photometric_equalise.cpp" alt="" coords="763,139,989,224"/>
+<map id="fip_photometric_equalise.h" name="fip_photometric_equalise.h">
+<area shape="rect" id="node2" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="5,87,171,114"/>
+<area shape="rect" id="node3" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="195,87,354,114"/>
+<area shape="rect" id="node4" href="$photometric__equalise__example_8cpp.html" title="photometric_equalise\l_example.cpp" alt="" coords="379,80,528,121"/>
+<area shape="rect" id="node5" href="$fip__photometric__equalise_8cpp.html" title="fip_photometric_equalise.cpp" alt="" coords="553,87,749,114"/>
 </map>

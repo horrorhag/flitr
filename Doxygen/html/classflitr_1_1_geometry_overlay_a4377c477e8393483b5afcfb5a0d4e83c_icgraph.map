@@ -1,12 +1,12 @@
 <map id="flitr::GeometryOverlay::setColour" name="flitr::GeometryOverlay::setColour">
-<area shape="rect" id="node2" href="$viewer__colour__night_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="256,5,307,32"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_points_overlay.html#ab985e2e9f3af6a973667a1a4eb12c062" title="flitr::PointsOverlay\l::PointsOverlay" alt="" coords="216,57,347,98"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_circle_overlay.html#a3cc287df28550407b32fa65868ee0a1a" title="flitr::CircleOverlay\l::CircleOverlay" alt="" coords="218,122,345,163"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_crosshair_overlay.html#ae5d5defab2e7797d1616738253c972e8" title="flitr::CrosshairOverlay\l::CrosshairOverlay" alt="" coords="206,187,357,229"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_geometry_overlay.html#ae40c3969b659dcd3f3fb15461ec1e522" title="flitr::GeometryOverlay\l::GeometryOverlay" alt="" coords="205,253,357,294"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_plot2_d_overlay.html#a6fa363aee59ea6ce8e902d5a1ea59fa6" title="flitr::Plot2DOverlay\l::Plot2DOverlay" alt="" coords="215,318,348,359"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_quad_overlay.html#a188d0172ddb90f635c20ff8653b01cc7" title="flitr::QuadOverlay\l::QuadOverlay" alt="" coords="219,383,344,425"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_text_label_overlay.html#aac34b2536a06d4bbabd5e38416c978c9" title="flitr::TextLabelOverlay\l::setColour" alt="" coords="205,449,357,490"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_triangle_overlay.html#ad8e6ec1d456bcabd2ba7805e08f70a68" title="flitr::TriangleOverlay\l::TriangleOverlay" alt="" coords="211,514,352,555"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_text_label_overlay.html#a2060f956f76e2ed92a253e16d4ca0140" title="flitr::TextLabelOverlay\l::TextLabelOverlay" alt="" coords="405,449,557,490"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_circle_overlay.html#a3cc287df28550407b32fa65868ee0a1a" title="flitr::CircleOverlay\l::CircleOverlay" alt="" coords="218,5,345,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_crosshair_overlay.html#ae5d5defab2e7797d1616738253c972e8" title="flitr::CrosshairOverlay\l::CrosshairOverlay" alt="" coords="206,71,357,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_geometry_overlay.html#ae40c3969b659dcd3f3fb15461ec1e522" title="flitr::GeometryOverlay\l::GeometryOverlay" alt="" coords="205,136,357,177"/>
+<area shape="rect" id="node5" href="$geometry__overlays_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="256,202,307,229"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_plot2_d_overlay.html#a6fa363aee59ea6ce8e902d5a1ea59fa6" title="flitr::Plot2DOverlay\l::Plot2DOverlay" alt="" coords="215,253,348,295"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_points_overlay.html#ab985e2e9f3af6a973667a1a4eb12c062" title="flitr::PointsOverlay\l::PointsOverlay" alt="" coords="216,319,347,360"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_quad_overlay.html#a188d0172ddb90f635c20ff8653b01cc7" title="flitr::QuadOverlay\l::QuadOverlay" alt="" coords="219,384,344,425"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_text_label_overlay.html#aac34b2536a06d4bbabd5e38416c978c9" title="flitr::TextLabelOverlay\l::setColour" alt="" coords="205,449,357,491"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_triangle_overlay.html#ad8e6ec1d456bcabd2ba7805e08f70a68" title="flitr::TriangleOverlay\l::TriangleOverlay" alt="" coords="211,515,352,556"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_text_label_overlay.html#a2060f956f76e2ed92a253e16d4ca0140" title="flitr::TextLabelOverlay\l::TextLabelOverlay" alt="" coords="405,449,557,491"/>
 </map>

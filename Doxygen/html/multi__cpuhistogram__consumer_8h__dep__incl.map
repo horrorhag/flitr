@@ -1,6 +1,6 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/multi_cpuhistogram_consumer.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/multi_cpuhistogram_consumer.h">
-<area shape="rect" id="node2" href="$cpu__shader__pass__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/cpu_shader_pass/cpu_shader\l_pass_example.cpp" alt="" coords="5,243,209,313"/>
-<area shape="rect" id="node3" href="$cpu__palette__remap__shader_8h.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/include\l/flitr/modules/cpu_shader\l_passes/cpu_palette_remap_shader.h" alt="" coords="145,124,395,195"/>
-<area shape="rect" id="node5" href="$multi__cpuhistogram__consumer_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/multi_cpuhistogram\l_consumer.cpp" alt="" coords="419,124,609,195"/>
-<area shape="rect" id="node4" href="$lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration/lucas\l_kanade_test.cpp" alt="" coords="233,243,427,313"/>
+<map id="multi_cpuhistogram_consumer.h" name="multi_cpuhistogram_consumer.h">
+<area shape="rect" id="node2" href="$cpu__shader__pass__example_8cpp.html" title="cpu_shader_pass_example.cpp" alt="" coords="5,184,216,211"/>
+<area shape="rect" id="node3" href="$cpu__palette__remap__shader_8h.html" title="cpu_palette_remap_shader.h" alt="" coords="149,102,345,129"/>
+<area shape="rect" id="node5" href="$multi__cpuhistogram__consumer_8cpp.html" title="multi_cpuhistogram\l_consumer.cpp" alt="" coords="369,95,506,136"/>
+<area shape="rect" id="node4" href="$lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="241,184,399,211"/>
 </map>

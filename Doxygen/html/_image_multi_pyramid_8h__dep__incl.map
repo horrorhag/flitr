@@ -1,6 +1,6 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/lucas_kanade/ImageMultiPyramid.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/lucas_kanade/ImageMultiPyramid.h">
-<area shape="rect" id="node2" href="$_image_stabiliser_multi_l_k_8h.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/include\l/flitr/modules/lucas_kanade\l/ImageStabiliserMultiLK.h" alt="" coords="115,124,305,195"/>
-<area shape="rect" id="node5" href="$_image_multi_pyramid_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/modules/lucas_kanade\l/ImageMultiPyramid.cpp" alt="" coords="329,124,520,195"/>
-<area shape="rect" id="node3" href="$lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration/lucas\l_kanade_test.cpp" alt="" coords="5,243,199,313"/>
-<area shape="rect" id="node4" href="$_image_stabiliser_multi_l_k_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/modules/lucas_kanade\l/ImageStabiliserMultiLK.cpp" alt="" coords="223,243,413,313"/>
+<map id="ImageMultiPyramid.h" name="ImageMultiPyramid.h">
+<area shape="rect" id="node2" href="$_image_stabiliser_multi_l_k_8h.html" title="ImageStabiliserMultiLK.h" alt="" coords="97,80,267,107"/>
+<area shape="rect" id="node5" href="$_image_multi_pyramid_8cpp.html" title="ImageMultiPyramid.cpp" alt="" coords="291,80,452,107"/>
+<area shape="rect" id="node3" href="$lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="5,155,164,181"/>
+<area shape="rect" id="node4" href="$_image_stabiliser_multi_l_k_8cpp.html" title="ImageStabiliserMultiLK.cpp" alt="" coords="189,155,373,181"/>
 </map>

@@ -1,12 +1,12 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/libtiff_producer.cpp" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/libtiff_producer.cpp">
-<area shape="rect" id="node2" href="$libtiff__producer_8h.html" title="flitr/libtiff_producer.h" alt="" coords="507,109,650,136"/>
-<area shape="rect" id="node4" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="683,266,839,293"/>
-<area shape="rect" id="node21" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="503,184,654,211"/>
-<area shape="rect" id="node5" href="$image_8h.html" title="flitr/image.h" alt="" coords="533,348,624,375"/>
-<area shape="rect" id="node14" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="732,423,865,449"/>
-<area shape="rect" id="node6" href="$image__format_8h.html" title="flitr/image_format.h" alt="" coords="572,423,708,449"/>
-<area shape="rect" id="node10" href="$image__metadata_8h.html" title="flitr/image_metadata.h" alt="" coords="890,423,1043,449"/>
-<area shape="rect" id="node7" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="584,497,696,524"/>
-<area shape="rect" id="node9" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="720,497,837,524"/>
-<area shape="rect" id="node22" href="$shared__image__buffer_8h.html" title="flitr/shared_image\l_buffer.h" alt="" coords="280,259,408,300"/>
+<map id="libtiff_producer.cpp" name="libtiff_producer.cpp">
+<area shape="rect" id="node2" href="$libtiff__producer_8h.html" title="flitr/libtiff_producer.h" alt="" coords="507,80,650,107"/>
+<area shape="rect" id="node4" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="683,237,839,263"/>
+<area shape="rect" id="node21" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="503,155,654,181"/>
+<area shape="rect" id="node5" href="$image_8h.html" title="flitr/image.h" alt="" coords="533,319,624,345"/>
+<area shape="rect" id="node14" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="732,393,865,420"/>
+<area shape="rect" id="node6" href="$image__format_8h.html" title="flitr/image_format.h" alt="" coords="572,393,708,420"/>
+<area shape="rect" id="node10" href="$image__metadata_8h.html" title="flitr/image_metadata.h" alt="" coords="890,393,1043,420"/>
+<area shape="rect" id="node7" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="584,468,696,495"/>
+<area shape="rect" id="node9" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="720,468,837,495"/>
+<area shape="rect" id="node22" href="$shared__image__buffer_8h.html" title="flitr/shared_image\l_buffer.h" alt="" coords="280,229,408,271"/>
 </map>
