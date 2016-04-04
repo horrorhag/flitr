@@ -418,6 +418,8 @@ ELSE()
   TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr lzma)
 
+
+  MESSAGE(${OPENSCENEGRAPH_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
 #TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
 #TARGET_LINK_LIBRARIES(flitr debug OpenThreadsd osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
@@ -426,7 +428,8 @@ ENDIF()
 TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} ${LIB_LINK_LIBRARIES})
 
 IF(FLITR_WITH_OSGCUDA)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} osgCuda)
+  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} debug osgCuda)
+  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} optimised osgCuda)
 ENDIF()
 
 

@@ -10,8 +10,8 @@ var searchData=
   ['encodestring',['EncodeString',['../classflitr_1_1_ti_xml_base.html#a32ed202562b58de64c7d799ca3c9db98',1,'flitr::TiXmlBase']]],
   ['encoding',['encoding',['../classflitr_1_1_ti_xml_declaration.html#a9811da8f3f6a6ad29842556f2f3cac73',1,'flitr::TiXmlDeclaration::encoding()'],['../classflitr_1_1_ti_xml_declaration.html#ac41e8e1807a61c196d8d005ac3f0916a',1,'flitr::TiXmlDeclaration::Encoding() const ']]],
   ['end',['end',['../classpitched__2d__range.html#a5a7a596de1f1414010bbb7aeae509aac',1,'pitched_2d_range']]],
-  ['entity',['Entity',['../structflitr_1_1_ti_xml_base_1_1_entity.html',1,'flitr::TiXmlBase']]],
   ['entity',['entity',['../classflitr_1_1_ti_xml_base.html#aae956c75fedff20d337f7cc109c6b71a',1,'flitr::TiXmlBase']]],
+  ['entity',['Entity',['../structflitr_1_1_ti_xml_base_1_1_entity.html',1,'flitr::TiXmlBase']]],
   ['enumerate',['Enumerate',['../_i_e_e_e1394__id_8cpp.html#a3b2cad6ef668a00cc5fecd0fe34f5c7f',1,'IEEE1394_id.cpp']]],
   ['enumpidmap',['EnumPIDMap',['../_d_s_v_l___defines_8h.html#af2a576a1d834d51be2fc088313df1c75',1,'DSVL_Defines.h']]],
   ['eparmtype',['EParmType',['../classflitr_1_1_parameters.html#a8cabd87df3f7c2e9b8b646d93a66b484',1,'flitr::Parameters']]],
@@ -27,5 +27,6 @@ var searchData=
   ['errorstring',['errorString',['../classflitr_1_1_ti_xml_base.html#a7ac8feec4100e446b3d78e1ac0659700',1,'flitr::TiXmlBase']]],
   ['expandrects',['ExpandRects',['../classflitr_1_1_c_p_u_find_discreet_objects_pass.html#a6a81c4121f3854c54abb430b9d65b75f',1,'flitr::CPUFindDiscreetObjectsPass']]],
   ['expandrects_5f',['expandRects_',['../classflitr_1_1_c_p_u_find_discreet_objects_pass.html#a6a30ab534c69d5ea7b804118a7d659d6',1,'flitr::CPUFindDiscreetObjectsPass']]],
-  ['exposeparameters_5f',['exposeParameters_',['../classflitr_1_1_c_p_u_palette_remap___shader.html#a78e15a3142867316525aa0fb3a2b0a10',1,'flitr::CPUPaletteRemap_Shader']]]
+  ['exposeparameters_5f',['exposeParameters_',['../classflitr_1_1_c_p_u_palette_remap___shader.html#a78e15a3142867316525aa0fb3a2b0a10',1,'flitr::CPUPaletteRemap_Shader']]],
+  ['points_5foverlay_2ecpp',['points_overlay.cpp',['../examples_2points__overlay_2points__overlay_8cpp.html',1,'']]]
 ];

@@ -1,13 +1,13 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/test_pattern_producer.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/test_pattern_producer.h">
-<area shape="rect" id="node2" href="$average__image__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/average_image/average_image\l_example.cpp" alt="" coords="5,109,219,180"/>
-<area shape="rect" id="node3" href="$beat__image__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/beat_image/beat_image_example.cpp" alt="" coords="243,117,495,173"/>
-<area shape="rect" id="node4" href="$dpt_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/DPT/dpt.cpp" alt="" coords="519,117,710,173"/>
-<area shape="rect" id="node5" href="$gaussian__filter__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/gaussian_filter/gaussian\l_filter_example.cpp" alt="" coords="734,109,925,180"/>
-<area shape="rect" id="node6" href="$lk__dewarp__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_dewarp_cpu/lk_dewarp_example.cpp" alt="" coords="949,117,1219,173"/>
-<area shape="rect" id="node7" href="$lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration/lucas\l_kanade_test.cpp" alt="" coords="1243,109,1437,180"/>
-<area shape="rect" id="node8" href="$cpu_2lucas__kanade__test_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/LK_image_registration_cpu\l/lucas_kanade_test.cpp" alt="" coords="1461,109,1651,180"/>
-<area shape="rect" id="node9" href="$morphological__filter__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/morphological_filter/morphological\l_filter_example.cpp" alt="" coords="1675,109,1903,180"/>
-<area shape="rect" id="node10" href="$main_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/msr/main.cpp" alt="" coords="1927,117,2118,173"/>
-<area shape="rect" id="node11" href="$photometric__equalise__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/photometric_equalise/photometric\l_equalise_example.cpp" alt="" coords="2142,109,2367,180"/>
-<area shape="rect" id="node12" href="$test__pattern__producer_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/test_pattern_producer.cpp" alt="" coords="2392,117,2595,173"/>
+<map id="test_pattern_producer.h" name="test_pattern_producer.h">
+<area shape="rect" id="node2" href="$average__image__example_8cpp.html" title="average_image_example.cpp" alt="" coords="5,87,203,114"/>
+<area shape="rect" id="node3" href="$beat__image__example_8cpp.html" title="beat_image_example.cpp" alt="" coords="227,87,402,114"/>
+<area shape="rect" id="node4" href="$dpt_8cpp.html" title="dpt.cpp" alt="" coords="426,87,491,114"/>
+<area shape="rect" id="node5" href="$gaussian__filter__example_8cpp.html" title="gaussian_filter_example.cpp" alt="" coords="515,87,706,114"/>
+<area shape="rect" id="node6" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="731,87,896,114"/>
+<area shape="rect" id="node7" href="$lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="921,87,1079,114"/>
+<area shape="rect" id="node8" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="1103,87,1262,114"/>
+<area shape="rect" id="node9" href="$morphological__filter__example_8cpp.html" title="morphological_filter\l_example.cpp" alt="" coords="1286,80,1423,121"/>
+<area shape="rect" id="node10" href="$main_8cpp.html" title="main.cpp" alt="" coords="1447,87,1523,114"/>
+<area shape="rect" id="node11" href="$photometric__equalise__example_8cpp.html" title="photometric_equalise\l_example.cpp" alt="" coords="1548,80,1697,121"/>
+<area shape="rect" id="node12" href="$test__pattern__producer_8cpp.html" title="test_pattern_producer.cpp" alt="" coords="1722,87,1899,114"/>
 </map>

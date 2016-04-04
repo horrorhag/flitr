@@ -1,7 +1,7 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/video_win32_directshow/dsvl/DSVL_GraphManager.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/src/flitr/video_win32_directshow/dsvl/DSVL_GraphManager.h">
-<area shape="rect" id="node9" href="$_d_s_v_l___defines_8h.html" title="DSVL_Defines.h" alt="" coords="1035,124,1155,151"/>
-<area shape="rect" id="node19" href="$_d_s_v_l___pixel_format_8h.html" title="DSVL_PixelFormat.h" alt="" coords="1831,124,1977,151"/>
-<area shape="rect" id="node22" href="$tinyxml_8h.html" title="tinyxml.h" alt="" coords="459,124,533,151"/>
-<area shape="rect" id="node21" href="$_d_s_v_l___pixel_format_types_8h.html" title="DSVL_PixelFormatTypes.h" alt="" coords="1961,199,2143,225"/>
-<area shape="rect" id="node23" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="99,199,216,225"/>
+<map id="DSVL_GraphManager.h" name="DSVL_GraphManager.h">
+<area shape="rect" id="node9" href="$_d_s_v_l___defines_8h.html" title="DSVL_Defines.h" alt="" coords="1035,80,1155,107"/>
+<area shape="rect" id="node19" href="$_d_s_v_l___pixel_format_8h.html" title="DSVL_PixelFormat.h" alt="" coords="1831,80,1977,107"/>
+<area shape="rect" id="node22" href="$tinyxml_8h.html" title="tinyxml.h" alt="" coords="459,80,533,107"/>
+<area shape="rect" id="node21" href="$_d_s_v_l___pixel_format_types_8h.html" title="DSVL_PixelFormatTypes.h" alt="" coords="1961,155,2143,181"/>
+<area shape="rect" id="node23" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="99,155,216,181"/>
 </map>

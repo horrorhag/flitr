@@ -1,5 +1,5 @@
-<map id="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h" name="/Users/bduvenhage/myWork/dev/flitr&#45;git&#45;svn/include/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h">
-<area shape="rect" id="node2" href="$gaussian__filter__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/gaussian_filter/gaussian\l_filter_example.cpp" alt="" coords="5,146,196,217"/>
-<area shape="rect" id="node3" href="$morphological__filter__example_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/examples\l/morphological_filter/morphological\l_filter_example.cpp" alt="" coords="220,146,448,217"/>
-<area shape="rect" id="node4" href="$fip__morphological__filter_8cpp.html" title="/Users/bduvenhage/myWork\l/dev/flitr&#45;git&#45;svn/src\l/flitr/modules/flitr_image\l_processors/morphological\l_filter/fip_morphological_filter.cpp" alt="" coords="472,139,692,224"/>
+<map id="fip_morphological_filter.h" name="fip_morphological_filter.h">
+<area shape="rect" id="node2" href="$gaussian__filter__example_8cpp.html" title="gaussian_filter_example.cpp" alt="" coords="5,87,196,114"/>
+<area shape="rect" id="node3" href="$morphological__filter__example_8cpp.html" title="morphological_filter\l_example.cpp" alt="" coords="220,80,357,121"/>
+<area shape="rect" id="node4" href="$fip__morphological__filter_8cpp.html" title="fip_morphological_filter.cpp" alt="" coords="382,87,566,114"/>
 </map>
