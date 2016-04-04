@@ -61,10 +61,19 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     //av_dict_set(&options, "pix_fmt", av_get_pix_fmt_name(PIX_FMT_GRAY8), 0);
     //av_dict_set(&options, "width", "1380", 0);
     //av_dict_set(&options, "height", "1038", 0);
-	av_dict_set(&options, "rtsp_transport", "tcp", 0);
-    av_dict_set(&options, "codec_type", "AVMEDIA_TYPE_VIDEO", 0);
-	avformat_network_init();
 
+    /* Different Protocols require different dictionary options to be set for
+     * the protocol. These are specified and set up according to this page:
+     * http://www.ffmpeg.org/ffmpeg-protocols.html
+     * Some defaults are set for RTSP when RTSP is used. If rtsp is not
+     * used these will be ignored by the *_open_* command. */
+    av_dict_set(&options, "rtsp_transport", "tcp", 0);        /* RTSP: Use TCP as lower transport protocol. */
+    av_dict_set(&options, "stimeout", "10000000", 0);         /* RTSP: Socket TCP I/O timeout in microseconds.*/
+    av_dict_set(&options, "allowed_media_types", "video", 0); /* RTSP: Only allow video. */
+    av_dict_set(&options, "timeout", "10", 0);                /* RTSP: Timeout in seconds to wait for incoming connections.*/
+    av_dict_set(&options, "rtsp_flags", "listen", 0);         /* RTSP: Act as a server, listening for an incoming connection. */
+    av_dict_set(&options, "max_delay", "0", 0);               /* RTSP: Do not reorder out of sequence packets. */
+    avformat_network_init();
 
     //int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, &FormatParameters_);
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
@@ -78,6 +87,18 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         throw FFmpegReaderException();
     }
 
+#if 0
+    /* Print out the dictionary options that were not used during the call to
+     * avformat_open_input(). This is for debugging only. */
+    AVDictionaryEntry *dictionaryEntry = NULL;
+    while(true) {
+        dictionaryEntry = av_dict_get(options, "", dictionaryEntry, AV_DICT_IGNORE_SUFFIX);
+        if(dictionaryEntry == nullptr) {
+            break;
+        }
+        logMessage(LOG_DEBUG) << "Header dictionary option not found: " << dictionaryEntry->key << " " << dictionaryEntry->value << "\n";
+    }
+#endif /* 0 */
     av_dict_free(&options);
 
     err=avformat_find_stream_info(FormatContext_, NULL);
