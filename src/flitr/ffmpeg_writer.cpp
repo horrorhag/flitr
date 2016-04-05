@@ -353,6 +353,25 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     //av_dict_set(&options, "height", "1038", 0);
     av_dict_set(&options, "codec_type", "AVMEDIA_TYPE_VIDEO", 0);
     //av_dict_set(&options, "codec_tag", "1", 0);
+
+    /* Different Protocols require different dictionary options to be set for
+     * the protocol. These are specified and set up according to this page:
+     * http://www.ffmpeg.org/ffmpeg-protocols.html
+     * Some defaults are set for RTSP when RTSP is used. If rtsp is not
+     * used these will be ignored by the *_open_* command.
+     *
+     * The following options resolves a lot of streaming related issues
+     * when reading an RTSP stream using the FFmpegReader.
+     * Without the options the following errors gets reported by the reader during streaming:
+     * [mpeg4 @ 0x140c0a0] concealing 3394 DC, 3394 AC, 3394 MV errors in I frame
+     * [mpeg4 @ 0x14eeec0] ac-tex damaged at 23 29
+     * [mpeg4 @ 0x14eeec0] Error at MB: 2372
+     *
+     * The streamed video is also more reliable with these options set. */
+    av_dict_set(&options, "rtsp_transport", "tcp", 0);        /* RTSP: Use TCP as lower transport protocol. */
+    av_dict_set(&options, "stimeout", "100", 0);              /* RTSP: Socket TCP I/O timeout in microseconds.*/
+    av_dict_set(&options, "allowed_media_types", "video", 0); /* RTSP: Only allow video. */
+    av_dict_set(&options, "max_delay", "0", 0);               /* RTSP: Do not reorder out of sequence packets. */
     if (avformat_write_header(FormatContext_,&options)!=0)
     {
         logMessage(LOG_CRITICAL) << "Could not write header.\n";
