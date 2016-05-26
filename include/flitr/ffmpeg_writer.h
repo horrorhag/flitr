@@ -45,6 +45,7 @@ extern "C" {
 #endif
 
 #include <libavutil/pixdesc.h>
+#include <libavutil/opt.h>
 
 #ifdef WIN32
 #undef av_pix_fmt_descriptors
@@ -71,6 +72,7 @@ extern "C" {
 
 #include <iostream>
 #include <sstream>
+#include <map>
 
 namespace flitr {
 
@@ -144,7 +146,26 @@ enum VideoCodec {//NB: Still need to test all the codecs and only include the on
  */
 class FLITR_EXPORT FFmpegWriter {
 public:
-    /** \brief Construct the FFmpegWriter
+    /**
+     * Default constructor for the FFmpegWriter.
+     *
+     * This constructor allows the user to construct the writer and then set
+     * header dictionary options that should be used for the stream using the
+     * setHeaderDictionaryOptions() function and set the Codec Context
+     * options using the setCodecContextPrivateOptions() function before
+     * opening the file for writing openVideo() function.
+     */
+    FFmpegWriter() noexcept;
+    /**
+     * Construct the FFmpegWriter and open the file for writing.
+     *
+     * If the file can not be opened a FFmpegWriterException() is thrown.
+     *
+     * If custom header dictionary and codec context options should be set
+     * for the file prior to opening, it is recommended to use the default
+     * constructor and then the openFile() function. It will also call the
+     * getCodecContextPrivateOptions() to set up the Codec Context before
+     * writing the file.
      *
      * \param[in] filename Name of the file or URL of the RTSP stream server.
      * \param[in] image_format Input image format of the data that will be written
@@ -164,12 +185,33 @@ public:
 
     ~FFmpegWriter();
 
-    /** \brief Write the video frame to the FFmpeg output stream.
+    /**
+     * Open the file for writing.
+     *
+     * This function will call getHeaderDictionaryOptions() to get additional
+     * FFmpeg dictionary options to pass to the open function.
+     *
+     * \param[in] filename Name of the file or URL of the RTSP stream server.
+     * \param[in] image_format Input image format of the data that will be written
+     *          using writeVideoFrame() on this writer.
+     * \param[in] frame_rate Frame rate that the data must be written with.
+     * \param[in] container Video Container format that must be used. This must
+     *          be set to flitr::FLITR_RTSP_CONTAINER if RTSP streaming is required.
+     * \param[in] codec The codec that must be used. For RTSP it is recommended to use
+     *          flitr::FLITR_NONE_CODEC so that the codec will be chosen by the application.
+     * \param[in] bit_rate Bit rate that must be used for writing the data.
+     */
+    bool openFile(std::string filename, const ImageFormat& image_format,
+                  const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE,
+                  VideoContainer container=FLITR_ANY_CONTAINER,
+                  VideoCodec codec=FLITR_RAWVIDEO_CODEC,
+                  int32_t bit_rate=-1);
+
+    /**
+     * Write the video frame to the FFmpeg output stream.
      *
      * The \a in_buf must be set up according to the \a image_format set during
-     * construction of this object. If the \a width or \a height passed to the
-     * constructor is not the same as the image format, this function will do the
-     * resizing of the frame automatically.
+     * construction of this object.
      *
      * \return True if the frame was successfully written. When doing RTSP
      * streaming this function will fail if the connection to the server was lost.
@@ -182,6 +224,76 @@ public:
      * \return Number of frames.
      */
     uint64_t getNumImages() const { return WrittenFrameCount_; }
+
+#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+    /**
+     * Set the dictionary options that must be used when calling avformat_write_header.
+     *
+     * This can be used to change the options as needed for the desired output stream.
+     * The different dictionary options are listed on the FFmpeg
+     * website at http://www.ffmpeg.org/ffmpeg-protocols.html.
+     *
+     * It is recommended to first get the previous options and then add new options
+     * to the map since this function will replace the options. For example:
+     * \code
+     * reader = std::make_shared<flitr::FFmpegReader>();
+     * options["rtsp_transport"     ] = "tcp";
+     * options["stimeout"           ] = "10000000";
+     * options["allowed_media_types"] = "video";
+     * options["max_delay"          ] = "0";
+     * \endcode
+     *
+     * This function must be called before a call to openFile(). If the non default
+     * constructor is used, any call to this function will be too late.
+     *
+     * \param dictionary_options Map of key value pairs as strings.
+     */
+    void setHeaderDictionaryOptions(std::map<std::string, std::string> dictionary_options) { DictionaryOptions_ = dictionary_options; }
+
+    /**
+     * Get the dictionary options set for the reader.
+     *
+     * This function returns the options that will used when the file is is opened and the header is written.
+     * \sa setHeaderDictionaryOptions()
+     */
+    std::map<std::string, std::string> getHeaderDictionaryOptions() const { return DictionaryOptions_; }
+#endif
+
+    /**
+     * Set the Codec Context private options that should be used.
+     *
+     * The options set here are applied to the AVCodecContext::priv_data after the AVCodecContext
+     * was set up for the writer. This is done before the call to avcodec_open2(). Some options
+     * can be found on this page: https://libav.org/avconv.html#libx264
+     *
+     * It is recommended to first get the previous options and then add new options
+     * to the map since this function will replace the options. For example:
+     * \code
+     *  writer = std::make_shared<flitr::FFmpegWriter>();
+     *  std::map<std::string, std::string> contextOptions = writer->getCodecContextPrivateOptions();
+     *  contextOptions["profile" ] = "high444";
+     *  contextOptions["preset"  ] = "ultrafast";
+     *  contextOptions["tune"    ] = "zerolatency";
+     *  contextOptions["x264opts"] = "slice-max-size=1400";
+     *  writer->setCodecContextPrivateOptions(contextOptions);
+     * \endcode
+     * The above options are an example to set H264 options on the libx264 encoder
+     * from the following link: https://libav.org/avconv.html#libx264
+     *
+     * This function must be called before a call to openFile(). If the the non default constructor
+     * is used, any call to this function will be too late.
+     *
+     * \param options dictionary_options Map of key value pairs as strings.
+     */
+    void setCodecContextPrivateOptions(std::map<std::string, std::string> options) { CodecContextPrivateOptions_ = options; }
+
+    /**
+     * Get the options set for the writer.
+     *
+     * This function returns the options that will used when the file is opened.
+     * \sa setCodecContextPrivateOptions()
+     */
+    std::map<std::string, std::string> getCodecContextPrivateOptions() const { return CodecContextPrivateOptions_; }
 
 private:
 
@@ -227,6 +339,11 @@ private:
 
     uint32_t SaveFrameWidth_;
     uint32_t SaveFrameHeight_;
+
+#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+    std::map<std::string, std::string> DictionaryOptions_;
+#endif
+    std::map<std::string, std::string> CodecContextPrivateOptions_;
 };
 
 }
