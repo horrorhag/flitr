@@ -83,7 +83,9 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 #endif
 
     if (err < 0) {
-        logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << "\n";
+        char errorBuffer[AV_ERROR_MAX_STRING_SIZE] = {0};
+        av_strerror(err, errorBuffer, AV_ERROR_MAX_STRING_SIZE);
+        logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << ": " << errorBuffer << "\n";
         throw FFmpegReaderException();
     }
 
@@ -298,12 +300,11 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
                 return false;
             } else
             {
-                char errbuf[256];
-                if (!av_strerror(read_err, errbuf, 256)) sprintf(errbuf,"undf");
-
+                char errbuf[AV_ERROR_MAX_STRING_SIZE];
+                av_strerror(read_err, errbuf, AV_ERROR_MAX_STRING_SIZE);
                 logMessage(LOG_DEBUG) << "Error ("<< errbuf <<") while reading frame " << im_number << "/" << NumImages_ <<  "\n";
-              //GetImageStats_->tock(); We'll only keep stats of the good frames.
-              return false;
+                //GetImageStats_->tock(); We'll only keep stats of the good frames.
+                return false;
             }
         }
         if (pkt.stream_index == VideoStreamIndex_) {

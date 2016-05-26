@@ -263,7 +263,11 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
     AVCodecContext_->codec_id=(AVCodecID)Codec_;
 
-    if (bit_rate>0) AVCodecContext_->bit_rate = bit_rate;
+    if (bit_rate>0) {
+        AVCodecContext_->bit_rate = bit_rate;
+        /* Set the bit rate tolerance to 20% the specified bit rate */
+        AVCodecContext_->bit_rate_tolerance = static_cast<int>(double(bit_rate) * 0.2);
+    }
 
     SaveFrameWidth_  = ImageFormat_.getWidth();
     SaveFrameHeight_ = ImageFormat_.getHeight();
@@ -401,8 +405,6 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     std::cout << "codec_tag=" << AVCodecContext_->codec_tag << "\n";
     std::cout.flush();
     AVCodecContext_->codec_tag=1;
-
-
 }
 
 FFmpegWriter::~FFmpegWriter()
@@ -483,7 +485,9 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 
         if (encode_ret<0)
         {
-            logMessage(LOG_CRITICAL) << "Failed to encode video frame. \n";
+            char errorBuffer[AV_ERROR_MAX_STRING_SIZE] = {0};
+            av_strerror(encode_ret, errorBuffer, AV_ERROR_MAX_STRING_SIZE);
+            logMessage(LOG_CRITICAL) << "Failed to encode video frame: " << errorBuffer << ". \n";
             logMessage(LOG_CRITICAL).flush();
            // WriteFrameStats_.tock(); We'll only keep stats of the good frames.
             return false;
