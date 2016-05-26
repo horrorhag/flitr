@@ -28,13 +28,57 @@
 using namespace flitr;
 using std::shared_ptr;
 
-
-FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt) :
+FFmpegReader::FFmpegReader() noexcept :
     FrameRate_(FLITR_DEFAULT_VIDEO_FRAME_RATE),
-    FileName_(filename),
     SingleFrameSource_(false),
     SingleFrameDone_(false)
 {
+    av_lockmgr_register(&lockManager);
+
+    avcodec_register_all();
+    av_register_all();
+    avformat_network_init();
+
+    FormatContext_ = NULL;
+
+    CodecContext_ = NULL;
+    Codec_ = NULL;
+
+    std::map<std::string, std::string> options;
+    options["codec_type"] = "AVMEDIA_TYPE_VIDEO";
+    setDictionaryOptions(options);
+}
+
+FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt) :
+    FFmpegReader()
+{
+    /* Call the open video function. Care must be taken that any virtual functions
+     * will be called as if not virtual. See the constructor documentation for
+     * additional information. */
+    bool opened = openVideo(filename, out_pix_fmt);
+    if(opened == false) {
+        throw FFmpegReaderException();
+    }
+}
+
+FFmpegReader::~FFmpegReader()
+{
+    if (DecodedFrame_) {
+        av_free(DecodedFrame_);
+    }
+    avcodec_close(CodecContext_);
+
+#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
+    avformat_close_input(&FormatContext_);
+#else
+    av_close_input_file(FormatContext_);
+#endif
+}
+
+bool FFmpegReader::openVideo(const std::string& filename, ImageFormat::PixelFormat out_pix_fmt)
+{
+    FileName_ = filename;
+    /* Register the StatsCollector handlers. */
     std::stringstream sws_stats_name;
     sws_stats_name << filename << " FFmpegReader::getImage,swscale";
     SwscaleStats_ = shared_ptr<StatsCollector>(new StatsCollector(sws_stats_name.str()));
@@ -43,39 +87,13 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     getimage_stats_name << filename << " FFmpegReader::getImage";
     GetImageStats_ = shared_ptr<StatsCollector>(new StatsCollector(getimage_stats_name.str()));
 
-        av_lockmgr_register(&lockManager);
-
-    avcodec_register_all();
-    av_register_all();
-
-    FormatContext_ = NULL;
-    //FormatContext_ = avformat_alloc_context();
-
-    CodecContext_ = NULL;
-    Codec_ = NULL;
-
+    /* Get the dictionary options before opening the stream. */
     AVDictionary *options = NULL;
-    //av_dict_set(&options, "video_size", "1380x1038", 0);
-    //av_dict_set(&options, "pixel_format", av_get_pix_fmt_name(PIX_FMT_GRAY8), 0);
+    std::map<std::string, std::string> dictionaryOptions = getDictionaryOptions();
+    for(const std::pair<std::string, std::string>& option: dictionaryOptions) {
+        av_dict_set(&options, option.first.c_str(), option.second.c_str(), 0);
+    }
 
-    //av_dict_set(&options, "pix_fmt", av_get_pix_fmt_name(PIX_FMT_GRAY8), 0);
-    //av_dict_set(&options, "width", "1380", 0);
-    //av_dict_set(&options, "height", "1038", 0);
-
-    /* Different Protocols require different dictionary options to be set for
-     * the protocol. These are specified and set up according to this page:
-     * http://www.ffmpeg.org/ffmpeg-protocols.html
-     * Some defaults are set for RTSP when RTSP is used. If rtsp is not
-     * used these will be ignored by the *_open_* command. */
-    av_dict_set(&options, "rtsp_transport", "tcp", 0);        /* RTSP: Use TCP as lower transport protocol. */
-    av_dict_set(&options, "stimeout", "10000000", 0);         /* RTSP: Socket TCP I/O timeout in microseconds.*/
-    av_dict_set(&options, "allowed_media_types", "video", 0); /* RTSP: Only allow video. */
-    av_dict_set(&options, "timeout", "10", 0);                /* RTSP: Timeout in seconds to wait for incoming connections.*/
-    av_dict_set(&options, "rtsp_flags", "listen", 0);         /* RTSP: Act as a server, listening for an incoming connection. */
-    av_dict_set(&options, "max_delay", "0", 0);               /* RTSP: Do not reorder out of sequence packets. */
-    avformat_network_init();
-
-    //int err = av_open_input_file(&FormatContext_, FileName_.c_str(), NULL, 0, &FormatParameters_);
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
     int err = avformat_open_input(&FormatContext_, FileName_.c_str(), NULL, &options);
 #else
@@ -86,7 +104,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         char errorBuffer[AV_ERROR_MAX_STRING_SIZE] = {0};
         av_strerror(err, errorBuffer, AV_ERROR_MAX_STRING_SIZE);
         logMessage(LOG_CRITICAL) << "av_open_input_file failed on " << filename.c_str() << " with code " << err << ": " << errorBuffer << "\n";
-        throw FFmpegReaderException();
+        return false;
     }
 
 #if 0
@@ -105,8 +123,10 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
     err=avformat_find_stream_info(FormatContext_, NULL);
     if (err < 0) {
-        logMessage(LOG_CRITICAL) << "avformat_find_stream_info failed on " << filename.c_str() << " with code " << err << "\n";
-        throw FFmpegReaderException();
+        char errorBuffer[AV_ERROR_MAX_STRING_SIZE] = {0};
+        av_strerror(err, errorBuffer, AV_ERROR_MAX_STRING_SIZE);
+        logMessage(LOG_CRITICAL) << "avformat_find_stream_info failed on " << filename.c_str() << " with code " << err << ": " << errorBuffer << "\n";
+        return false;
     }
 
 
@@ -136,17 +156,17 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 
     if (!Codec_) {
         logMessage(LOG_CRITICAL) << "Cannot find video codec for " << filename.c_str() << "\n";
-        throw FFmpegReaderException();
+        return false;
     }
 
     if (avcodec_open2(CodecContext_, Codec_, NULL) < 0) {
         logMessage(LOG_CRITICAL) << "Cannot open video codec for " << filename.c_str() << "\n";
-        throw FFmpegReaderException();
+        return false;
     }
 
 
     // everything should be ready for decoding video
-    
+
     if (getLogMessageCategory() & LOG_INFO) {
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
         av_dump_format(FormatContext_, 0, FileName_.c_str(), 0);
@@ -154,7 +174,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
         dump_format(FormatContext_, 0, FileName_.c_str(), 0);
 #endif
     }
-    
+
     double duration_seconds = double(FormatContext_->duration) / AV_TIME_BASE;
     FrameRate_ = double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.num) / double(FormatContext_->streams[VideoStreamIndex_]->r_frame_rate.den);
     NumImages_ = 0.5 + (duration_seconds * FrameRate_);
@@ -201,17 +221,17 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
                 ImageFormat_.getWidth(), ImageFormat_.getHeight(), (AVPixelFormat)out_ffmpeg_pix_fmt,
                 SWS_BILINEAR, NULL, NULL, NULL);
 #endif
-    
+
     DecodedFrame_ = avcodec_alloc_frame();
     if (!DecodedFrame_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate memory for decoded frame.\n";
-        throw FFmpegReaderException();
+        return false;
     }
 
     ConvertedFrame_ = allocFFmpegFrame(out_ffmpeg_pix_fmt, ImageFormat_.getWidth(), ImageFormat_.getHeight());
     if (!ConvertedFrame_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate memory for video storage buffers.\n";
-        throw FFmpegReaderException();
+        return false;
     }
 
     if (NumImages_ == 1) {
@@ -220,20 +240,7 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
     }
 
     CurrentImage_ = -1;
-}
-
-FFmpegReader::~FFmpegReader()
-{
-    if (DecodedFrame_) {
-        av_free(DecodedFrame_);
-    }
-    avcodec_close(CodecContext_);
-
-#if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
-    avformat_close_input(&FormatContext_);
-#else
-    av_close_input_file(FormatContext_);
-#endif
+    return true;
 }
 
 bool FFmpegReader::getImage(Image &out_image, int im_number)
@@ -353,11 +360,11 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     SwscaleStats_->tick();
 #if defined FLITR_USE_SWSCALE
     ConvertedFrame_->data[0] = out_image.data(); // save a memcpy
-    
+
     sws_scale(ConvertFormatCtx_,
               DecodedFrame_->data, DecodedFrame_->linesize, 0, CodecContext_->height,
               ConvertedFrame_->data, ConvertedFrame_->linesize);
-    
+
     //printf("%d %d\n", DecodedFrame_->linesize, ConvertedFrame_->linesize);
     //fflush(stdout);
 #else

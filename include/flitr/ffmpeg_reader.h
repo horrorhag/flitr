@@ -72,6 +72,7 @@ extern "C" {
 
 #include <iostream>
 #include <sstream>
+#include <map>
 
 namespace flitr {
 
@@ -85,16 +86,45 @@ struct FFmpegReaderException {
  */
 class FLITR_EXPORT FFmpegReader {
   public:
+    /**
+     * Create the reader without trying to open a stream.
+     *
+     * This constructor allows the user to construct the reader and then set
+     * dictionary options that should be used for the stream using the
+     * setDictionaryOptions() function before opening the video file with the
+     * openVideo() function.
+     */
+    FFmpegReader() noexcept;
+
     /** 
      * Creates a reader for a video file.
+     *
+     * This constructor attempts to open the video during construction.
+     * If the video can not be opened a FFmpegReaderException() is thrown.
+     *
+     * If custom dictionary options should be set for the opening logic,
+     * it is recommended to use the default constructor and then the
+     * openVideo() function.
      * 
      * \param filename Input video file name.
      * \param out_pix_fmt The format the image data would be converted.
      * to prior to output.
-     *
      */
     FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pix_fmt);
+
     ~FFmpegReader();
+
+    /**
+     * Open the specified video and attempt to give the output in the given pixel format.
+     *
+     * This function will call getDictionaryOptions() to get additional FFmpeg dictionary
+     * options to pass to the open function.
+     *
+     * \param filename Name of the input file to open.
+     * \param out_pix_fmt Output pixel format that is required.
+     * \return true if successful, otherwise false.
+     */
+    bool openVideo(const std::string &filename, ImageFormat::PixelFormat out_pix_fmt);
 
     /** 
      * Reads the specified frame from the video file.
@@ -135,6 +165,38 @@ class FLITR_EXPORT FFmpegReader {
      */
     uint32_t getFrameRate() const { return FrameRate_; }
 
+    /**
+     * Set the dictionary options that must be used when calling avformat_open_input.
+     *
+     * This can be used to change the options as needed for the desired input stream.
+     * The different dictionary options are listed on the FFmpeg
+     * website at http://www.ffmpeg.org/ffmpeg-protocols.html.
+     *
+     * It is recommended to first get the previous options and then add new options
+     * to the map since this function will replace the options. For example:
+     * \code
+     * reader = std::make_shared<flitr::FFmpegReader>();
+     * options["rtsp_transport"     ] = "tcp";
+     * options["stimeout"           ] = "10000000";
+     * options["allowed_media_types"] = "video";
+     * options["max_delay"          ] = "0";
+     * \endcode
+     *
+     * This function must be called before a call to openVideo(). If the FFmpegReader(std::string, ImageFormat::PixelFormat)
+     * constructor is used, any call to this function will be too late.
+     *
+     * \param dictionary_options Map of key value pairs as strings.
+     */
+    void setDictionaryOptions(std::map<std::string, std::string> dictionary_options) { DictionaryOptions_ = dictionary_options; }
+
+    /**
+     * Get the dictionary options set for the reader.
+     *
+     * This function returns the options that will used when the video is opened.
+     * \sa setDictionaryOptions()
+     */
+    std::map<std::string, std::string> getDictionaryOptions() const { return DictionaryOptions_; }
+
   private:
     /// Used for multi-threading access.
     static int lockManager(void **mutex, enum AVLockOp op);
@@ -166,6 +228,7 @@ class FLITR_EXPORT FFmpegReader {
     std::shared_ptr<StatsCollector> SwscaleStats_;
     std::shared_ptr<StatsCollector> GetImageStats_;
 
+    std::map<std::string, std::string> DictionaryOptions_;
 
 #if defined FLITR_USE_SWSCALE
     struct SwsContext *ConvertFormatCtx_;
