@@ -24,29 +24,53 @@
 using namespace flitr;
 using std::shared_ptr;
 
-
 //"The output format is automatically guessed according to the file extension and bit depth.\n"
 //"Raw images can also be output by using '%%d' in the filename\n"
 
-FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate, VideoContainer container, VideoCodec codec, int32_t bit_rate) :
-    Container_(container),
-    Codec_(codec),
+FFmpegWriter::FFmpegWriter() noexcept :
     AVCodec_(0),
     AVCodecContext_(0),
-    ImageFormat_(image_format),
-    SaveFileName_(filename),
     WrittenFrameCount_(0)
 {
-    FrameRate_.num=frame_rate;
-    FrameRate_.den=1.0;
+    av_register_all();
+    avformat_network_init();
+
+    std::map<std::string, std::string> options;
+    options["codec_type"] = "AVMEDIA_TYPE_VIDEO";
+    setHeaderDictionaryOptions(options);
+}
+
+FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate, VideoContainer container, VideoCodec codec, int32_t bit_rate) :
+    FFmpegWriter()
+{
+    bool opened = openFile(filename, image_format, frame_rate, container, codec, bit_rate);
+    if(opened == false) {
+        throw FFmpegWriterException();
+    }
+}
+
+FFmpegWriter::~FFmpegWriter()
+{
+    closeVideoFile();
+
+    av_free(InputFrame_);
+    av_free(SaveFrame_);
+    
+    av_free(VideoEncodeBuffer_);
+}
+
+bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate, VideoContainer container, VideoCodec codec, int32_t bit_rate)
+{
+    Container_     = container;
+    Codec_         = codec;
+    ImageFormat_   = image_format;
+    SaveFileName_  = filename;
+    FrameRate_.num = frame_rate;
+    FrameRate_.den = 1.0;
 
     std::stringstream writeframe_stats_name;
     writeframe_stats_name << filename << " FFmpegWriter::writeFrame";
     WriteFrameStats_ = shared_ptr<StatsCollector>(new StatsCollector(writeframe_stats_name.str()));
-
-    /* register all codecs, demux and protocols */
-    av_register_all();
-//    avcodec_register_all();
 
     //=== VideoEncodeBuffer_ for use with older avcodec_encode_video(...) ===
     // be safe with size
@@ -94,7 +118,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (!OutputFormat_) {
         logMessage(LOG_CRITICAL) << "Cannot set video format.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
     //=====================
 
@@ -106,7 +130,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (!FormatContext_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate video format context.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
     //BD FormatContext_->oformat = OutputFormat_;
@@ -124,7 +148,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (!AVCodec_) {
         logMessage(LOG_CRITICAL) << "Cannot find video codec.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
     if (AVCodec_->supported_framerates!=0)
@@ -250,7 +274,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (!VideoStream_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate video stream.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
 
@@ -263,7 +287,11 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 
     AVCodecContext_->codec_id=(AVCodecID)Codec_;
 
-    if (bit_rate>0) AVCodecContext_->bit_rate = bit_rate;
+    if (bit_rate>0) {
+        AVCodecContext_->bit_rate = bit_rate;
+        /* Set the bit rate tolerance to 20% the specified bit rate */
+        AVCodecContext_->bit_rate_tolerance = static_cast<int>(double(bit_rate) * 0.2);
+    }
 
     SaveFrameWidth_  = ImageFormat_.getWidth();
     SaveFrameHeight_ = ImageFormat_.getHeight();
@@ -273,10 +301,20 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     AVCodecContext_->height = SaveFrameHeight_;
     AVCodecContext_->time_base.den= FrameRate_.num;
     AVCodecContext_->time_base.num= FrameRate_.den;
-    AVCodecContext_->gop_size = 0;
     AVCodecContext_->pix_fmt = SaveFrameFormat_;
-
+    AVCodecContext_->gop_size = 0;
     AVCodecContext_->codec_type = AVMEDIA_TYPE_VIDEO;
+
+    /* Apply the private options for the codec context */
+    std::map<std::string, std::string> contextOtions = getCodecContextPrivateOptions();
+    for(const std::pair<std::string, std::string>& option: contextOtions) {
+        int set = av_opt_set(AVCodecContext_->priv_data, option.first.c_str(), option.second.c_str(), 0);
+        if(set != 0) {
+            if(set == AVERROR_OPTION_NOT_FOUND) {
+                logMessage(LOG_DEBUG) << "Codec Context option not found: " << option.first << "\n";
+            }
+        }
+    }
 
     // experiment with coder type
     //AVCodecContext_->coder_type = FF_CODER_TYPE_AC; // faster for FFV1
@@ -294,14 +332,14 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (avcodec_open2(AVCodecContext_, AVCodec_, NULL) < 0) {
         logMessage(LOG_CRITICAL) << "Cannot open video codec.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
 #if LIBAVFORMAT_VERSION_INT < ((54<<16) + (6<<8) + 100)
     if (av_set_parameters(FormatContext_, NULL) < 0) {
         logMessage(LOG_CRITICAL) << "Cannot set video parameters.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 #endif
 
@@ -323,7 +361,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     if (!InputFrame_ || !SaveFrame_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate memory for video storage buffers.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
 #if defined FLITR_USE_SWSCALE
@@ -341,42 +379,21 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
 #endif
         logMessage(LOG_CRITICAL) << "Cannot open video file " << SaveFileName_ << "\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)
     AVDictionary *options = NULL;
-    //av_dict_set(&options, "video_size", "1380x1038", 0);
-    //av_dict_set(&options, "pixel_format", av_get_pix_fmt_name(PIX_FMT_GRAY16LE), 0);
-    //av_dict_set(&options, "pix_fmt", av_get_pix_fmt_name(PIX_FMT_GRAY16LE), 0);
-    //av_dict_set(&options, "width", "1380", 0);
-    //av_dict_set(&options, "height", "1038", 0);
-    av_dict_set(&options, "codec_type", "AVMEDIA_TYPE_VIDEO", 0);
-    //av_dict_set(&options, "codec_tag", "1", 0);
-
-    /* Different Protocols require different dictionary options to be set for
-     * the protocol. These are specified and set up according to this page:
-     * http://www.ffmpeg.org/ffmpeg-protocols.html
-     * Some defaults are set for RTSP when RTSP is used. If rtsp is not
-     * used these will be ignored by the *_open_* command.
-     *
-     * The following options resolves a lot of streaming related issues
-     * when reading an RTSP stream using the FFmpegReader.
-     * Without the options the following errors gets reported by the reader during streaming:
-     * [mpeg4 @ 0x140c0a0] concealing 3394 DC, 3394 AC, 3394 MV errors in I frame
-     * [mpeg4 @ 0x14eeec0] ac-tex damaged at 23 29
-     * [mpeg4 @ 0x14eeec0] Error at MB: 2372
-     *
-     * The streamed video is also more reliable with these options set. */
-    av_dict_set(&options, "rtsp_transport", "tcp", 0);        /* RTSP: Use TCP as lower transport protocol. */
-    av_dict_set(&options, "stimeout", "100", 0);              /* RTSP: Socket TCP I/O timeout in microseconds.*/
-    av_dict_set(&options, "allowed_media_types", "video", 0); /* RTSP: Only allow video. */
-    av_dict_set(&options, "max_delay", "0", 0);               /* RTSP: Do not reorder out of sequence packets. */
+    /* Apply the dictionary options set on the writer */
+    std::map<std::string, std::string> dictionaryOptions = getHeaderDictionaryOptions();
+    for(const std::pair<std::string, std::string>& option: dictionaryOptions) {
+        av_dict_set(&options, option.first.c_str(), option.second.c_str(), 0);
+    }
     if (avformat_write_header(FormatContext_,&options)!=0)
     {
         logMessage(LOG_CRITICAL) << "Could not write header.\n";
         logMessage(LOG_CRITICAL).flush();
-        throw FFmpegWriterException();
+        return false;
     }
 
     AVDictionaryEntry *t = NULL;
@@ -392,7 +409,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
         {
             logMessage(LOG_CRITICAL) << "Could not write header.\n";
             logMessage(LOG_CRITICAL).flush();
-            throw FFmpegWriterException();
+            return false;
         }
 #endif
 
@@ -402,17 +419,7 @@ FFmpegWriter::FFmpegWriter(std::string filename, const ImageFormat& image_format
     std::cout.flush();
     AVCodecContext_->codec_tag=1;
 
-
-}
-
-FFmpegWriter::~FFmpegWriter()
-{
-    closeVideoFile();
-
-    av_free(InputFrame_);
-    av_free(SaveFrame_);
-    
-    av_free(VideoEncodeBuffer_);
+    return true;
 }
 
 
@@ -454,6 +461,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 
     if (FormatContext_->oformat->flags & AVFMT_RAWPICTURE)
     {
+        std::cout << "RAW" << std::endl;
         //Raw video case - the API will change slightly in the near
         //future for that.
 
@@ -473,7 +481,6 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
     } else
     {
         /* encode the image */
-
 #if LIBAVFORMAT_VERSION_INT > ((53<<16) + (35<<8) + 0)
         int got_output;
         int encode_ret = avcodec_encode_video2(AVCodecContext_, &pkt, SaveFrame_, &got_output);
@@ -483,12 +490,13 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 
         if (encode_ret<0)
         {
-            logMessage(LOG_CRITICAL) << "Failed to encode video frame. \n";
+            char errorBuffer[AV_ERROR_MAX_STRING_SIZE] = {0};
+            av_strerror(encode_ret, errorBuffer, AV_ERROR_MAX_STRING_SIZE);
+            logMessage(LOG_CRITICAL) << "Failed to encode video frame: " << errorBuffer << ". \n";
             logMessage(LOG_CRITICAL).flush();
            // WriteFrameStats_.tock(); We'll only keep stats of the good frames.
             return false;
         }
-
         /* Note: If returned size is zero, it means the image was buffered. */
 
 #if LIBAVFORMAT_VERSION_INT > ((53<<16) + (35<<8) + 0)

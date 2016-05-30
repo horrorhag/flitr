@@ -85,7 +85,7 @@ class FLITR_EXPORT ImageProducer {
      * 
      * \return Whether an image was produced.
      */
-    virtual bool seek(uint32_t position) { return false; }
+    virtual bool seek(uint32_t position) { (void)position; return false; }
 
     /** 
      * Find the least number of readable image slots available between
