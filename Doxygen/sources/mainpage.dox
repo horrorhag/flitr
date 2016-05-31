@@ -43,7 +43,7 @@ The following steps are used to build <a href="http://www.ffmpeg.org/">FFmpeg</a
 $ sudo mkdir /opt/FFmpeg
 $ sudo chown $(whoami):$(whoami) /opt/FFmpeg
 $ cd /opt/FFmpeg
-$ git clone git://git.videolan.org/ffmpeg.git 2.8.6
+$ git clone --branch n2.8.6 https://git.ffmpeg.org/ffmpeg.git 2.8.6
 $ cd 2.8.6
 $ git checkout n2.8.6
 $ ./configure --enable-shared --arch=x86_64 --disable-static --enable-pic
