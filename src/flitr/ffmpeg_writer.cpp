@@ -59,7 +59,7 @@ FFmpegWriter::~FFmpegWriter()
     av_free(VideoEncodeBuffer_);
 }
 
-bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate, VideoContainer container, VideoCodec codec, int32_t bit_rate)
+bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_format, const uint32_t frame_rate, VideoContainer container, VideoCodec codec, int32_t bit_rate, double scale_factor)
 {
     Container_     = container;
     Codec_         = codec;
@@ -293,8 +293,8 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
         AVCodecContext_->bit_rate_tolerance = static_cast<int>(double(bit_rate) * 0.2);
     }
 
-    SaveFrameWidth_  = ImageFormat_.getWidth();
-    SaveFrameHeight_ = ImageFormat_.getHeight();
+    SaveFrameWidth_  = double(ImageFormat_.getWidth()) * scale_factor;
+    SaveFrameHeight_ = double(ImageFormat_.getHeight()) * scale_factor;
 
     /* resolution must be a multiple of two */
     AVCodecContext_->width = SaveFrameWidth_;
@@ -302,7 +302,9 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
     AVCodecContext_->time_base.den= FrameRate_.num;
     AVCodecContext_->time_base.num= FrameRate_.den;
     AVCodecContext_->pix_fmt = SaveFrameFormat_;
-    AVCodecContext_->gop_size = 0;
+    AVCodecContext_->gop_size = 1;
+    AVCodecContext_->qmin = 2;
+    AVCodecContext_->qmax = 5;
     AVCodecContext_->codec_type = AVMEDIA_TYPE_VIDEO;
 
     /* Apply the private options for the codec context */
@@ -481,6 +483,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
     } else
     {
         /* encode the image */
+
 #if LIBAVFORMAT_VERSION_INT > ((53<<16) + (35<<8) + 0)
         int got_output;
         int encode_ret = avcodec_encode_video2(AVCodecContext_, &pkt, SaveFrame_, &got_output);

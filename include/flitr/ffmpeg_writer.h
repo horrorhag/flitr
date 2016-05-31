@@ -200,12 +200,14 @@ public:
      * \param[in] codec The codec that must be used. For RTSP it is recommended to use
      *          flitr::FLITR_NONE_CODEC so that the codec will be chosen by the application.
      * \param[in] bit_rate Bit rate that must be used for writing the data.
+     * \param[in] scale_factor The input image size will be scaled (via multiplication)
+     *          to get the size of the output stream size.
      */
     bool openFile(std::string filename, const ImageFormat& image_format,
                   const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE,
                   VideoContainer container=FLITR_ANY_CONTAINER,
                   VideoCodec codec=FLITR_RAWVIDEO_CODEC,
-                  int32_t bit_rate=-1);
+                  int32_t bit_rate=-1, double scale_factor = 1);
 
     /**
      * Write the video frame to the FFmpeg output stream.
