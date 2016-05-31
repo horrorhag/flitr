@@ -2,11 +2,18 @@
 
 using namespace flitr;
 
-GLSLCropPass::GLSLCropPass(flitr::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU)
+GLSLCropPass::GLSLCropPass(flitr::TextureRectangle *in_tex, int xmin, int ymin, int xmax, int ymax, int newWidth, int newHeight, bool read_back_to_CPU)
     : GLSLImageProcessor(in_tex, nullptr, read_back_to_CPU)
 {
-    TextureWidth_ = xmax-xmin+1;//in_tex->getTextureWidth();
-    TextureHeight_ = ymax-ymin+1;//in_tex->getTextureHeight();
+    if (newWidth!=-1)
+    {
+        TextureWidth_ = newWidth;
+        TextureHeight_ = newHeight;
+    } else
+    {
+        TextureWidth_ = xmax-xmin+1;//in_tex->getTextureWidth();
+        TextureHeight_ = ymax-ymin+1;//in_tex->getTextureHeight();
+    }
 
     RootGroup_ = new osg::Group;
     InTexture_ = in_tex;
@@ -30,6 +37,16 @@ GLSLCropPass::~GLSLCropPass()
 {
 }
 
+void GLSLCropPass::updateCrop(int xmin, int ymin, int xmax, int ymax)
+{
+    osg::ref_ptr<osg::Vec2Array> quad_tcoords = new osg::Vec2Array; // texture coords
+    quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+0));
+    quad_tcoords->push_back(osg::Vec2(xmax+1, ymin+0));
+    quad_tcoords->push_back(osg::Vec2(xmax+1, ymax+1));
+    quad_tcoords->push_back(osg::Vec2(xmin+0, ymax+1));
+    quad_geom_->setTexCoordArray(0, quad_tcoords.get());
+}
+
 osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, int xmax, int ymax)
 {
     osg::ref_ptr<osg::Group> top_group = new osg::Group;
@@ -45,30 +62,30 @@ osg::ref_ptr<osg::Group> GLSLCropPass::createTexturedQuad(int xmin, int ymin, in
 
     osg::ref_ptr<osg::Vec2Array> quad_tcoords = new osg::Vec2Array; // texture coords
     quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+0));
-    quad_tcoords->push_back(osg::Vec2(xmin+TextureWidth_, ymin+0));
-    quad_tcoords->push_back(osg::Vec2(xmin+TextureWidth_, ymin+TextureHeight_));
-    quad_tcoords->push_back(osg::Vec2(xmin+0, ymin+TextureHeight_));
+    quad_tcoords->push_back(osg::Vec2(xmax+1, ymin+0));
+    quad_tcoords->push_back(osg::Vec2(xmax+1, ymax+1));
+    quad_tcoords->push_back(osg::Vec2(xmin+0, ymax+1));
 
-    osg::ref_ptr<osg::Geometry> quad_geom = new osg::Geometry;
+    quad_geom_ = new osg::Geometry;
     osg::ref_ptr<osg::DrawArrays> quad_da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
 
     osg::ref_ptr<osg::Vec4Array> quad_colors = new osg::Vec4Array;
     quad_colors->push_back(osg::Vec4(1.0f,1.0f,1.0f,1.0f));
 
-    quad_geom->setVertexArray(quad_coords.get());
-    quad_geom->setTexCoordArray(0, quad_tcoords.get());
-    quad_geom->addPrimitiveSet(quad_da.get());
-    quad_geom->setColorArray(quad_colors.get());
-    quad_geom->setColorBinding(osg::Geometry::BIND_OVERALL);
+    quad_geom_->setVertexArray(quad_coords.get());
+    quad_geom_->setTexCoordArray(0, quad_tcoords.get());
+    quad_geom_->addPrimitiveSet(quad_da.get());
+    quad_geom_->setColorArray(quad_colors.get());
+    quad_geom_->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-    StateSet_ = quad_geom->getOrCreateStateSet();
+    StateSet_ = quad_geom_->getOrCreateStateSet();
     StateSet_->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
     StateSet_->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
     StateSet_->setTextureAttributeAndModes(0, InTexture_.get(), osg::StateAttribute::ON);
     
     StateSet_->addUniform(new osg::Uniform("textureID0", 0));
 
-    quad_geode->addDrawable(quad_geom.get());
+    quad_geode->addDrawable(quad_geom_.get());
     
     top_group->addChild(quad_geode.get());
 

@@ -35,9 +35,11 @@ namespace flitr {
     {
     public:
         GLSLCropPass(flitr::TextureRectangle *in_tex,
-                     int xmin, int ymin, int xmax, int ymax, bool read_back_to_CPU = false);
+                     int xmin, int ymin, int xmax, int ymax, int newWidth = -1, int newHeight = -1, bool read_back_to_CPU = false);
         
         ~GLSLCropPass();
+
+        void updateCrop(int xmin, int ymin, int xmax, int ymax);
         
         osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
         osg::ref_ptr<flitr::TextureRectangle> getOutputTexture() { return OutTexture_; }
@@ -49,6 +51,8 @@ namespace flitr {
         virtual osg::ref_ptr<osg::Group> createTexturedQuad(int xmin, int ymin, int xmax, int ymax);
         void createOutputTexture(bool read_back_to_CPU);
         void setupCamera();
+
+        osg::ref_ptr<osg::Geometry> quad_geom_;
 
     };
 }
