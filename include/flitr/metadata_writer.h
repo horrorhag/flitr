@@ -32,6 +32,24 @@ namespace flitr {
 
 class FLITR_EXPORT MetadataWriter {
   public:
+    /**
+     * Create the MetadataWriter with an empty file name.
+     *
+     * This constructor will not attempt to set a file name or open the file.
+     * This constructor is useful when this class is extended by deriving from
+     * it.
+     */
+    MetadataWriter();
+    /**
+     * Create the MetadataWriter and open the file specified with \a filename.
+     *
+     * When this constructor is used, the openFile() function will be
+     * called from the constructor, as if it is not virtual due to the
+     * way C++ handles virtual function calls from the constructor of a class.
+     * Thus when deriving from this class and the openFile() function gets
+     * re-implemented, use the default constructor instead and then call the
+     * openFile() so that the overloaded implementation can be called.
+     */
     MetadataWriter(std::string filename);
     virtual ~MetadataWriter();
 
@@ -40,9 +58,9 @@ class FLITR_EXPORT MetadataWriter {
   protected:
     std::ofstream FileStream_;
 
-    bool openFile();
-    bool closeFile();
-	
+    virtual bool openFile();
+    virtual bool closeFile();
+
     std::string SaveFileName_;
 };
 

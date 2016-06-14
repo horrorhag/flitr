@@ -109,7 +109,6 @@ bool MultiFFmpegConsumer::setContainer(VideoContainer container)
     return true;
 }
 
-
 bool MultiFFmpegConsumer::init()
 {
     FFmpegWriters_.resize(ImagesPerSlot_);
@@ -153,8 +152,16 @@ bool MultiFFmpegConsumer::openFiles(std::string basename, std::vector<std::strin
     }
 }
 
-bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const uint32_t frame_rate)
+bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const uint32_t frame_rate, std::vector<MetadataWriter*> metadata_writers)
 {
+    /* If the size is 0, the default value, then this function will create default
+     * MetadataWriters. Otherwise the size must match the number of images in each slot. */
+    if((metadata_writers.size() != 0 ) && (metadata_writers.size() != ImagesPerSlot_))
+    {
+        return false;
+    }
+    bool useDefaultMetadataWriter = (metadata_writers.size() == 0);
+
     if (filenames.size()==ImagesPerSlot_)
     {
         for (unsigned int i=0; i<ImagesPerSlot_; i++)
@@ -171,7 +178,11 @@ bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const ui
                 std::string metadata_filename(filenames[i] + ".meta");
 
                 FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate, Container_, Codec_, BitRate_);
-                MetadataWriters_[i] = new MetadataWriter(metadata_filename);
+                if(useDefaultMetadataWriter == true) {
+                    MetadataWriters_[i] = new MetadataWriter(metadata_filename);
+                } else {
+                    MetadataWriters_[i] = metadata_writers[i];
+                }
             } else
             {//If the filename is "" then the recording is disbaled.
                 FFmpegWriters_[i] = 0;
