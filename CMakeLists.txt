@@ -375,8 +375,10 @@ ENDIF(FLITR_USE_LIBTIFF)
 #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
 IF(NOT APPLE)
   SET(LIB_SOURCES ${LIB_SOURCES}
+    src/flitr/multi_screen_capture_producer.cpp
     src/flitr/screen_capture_producer.cpp
     src/flitr/texture_capture_producer.cpp
+    include/flitr/multi_screen_capture_producer.h
     include/flitr/screen_capture_producer.h
     include/flitr/texture_capture_producer.h
   )
