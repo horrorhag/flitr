@@ -39,10 +39,11 @@ FFmpegReader::FFmpegReader() noexcept :
     av_register_all();
     avformat_network_init();
 
-    FormatContext_ = NULL;
-
-    CodecContext_ = NULL;
-    Codec_ = NULL;
+    FormatContext_  = nullptr;
+    CodecContext_   = nullptr;
+    Codec_          = nullptr;
+    DecodedFrame_   = nullptr;
+    ConvertedFrame_ = nullptr;
 
     std::map<std::string, std::string> options;
     options["codec_type"] = "AVMEDIA_TYPE_VIDEO";

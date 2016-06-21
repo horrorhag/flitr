@@ -104,7 +104,7 @@ class FLITR_EXPORT Image {
     ImageFormat * const format() { return &Format_; }
     
     //!Get the image mata data.
-    const std::shared_ptr<ImageMetadata> metadata() { return Metadata_; }
+    const std::shared_ptr<ImageMetadata> metadata() const { return Metadata_; }
     
     //!Set the image mata data.
     void setMetadata(std::shared_ptr<ImageMetadata> md) { Metadata_ = md; }

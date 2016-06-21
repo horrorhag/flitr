@@ -58,7 +58,19 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
 
     bool openFiles(std::string basename, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
     bool openFiles(std::string basename, std::vector<std::string> basename_postfixes, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
-    bool openFiles(std::vector<std::string> filenames, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
+    /**
+     * Open the files for writing.
+     *
+     * If required, specific metadata writers can be set using the optional \a metadata_writers
+     * argument. If this vector is an empty vector (by default) then the normal flitr::MetadataWriter
+     * will be used to write the metadata. Otherwise the metadata writers in the list will be
+     * used for each of the files in the \a filenames list. If the number of file names, the
+     * number of metadata writers (if not 0) and the number of images per slot as set during construction
+     * of this class does not match, this function will not start writing and will return false.
+     *
+     * This class will take ownership of the writers and will delete them when writing is done and
+     * the closeFiles() function gets called. */
+    bool openFiles(std::vector<std::string> filenames, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE, std::vector<MetadataWriter *> metadata_writers = std::vector<MetadataWriter *>());
 
     bool startWriting();
     bool stopWriting();

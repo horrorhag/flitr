@@ -66,6 +66,7 @@ bool FIPFlip::trigger()
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
+            imWrite->setMetadata(imRead->metadata());
             
             uint8_t const * const dataRead=(uint8_t const * const)imRead->data();
             uint8_t * const dataWrite=(uint8_t * const )imWrite->data();
