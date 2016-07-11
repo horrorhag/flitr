@@ -1,0 +1,176 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid2\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid3\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2160\lin2160 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid102\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid202\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid203\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2160\lin2160 }{\listname ;}\listid3}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww24780\viewh15120\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b\fs48 \cf0 C++ Coding Standard\
+
+\b0\fs36 Not just about coding style and how to name your variables... We'll also include:\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}how to comment your code, \
+{\listtext	\'95	}modern C++ coding guidelines and best practices including data oriented design,\
+{\listtext	\'95	}revision control practices, \
+{\listtext	\'95	}tips on writing clean code, \
+{\listtext	\'95	}tips on writing efficient code,\
+{\listtext	\'95	}useful STL containers and algorithms,\
+{\listtext	\'95	}guidelines on writing multi-threaded code, \
+{\listtext	\'95	}guidelines on writing library interfaces: [https://www.youtube.com/watch?v=iVHDQagLsrg&app=desktop]\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}Make it easy to use the API right and difficult to misuse!\
+{\listtext	\uc0\u8259 	}Code using the library should be self explanatory!\
+{\listtext	\uc0\u8259 	}Use setters and getters rather than single init method/constructor with many parameters.\
+{\listtext	\uc0\u8259 	}Investment to learn API should be small.\
+{\listtext	\uc0\u8259 	}Use above as a design consideration from the start.\
+{\listtext	\uc0\u8259 	}Remove for boiler place code that is just copied from example to example...\
+{\listtext	\uc0\u8259 	}Don't add things that are not asked for\
+\pard\tx1660\tx2160\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls1\ilvl2\cf0 {\listtext	\uc0\u8259 	}these are not tested/checked as well\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}Don't block users from doing things (that your API doesn't do) on their own.\
+{\listtext	\uc0\u8259 	}Define interface/API before design and implementation of internals.\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}etc.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+What is not included here, but rather as part of the research group's general standard/master-plan/cook-book...:\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls2\ilvl0\cf0 {\listtext	\'95	}Document & presentation templates,\
+{\listtext	\'95	}Suggested software development processes - probably not waterfall process, but some flavour of agile!\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls2\ilvl1\cf0 {\listtext	\uc0\u8259 	}Agile practices relevant to QRTs / Skunkworks ?\
+{\listtext	\uc0\u8259 	}Research and development methodology and suggested practices?\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls2\ilvl0\cf0 {\listtext	\'95	}HowTo write, for example, an ImageProducer.\
+{\listtext	\'95	}FLITr/IPF disk images.\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\
+
+\b\fs40 1. Coding Style Guide\
+
+\b0\fs36 In 2014 we reviewed Google's C++ Style Guide (https://google.github.io/styleguide/cppguide.html). Their parting words are "Use common sense and BE CONSISTENT. If you are editing code, take a few minutes to look at the code around you..."  Good style is to the benefit of your future readers which includes yourself.\
+\
+We'll start our style guidelines with "BE CONSISTENT." However, to converge to a consistent code base...\
+\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\'95	}Directory names and file names should be 
+\i lower case
+\i0  using _ separator e.g. fip_average_image.h\
+{\listtext	\'95	}Class names should use CamelCase e.g. SharedImageBuffer, ImageConsumer\
+{\listtext	\'95	}Namespace names should be kept short, but not cryptic, and lower case e.g. flitr\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}if you really need to use 
+\i lower case
+\i0  using _ separator\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\'95	}Method and function names should use lower camelCase e.g. initWithStorage(), releaseWriteSlot()\
+{\listtext	\'95	}Member variables should use lower _camelCase e.g. _imageProducer.\
+{\listtext	\'95	}Const member variables should use ALL_CAPITALS.\
+{\listtext	\'95	}If you would like to use Hungarian notation then you should use:\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}_strName 		// std::string\
+{\listtext	\uc0\u8259 	}_pszName 	// zero terminated c string\
+{\listtext	\uc0\u8259 	}_pName 		// pointer\
+{\listtext	\uc0\u8259 	}_bCheck 		// boolean\
+{\listtext	\uc0\u8259 	}_i32Value		// 32 bit integer\
+{\listtext	\uc0\u8259 	}_dValue		// double\
+{\listtext	\uc0\u8259 	}_fValue		// float\
+{\listtext	\uc0\u8259 	}_u32Value		// unsigned 32 bit integer\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\'95	}Member variables should be placed at the bottom of the Class definition and preferably be private.\
+{\listtext	\'95	}One should not use 'using' e.g. 'using namespace flitr' in a header file.\
+{\listtext	\'95	}Include files should be in this order:\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}local include files\
+{\listtext	\uc0\u8259 	}your own library include files\
+{\listtext	\uc0\u8259 	}system (/usr /opt) include files\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\'95	}Path names should be specified using '/' and not '\\'\
+{\listtext	\'95	}Use const constantly\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}bool initWithStorage(
+\b const
+\b0  bool zero_mem = false);\
+{\listtext	\uc0\u8259 	}uint32_t getNumWriteSlotsAvailable() 
+\b const
+\b0 ;\
+{\listtext	\uc0\u8259 	}uint32_t getNumReadSlotsAvailable(
+\b const
+\b0  ImageConsumer& consumer)\
+{\listtext	\uc0\u8259 	}std::map< 
+\b const
+\b0  ImageConsumer*, uint32_t > ReadTails_\
+\pard\tx1660\tx2160\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li2160\fi-2160\pardirnatural\partightenfactor0
+\ls3\ilvl2\cf0 {\listtext	\uc0\u8259 	}ImageConsumer * 
+\b const
+\b0  theConsumer_;\
+{\listtext	\uc0\u8259 	}ImageConsumer 
+\b const 
+\b0 * theConsumer_;\
+{\listtext	\uc0\u8259 	}ImageConsumer 
+\b const 
+\b0 * 
+\b const
+\b0  theConsumer_;\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\'95	}Be consistent with use of whitespace and placement of \{\}\
+\pard\tx940\tx1440\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls3\ilvl1\cf0 {\listtext	\uc0\u8259 	}spaces AND NOT tabs.\
+\pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
+\ls3\ilvl0\cf0 {\listtext	\'95	}Units and direction... in variable name?\
+{\listtext	\'95	}Code in header file ... \
+{\listtext	\'95	}function pre and post conditions ...\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+
+\b\fs40 2. CMake \
+
+\b0\fs36 \
+
+\b\fs40 3. How To Comment Your Code\
+
+\b0\fs36 We use Doxygen http://www.doxygen.org/index.html\
+\
+
+\b Single line comments:\
+
+\b0 //!... text ...\
+/// ... text ...\
+\
+
+\b Multi line comments:\
+
+\b0 /**\
+ ... text ...\
+ */\
+\
+/*!\
+ ... text ...\
+*/
+\b \
+\
+Brief vs. Detailed descriptions:\
+
+\b0 /*! \\brief Brief description.\
+ *         Brief description continued.\
+ *\
+ *  Detailed description starts here.\
+ */\
+\
+//! Brief single line description\
+\
+//!Detailed multi line\
+//!description of the code.\
+\
+
+\b Documenting members:\
+
+\b0 int var; //!< Description after the member\
+\
+//!Description before the member\
+int var;}
