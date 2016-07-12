@@ -44,7 +44,9 @@ latestHx_(0.0),
 latestHy_(0.0),
 latestHFrameNumber_(0),
 sumHx_(0.0f),
-sumHy_(0.0f)
+sumHy_(0.0f),
+burnFx_(0.0f),
+burnFy_(0.0f)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
@@ -403,6 +405,9 @@ bool FIPLKStabilise::trigger()
             {
                 sumHx_+=latestHx_;
                 sumHy_+=latestHy_;
+                
+                sumHx_*=burnFx_;
+                sumHy_*=burnFy_;
             }
             
             

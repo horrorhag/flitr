@@ -68,10 +68,10 @@ public:
          *@param fx Factor [0..1] by which to reduce the output image transform in x.
          *@param fy Factor [0..1] by which to reduce the output image transform in y.
      */
-    virtual void burnOutputTransform(const float fx, const float fy)
+    virtual void setupOutputTransformBurn(const float fx, const float fy)
     {
-        sumHx_*=fx;
-        sumHy_*=fy;
+        burnFx_=fx;
+        burnFy_=fy;
     }
 
     virtual std::string getTitle() {
@@ -108,6 +108,8 @@ private:
 
     float sumHx_;
     float sumHy_;
+    float burnFx_;
+    float burnFy_;
 };
 
 }

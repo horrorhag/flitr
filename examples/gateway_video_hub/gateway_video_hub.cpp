@@ -22,7 +22,8 @@ int main(int argc, char *argv[])
     
     flitr::VideoHub videoHub;
     //videoHub.createV4LProducer("v4linput", "/dev/video0");
-    videoHub.createVideoFileProducer("input", "/Users/bduvenhage/Desktop/nikon_compressed.mp4");
+    videoHub.createRTSPProducer("input", "rtsp://192.168.0.90:554/axis-media/media.amp");
+    //videoHub.createVideoFileProducer("input", "/Users/bduvenhage/Desktop/nikon_compressed.mp4");
     
     videoHub.createImageStabProcess("istab", "input");
     //ToDo: High pass filter output transform - lkstabilise->burnOutputTransform(0.975f, 0.975f);

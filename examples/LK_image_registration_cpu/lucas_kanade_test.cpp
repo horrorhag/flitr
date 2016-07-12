@@ -162,6 +162,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not initialise the lkstabilise processor.\n";
         exit(-1);
     }
+    lkstabilise->setupOutputTransformBurn(0.975f, 0.975f); //High pass filter output transform.
     lkstabilise->startTriggerThread();
     
     
@@ -284,9 +285,6 @@ int main(int argc, char *argv[])
         if (osgc->getNext())
         {
             viewer.frame();
-            
-            //High pass filter output transform.
-            lkstabilise->burnOutputTransform(0.975f, 0.975f);
             
             /*
              float simHx, simHy;
