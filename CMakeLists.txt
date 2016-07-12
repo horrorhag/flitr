@@ -124,6 +124,22 @@ endif()
 ENDIF(FLITR_USE_OPENMP)
 
 
+OPTION(FLITR_USE_WEBRTC "Include and use WebRTC." OFF)
+IF(FLITR_USE_WEBRTC)
+  #Note: Assuming for the moment that libWebRTC, if present, is installed amongst the default system includes and libs.
+  ADD_DEFINITIONS(-DUSE_WEBRTC)
+# === find WebRTC ===
+#find_package(WebRTC)
+#if (WEBRTC_FOUND)
+#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WebRTC_C_FLAGS}")
+#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WebRTC_CXX_FLAGS}")
+#    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${WebRTC_EXE_LINKER_FLAGS}")
+#    ADD_DEFINITIONS(-DUSE_WEBRTC)
+#endif()
+# ===================
+ENDIF(FLITR_USE_WEBRTC)
+
+
 #default include and lib directories.
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR};${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR} /usr/local/lib /opt/local/lib ${FLITR_3RDPARTY_ROOT}/lib ${FLITR_3RDPARTY_ROOT}/bin)
@@ -364,12 +380,21 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.h
 )
 
+
 IF(FLITR_USE_LIBTIFF)
 SET(LIB_SOURCES ${LIB_SOURCES}
     src/flitr/libtiff_producer.cpp
     include/flitr/libtiff_producer.h
 )
 ENDIF(FLITR_USE_LIBTIFF)
+
+
+IF(FLITR_USE_WEBRTC)
+SET(LIB_SOURCES ${LIB_SOURCES}
+  src/flitr/multi_webrtc_consumer.cpp
+  include/flitr/multi_webrtc_consumer.h
+)
+ENDIF(FLITR_USE_WEBRTC)
 
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
@@ -451,6 +476,10 @@ IF(FLITR_USE_LIBTIFF)
   ADD_SUBDIRECTORY(apps/viewer_colour_night)
 ENDIF()
 
+
+IF(FLITR_USE_WEBRTC)
+    ADD_SUBDIRECTORY(examples/gateway_video_hub)
+ENDIF(FLITR_USE_WEBRTC)
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)

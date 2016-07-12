@@ -27,7 +27,7 @@
 
 namespace flitr {
     
-    /*! Applies Gaussian filter with radius approx. 5 pixels. */
+    /*! Applies Gaussian filter. */
     class FLITR_EXPORT FIPGaussianFilter : public ImageProcessor
     {
     public:

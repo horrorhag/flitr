@@ -36,7 +36,7 @@ FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_sl
                          uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 avrgImageLongevity_(avrgImageLongevity),
-recipGradientThreshold_(1.0f / 0.0005f),
+recipGradientThreshold_(1.0f / 0.003f),
 numLevels_(4),//Num levels searched for scint motion.
 gaussianFilter_(2.0f, 8),
 gaussianDownsample_(1.0f, 4),

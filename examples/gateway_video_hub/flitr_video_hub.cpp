@@ -5,6 +5,8 @@
 #include <flitr/multi_webrtc_consumer.h>
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
+#include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 
 //====
 flitr::VideoHub::VideoHub()
@@ -49,7 +51,7 @@ bool flitr::VideoHub::createVideoFileProducer(const std::string &name, const std
 }
 
 //====
-bool flitr::VideoHub::createRTSPProducer(std::string &name, const std::string &url)
+bool flitr::VideoHub::createRTSPProducer(const std::string &name, const std::string &url)
 {
     std::shared_ptr<flitr::FFmpegProducer> ip(new flitr::FFmpegProducer(url, flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, 2));
     
@@ -66,7 +68,7 @@ bool flitr::VideoHub::createRTSPProducer(std::string &name, const std::string &u
 }
 
 //====
-bool flitr::VideoHub::createV4LProducer(std::string &name, const std::string &device)
+bool flitr::VideoHub::createV4LProducer(const std::string &name, const std::string &device)
 {
     return false;
 }
@@ -78,40 +80,42 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
     
     if (it!=_producerMap.end())
     {
-        /*
-         //==
-         shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*ip, 1, 2));
-         if (!cnvrtToYF32->init())
-         {
-         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
-         exit(-1);
-         }
-         
-         cnvrtToYF32->startTriggerThread();
-         
-         //==
-         shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1,
-         FIPLKStabilise::Mode::SUBPIXELSTAB,
-         2));
-         if (!lkstabilise->init())
-         {
-         std::cerr << "Could not initialise the lkstabilise processor.\n";
-         exit(-1);
-         }
-         lkstabilise->startTriggerThread();
-         
-         
-         //==
-         shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkstabilise, 1, 0.95f, 2));
-         if (!cnvrtToY8->init())
-         {
-         std::cerr << "Could not initialise the cnvrtToY8 processor.\n";
-         exit(-1);
-         }
-         cnvrtToY8->startTriggerThread();
-         
-         */
-        return false;
+        //==
+        std::shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*(it->second), 1, 2));
+        if (!cnvrtToYF32->init())
+        {
+            std::cerr << "Could not initialise the cnvrtToF32 processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+        
+        cnvrtToYF32->startTriggerThread();
+        
+        //==
+        std::shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1, FIPLKStabilise::Mode::SUBPIXELSTAB, 2));
+        if (!lkstabilise->init())
+        {
+            std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+        lkstabilise->startTriggerThread();
+        
+        
+        //==
+        std::shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkstabilise, 1, 0.95f, 2));
+        if (!cnvrtToY8->init())
+        {
+            std::cerr << "Could not initialise the cnvrtToY8 processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+        cnvrtToY8->startTriggerThread();
+        
+        
+        //Add new map entries and store the image producers.
+        _producerMap[name+std::string("_cnvrtToY8")]=cnvrtToYF32;
+        _producerMap[name+std::string("_lkstabiliseF32")]=lkstabilise;
+        _producerMap[name]=cnvrtToY8;
+        
+        return true;
     }
     
     return false;
@@ -149,7 +153,7 @@ bool flitr::VideoHub::createVideoFileConsumer(const std::string &name, const std
         
         //Add new map entry and store the image consumer.
         _consumerMap[name]=mffc;
-
+        
         mffc->openFiles(fileName, frameRate);
         mffc->startWriting();
         
@@ -213,15 +217,6 @@ bool flitr::VideoHub::createImageBufferConsumer(const std::string &name, const s
     }
     
     return false;
-}
-
-//====
-void flitr::VideoHub::trigger()
-{
-    for (auto &ip : _producerMap)
-    {
-        ip.second->trigger();
-    }
 }
 
 //====

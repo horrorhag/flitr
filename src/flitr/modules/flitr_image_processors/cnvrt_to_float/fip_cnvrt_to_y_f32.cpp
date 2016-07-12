@@ -92,7 +92,7 @@ bool FIPConvertToYF32::trigger()
                     for (size_t y=0; y<height; ++y)
                     {
                         const size_t lineOffset=y * width;
-                        size_t readOffset=lineOffset*3+1;
+                        size_t readOffset=lineOffset*3;
 
                         for (size_t x=0; x<width; ++x)
                         {

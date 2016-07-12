@@ -66,13 +66,13 @@ namespace flitr
          \param name The name of the new processor/producer.
          \param fileName The name of the producer to attach to.
          */
-        bool createRTSPProducer(std::string &name, const std::string &url);
+        bool createRTSPProducer(const std::string &name, const std::string &url);
         
         /** Create and image producer to open and get images from a v4l device.
          \param name The name of the new processor/producer.
          \param fileName The name of the producer to attach to.
          */
-        bool createV4LProducer(std::string &name, const std::string &device);
+        bool createV4LProducer(const std::string &name, const std::string &device);
         
         
         //=== Image processors
@@ -128,9 +128,6 @@ namespace flitr
                                        uint8_t * const buffer);
         
         //=== Misc.
-        //!Trigger all producers that require an external trigger.
-        void trigger();
-        
         //!Return a pointer to specific producer for use with an external consumer.
         std::shared_ptr<flitr::ImageProducer> getProducer(const std::string &producerName);
         

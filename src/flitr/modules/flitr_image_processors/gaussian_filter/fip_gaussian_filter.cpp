@@ -98,7 +98,10 @@ bool FIPGaussianFilter::init()
     
     //Allocate a buffer big enough for any of the image slots.
     scratchData_=new uint8_t[maxScratchDataSize];
+    memset(scratchData_, 0, maxScratchDataSize);
+    
     intImageScratchData_=new double[maxScratchDataValues];
+    memset(intImageScratchData_, 0, maxScratchDataValues*sizeof(double));
     
     return rValue;
 }

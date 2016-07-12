@@ -97,10 +97,10 @@ int main(int argc, char *argv[])
     
     //===
     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
-                                         190,
-                                         250,
-                                         640,
-                                         480,
+                                         100,
+                                         100,
+                                         1160,
+                                         824,
                                          2));
     if (!crop->init())
     {
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
     
     //===
     shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*crop, 1,
-                                                                                      0.6, //target average
+                                                                                      0.4, //target average
                                                                                       2));//Buffer size.
     
     if (!photometricEqualise->init())
@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
     
     //===
     shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
-                                                         0.3f, //Internal average image longevity.
+                                                         0.5f, //Internal average image longevity.
                                                          2)); //Buffer size.
     if (!lkdewarp->init())
     {
@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
      averageImage->startTriggerThread();
      
      
-     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 20.0f, 2.75f, 2));
+     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 20.0f, 1.75f, 2));
      if (!unsharpMask->init())
      {
      std::cerr << "Could not initialise the unsharp mask processor.\n";
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
     }
     
     
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*lkstabilise, 1));
+    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1));
     if (!osgcOrig->init())
     {
         std::cerr << "Could not init osgcOrig consumer\n";

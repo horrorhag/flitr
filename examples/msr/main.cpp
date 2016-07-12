@@ -6,10 +6,12 @@
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
 
+#include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 #include <flitr/modules/flitr_image_processors/flip/fip_flip.h>
 #include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
 #include <flitr/modules/flitr_image_processors/transform2D/fip_transform2D.h>
 #include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
+#include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
 
 #include <flitr/modules/flitr_image_processors/msr/fip_msr.h>
 
@@ -122,20 +124,48 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 2));
-    if (!cnvrtToRGBF32->init()) {
-        std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
+    shared_ptr<FIPConvertToYF32> cnvrtToF32(new FIPConvertToYF32(*ip, 1, 2));
+    if (!cnvrtToF32->init()) {
+        std::cerr << "Could not initialise the FIPConvertToYF32 processor.\n";
         exit(-1);
     }
-    cnvrtToRGBF32->startTriggerThread();
+    cnvrtToF32->startTriggerThread();
     
+
+    /*
+    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1,
+                                                                  2.0, 5,
+                                                                  0,
+                                                                  2));
+    if (!gaussFilt->init())
+    {
+        std::cerr << "Could not initialise the gaussFilt processor.\n";
+        exit(-1);
+    }
+    gaussFilt->startTriggerThread();
+    */
     
-    shared_ptr<FIPMSR> msr(new FIPMSR(*cnvrtToRGBF32, 1, 1));
+
+    //===
+    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToF32, 1,
+                                                                                      0.5, //target average
+                                                                                      2));//Buffer size.
+    
+    if (!photometricEqualise->init())
+    {
+        std::cerr << "Could not initialise the photometricEqualise processor.\n";
+        exit(-1);
+    }
+    photometricEqualise->startTriggerThread();
+    
+
+    shared_ptr<FIPMSR> msr(new FIPMSR(*photometricEqualise, 1, 1));
     if (!msr->init()) {
         std::cerr << "Could not initialise the msr image processor.\n";
         exit(-1);
     }
     msr->startTriggerThread();
+
     
     /*
      shared_ptr<FIPAverageImageIIR> averageIIR(new FIPAverageImageIIR(*msr, 1, 50.0f, 1));
@@ -146,15 +176,16 @@ int main(int argc, char *argv[])
      averageIIR->startTriggerThread();
      */
     
-    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr, 1, 0.95f, 2));
+    /*
+    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 2));
     if (!cnvrtToRGB8->init()) {
         std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
         exit(-1);
     }
     cnvrtToRGB8->startTriggerThread();
+    */
     
-    
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToRGB8, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*msr, 1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
@@ -189,8 +220,8 @@ int main(int argc, char *argv[])
         translate.makeTranslate(osg::Vec3d(+osgcOrig->getOutputTexture()->getTextureWidth()/2,
                                            0.0,
                                            0.0));
-        quad->flipAroundHorizontal();
-        quad->rotateAroundCentre(5.0/180.0*M_PI);
+        //quad->flipAroundHorizontal();
+        //quad->rotateAroundCentre(5.0/180.0*M_PI);
         quad->translate(osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
@@ -201,8 +232,8 @@ int main(int argc, char *argv[])
         translate.makeTranslate(osg::Vec3d(-osgcOrig->getOutputTexture()->getTextureWidth()/2,
                                            0.0,
                                            0.0));
-        quadOrig->flipAroundHorizontal();
-        quadOrig->rotateAroundCentre(5.0/180.0*M_PI);
+        //quadOrig->flipAroundHorizontal();
+        //quadOrig->rotateAroundCentre(5.0/180.0*M_PI);
         quadOrig->translate(-osgc->getOutputTexture()->getTextureWidth()>>1, 0);
     }
     
@@ -211,7 +242,7 @@ int main(int argc, char *argv[])
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     
-    KeyPressedHandler *kbHandler=new KeyPressedHandler(10);
+    KeyPressedHandler *kbHandler=new KeyPressedHandler(3);
     viewer.addEventHandler(kbHandler);
     
     viewer.setSceneData(root_node);
@@ -247,12 +278,14 @@ int main(int argc, char *argv[])
         bool renderFrame=false;
         
         if (osgc->getNext()) renderFrame=true;
-        if (osgcOrig->getNext()) renderFrame=true;
+        //if (osgcOrig->getNext()) renderFrame=true;
         
         msr->setGFScale(kbHandler->GFScale_);
         
         if (renderFrame)
         {
+            osgcOrig->getNext();
+            
             viewer.frame();
             
             /*
@@ -277,10 +310,9 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    cnvrtToRGBF32->stopTriggerThread();
-    //averageIIR->stopTriggerThread();
-    msr->stopTriggerThread();
-    cnvrtToRGB8->stopTriggerThread();
+    cnvrtToF32->stopTriggerThread();
+//    msr->stopTriggerThread();
+    //cnvrtToRGB8->stopTriggerThread();
     
     return 0;
 }

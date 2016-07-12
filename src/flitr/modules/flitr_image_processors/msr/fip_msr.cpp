@@ -255,14 +255,17 @@ bool FIPMSR::trigger()
                         
                         const int histoBinNum=int(((r + 1.0f)*0.5f) * (histoBinArrSize_-1) + 0.5f);
                         
-                        histoBins_[histoBinNum]=histoBins_[histoBinNum]+1;
+                        if ((histoBinNum>=0) && (histoBinNum<histoBinArrSize_))
+                        {
+                            histoBins_[histoBinNum]=histoBins_[histoBinNum]+1;
+                        }
                         
                         ++numHistoSamples;
                     }
                 }
                  
                 //Remove outliers.
-                size_t lowerToRemove=numHistoSamples*0.005f;
+                size_t lowerToRemove=numHistoSamples*0.001f;
                 size_t lowerRemoved=0;
                 
                 for (int binNum=0; binNum<histoBinArrSize_; ++binNum)
@@ -324,7 +327,7 @@ bool FIPMSR::trigger()
             }
             
             //MSR cont.
-            const float gain=1.0f;//Boosts image intensity.
+            const float gain=0.9f;//Boosts image intensity.
             const float chromatGain=1.0f;//Boosts colour.
             const float blacknessFloor=0.05f/255.0f;//Limits the enhancement of low signal (black) areas.
             

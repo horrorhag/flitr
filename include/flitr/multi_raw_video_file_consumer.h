@@ -63,8 +63,13 @@ class FLITR_EXPORT MultiRawVideoFileConsumer : public ImageConsumer {
 
     bool init();
 
+    //!Open (for writing) one video file per image slot using the supplied basename file name.
     bool openFiles(std::string basename, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
+    
+    //!Open (for writing) one video file per image slot using the supplied basename file name and supplied postfixes.
     bool openFiles(std::string basename, std::vector<std::string> basename_postfixes, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
+
+    //!Open (for writing) one video file per image slot using the supplied vector of file names.
     bool openFiles(std::vector<std::string> filenames, const uint32_t frame_rate=FLITR_DEFAULT_VIDEO_FRAME_RATE);
 
     bool startWriting();
