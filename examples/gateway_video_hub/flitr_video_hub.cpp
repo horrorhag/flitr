@@ -97,7 +97,7 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
             std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
-        lkstabilise->setupOutputTransformBurn(0.975f, 0.975f); //High pass filter output transform.
+        lkstabilise->setupOutputTransformBurn(0.9875f, 0.9875f); //High pass filter output transform.
         lkstabilise->startTriggerThread();
         
         
@@ -204,7 +204,6 @@ bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::s
     
     return false;
 }
-
 
 //====
 bool flitr::VideoHub::createImageBufferConsumer(const std::string &name, const std::string &producerName,

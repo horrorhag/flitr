@@ -61,7 +61,7 @@ namespace flitr
          \param fileName The name of the producer to attach to.
          */
         bool createVideoFileProducer(const std::string &name, const std::string &filename);
-
+        
         /** Create and image producer to play an RTSP stream.
          \param name The name of the new processor/producer.
          \param fileName The name of the producer to attach to.
@@ -126,6 +126,12 @@ namespace flitr
          */
         bool createImageBufferConsumer(const std::string &name, const std::string &producerName,
                                        uint8_t * const buffer);
+        
+        /** Method to hold the buffer updates for read access.
+         \param bufferHold If true the the buffer will not be updated and be available for read access. The method blocks until buffer becomes available.
+         \sa createImageBufferConsumer
+         */
+        bool imageBufferConsumerHold(const bool bufferHold);
         
         //=== Misc.
         //!Return a pointer to specific producer for use with an external consumer.
