@@ -18,13 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/multi_webrtc_consumer.h>
+#include <flitr/multi_example_consumer.h>
 #include <flitr/image_producer.h>
 
 using namespace flitr;
 
 //======
-void MultiWebRTCConsumerThread::run()
+void MultiExampleConsumerThread::run()
 {
     std::vector<Image**> imv;
     
@@ -87,7 +87,7 @@ void MultiWebRTCConsumerThread::run()
 
 
 //======
-MultiWebRTCConsumer::MultiWebRTCConsumer(ImageProducer& producer,
+MultiExampleConsumer::MultiExampleConsumer(ImageProducer& producer,
                                          const uint32_t imagesPerSlot) :
 ImageConsumer(producer),
 _imagesPerSlot(imagesPerSlot)
@@ -100,7 +100,7 @@ _imagesPerSlot(imagesPerSlot)
 
 
 //======
-MultiWebRTCConsumer::~MultiWebRTCConsumer()
+MultiExampleConsumer::~MultiExampleConsumer()
 {
     _thread->setExit();
     _thread->join();
@@ -108,11 +108,11 @@ MultiWebRTCConsumer::~MultiWebRTCConsumer()
 
 
 //======
-bool MultiWebRTCConsumer::init()
+bool MultiExampleConsumer::init()
 {
     ImageConsumer::init();
     
-    _thread = new MultiWebRTCConsumerThread(this);
+    _thread = new MultiExampleConsumerThread(this);
     _thread->startThread();
     
     return true;
@@ -120,14 +120,14 @@ bool MultiWebRTCConsumer::init()
 
 
 //======
-bool MultiWebRTCConsumer::openConnection(const std::string &streamName)
+bool MultiExampleConsumer::openConnection(const std::string &streamName)
 {
     return false;
 }
 
 
 //======
-bool MultiWebRTCConsumer::closeConnection()
+bool MultiExampleConsumer::closeConnection()
 {
     return false;
 }
