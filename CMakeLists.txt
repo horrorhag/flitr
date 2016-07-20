@@ -185,6 +185,7 @@ SET(LIB_SOURCES
   src/flitr/metadata_writer.cpp
   src/flitr/metadata_reader.cpp
   src/flitr/multi_example_consumer.cpp
+  src/flitr/multi_image_buffer_consumer.cpp
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
   src/flitr/multi_ffmpeg_producer.cpp
@@ -294,6 +295,7 @@ SET(LIB_SOURCES
   include/flitr/metadata_writer.h
   include/flitr/metadata_reader.h
   include/flitr/multi_example_consumer.h
+  include/flitr/multi_image_buffer_consumer.h
   include/flitr/fifo_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h

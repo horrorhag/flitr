@@ -4,8 +4,6 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
-#include <flitr/ffmpeg_producer.h>
-#include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/multi_example_consumer.h>
 
 #include <osgViewer/Viewer>
@@ -29,6 +27,11 @@ int main(int argc, char *argv[])
     
     //videoHub.createVideoFileConsumer("video_output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
     videoHub.createVideoFileConsumer("video_output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
+    
+    videoHub.createImageBufferConsumer("image_output", "imotion");
+    const flitr::VideoHubImageFormat imf=videoHub.getImageFormat("imotion");
+    uint8_t * const imageBuffer=new uint8_t[imf._width * imf._height *  imf._bytesPerPixel];
+    videoHub.imageBufferConsumerSetBuffer("image_output", imageBuffer);
     
     //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
     videoHub.createWebRTCConsumer("webrtc_output", "imotion", "webrtc.fifo");
@@ -81,6 +84,10 @@ int main(int argc, char *argv[])
         
         OpenThreads::Thread::microSleep(1000);
     }
+    
+    
+    videoHub.stopAllThreads();
+    delete [] imageBuffer;
     
     return 0;
 }

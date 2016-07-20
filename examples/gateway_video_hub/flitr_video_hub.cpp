@@ -3,6 +3,7 @@
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/fifo_consumer.h>
+#include <flitr/multi_image_buffer_consumer.h>
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
@@ -33,6 +34,11 @@ flitr::VideoHub::~VideoHub()
 bool flitr::VideoHub::init()
 {
     return true;
+}
+
+//====
+void flitr::VideoHub::stopAllThreads()
+{
 }
 
 //====
@@ -218,13 +224,70 @@ bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::s
 }
 
 //====
-bool flitr::VideoHub::createImageBufferConsumer(const std::string &name, const std::string &producerName,
-                                                uint8_t * const buffer)
+bool flitr::VideoHub::createImageBufferConsumer(const std::string &name, const std::string &producerName)
 {
     const auto it=_producerMap.find(producerName);
     
     if (it!=_producerMap.end())
     {
+        std::shared_ptr<flitr::MultiImageBufferConsumer> imageBufferConsumer(new flitr::MultiImageBufferConsumer(*(it->second), 1));
+        
+        if (!imageBufferConsumer->init())
+        {
+            std::cerr << "Could not initialise ImageBufferConsumer" << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+        
+        //Add new map entry and store the image consumer.
+        _consumerMap[name]=imageBufferConsumer;
+        
+        return true;
+    }
+    
+    return false;
+}
+
+//====
+bool flitr::VideoHub::imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer)
+{
+    const auto it=_consumerMap.find(consumerName);
+    
+    if (it!=_consumerMap.end())
+    {
+        MultiImageBufferConsumer *mibc=dynamic_cast<MultiImageBufferConsumer *>(it->second.get());
+        
+        if (mibc!=nullptr)
+        {
+            std::vector<uint8_t *> bufferVec;
+            bufferVec.push_back(buffer);
+            
+            mibc->setBufferVec(bufferVec);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    return false;
+}
+
+//====
+bool flitr::VideoHub::imageBufferConsumerHold(const std::string &consumerName, const bool bufferHold)
+{
+    const auto it=_consumerMap.find(consumerName);
+    
+    if (it!=_consumerMap.end())
+    {
+        MultiImageBufferConsumer *mibc=dynamic_cast<MultiImageBufferConsumer *>(it->second.get());
+        
+        if (mibc!=nullptr)
+        {
+            mibc->setBufferHold(bufferHold);
+            
+            return true;
+        }
+        
         return false;
     }
     
@@ -259,6 +322,7 @@ flitr::VideoHubImageFormat flitr::VideoHub::getImageFormat(const std::string &pr
         imgFrmt._width=flitrImgFrmt.getWidth();
         imgFrmt._height=flitrImgFrmt.getHeight();
         imgFrmt._pixelFormat=ImageFormat::FLITR_PIX_FMT_RGB_8;
+        imgFrmt._bytesPerPixel=3;
     }
     
     return imgFrmt;

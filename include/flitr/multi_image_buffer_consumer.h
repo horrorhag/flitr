@@ -18,8 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MULTI_EXAMPLE_CONSUMER_H
-#define MULTI_EXAMPLE_CONSUMER_H 1
+#ifndef MULTI_WEBRTC_CONSUMER_H
+#define MULTI_WEBRTC_CONSUMER_H 1
 
 #include <flitr/ffmpeg_utils.h>
 #include <flitr/image_consumer.h>
@@ -31,61 +31,61 @@
 
 namespace flitr
 {
-    class MultiExampleConsumer;
+    class MultiImageBufferConsumer;
     
-    class MultiExampleConsumerThread : public OpenThreads::Thread
+    class MultiImageBufferConsumerThread : public OpenThreads::Thread
     {
     public:
-        MultiExampleConsumerThread(MultiExampleConsumer *consumer) :
+        MultiImageBufferConsumerThread(MultiImageBufferConsumer *consumer) :
         _consumer(consumer),
         _shouldExit(false) {}
         void run();
         void setExit() { _shouldExit = true; }
     private:
         
-        MultiExampleConsumer *_consumer;
+        MultiImageBufferConsumer *_consumer;
         bool _shouldExit;
     };
     
-    class FLITR_EXPORT MultiExampleConsumer : public ImageConsumer
+    class FLITR_EXPORT MultiImageBufferConsumer : public ImageConsumer
     {
-        friend class MultiExampleConsumerThread;
+        friend class MultiImageBufferConsumerThread;
     public:
         
-        MultiExampleConsumer(ImageProducer& producer, const uint32_t imagesPerSlot);
+        MultiImageBufferConsumer(ImageProducer& producer, const uint32_t imagesPerSlot);
         
-        virtual ~MultiExampleConsumer();
+        virtual ~MultiImageBufferConsumer();
         
         //!Calls the base class initialiser and starts up the consumer thread.
         bool init();
         
-        //!Open the connection to WebRTC sink.
-        bool openConnection(const std::string &streamName);
+        //!Set the buffers to user defined memory location.
+        void setBufferVec(const std::vector<uint8_t *> bufferVec);
         
-        //!Close the connection.
-        bool closeConnection();
+        //!Set buffer hold.
+        void setBufferHold(const bool hold);
         
-        //!Example of using a scoped lock.
-        int getterThatMightRequireAScopedLock(const uint32_t imNumber)
-        {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*_accessMutex);
-            return 0;
-        }
         
     private:
         //!Vector of image formats of the images in the slot.
         std::vector<ImageFormat> _imageFormatVec;
         
+        //!Vector of user defined buffer locations.
+        std::vector<uint8_t *> _bufferVec;
+        
+        //!Indicates if buffers are on hold i.e. not being updated!
+        bool _buffersHold;
+        
         //!Number of images per image slot.
         const uint32_t _imagesPerSlot;
         
         //!Consumer thread that processes the FLITr video stream.
-        MultiExampleConsumerThread *_thread;
+        MultiImageBufferConsumerThread *_thread;
         
-        //!Example of mutex that may be used for access control if required.
+        //!Mutex used with setBufferHold(...).
         std::shared_ptr<OpenThreads::Mutex> _accessMutex;
     };
     
 }
 
-#endif //MULTI_EXAMPLE_CONSUMER_H
+#endif //MULTI_WEBRTC_CONSUMER_H

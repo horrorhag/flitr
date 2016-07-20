@@ -36,11 +36,13 @@ namespace flitr
         int32_t _width;//!< Width of the image in pixels.
         int32_t _height;//!< Height of the image in pixels.
         ImageFormat::PixelFormat _pixelFormat;
+        int32_t _bytesPerPixel;//!< Bytes per pixel.
         
         VideoHubImageFormat() :
         _width(-1),
         _height(-1),
-        _pixelFormat(ImageFormat::FLITR_PIX_FMT_ANY)
+        _pixelFormat(ImageFormat::FLITR_PIX_FMT_ANY),
+        _bytesPerPixel(0)
         {}
     };
     
@@ -53,7 +55,7 @@ namespace flitr
         ~VideoHub();
         
         bool init();
-        
+        void stopAllThreads();
         
         //=== Producers
         /** Create and image producer to play back a video file.
@@ -122,17 +124,23 @@ namespace flitr
         /** Create an image consumer that copies the raw data to a user allocated 'buffer'.
          \param name The name of the new consumer.
          \param producerName The name of the producer to attach to.
-         \param buffer The user allocated buffer big enough to hold an image from producer producerName.
-         \sa getImageFormat
          */
-        bool createImageBufferConsumer(const std::string &name, const std::string &producerName,
-                                       uint8_t * const buffer);
+        bool createImageBufferConsumer(const std::string &name, const std::string &producerName);
         
         /** Method to hold the buffer updates for read access.
+         \param consumerName The name of the image buffer consumer.
+         \param buffer The user allocated buffer big enough to hold an image from producer producerName.
+         \sa getImageFormat
+         \sa createImageBufferConsumer
+         */
+        bool imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer);
+        
+        /** Method to hold the buffer updates for read access.
+         \param consumerName The name of the image buffer consumer.
          \param bufferHold If true the the buffer will not be updated and be available for read access. The method blocks until buffer becomes available.
          \sa createImageBufferConsumer
          */
-        bool imageBufferConsumerHold(const bool bufferHold);
+        bool imageBufferConsumerHold(const std::string &consumerName, const bool bufferHold);
         
         //=== Misc.
         //!Return a pointer to specific producer for use with an external consumer.
