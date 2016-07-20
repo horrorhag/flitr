@@ -81,7 +81,7 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
     VideoEncodeBuffer_ = (uint8_t *)av_malloc(VideoEncodeBufferSize_);
 
     InputFrameFormat_ = PixelFormatFLITrToFFmpeg(image_format.getPixelFormat());
-    SaveFrameFormat_=PIX_FMT_NONE;//Chosen below.
+    SaveFrameFormat_=AV_PIX_FMT_NONE;//Chosen below.
 
 
     //=== OutputFormat_ ===
@@ -108,7 +108,7 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
 
     if (!OutputFormat_)
     {//If nothing requested or request failed. Then guess from pixel format.
-        if (InputFrameFormat_ == PIX_FMT_GRAY16LE) {
+        if (InputFrameFormat_ == AV_PIX_FMT_GRAY16LE) {
             OutputFormat_ = av_guess_format("matroska", NULL, NULL);
         } else {
             OutputFormat_ = av_guess_format("avi", NULL, NULL);
@@ -203,7 +203,7 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
 
         std::cout << "   Valid codec pixel formats are: ";
         std::cout.flush();
-        while ((*codecPixelFormats)!=PIX_FMT_NONE)
+        while ((*codecPixelFormats)!=AV_PIX_FMT_NONE)
         {
             AVPixFmtDescriptor codecPixdesc=av_pix_fmt_descriptors[(*codecPixelFormats)];
 
@@ -238,7 +238,7 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
             codecPixelFormats++;
         }
 
-        if ((*codecPixelFormats)==PIX_FMT_NONE)
+        if ((*codecPixelFormats)==AV_PIX_FMT_NONE)
         {//Frame format not supported by codec. Choose an alternative.
 
             //ToDo: Smartly choose format based on bit depth.
@@ -256,10 +256,10 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
         std::cout.flush();
     }
 
-    if ( (((AVCodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==PIX_FMT_RGB24) )
+    if ( (((AVCodecID)Codec_)==CODEC_ID_RAWVIDEO) && (SaveFrameFormat_==AV_PIX_FMT_RGB24) )
     {//It seems that ffmpeg swaps the rgb components when using the raw codec.
-        SaveFrameFormat_=PIX_FMT_BGR24;
-        std::cout << "   Using pixel format " << av_get_pix_fmt_name(SaveFrameFormat_) << " instead of " << av_get_pix_fmt_name(PIX_FMT_RGB24) <<" because it seems that FFmpeg swaps the rgb when using raw codec.\n";
+        SaveFrameFormat_=AV_PIX_FMT_BGR24;
+        std::cout << "   Using pixel format " << av_get_pix_fmt_name(SaveFrameFormat_) << " instead of " << av_get_pix_fmt_name(AV_PIX_FMT_RGB24) <<" because it seems that FFmpeg swaps the rgb when using raw codec.\n";
         std::cout.flush();
     } else
     {
@@ -439,7 +439,7 @@ bool FFmpegWriter::writeVideoFrame(uint8_t *in_buf)
 
 #if defined FLITR_USE_SWSCALE
 /*
-    if ((InputFrameFormat_!=PIX_FMT_GRAY8)&&(InputFrameFormat_!=PIX_FMT_GRAY16LE))
+    if ((InputFrameFormat_!=AV_PIX_FMT_GRAY8)&&(InputFrameFormat_!=AV_PIX_FMT_GRAY16LE))
     {//Sometime the image has to be flipped.
         InputFrame_->data[0] += InputFrame_->linesize[0] * (AVCodecContext_->height-1);
         InputFrame_->linesize[0]*=-1;

@@ -6,7 +6,9 @@
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
+#include <flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
 
 //====
 flitr::VideoHub::VideoHub()
@@ -74,7 +76,7 @@ bool flitr::VideoHub::createV4LProducer(const std::string &name, const std::stri
 }
 
 //====
-bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std::string &producerName)
+bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std::string &producerName, const double outputFilter)
 {
     const auto it=_producerMap.find(producerName);
     
@@ -97,24 +99,24 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
             std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
-        lkstabilise->setupOutputTransformBurn(0.9875f, 0.9875f); //High pass filter output transform.
+        lkstabilise->setupOutputTransformBurn(outputFilter, outputFilter); //High pass filter output transform.
         lkstabilise->startTriggerThread();
         
         
         //==
-        std::shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkstabilise, 1, 0.95f, 2));
-        if (!cnvrtToY8->init())
+        std::shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*lkstabilise, 1, 0.95f, 2));
+        if (!cnvrtToRGB8->init())
         {
             std::cerr << "Could not initialise the cnvrtToY8 processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
-        cnvrtToY8->startTriggerThread();
+        cnvrtToRGB8->startTriggerThread();
         
         
         //Add new map entries and store the image producers.
-        _producerMap[name+std::string("_cnvrtToY8")]=cnvrtToYF32;
+        _producerMap[name+std::string("_cnvrtToF32")]=cnvrtToYF32;
         _producerMap[name+std::string("_lkstabiliseF32")]=lkstabilise;
-        _producerMap[name]=cnvrtToY8;
+        _producerMap[name]=cnvrtToRGB8;
         
         return true;
     }
@@ -130,7 +132,19 @@ bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const s
     
     if (it!=_producerMap.end())
     {
-        return false;
+        //==
+        std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*(it->second), 1, 2));
+        if (!motionDetect->init())
+        {
+            std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+        motionDetect->startTriggerThread();
+        
+        //Add new map entry and store the image producer.
+        _producerMap[name]=motionDetect;
+        
+        return true;
     }
     
     return false;
@@ -144,7 +158,7 @@ bool flitr::VideoHub::createVideoFileConsumer(const std::string &name, const std
     
     if (it!=_producerMap.end())
     {
-        std::shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*(it->second),1));
+        std::shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*(it->second), 1));
         
         if (!mffc->init())
         {

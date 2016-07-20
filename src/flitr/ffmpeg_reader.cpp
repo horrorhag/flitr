@@ -369,7 +369,7 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     //printf("%d %d\n", DecodedFrame_->linesize, ConvertedFrame_->linesize);
     //fflush(stdout);
 #else
-    img_convert((AVPicture *)ConvertedFrame_, PIX_FMT_GRAY8,
+    img_convert((AVPicture *)ConvertedFrame_, AV_PIX_FMT_GRAY8,
                 (AVPicture *)DecodedFrame_, CodecContext_->pix_fmt,
                 CodecContext_->width, CodecContext_->height);
 #endif

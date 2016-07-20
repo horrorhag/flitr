@@ -242,6 +242,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.cpp
   src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
+  src/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_test_pattern.cpp
 
@@ -291,6 +292,7 @@ SET(LIB_SOURCES
   include/flitr/manipulator_utils.h
   include/flitr/metadata_writer.h
   include/flitr/metadata_reader.h
+  include/flitr/fifo_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
   include/flitr/multi_ffmpeg_producer.h
@@ -359,6 +361,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h
   include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
+  include/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h
   include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
   include/flitr/modules/flitr_image_processors/simulate/fip_test_pattern.h
 

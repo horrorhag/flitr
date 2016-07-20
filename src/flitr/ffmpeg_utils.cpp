@@ -26,33 +26,33 @@ AVPixelFormat flitr::PixelFormatFLITrToFFmpeg(flitr::ImageFormat::PixelFormat in
 {
     switch (in_fmt) {
       case ImageFormat::FLITR_PIX_FMT_Y_8:
-        return PIX_FMT_GRAY8;
+        return AV_PIX_FMT_GRAY8;
         break;
       case ImageFormat::FLITR_PIX_FMT_RGB_8:
-        return PIX_FMT_RGB24;
+        return AV_PIX_FMT_RGB24;
         break;
       case ImageFormat::FLITR_PIX_FMT_Y_16:
-        return PIX_FMT_GRAY16LE;
+        return AV_PIX_FMT_GRAY16LE;
         break;
       case ImageFormat::FLITR_PIX_FMT_BGRA:
-          return PIX_FMT_BGRA;
+          return AV_PIX_FMT_BGRA;
           break;
       default:
         // \todo maybe return error for unhandled FLITr pix format!
-        return PIX_FMT_NONE;
+        return AV_PIX_FMT_NONE;
     }
 }
 
 flitr::ImageFormat::PixelFormat flitr::PixelFormatFFmpegToFLITr(AVPixelFormat in_fmt)
 {
     switch (in_fmt) {
-      case PIX_FMT_GRAY8:
+      case AV_PIX_FMT_GRAY8:
         return ImageFormat::FLITR_PIX_FMT_Y_8;
         break;
-      case PIX_FMT_RGB24:
+      case AV_PIX_FMT_RGB24:
         return ImageFormat::FLITR_PIX_FMT_RGB_8;
         break;
-      case PIX_FMT_GRAY16LE:
+      case AV_PIX_FMT_GRAY16LE:
         return ImageFormat::FLITR_PIX_FMT_Y_16;
         break;
       default:

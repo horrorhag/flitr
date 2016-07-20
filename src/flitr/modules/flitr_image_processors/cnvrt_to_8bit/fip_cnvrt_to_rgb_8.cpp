@@ -32,8 +32,8 @@ scaleFactor_(scale_factor)
 {
     
     //Setup image format being produced to downstream.
-    for (uint32_t i=0; i<images_per_slot; i++) {
-        //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
+    for (uint32_t i=0; i<images_per_slot; i++)
+    {
         ImageFormat downStreamFormat(upStreamProducer.getFormat().getWidth(), upStreamProducer.getFormat().getHeight(),
                                      ImageFormat::FLITR_PIX_FMT_RGB_8);
         
@@ -95,6 +95,28 @@ bool FIPConvertToRGB8::trigger()
                         dataWrite[offset + 2]=(B>=255.0f)?((uint8_t)255):((B<=0.0f)?((uint8_t)0):(B+0.5f));
                         
                         offset+=3;
+                    }
+                }
+            } else
+            if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+            {
+                float const * const dataRead=(float *)imRead->data();
+                
+                for (size_t y=0; y<height; ++y)
+                {
+                    const size_t readOffset=(y * width);
+                    size_t writeOffset=readOffset * 3;
+                    
+                    for (size_t x=0; x<width; ++x)
+                    {
+                        const float I=dataRead[readOffset+x]*(256.0f*scaleFactor_);
+                        const float clampedI=(I>=255.0f)?((uint8_t)255):((I<=0.0f)?((uint8_t)0):(I+0.5f));
+                        
+                        dataWrite[writeOffset + 0]=clampedI;
+                        dataWrite[writeOffset + 1]=clampedI;
+                        dataWrite[writeOffset + 2]=clampedI;
+                        
+                        writeOffset+=3;
                     }
                 }
             }

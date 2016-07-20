@@ -79,8 +79,9 @@ namespace flitr
         /** Create and image processor that stabilises the image stream.
          \param name The name of the new processor/producer.
          \param producerName The name of the producer to attach to.
+         \param outputFilter Per frame multiplier of the istab transform. e.g. a value of 1.0 is suitable for a stationary camera while a value of 0.98 might be suitable to a slowly panning camera. 
          */
-        bool createImageStabProcess(const std::string &name, const std::string &producerName);
+        bool createImageStabProcess(const std::string &name, const std::string &producerName, const double outputFilter);
         
         /** Create and image processor that detects motion in the image stream.
          \param name The name of the new processor/producer.
