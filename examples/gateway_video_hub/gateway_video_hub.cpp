@@ -21,6 +21,9 @@ int main(int argc, char *argv[])
     //videoHub.createV4LProducer("input", "/dev/video0");
     //videoHub.createRTSPProducer("input", "rtsp://192.168.0.90:554/axis-media/media.amp");//PC set to 192.168.0.100
     videoHub.createVideoFileProducer("input", "/Users/bduvenhage/Desktop/nikon_compressed.mp4");
+#ifdef __linux
+    //videoHub.createV4LProducer("input4vl", "/dev/video0");
+#endif
     
     videoHub.createImageStabProcess("istab", "input", 0.9925);
     videoHub.createMotionDetectProcess("imotion", "istab", true, true);
@@ -94,6 +97,7 @@ int main(int argc, char *argv[])
         OpenThreads::Thread::microSleep(1000);
     }
     
+    osgc.reset();
     
     videoHub.stopAllThreads();
     videoHub.cleanup();

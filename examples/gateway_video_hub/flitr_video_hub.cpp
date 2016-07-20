@@ -51,8 +51,19 @@ void flitr::VideoHub::cleanup()
         _consumerMap.erase(_consumerMap.begin());
     }
 
-    while (_producerMap.size())
+    //Store order of processors in string vec and delete in correct order...
+    while (_processorOrder.size())
     {
+        const std::string &processorName=_processorOrder.back();
+        
+        const auto it=_producerMap.find(processorName);
+        
+        if (it!=_producerMap.end())
+        {
+            _producerMap.erase(it);
+        }
+        
+        _processorOrder.pop_back();
     }
 }
 
@@ -139,6 +150,10 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
         _producerMap[name+std::string("_lkstabiliseF32")]=lkstabilise;
         _producerMap[name]=cnvrtToRGB8;
         
+        _processorOrder.push_back(name+std::string("_cnvrtToF32"));
+        _processorOrder.push_back(name+std::string("_lkstabiliseF32"));
+        _processorOrder.push_back(name);
+        
         return true;
     }
     
@@ -164,6 +179,8 @@ bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const s
         
         //Add new map entry and store the image producer.
         _producerMap[name]=motionDetect;
+        
+        _processorOrder.push_back(name);
         
         return true;
     }

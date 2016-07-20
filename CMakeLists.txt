@@ -416,6 +416,10 @@ if(WIN32)
 endif(WIN32)
 if(UNIX)
     IF(NOT APPLE)
+        SET(LIB_SOURCES ${LIB_SOURCES}
+            src/flitr/v4l2_producer.cpp
+            include/flitr/v4l2_producer.h
+        )
         ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
     ENDIF()
 endif(UNIX)

@@ -157,7 +157,7 @@ namespace flitr
         //!Vector of consumers.
         std::map<std::string, std::shared_ptr<flitr::ImageConsumer>> _consumerMap;
         
-        std::vector<std::pair<std::string, std::string>> _processorDependentVec;
+        std::vector<std::string> _processorOrder;
     };
     
 }
