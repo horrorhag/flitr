@@ -6,7 +6,7 @@
 #include <flitr/ortho_texture_manipulator.h>
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
-#include <flitr/multi_webrtc_consumer.h>
+#include <flitr/multi_example_consumer.h>
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>

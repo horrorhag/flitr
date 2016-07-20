@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <flitr/multi_webrtc_consumer.h>
+#include <flitr/multi_example_consumer.h>
 #include <flitr/image_producer.h>
 
 using namespace flitr;
