@@ -8,17 +8,19 @@ var searchData=
   ['morphologicalfilter',['MorphologicalFilter',['../classflitr_1_1_morphological_filter.html',1,'flitr']]],
   ['multicpuhistogramconsumer',['MultiCPUHistogramConsumer',['../classflitr_1_1_multi_c_p_u_histogram_consumer.html',1,'flitr']]],
   ['multicpuhistogramconsumerthread',['MultiCPUHistogramConsumerThread',['../classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html',1,'flitr']]],
+  ['multiexampleconsumer',['MultiExampleConsumer',['../classflitr_1_1_multi_example_consumer.html',1,'flitr']]],
+  ['multiexampleconsumerthread',['MultiExampleConsumerThread',['../classflitr_1_1_multi_example_consumer_thread.html',1,'flitr']]],
   ['multiffmpegconsumer',['MultiFFmpegConsumer',['../classflitr_1_1_multi_f_fmpeg_consumer.html',1,'flitr']]],
   ['multiffmpegconsumerthread',['MultiFFmpegConsumerThread',['../classflitr_1_1_multi_f_fmpeg_consumer_thread.html',1,'flitr']]],
   ['multiffmpegproducer',['MultiFFmpegProducer',['../classflitr_1_1_multi_f_fmpeg_producer.html',1,'flitr']]],
   ['multiffmpegproducerthread',['MultiFFmpegProducerThread',['../classflitr_1_1_multi_f_fmpeg_producer_thread.html',1,'flitr']]],
+  ['multiimagebufferconsumer',['MultiImageBufferConsumer',['../classflitr_1_1_multi_image_buffer_consumer.html',1,'flitr']]],
+  ['multiimagebufferconsumerthread',['MultiImageBufferConsumerThread',['../classflitr_1_1_multi_image_buffer_consumer_thread.html',1,'flitr']]],
   ['multilibtiffproducer',['MultiLibTiffProducer',['../classflitr_1_1_multi_lib_tiff_producer.html',1,'flitr']]],
   ['multiosgconsumerdiscardthread',['MultiOSGConsumerDiscardThread',['../classflitr_1_1_multi_o_s_g_consumer_discard_thread.html',1,'flitr']]],
   ['multiosgconsumermetadatacreator',['MultiOSGConsumerMetadataCreator',['../classflitr_1_1_multi_o_s_g_consumer_metadata_creator.html',1,'flitr']]],
   ['multirawvideofileconsumer',['MultiRawVideoFileConsumer',['../classflitr_1_1_multi_raw_video_file_consumer.html',1,'flitr']]],
   ['multirawvideofileconsumerthread',['MultiRawVideoFileConsumerThread',['../classflitr_1_1_multi_raw_video_file_consumer_thread.html',1,'flitr']]],
   ['multiscreencaptureproducer',['MultiScreenCaptureProducer',['../classflitr_1_1_multi_screen_capture_producer.html',1,'flitr']]],
-  ['multitexturedquad',['MultiTexturedQuad',['../classflitr_1_1_multi_textured_quad.html',1,'flitr']]],
-  ['multiwebrtcconsumer',['MultiWebRTCConsumer',['../classflitr_1_1_multi_web_r_t_c_consumer.html',1,'flitr']]],
-  ['multiwebrtcconsumerthread',['MultiWebRTCConsumerThread',['../classflitr_1_1_multi_web_r_t_c_consumer_thread.html',1,'flitr']]]
+  ['multitexturedquad',['MultiTexturedQuad',['../classflitr_1_1_multi_textured_quad.html',1,'flitr']]]
 ];

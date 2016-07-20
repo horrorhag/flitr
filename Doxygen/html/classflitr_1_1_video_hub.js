@@ -2,7 +2,7 @@ var classflitr_1_1_video_hub =
 [
     [ "VideoHub", "classflitr_1_1_video_hub.html#a360e8379829538e8169846be2622c6c5", null ],
     [ "~VideoHub", "classflitr_1_1_video_hub.html#a9618130b2cbb8da6319674aaf9566688", null ],
-    [ "createImageBufferConsumer", "classflitr_1_1_video_hub.html#a6b7c5a00c52251546c55948d8e0102b2", null ],
+    [ "createImageBufferConsumer", "classflitr_1_1_video_hub.html#a04c27c4847d056f2af15814566be5de3", null ],
     [ "createImageStabProcess", "classflitr_1_1_video_hub.html#a0414096133006193b8078bf0c4b67cd9", null ],
     [ "createMotionDetectProcess", "classflitr_1_1_video_hub.html#ad587c2e537d1c3bfeb408eee42e1c968", null ],
     [ "createRTSPConsumer", "classflitr_1_1_video_hub.html#ada05769b9ea3f4626e654b29a7c20737", null ],
@@ -13,8 +13,10 @@ var classflitr_1_1_video_hub =
     [ "createWebRTCConsumer", "classflitr_1_1_video_hub.html#a4abd236f2a5183f5b86c5693dbba36dd", null ],
     [ "getImageFormat", "classflitr_1_1_video_hub.html#a77c1e0643183a83f2186efc881b5c31b", null ],
     [ "getProducer", "classflitr_1_1_video_hub.html#a35a1fab23317a74ec40047bb33972c28", null ],
-    [ "imageBufferConsumerHold", "classflitr_1_1_video_hub.html#abf1d0986d80c621e99368424066ad6e0", null ],
+    [ "imageBufferConsumerHold", "classflitr_1_1_video_hub.html#a0ef701a78f483e3e4022843550bdfdd7", null ],
+    [ "imageBufferConsumerSetBuffer", "classflitr_1_1_video_hub.html#ac2a56990f164feb53629584424ae21f3", null ],
     [ "init", "classflitr_1_1_video_hub.html#ac6e07b114b4f930e5a3cfa5aec831a54", null ],
+    [ "stopAllThreads", "classflitr_1_1_video_hub.html#a21fd3f36b127316f49c901e3790c2f09", null ],
     [ "_consumerMap", "classflitr_1_1_video_hub.html#a8ffac3c5814322cf0ff7ca71a97174c7", null ],
     [ "_producerMap", "classflitr_1_1_video_hub.html#ae3b95b9c51c92520da5547f28262be1d", null ]
 ];

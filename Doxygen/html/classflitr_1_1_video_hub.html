@@ -135,6 +135,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9618130b2cbb8da6319674aaf9566688"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6e07b114b4f930e5a3cfa5aec831a54"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#ac6e07b114b4f930e5a3cfa5aec831a54">init</a> ()</td></tr>
 <tr class="separator:ac6e07b114b4f930e5a3cfa5aec831a54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21fd3f36b127316f49c901e3790c2f09"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a21fd3f36b127316f49c901e3790c2f09">stopAllThreads</a> ()</td></tr>
+<tr class="separator:a21fd3f36b127316f49c901e3790c2f09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cac362732dcf8548be2d0e3c50835ef"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a0cac362732dcf8548be2d0e3c50835ef">createVideoFileProducer</a> (const std::string &amp;name, const std::string &amp;filename)</td></tr>
 <tr class="separator:a0cac362732dcf8548be2d0e3c50835ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60bfaef4d7fe5bde3b2ed6ccb57086d1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a60bfaef4d7fe5bde3b2ed6ccb57086d1">createRTSPProducer</a> (const std::string &amp;name, const std::string &amp;url)</td></tr>
@@ -151,10 +153,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ada05769b9ea3f4626e654b29a7c20737"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4abd236f2a5183f5b86c5693dbba36dd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a4abd236f2a5183f5b86c5693dbba36dd">createWebRTCConsumer</a> (const std::string &amp;name, const std::string &amp;producerName, const std::string &amp;fifoName)</td></tr>
 <tr class="separator:a4abd236f2a5183f5b86c5693dbba36dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b7c5a00c52251546c55948d8e0102b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a6b7c5a00c52251546c55948d8e0102b2">createImageBufferConsumer</a> (const std::string &amp;name, const std::string &amp;producerName, uint8_t *const buffer)</td></tr>
-<tr class="separator:a6b7c5a00c52251546c55948d8e0102b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf1d0986d80c621e99368424066ad6e0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#abf1d0986d80c621e99368424066ad6e0">imageBufferConsumerHold</a> (const bool bufferHold)</td></tr>
-<tr class="separator:abf1d0986d80c621e99368424066ad6e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04c27c4847d056f2af15814566be5de3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a04c27c4847d056f2af15814566be5de3">createImageBufferConsumer</a> (const std::string &amp;name, const std::string &amp;producerName)</td></tr>
+<tr class="separator:a04c27c4847d056f2af15814566be5de3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2a56990f164feb53629584424ae21f3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#ac2a56990f164feb53629584424ae21f3">imageBufferConsumerSetBuffer</a> (const std::string &amp;consumerName, uint8_t *const buffer)</td></tr>
+<tr class="separator:ac2a56990f164feb53629584424ae21f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef701a78f483e3e4022843550bdfdd7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a0ef701a78f483e3e4022843550bdfdd7">imageBufferConsumerHold</a> (const std::string &amp;consumerName, const bool bufferHold)</td></tr>
+<tr class="separator:a0ef701a78f483e3e4022843550bdfdd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35a1fab23317a74ec40047bb33972c28"><td class="memItemLeft" align="right" valign="top">std::shared_ptr<br class="typebreak" />
 &lt; <a class="el" href="classflitr_1_1_image_producer.html">flitr::ImageProducer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classflitr_1_1_video_hub.html#a35a1fab23317a74ec40047bb33972c28">getProducer</a> (const std::string &amp;producerName)</td></tr>
 <tr class="memdesc:a35a1fab23317a74ec40047bb33972c28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a pointer to specific producer for use with an external consumer.  <a href="#a35a1fab23317a74ec40047bb33972c28">More...</a><br /></td></tr>
@@ -219,7 +223,7 @@ Here is the call graph for this function:</div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a6b7c5a00c52251546c55948d8e0102b2"></a>
+<a class="anchor" id="a04c27c4847d056f2af15814566be5de3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -233,13 +237,7 @@ Here is the call graph for this function:</div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>producerName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *const&#160;</td>
-          <td class="paramname"><em>buffer</em>&#160;</td>
+          <td class="paramname"><em>producerName</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -252,11 +250,18 @@ Here is the call graph for this function:</div>
   <table class="params">
     <tr><td class="paramname">name</td><td>The name of the new consumer. </td></tr>
     <tr><td class="paramname">producerName</td><td>The name of the producer to attach to. </td></tr>
-    <tr><td class="paramname">buffer</td><td>The user allocated buffer big enough to hold an image from producer producerName. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classflitr_1_1_video_hub.html#a77c1e0643183a83f2186efc881b5c31b" title="Get the image format of the first image in the slot of a specific producer. ">getImageFormat</a> </dd></dl>
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classflitr_1_1_video_hub_a04c27c4847d056f2af15814566be5de3_icgraph.png" border="0" usemap="#classflitr_1_1_video_hub_a04c27c4847d056f2af15814566be5de3_icgraph" alt=""/></div>
+<map name="classflitr_1_1_video_hub_a04c27c4847d056f2af15814566be5de3_icgraph" id="classflitr_1_1_video_hub_a04c27c4847d056f2af15814566be5de3_icgraph">
+<area shape="rect" id="node2" href="gateway__video__hub_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="239,13,289,39"/></map>
+</div>
+</p>
 
 </div>
 </div>
@@ -641,6 +646,15 @@ Here is the call graph for this function:</div>
 </div>
 </p>
 
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classflitr_1_1_video_hub_a77c1e0643183a83f2186efc881b5c31b_icgraph.png" border="0" usemap="#classflitr_1_1_video_hub_a77c1e0643183a83f2186efc881b5c31b_icgraph" alt=""/></div>
+<map name="classflitr_1_1_video_hub_a77c1e0643183a83f2186efc881b5c31b_icgraph" id="classflitr_1_1_video_hub_a77c1e0643183a83f2186efc881b5c31b_icgraph">
+<area shape="rect" id="node2" href="gateway__video__hub_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="220,13,271,39"/></map>
+</div>
+</p>
+
 </div>
 </div>
 <a class="anchor" id="a35a1fab23317a74ec40047bb33972c28"></a>
@@ -670,26 +684,100 @@ Here is the caller graph for this function:</div>
 
 </div>
 </div>
-<a class="anchor" id="abf1d0986d80c621e99368424066ad6e0"></a>
+<a class="anchor" id="a0ef701a78f483e3e4022843550bdfdd7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool flitr::VideoHub::imageBufferConsumerHold </td>
           <td>(</td>
-          <td class="paramtype">const bool&#160;</td>
-          <td class="paramname"><em>bufferHold</em></td><td>)</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>consumerName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>bufferHold</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Method to hold the buffer updates for read access. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">consumerName</td><td>The name of the image buffer consumer. </td></tr>
     <tr><td class="paramname">bufferHold</td><td>If true the the buffer will not be updated and be available for read access. The method blocks until buffer becomes available. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classflitr_1_1_video_hub.html#a6b7c5a00c52251546c55948d8e0102b2">createImageBufferConsumer</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classflitr_1_1_video_hub.html#a04c27c4847d056f2af15814566be5de3">createImageBufferConsumer</a> </dd></dl>
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classflitr_1_1_video_hub_a0ef701a78f483e3e4022843550bdfdd7_cgraph.png" border="0" usemap="#classflitr_1_1_video_hub_a0ef701a78f483e3e4022843550bdfdd7_cgraph" alt=""/></div>
+<map name="classflitr_1_1_video_hub_a0ef701a78f483e3e4022843550bdfdd7_cgraph" id="classflitr_1_1_video_hub_a0ef701a78f483e3e4022843550bdfdd7_cgraph">
+<area shape="rect" id="node2" href="classflitr_1_1_multi_image_buffer_consumer.html#a18cb11b70851287ca168d0cd2e21edce" title="Set buffer hold. " alt="" coords="236,5,443,47"/></map>
+</div>
+</p>
+
+</div>
+</div>
+<a class="anchor" id="ac2a56990f164feb53629584424ae21f3"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool flitr::VideoHub::imageBufferConsumerSetBuffer </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>consumerName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *const&#160;</td>
+          <td class="paramname"><em>buffer</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Method to hold the buffer updates for read access. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">consumerName</td><td>The name of the image buffer consumer. </td></tr>
+    <tr><td class="paramname">buffer</td><td>The user allocated buffer big enough to hold an image from producer producerName. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classflitr_1_1_video_hub.html#a77c1e0643183a83f2186efc881b5c31b" title="Get the image format of the first image in the slot of a specific producer. ">getImageFormat</a> </dd>
+<dd>
+<a class="el" href="classflitr_1_1_video_hub.html#a04c27c4847d056f2af15814566be5de3">createImageBufferConsumer</a> </dd></dl>
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_cgraph.png" border="0" usemap="#classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_cgraph" alt=""/></div>
+<map name="classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_cgraph" id="classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_cgraph">
+<area shape="rect" id="node2" href="classflitr_1_1_multi_image_buffer_consumer.html#a81de0c1bae6da41c23214cd7835b37b8" title="Set the buffers to user defined memory location. " alt="" coords="236,5,443,47"/></map>
+</div>
+</p>
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_icgraph.png" border="0" usemap="#classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_icgraph" alt=""/></div>
+<map name="classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_icgraph" id="classflitr_1_1_video_hub_ac2a56990f164feb53629584424ae21f3_icgraph">
+<area shape="rect" id="node2" href="gateway__video__hub_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="236,13,287,39"/></map>
+</div>
+</p>
 
 </div>
 </div>
@@ -705,6 +793,30 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a class="anchor" id="a21fd3f36b127316f49c901e3790c2f09"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void flitr::VideoHub::stopAllThreads </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><div class="dynheader">
+Here is the caller graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classflitr_1_1_video_hub_a21fd3f36b127316f49c901e3790c2f09_icgraph.png" border="0" usemap="#classflitr_1_1_video_hub_a21fd3f36b127316f49c901e3790c2f09_icgraph" alt=""/></div>
+<map name="classflitr_1_1_video_hub_a21fd3f36b127316f49c901e3790c2f09_icgraph" id="classflitr_1_1_video_hub_a21fd3f36b127316f49c901e3790c2f09_icgraph">
+<area shape="rect" id="node2" href="gateway__video__hub_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97" title="main" alt="" coords="207,13,257,39"/></map>
+</div>
+</p>
 
 </div>
 </div>
@@ -763,7 +875,7 @@ Here is the caller graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespaceflitr.html">flitr</a></li><li class="navelem"><a class="el" href="classflitr_1_1_video_hub.html">VideoHub</a></li>
-    <li class="footer">Generated on Wed Jul 20 2016 08:52:07 for FLITr by
+    <li class="footer">Generated on Wed Jul 20 2016 09:13:07 for FLITr by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

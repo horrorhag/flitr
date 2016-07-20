@@ -127,7 +127,7 @@ var searchData=
   ['getsupportdensity',['getSupportDensity',['../classflitr_1_1_target_injector_1_1_synthetic_target.html#ab03f389ad17e4dac1b579caedbb96e0a',1,'flitr::TargetInjector::SyntheticTarget']]],
   ['gettargetaverage',['getTargetAverage',['../classflitr_1_1_f_i_p_photometric_equalise.html#aad013e6074d48fe70e847b27767d5b40',1,'flitr::FIPPhotometricEqualise::getTargetAverage()'],['../classflitr_1_1_f_i_p_local_photometric_equalise.html#a44df9c542875cbd6b2addebb33280478',1,'flitr::FIPLocalPhotometricEqualise::getTargetAverage()']]],
   ['gettargetbrightness',['getTargetBrightness',['../classflitr_1_1_target_injector.html#a81e77046cc59bb98c2287cedd01157e6',1,'flitr::TargetInjector']]],
-  ['getterthatmightrequireascopedlock',['getterThatMightRequireAScopedLock',['../classflitr_1_1_multi_web_r_t_c_consumer.html#af35a72daeb5548018d627d52374a40c9',1,'flitr::MultiWebRTCConsumer']]],
+  ['getterthatmightrequireascopedlock',['getterThatMightRequireAScopedLock',['../classflitr_1_1_multi_example_consumer.html#a985f2590ce751b459b73e56c50bc7f5b',1,'flitr::MultiExampleConsumer']]],
   ['gettext',['GetText',['../classflitr_1_1_ti_xml_element.html#aa6dedd8a146acf3b1bc0903deb2d411a',1,'flitr::TiXmlElement']]],
   ['gettextureid',['getTextureID',['../class_key_pressed_handler.html#a15fffb6ed4f4f98f049b11854e633f4a',1,'KeyPressedHandler']]],
   ['getthreshold',['getThreshold',['../classflitr_1_1_g_l_s_l_threshold_pass.html#afab9650cd9300cd3b2c22f6481c1a6bd',1,'flitr::GLSLThresholdPass']]],

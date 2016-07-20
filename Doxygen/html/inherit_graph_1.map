@@ -3,10 +3,11 @@
 <area shape="rect" id="node3" href="$classflitr_1_1_image_multiplexer_thread.html" title="flitr::ImageMultiplexerThread" alt="" coords="128,56,315,83"/>
 <area shape="rect" id="node4" href="$classflitr_1_1_image_processor_thread.html" title="flitr::ImageProcessorThread" alt="" coords="130,107,313,133"/>
 <area shape="rect" id="node5" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html" title="flitr::MultiCPUHistogram\lConsumerThread" alt="" coords="139,158,304,199"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_multi_f_fmpeg_consumer_thread.html" title="flitr::MultiFFmpegConsumer\lThread" alt="" coords="129,223,313,265"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_multi_f_fmpeg_producer_thread.html" title="flitr::MultiFFmpegProducer\lThread" alt="" coords="133,289,309,330"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_multi_o_s_g_consumer_discard_thread.html" title="flitr::MultiOSGConsumerDiscard\lThread" alt="" coords="116,354,327,395"/>
-<area shape="rect" id="node9" href="$classflitr_1_1_multi_raw_video_file_consumer_thread.html" title="flitr::MultiRawVideoFile\lConsumerThread" alt="" coords="143,419,300,461"/>
-<area shape="rect" id="node10" href="$classflitr_1_1_multi_web_r_t_c_consumer_thread.html" title="flitr::MultiWebRTCConsumer\lThread" alt="" coords="126,485,317,526"/>
-<area shape="rect" id="node11" href="$classflitr_1_1_video_producer_1_1_video_producer_thread.html" title="flitr::VideoProducer\l::VideoProducerThread" alt="" coords="144,550,299,591"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_multi_example_consumer_thread.html" title="flitr::MultiExampleConsumer\lThread" alt="" coords="128,223,315,265"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_multi_f_fmpeg_consumer_thread.html" title="flitr::MultiFFmpegConsumer\lThread" alt="" coords="129,289,313,330"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_multi_f_fmpeg_producer_thread.html" title="flitr::MultiFFmpegProducer\lThread" alt="" coords="133,354,309,395"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_multi_image_buffer_consumer_thread.html" title="flitr::MultiImageBufferConsumer\lThread" alt="" coords="118,419,325,461"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_multi_o_s_g_consumer_discard_thread.html" title="flitr::MultiOSGConsumerDiscard\lThread" alt="" coords="116,485,327,526"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_multi_raw_video_file_consumer_thread.html" title="flitr::MultiRawVideoFile\lConsumerThread" alt="" coords="143,550,300,591"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_video_producer_1_1_video_producer_thread.html" title="flitr::VideoProducer\l::VideoProducerThread" alt="" coords="144,615,299,657"/>
 </map>

@@ -32,10 +32,11 @@
 <area shape="rect" id="node33" href="$classflitr_1_1_f_i_p_transform2_d.html#a80f64fd03a07119940bb3645a3d49daa" title="flitr::FIPTransform2D\l::trigger" alt="" coords="230,1869,375,1911"/>
 <area shape="rect" id="node34" href="$classflitr_1_1_f_i_p_unsharp_mask.html#aba076ee2fb184b92d5fcf32d4fbb2a32" title="flitr::FIPUnsharpMask\l::trigger" alt="" coords="227,1935,378,1976"/>
 <area shape="rect" id="node35" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html#acccdac29b5ca600265e885dcf22a2699" title="flitr::MultiCPUHistogram\lConsumerThread::run" alt="" coords="220,2000,385,2041"/>
-<area shape="rect" id="node36" href="$classflitr_1_1_multi_web_r_t_c_consumer_thread.html#a17f9510c1b8e279e58e6a6a4fbbb5e8c" title="flitr::MultiWebRTCConsumer\lThread::run" alt="" coords="207,2065,398,2107"/>
+<area shape="rect" id="node36" href="$classflitr_1_1_multi_example_consumer_thread.html#af49881c0f6aad8410e9c5e95cd58f980" title="flitr::MultiExampleConsumer\lThread::run" alt="" coords="209,2065,396,2107"/>
 <area shape="rect" id="node37" href="$classflitr_1_1_multi_f_fmpeg_consumer_thread.html#ad7662f15530121ea86e2c2aa9f1954fa" title="flitr::MultiFFmpegConsumer\lThread::run" alt="" coords="211,2131,395,2172"/>
-<area shape="rect" id="node38" href="$classflitr_1_1_multi_o_s_g_consumer_discard_thread.html#a4b80adbb1afd4243cde3cc67978aa28e" title="flitr::MultiOSGConsumerDiscard\lThread::run" alt="" coords="197,2196,408,2237"/>
-<area shape="rect" id="node39" href="$classflitr_1_1_multi_raw_video_file_consumer_thread.html#aee84667d26d5fcb60ea1e45408caaa3d" title="flitr::MultiRawVideoFile\lConsumerThread::run" alt="" coords="224,2261,381,2303"/>
-<area shape="rect" id="node40" href="$classflitr_1_1_target_injector.html#af9e76db754bdc59e891f881169ef2693" title="flitr::TargetInjector\l::trigger" alt="" coords="239,2327,367,2368"/>
+<area shape="rect" id="node38" href="$classflitr_1_1_multi_image_buffer_consumer_thread.html#a9f29afd6b85ae47b8992a70e78a94ae3" title="flitr::MultiImageBufferConsumer\lThread::run" alt="" coords="199,2196,406,2237"/>
+<area shape="rect" id="node39" href="$classflitr_1_1_multi_o_s_g_consumer_discard_thread.html#a4b80adbb1afd4243cde3cc67978aa28e" title="flitr::MultiOSGConsumerDiscard\lThread::run" alt="" coords="197,2261,408,2303"/>
+<area shape="rect" id="node40" href="$classflitr_1_1_multi_raw_video_file_consumer_thread.html#aee84667d26d5fcb60ea1e45408caaa3d" title="flitr::MultiRawVideoFile\lConsumerThread::run" alt="" coords="224,2327,381,2368"/>
+<area shape="rect" id="node41" href="$classflitr_1_1_target_injector.html#af9e76db754bdc59e891f881169ef2693" title="flitr::TargetInjector\l::trigger" alt="" coords="239,2392,367,2433"/>
 <area shape="rect" id="node5" href="$classflitr_1_1_fifo_consumer.html#a5c916758d27cb8e2e5c3ced0a68b1fea" title="flitr::FifoConsumer\l::FifoConsumer" alt="" coords="635,100,765,141"/>
 </map>

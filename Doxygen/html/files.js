@@ -345,8 +345,8 @@ var files =
     ] ],
     [ "multi_example_consumer.cpp", "multi__example__consumer_8cpp.html", null ],
     [ "multi_example_consumer.h", "multi__example__consumer_8h.html", [
-      [ "MultiWebRTCConsumerThread", "classflitr_1_1_multi_web_r_t_c_consumer_thread.html", "classflitr_1_1_multi_web_r_t_c_consumer_thread" ],
-      [ "MultiWebRTCConsumer", "classflitr_1_1_multi_web_r_t_c_consumer.html", "classflitr_1_1_multi_web_r_t_c_consumer" ]
+      [ "MultiExampleConsumerThread", "classflitr_1_1_multi_example_consumer_thread.html", "classflitr_1_1_multi_example_consumer_thread" ],
+      [ "MultiExampleConsumer", "classflitr_1_1_multi_example_consumer.html", "classflitr_1_1_multi_example_consumer" ]
     ] ],
     [ "multi_ffmpeg_consumer.cpp", "multi__ffmpeg__consumer_8cpp.html", null ],
     [ "multi_ffmpeg_consumer.h", "multi__ffmpeg__consumer_8h.html", [
@@ -357,6 +357,11 @@ var files =
     [ "multi_ffmpeg_producer.h", "multi__ffmpeg__producer_8h.html", [
       [ "MultiFFmpegProducerThread", "classflitr_1_1_multi_f_fmpeg_producer_thread.html", "classflitr_1_1_multi_f_fmpeg_producer_thread" ],
       [ "MultiFFmpegProducer", "classflitr_1_1_multi_f_fmpeg_producer.html", "classflitr_1_1_multi_f_fmpeg_producer" ]
+    ] ],
+    [ "multi_image_buffer_consumer.cpp", "multi__image__buffer__consumer_8cpp.html", null ],
+    [ "multi_image_buffer_consumer.h", "multi__image__buffer__consumer_8h.html", [
+      [ "MultiImageBufferConsumerThread", "classflitr_1_1_multi_image_buffer_consumer_thread.html", "classflitr_1_1_multi_image_buffer_consumer_thread" ],
+      [ "MultiImageBufferConsumer", "classflitr_1_1_multi_image_buffer_consumer.html", "classflitr_1_1_multi_image_buffer_consumer" ]
     ] ],
     [ "multi_osg_consumer.cpp", "multi__osg__consumer_8cpp.html", null ],
     [ "multi_osg_consumer.h", "multi__osg__consumer_8h.html", "multi__osg__consumer_8h" ],

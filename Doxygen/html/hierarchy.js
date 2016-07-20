@@ -93,9 +93,10 @@ var hierarchy =
         [ "flitr::TargetInjector", "classflitr_1_1_target_injector.html", null ]
       ] ],
       [ "flitr::MultiCPUHistogramConsumer", "classflitr_1_1_multi_c_p_u_histogram_consumer.html", null ],
+      [ "flitr::MultiExampleConsumer", "classflitr_1_1_multi_example_consumer.html", null ],
       [ "flitr::MultiFFmpegConsumer", "classflitr_1_1_multi_f_fmpeg_consumer.html", null ],
+      [ "flitr::MultiImageBufferConsumer", "classflitr_1_1_multi_image_buffer_consumer.html", null ],
       [ "flitr::MultiRawVideoFileConsumer", "classflitr_1_1_multi_raw_video_file_consumer.html", null ],
-      [ "flitr::MultiWebRTCConsumer", "classflitr_1_1_multi_web_r_t_c_consumer.html", null ],
       [ "flitr::TMultiOSGConsumer< T >", "classflitr_1_1_t_multi_o_s_g_consumer.html", null ],
       [ "TestConsumer", "class_test_consumer.html", null ],
       [ "TestConsumer", "class_test_consumer.html", null ]
@@ -213,11 +214,12 @@ var hierarchy =
       [ "flitr::ImageMultiplexerThread", "classflitr_1_1_image_multiplexer_thread.html", null ],
       [ "flitr::ImageProcessorThread", "classflitr_1_1_image_processor_thread.html", null ],
       [ "flitr::MultiCPUHistogramConsumerThread", "classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html", null ],
+      [ "flitr::MultiExampleConsumerThread", "classflitr_1_1_multi_example_consumer_thread.html", null ],
       [ "flitr::MultiFFmpegConsumerThread", "classflitr_1_1_multi_f_fmpeg_consumer_thread.html", null ],
       [ "flitr::MultiFFmpegProducerThread", "classflitr_1_1_multi_f_fmpeg_producer_thread.html", null ],
+      [ "flitr::MultiImageBufferConsumerThread", "classflitr_1_1_multi_image_buffer_consumer_thread.html", null ],
       [ "flitr::MultiOSGConsumerDiscardThread", "classflitr_1_1_multi_o_s_g_consumer_discard_thread.html", null ],
       [ "flitr::MultiRawVideoFileConsumerThread", "classflitr_1_1_multi_raw_video_file_consumer_thread.html", null ],
-      [ "flitr::MultiWebRTCConsumerThread", "classflitr_1_1_multi_web_r_t_c_consumer_thread.html", null ],
       [ "flitr::VideoProducer::VideoProducerThread", "classflitr_1_1_video_producer_1_1_video_producer_thread.html", null ]
     ] ],
     [ "flitr::TiXmlAttributeSet", "classflitr_1_1_ti_xml_attribute_set.html", null ],
