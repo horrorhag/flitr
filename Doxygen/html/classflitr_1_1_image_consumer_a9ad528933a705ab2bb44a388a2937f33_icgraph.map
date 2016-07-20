@@ -1,4 +1,5 @@
 <map id="flitr::ImageConsumer::init" name="flitr::ImageConsumer::init">
-<area shape="rect" id="node2" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#a9c5097cfb472e0fa4b6705a9fb0b8e84" title="flitr::MultiCPUHistogram\lConsumer::init" alt="" coords="210,5,375,47"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_multi_web_r_t_c_consumer.html#afc91bb353fb3896b0eef21486259ed04" title="Calls the base class initialiser and starts up the consumer thread. " alt="" coords="197,71,388,112"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_multi_c_p_u_histogram_consumer.html#a9c5097cfb472e0fa4b6705a9fb0b8e84" title="flitr::MultiCPUHistogram\lConsumer::init" alt="" coords="218,5,383,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_example_consumer.html#a020c75cacf3ae66fa96bd9bfdceb0372" title="Calls the base class initialiser and starts up the consumer thread. " alt="" coords="207,71,394,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_multi_image_buffer_consumer.html#a7f41412900aa7f3d0f2fb15578d7f387" title="Calls the base class initialiser and starts up the consumer thread. " alt="" coords="197,136,404,177"/>
 </map>

@@ -65,14 +65,14 @@ var NAVTREEINDEX =
 "classflitr_1_1_g_l_s_l_sigmoid_pass.html",
 "classflitr_1_1_image_format.html#a855fea1bb02ffed92f45b6848a986a0b",
 "classflitr_1_1_image_stabiliser_multi_l_k.html#a3f9194213e86e3c51f6d558ffea7e654",
-"classflitr_1_1_multi_screen_capture_producer.html#ad0c82ae249f3da004897457ad5d98703",
-"classflitr_1_1_raw_video_file_reader.html#af0a96b07519f1c3c5f8ba76cf5cc1d8b",
-"classflitr_1_1_ti_xml_attribute.html#a19e6b6862a80b188571c47947e88d030",
-"classflitr_1_1_ti_xml_node.html#a01b934d45a4698773b055bc92b9f08fc",
-"classpitched__2d__range.html",
-"functions_u.html",
-"namespacemembers_func.html",
-"tinyxml_8h.html#ac7b6a48dba397233123a85c3e8e518fa"
+"classflitr_1_1_multi_raw_video_file_consumer.html#a65cf68ef40802344d7e7a102b6bf6b5e",
+"classflitr_1_1_raw_video_file_producer.html#adf15a2f4a81090d9ae716df230ca237e",
+"classflitr_1_1_textured_quad.html#aa695acc2d1137425548ca89702db4594",
+"classflitr_1_1_ti_xml_handle.html#a58ab3beda92e4c24c153a662317ad008",
+"classflitr_1_1_x_m_l_config.html",
+"functions_func_t.html",
+"multi__ffmpeg__consumer_8h_source.html",
+"test__pattern__producer_8h.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -3,6 +3,13 @@
 <area shape="rect" id="node3" href="$classflitr_1_1_video_hub.html#a0414096133006193b8078bf0c4b67cd9" title="flitr::VideoHub::createImage\lStabProcess" alt="" coords="105,71,291,112"/>
 <area shape="rect" id="node4" href="$classflitr_1_1_video_hub.html#ad587c2e537d1c3bfeb408eee42e1c968" title="flitr::VideoHub::createMotion\lDetectProcess" alt="" coords="104,136,292,177"/>
 <area shape="rect" id="node5" href="$classflitr_1_1_video_hub.html#a5d81dcccc033b7fff766a08559272f4d" title="flitr::VideoHub::createVideo\lFileConsumer" alt="" coords="107,201,289,243"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_video_hub.html#a4abd236f2a5183f5b86c5693dbba36dd" title="flitr::VideoHub::createWeb\lRTCConsumer" alt="" coords="110,267,286,308"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_video_hub.html#a35a1fab23317a74ec40047bb33972c28" title="Return a pointer to specific producer for use with an external consumer. " alt="" coords="107,333,289,359"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_video_hub.html#a04c27c4847d056f2af15814566be5de3" title="flitr::VideoHub::createImage\lBufferConsumer" alt="" coords="105,267,291,308"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_video_hub.html#a77c1e0643183a83f2186efc881b5c31b" title="Get the image format of the first image in the slot of a specific producer. " alt="" coords="115,332,281,373"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_video_hub.html#ac2a56990f164feb53629584424ae21f3" title="flitr::VideoHub::imageBuffer\lConsumerSetBuffer" alt="" coords="107,397,289,439"/>
+<area shape="rect" id="node12" href="$classflitr_1_1_video_hub.html#a4abd236f2a5183f5b86c5693dbba36dd" title="flitr::VideoHub::createWeb\lRTCConsumer" alt="" coords="110,463,286,504"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_video_hub.html#a35a1fab23317a74ec40047bb33972c28" title="Return a pointer to specific producer for use with an external consumer. " alt="" coords="107,529,289,555"/>
+<area shape="rect" id="node14" href="$classflitr_1_1_video_hub.html#a21fd3f36b127316f49c901e3790c2f09" title="flitr::VideoHub::stopAll\lThreads" alt="" coords="121,580,275,621"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="381,267,506,308"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="381,332,506,373"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_multi_image_buffer_consumer.html#a81de0c1bae6da41c23214cd7835b37b8" title="Set the buffers to user defined memory location. " alt="" coords="340,397,547,439"/>
 </map>

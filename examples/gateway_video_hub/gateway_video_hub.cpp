@@ -4,6 +4,7 @@
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
+#include <flitr/multi_example_consumer.h>
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
