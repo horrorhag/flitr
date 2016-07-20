@@ -5,7 +5,13 @@
 #include <flitr/fifo_consumer.h>
 #include <flitr/multi_image_buffer_consumer.h>
 
+#ifdef __linux
+#include <flitr/v4l_producer.h>
+#endif //__linux
+
+
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 #include <flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
@@ -51,7 +57,7 @@ void flitr::VideoHub::cleanup()
         _consumerMap.erase(_consumerMap.begin());
     }
 
-    //Store order of processors in string vec and delete in correct order...
+    
     while (_processorOrder.size())
     {
         const std::string &processorName=_processorOrder.back();
@@ -104,7 +110,22 @@ bool flitr::VideoHub::createRTSPProducer(const std::string &name, const std::str
 //====
 bool flitr::VideoHub::createV4LProducer(const std::string &name, const std::string &device)
 {
+#ifdef __linux
+    std::shared_ptr<flitr::V4LProducer> ip(new flitr::V4LProducer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, device));
+    
+    if (!ip->init())
+    {
+        std::cerr << "Could not open " << device << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+        return false;
+    }
+    
+    //Add new map entry and store the image producer.
+    _producerMap[name]=ip;
+    
+    return true;
+#else
     return false;
+#endif
 }
 
 //====
@@ -115,17 +136,17 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
     if (it!=_producerMap.end())
     {
         //==
-        std::shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*(it->second), 1, 2));
-        if (!cnvrtToYF32->init())
+        std::shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*(it->second), 1, 2));
+        if (!cnvrtToRGBF32->init())
         {
-            std::cerr << "Could not initialise the cnvrtToF32 processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            std::cerr << "Could not initialise the cnvrtToRGBF32 processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
         
-        cnvrtToYF32->startTriggerThread();
+        cnvrtToRGBF32->startTriggerThread();
         
         //==
-        std::shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1, FIPLKStabilise::Mode::SUBPIXELSTAB, 2));
+        std::shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToRGBF32, 1, FIPLKStabilise::Mode::INTSTAB, 2));
         if (!lkstabilise->init())
         {
             std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
@@ -146,7 +167,7 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
         
         
         //Add new map entries and store the image producers.
-        _producerMap[name+std::string("_cnvrtToF32")]=cnvrtToYF32;
+        _producerMap[name+std::string("_cnvrtToF32")]=cnvrtToRGBF32;
         _producerMap[name+std::string("_lkstabiliseF32")]=lkstabilise;
         _producerMap[name]=cnvrtToRGB8;
         

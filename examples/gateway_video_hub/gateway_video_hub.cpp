@@ -20,32 +20,35 @@ int main(int argc, char *argv[])
     
     //videoHub.createV4LProducer("input", "/dev/video0");
     //videoHub.createRTSPProducer("input", "rtsp://192.168.0.90:554/axis-media/media.amp");//PC set to 192.168.0.100
+    //videoHub.createRTSPProducer("input", "rtsp://mpv.cdn3.bigCDN.com:554/bigCDN/mp4:bigbuckbunnyiphone_400.mp4");
     videoHub.createVideoFileProducer("input", "/Users/bduvenhage/Desktop/nikon_compressed.mp4");
+    //videoHub.createVideoFileProducer("input", "/Volumes/Data/ULWASS_trimmed640.mp4");
+    
 #ifdef __linux
     //videoHub.createV4LProducer("input4vl", "/dev/video0");
 #endif
     
     videoHub.createImageStabProcess("istab", "input", 0.9925);
-    videoHub.createMotionDetectProcess("imotion", "istab", true, true);
+    //videoHub.createMotionDetectProcess("imotion", "istab", true, true);
     
-    //videoHub.createVideoFileConsumer("video_output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
-    videoHub.createVideoFileConsumer("video_output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
+    videoHub.createVideoFileConsumer("video_output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
+    //videoHub.createVideoFileConsumer("video_output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
     
-    videoHub.createImageBufferConsumer("image_output", "imotion");
-    const flitr::VideoHubImageFormat imageBufferFormat=videoHub.getImageFormat("imotion");
+    videoHub.createImageBufferConsumer("image_output", "istab");
+    const flitr::VideoHubImageFormat imageBufferFormat=videoHub.getImageFormat("istab");
     uint8_t * const imageBuffer=new uint8_t[imageBufferFormat._width * imageBufferFormat._height *  imageBufferFormat._bytesPerPixel];
     videoHub.imageBufferConsumerSetBuffer("image_output", imageBuffer);
     
-    //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
-    videoHub.createWebRTCConsumer("webrtc_output", "imotion", "webrtc.fifo");
+    videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
+    //videoHub.createWebRTCConsumer("webrtc_output", "imotion", "webrtc.fifo");
     
     
     
     //=============================//
     //=== OSG and Viewer things ===//
     //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("input")), 1, 1));
-    //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("istab")), 1, 1));
-    std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("imotion")), 1, 1));
+    std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("istab")), 1, 1));
+    //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("imotion")), 1, 1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
