@@ -2,7 +2,7 @@
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
-#include <flitr/multi_webrtc_consumer.h>
+#include <flitr/fifo_consumer.h>
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
@@ -194,24 +194,22 @@ bool flitr::VideoHub::createRTSPConsumer(const std::string &name, const std::str
 
 //====
 bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::string &producerName,
-                                           const std::string &streamName)
+                                           const std::string &fifoName)
 {
     const auto it=_producerMap.find(producerName);
     
     if (it!=_producerMap.end())
     {
-        std::shared_ptr<flitr::MultiWebRTCConsumer> ic(new flitr::MultiWebRTCConsumer(*(it->second), 1));
+        std::shared_ptr<flitr::FifoConsumer> fifo(new flitr::FifoConsumer(*(it->second), fifoName));
         
-        if (!ic->init())
+        if (!fifo->init())
         {
-            std::cerr << "Could not initialise MultiWebRTCConsumer" << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            std::cerr << "Could not initialise WebRTC FifoConsumer" << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
         
         //Add new map entry and store the image consumer.
-        _consumerMap[name]=ic;
-        
-        ic->openConnection(streamName); //Connection should be closed on destruct.
+        _consumerMap[name]=fifo;
         
         return true;
     }

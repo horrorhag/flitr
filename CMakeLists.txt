@@ -184,6 +184,7 @@ SET(LIB_SOURCES
   src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
   src/flitr/metadata_reader.cpp
+  src/flitr/multi_example_consumer.cpp
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
   src/flitr/multi_ffmpeg_producer.cpp
@@ -292,6 +293,7 @@ SET(LIB_SOURCES
   include/flitr/manipulator_utils.h
   include/flitr/metadata_writer.h
   include/flitr/metadata_reader.h
+  include/flitr/multi_example_consumer.h
   include/flitr/fifo_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
@@ -390,14 +392,6 @@ SET(LIB_SOURCES ${LIB_SOURCES}
     include/flitr/libtiff_producer.h
 )
 ENDIF(FLITR_USE_LIBTIFF)
-
-
-IF(FLITR_USE_WEBRTC)
-SET(LIB_SOURCES ${LIB_SOURCES}
-  src/flitr/multi_webrtc_consumer.cpp
-  include/flitr/multi_webrtc_consumer.h
-)
-ENDIF(FLITR_USE_WEBRTC)
 
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.

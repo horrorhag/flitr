@@ -18,8 +18,6 @@
 
 int main(int argc, char *argv[])
 {
-
-    
     flitr::VideoHub videoHub;
     
     //videoHub.createV4LProducer("input", "/dev/video0");
@@ -29,10 +27,11 @@ int main(int argc, char *argv[])
     videoHub.createImageStabProcess("istab", "input", 0.9925);
     videoHub.createMotionDetectProcess("imotion", "istab", true, true);
     
-    //videoHub.createVideoFileConsumer("output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
-    videoHub.createVideoFileConsumer("output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
-    //videoHub.createWebRTCConsumer("webrtcstream", "istab", "146.64.246.11:8000");
-    //videoHub.createWebRTCConsumer("webrtcstream", "imotion", "146.64.246.11:8000");
+    //videoHub.createVideoFileConsumer("video_output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
+    videoHub.createVideoFileConsumer("video_output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
+    
+    //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
+    videoHub.createWebRTCConsumer("webrtc_output", "imotion", "webrtc.fifo");
     
     
     

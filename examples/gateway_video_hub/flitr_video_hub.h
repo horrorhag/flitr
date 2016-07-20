@@ -114,10 +114,10 @@ namespace flitr
         /** Create and image consumer that streams the video using WebRTC.
          \param name The name of the new consumer.
          \param producerName The name of the producer to attach to.
-         \param streamName Temp placeholder for WebRTC destination endpoint.
+         \param fifoName WebRTC fifo file buffer.
          */
         bool createWebRTCConsumer(const std::string &name, const std::string &producerName,
-                                  const std::string &streamName);
+                                  const std::string &fifoName);
         
         /** Create an image consumer that copies the raw data to a user allocated 'buffer'.
          \param name The name of the new consumer.
