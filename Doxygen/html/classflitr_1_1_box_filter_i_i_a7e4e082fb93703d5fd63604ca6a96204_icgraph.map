@@ -1,5 +1,6 @@
 <map id="flitr::BoxFilterII::filter" name="flitr::BoxFilterII::filter">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#a5b5151fdd4fb47f3497bed349cb2d04e" title="flitr::FIPAverageImageIIR\l::trigger" alt="" coords="160,5,332,47"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="169,71,323,112"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_m_s_r.html#a1cdcd646613ebc8d3bfff69582143cad" title="flitr::FIPMSR::trigger" alt="" coords="175,137,317,163"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#a5b5151fdd4fb47f3497bed349cb2d04e" title="flitr::FIPAverageImageIIR\l::trigger" alt="" coords="161,5,332,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="170,71,323,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_motion_detect.html#a0b73f8d531376a2880e14bb12cbc54d7" title="flitr::FIPMotionDetect\l::trigger" alt="" coords="173,136,320,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_m_s_r.html#a1cdcd646613ebc8d3bfff69582143cad" title="flitr::FIPMSR::trigger" alt="" coords="175,202,318,229"/>
 </map>

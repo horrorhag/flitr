@@ -1,28 +1,21 @@
 var searchData=
 [
   ['target_5finjector_2ecpp',['target_injector.cpp',['../target__injector_8cpp.html',1,'']]],
-  ['target_5finjector_2ed',['target_injector.d',['../target__injector_8d.html',1,'']]],
   ['target_5finjector_2eh',['target_injector.h',['../target__injector_8h.html',1,'']]],
   ['target_5finjector_5fexample_2ecpp',['target_injector_example.cpp',['../target__injector__example_8cpp.html',1,'']]],
-  ['target_5finjector_5fexample_2ed',['target_injector_example.d',['../target__injector__example_8d.html',1,'']]],
   ['test_5fpattern_5fproducer_2ecpp',['test_pattern_producer.cpp',['../test__pattern__producer_8cpp.html',1,'']]],
-  ['test_5fpattern_5fproducer_2ed',['test_pattern_producer.d',['../test__pattern__producer_8d.html',1,'']]],
   ['test_5fpattern_5fproducer_2eh',['test_pattern_producer.h',['../test__pattern__producer_8h.html',1,'']]],
   ['text_5flabel_5foverlay_2ecpp',['text_label_overlay.cpp',['../text__label__overlay_8cpp.html',1,'']]],
-  ['text_5flabel_5foverlay_2ed',['text_label_overlay.d',['../text__label__overlay_8d.html',1,'']]],
   ['text_5flabel_5foverlay_2eh',['text_label_overlay.h',['../text__label__overlay_8h.html',1,'']]],
   ['texture_2eh',['texture.h',['../texture_8h.html',1,'']]],
   ['texture_5fcapture_5fproducer_2ecpp',['texture_capture_producer.cpp',['../texture__capture__producer_8cpp.html',1,'']]],
   ['texture_5fcapture_5fproducer_2eh',['texture_capture_producer.h',['../texture__capture__producer_8h.html',1,'']]],
   ['textured_5fquad_2ecpp',['textured_quad.cpp',['../textured__quad_8cpp.html',1,'']]],
-  ['textured_5fquad_2ed',['textured_quad.d',['../textured__quad_8d.html',1,'']]],
   ['textured_5fquad_2eh',['textured_quad.h',['../textured__quad_8h.html',1,'']]],
-  ['tinystr_2ed',['tinystr.d',['../tinystr_8d.html',1,'']]],
   ['tinyxml_2ecpp',['tinyxml.cpp',['../tinyxml_8cpp.html',1,'']]],
   ['tinyxml_2eh',['tinyxml.h',['../tinyxml_8h.html',1,'']]],
   ['tinyxmlerror_2ecpp',['tinyxmlerror.cpp',['../tinyxmlerror_8cpp.html',1,'']]],
   ['tinyxmlparser_2ecpp',['tinyxmlparser.cpp',['../tinyxmlparser_8cpp.html',1,'']]],
   ['triangle_5foverlay_2ecpp',['triangle_overlay.cpp',['../triangle__overlay_8cpp.html',1,'']]],
-  ['triangle_5foverlay_2ed',['triangle_overlay.d',['../triangle__overlay_8d.html',1,'']]],
   ['triangle_5foverlay_2eh',['triangle_overlay.h',['../triangle__overlay_8h.html',1,'']]]
 ];

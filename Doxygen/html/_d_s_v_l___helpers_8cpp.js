@@ -4,7 +4,7 @@ var _d_s_v_l___helpers_8cpp =
     [ "AMErrorMessage", "_d_s_v_l___helpers_8cpp.html#a75eb2871233822b5f8d3c9d6e76b89ad", null ],
     [ "AutoConnectFilters", "_d_s_v_l___helpers_8cpp.html#a18a4f5f760cc9d29395a66988c82d929", null ],
     [ "avg2fps", "_d_s_v_l___helpers_8cpp.html#a4e34da0fd0a713b30cf5fa4b8ee365e6", null ],
-    [ "CanDeliverDV", "_d_s_v_l___helpers_8cpp.html#a649d76cea9bf57fb7e68797a7df4a91b", null ],
+    [ "CanDeliverDV", "_d_s_v_l___helpers_8cpp.html#ac2e124b61defc24aa0978897b0f07572", null ],
     [ "CanDeliverVideo", "_d_s_v_l___helpers_8cpp.html#ab131c6ae889417896d285a07a412138b", null ],
     [ "ConnectFilters", "_d_s_v_l___helpers_8cpp.html#a45c00eabc5acc20c8d73cc35b70dd35f", null ],
     [ "CopyMediaType", "_d_s_v_l___helpers_8cpp.html#a6e34492acaf35925c5bea44d928e3bc5", null ],

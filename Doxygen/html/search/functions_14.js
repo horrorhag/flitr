@@ -5,6 +5,7 @@ var searchData=
   ['unlock',['Unlock',['../class_d_s_v_l___graph_manager.html#aa785f68a72bfb29c039d7dd728a0becb',1,'DSVL_GraphManager']]],
   ['unmappid',['UnmapPID',['../_d_s_v_l___defines_8h.html#a9b7353e4bd95b2561453e125c3d66ce4',1,'DSVL_Defines.h']]],
   ['update',['update',['../classflitr_1_1_plot2_d_overlay.html#a1d7e39dc54b5bf61c699154c363fb293',1,'flitr::Plot2DOverlay::update()'],['../classflitr_1_1_target_injector_1_1_synthetic_target.html#ad345fa8b8679865be8cc86cac15ea373',1,'flitr::TargetInjector::SyntheticTarget::update()']]],
+  ['updatecrop',['updateCrop',['../classflitr_1_1_g_l_s_l_crop_pass.html#addecb27a9caeac823af68df91e9348ee',1,'flitr::GLSLCropPass']]],
   ['updatecrosshair',['updateCrosshair',['../classflitr_1_1_crosshair_overlay.html#ab7c5e02d2de6e420651e49444419d4bb',1,'flitr::CrosshairOverlay']]],
   ['updateh_5fbilucaskanadecpu',['updateH_BiLucasKanadeCPU',['../classflitr_1_1_image_stabiliser_bi_l_k.html#a4a22ee2a04a3ac005f86363102638723',1,'flitr::ImageStabiliserBiLK']]],
   ['updateh_5fnlucaskanadecpu',['updateH_NLucasKanadeCPU',['../classflitr_1_1_image_stabiliser_multi_l_k.html#af18a57969f455e1a488260527388cf23',1,'flitr::ImageStabiliserMultiLK']]],

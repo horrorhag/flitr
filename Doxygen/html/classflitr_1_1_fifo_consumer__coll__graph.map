@@ -1,0 +1,12 @@
+<map id="flitr::FifoConsumer" name="flitr::FifoConsumer">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html" title="{flitr::ImageConsumer\n||+ ImageConsumer()\l+ ~ImageConsumer()\l+ getNumReadSlotsAvailable()\l+ getNumReadSlotsReserved()\l+ reserveReadSlot()\l+ releaseReadSlot()\l+ init()\l+ getFormat()\l# setSharedImageBuffer()\l}" alt="" coords="397,1365,602,1560"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# removeConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="425,943,659,1225"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_shared_image_buffer.html" title="Class for passing images between producers and consumers. " alt="" coords="537,1851,771,2265"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="284,145,467,487"/>
+<area shape="rect" id="node13" href="$classflitr_1_1_image.html" title="{flitr::Image\n|&#45; Metadata_\l&#45; Data_\l|+ Image()\l+ ~Image()\l+ Image()\l+ operator=()\l+ format()\l+ format()\l+ metadata()\l+ setMetadata()\l+ data()\l+ data()\l&#45; deepCopy()\l&#45; outOfMem()\l}" alt="" coords="202,665,317,919"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="651,277,767,355"/>
+<area shape="rect" id="node11" title="STL class. " alt="" coords="823,277,946,355"/>
+<area shape="rect" id="node14" title="STL class. " alt="" coords="203,1424,283,1501"/>
+<area shape="rect" id="node15" title="STL class. " alt="" coords="192,1038,319,1130"/>
+<area shape="rect" id="node16" title="STL class. " alt="" coords="5,1424,89,1501"/>
+</map>

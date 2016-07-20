@@ -1,5 +1,6 @@
 <map id="flitr::FFmpegWriter" name="flitr::FFmpegWriter">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="5,147,192,488"/>
-<area shape="rect" id="node3" title="STL class. " alt="" coords="216,279,296,356"/>
-<area shape="rect" id="node4" title="STL class. " alt="" coords="193,5,319,97"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="5,315,188,656"/>
+<area shape="rect" id="node4" title="STL class. " alt="" coords="238,160,318,237"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="215,5,341,97"/>
+<area shape="rect" id="node6" title="STL class. " alt="" coords="374,160,497,237"/>
 </map>

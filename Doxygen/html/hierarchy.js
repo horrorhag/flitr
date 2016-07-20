@@ -29,6 +29,7 @@ var hierarchy =
       [ "flitr::ImageNPyramid::PyramidRebuilt_CameraPostDrawCallback", "classflitr_1_1_image_n_pyramid_1_1_pyramid_rebuilt___camera_post_draw_callback.html", null ],
       [ "flitr::ImageStabiliserBiLK::PostBiLKIteration_CameraPostDrawCallback", "classflitr_1_1_image_stabiliser_bi_l_k_1_1_post_bi_l_k_iteration___camera_post_draw_callback.html", null ],
       [ "flitr::ImageStabiliserMultiLK::PostNLKIteration_CameraPostDrawCallback", "classflitr_1_1_image_stabiliser_multi_l_k_1_1_post_n_l_k_iteration___camera_post_draw_callback.html", null ],
+      [ "flitr::MultiScreenCaptureProducer::ScreenCaptureCallback", "classflitr_1_1_multi_screen_capture_producer_1_1_screen_capture_callback.html", null ],
       [ "flitr::ScreenCaptureProducer::ScreenCaptureCallback", "classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html", null ],
       [ "flitr::TextureCaptureProducer::TextureCaptureDrawCallback", "structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html", null ],
       [ "GLSLKeepHistoryPass::CameraPostDrawCallback", "struct_g_l_s_l_keep_history_pass_1_1_camera_post_draw_callback.html", null ]
@@ -57,6 +58,7 @@ var hierarchy =
     [ "flitr::Image", "classflitr_1_1_image.html", null ],
     [ "flitr::ImageBiPyramid", "classflitr_1_1_image_bi_pyramid.html", null ],
     [ "flitr::ImageConsumer", "classflitr_1_1_image_consumer.html", [
+      [ "flitr::FifoConsumer", "classflitr_1_1_fifo_consumer.html", null ],
       [ "flitr::ImageProcessor", "classflitr_1_1_image_processor.html", [
         [ "flitr::DeMotionBlur", "classflitr_1_1_de_motion_blur.html", null ],
         [ "flitr::FIPAverageImage", "classflitr_1_1_f_i_p_average_image.html", null ],
@@ -80,6 +82,7 @@ var hierarchy =
         [ "flitr::FIPLocalPhotometricEqualise", "classflitr_1_1_f_i_p_local_photometric_equalise.html", null ],
         [ "flitr::FIPMedian", "classflitr_1_1_f_i_p_median.html", null ],
         [ "flitr::FIPMorphologicalFilter", "classflitr_1_1_f_i_p_morphological_filter.html", null ],
+        [ "flitr::FIPMotionDetect", "classflitr_1_1_f_i_p_motion_detect.html", null ],
         [ "flitr::FIPMSR", "classflitr_1_1_f_i_p_m_s_r.html", null ],
         [ "flitr::FIPPhotometricEqualise", "classflitr_1_1_f_i_p_photometric_equalise.html", null ],
         [ "flitr::FIPRotate", "classflitr_1_1_f_i_p_rotate.html", null ],
@@ -92,6 +95,7 @@ var hierarchy =
       [ "flitr::MultiCPUHistogramConsumer", "classflitr_1_1_multi_c_p_u_histogram_consumer.html", null ],
       [ "flitr::MultiFFmpegConsumer", "classflitr_1_1_multi_f_fmpeg_consumer.html", null ],
       [ "flitr::MultiRawVideoFileConsumer", "classflitr_1_1_multi_raw_video_file_consumer.html", null ],
+      [ "flitr::MultiWebRTCConsumer", "classflitr_1_1_multi_web_r_t_c_consumer.html", null ],
       [ "flitr::TMultiOSGConsumer< T >", "classflitr_1_1_t_multi_o_s_g_consumer.html", null ],
       [ "TestConsumer", "class_test_consumer.html", null ],
       [ "TestConsumer", "class_test_consumer.html", null ]
@@ -108,6 +112,7 @@ var hierarchy =
       [ "flitr::ImageProcessor", "classflitr_1_1_image_processor.html", null ],
       [ "flitr::MultiFFmpegProducer", "classflitr_1_1_multi_f_fmpeg_producer.html", null ],
       [ "flitr::MultiLibTiffProducer", "classflitr_1_1_multi_lib_tiff_producer.html", null ],
+      [ "flitr::MultiScreenCaptureProducer", "classflitr_1_1_multi_screen_capture_producer.html", null ],
       [ "flitr::RawVideoFileProducer", "classflitr_1_1_raw_video_file_producer.html", null ],
       [ "flitr::ScreenCaptureProducer", "classflitr_1_1_screen_capture_producer.html", null ],
       [ "flitr::SMultiFFmpegProducer", "classflitr_1_1_s_multi_f_fmpeg_producer.html", null ],
@@ -212,6 +217,7 @@ var hierarchy =
       [ "flitr::MultiFFmpegProducerThread", "classflitr_1_1_multi_f_fmpeg_producer_thread.html", null ],
       [ "flitr::MultiOSGConsumerDiscardThread", "classflitr_1_1_multi_o_s_g_consumer_discard_thread.html", null ],
       [ "flitr::MultiRawVideoFileConsumerThread", "classflitr_1_1_multi_raw_video_file_consumer_thread.html", null ],
+      [ "flitr::MultiWebRTCConsumerThread", "classflitr_1_1_multi_web_r_t_c_consumer_thread.html", null ],
       [ "flitr::VideoProducer::VideoProducerThread", "classflitr_1_1_video_producer_1_1_video_producer_thread.html", null ]
     ] ],
     [ "flitr::TiXmlAttributeSet", "classflitr_1_1_ti_xml_attribute_set.html", null ],
@@ -236,6 +242,8 @@ var hierarchy =
       [ "pitched_2d_range< InIterator >::pitch_functor", "structpitched__2d__range_1_1pitch__functor.html", null ]
     ] ],
     [ "flitr::vc_buffer", "structflitr_1_1vc__buffer.html", null ],
+    [ "flitr::VideoHub", "classflitr_1_1_video_hub.html", null ],
+    [ "flitr::VideoHubImageFormat", "structflitr_1_1_video_hub_image_format.html", null ],
     [ "flitr::VideoParam", "structflitr_1_1_video_param.html", null ],
     [ "flitr::XMLConfig", "classflitr_1_1_x_m_l_config.html", null ]
 ];

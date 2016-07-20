@@ -1,4 +1,5 @@
 <map id="flitr::ImageProcessorThread::setExit" name="flitr::ImageProcessorThread::setExit">
-<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#afc5671e8b3474ff697800ddd9be852ab" title="flitr::ImageProcessor\l::stopTriggerThread" alt="" coords="240,5,384,47"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_image_processor.html#a2ff83cf5f0986ed04b7799499fe0defc" title="flitr::ImageProcessor\l::~ImageProcessor" alt="" coords="432,5,576,47"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_processor.html#afc5671e8b3474ff697800ddd9be852ab" title="flitr::ImageProcessor\l::stopTriggerThread" alt="" coords="236,27,379,69"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_video_hub.html#a9618130b2cbb8da6319674aaf9566688" title="flitr::VideoHub::~VideoHub" alt="" coords="427,5,605,32"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_processor.html#a2ff83cf5f0986ed04b7799499fe0defc" title="flitr::ImageProcessor\l::~ImageProcessor" alt="" coords="445,57,587,98"/>
 </map>

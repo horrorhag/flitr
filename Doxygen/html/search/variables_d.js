@@ -3,7 +3,7 @@ var searchData=
   ['n',['n',['../struct_memory_buffer_handle.html#a307b46bd823cfdc7b1378c1764d0cf23',1,'MemoryBufferHandle']]],
   ['name',['name',['../classflitr_1_1_ti_xml_attribute.html#a4dabd90b39c885bf318816aa217e0c89',1,'flitr::TiXmlAttribute']]],
   ['next',['next',['../classflitr_1_1_ti_xml_node.html#a0809aa9d9e262c387d51056a0bf7bd98',1,'flitr::TiXmlNode::next()'],['../classflitr_1_1_ti_xml_attribute.html#a422f4b9d406dcd0c92fea862c24603fe',1,'flitr::TiXmlAttribute::next()']]],
-  ['nextsnapfilename_5f',['nextSnapFileName_',['../classflitr_1_1_screen_capture_producer.html#a6e703574e1ab8eeb0a4e0b97899a2e59',1,'flitr::ScreenCaptureProducer']]],
+  ['nextsnapfilename_5f',['nextSnapFileName_',['../classflitr_1_1_multi_screen_capture_producer.html#a8771981c91625daf2ffc14a5b31496d4',1,'flitr::MultiScreenCaptureProducer::nextSnapFileName_()'],['../classflitr_1_1_screen_capture_producer.html#a6e703574e1ab8eeb0a4e0b97899a2e59',1,'flitr::ScreenCaptureProducer::nextSnapFileName_()']]],
   ['node',['node',['../classflitr_1_1_ti_xml_handle.html#a7a28ac7c890dcda3ddd4eef8207008d8',1,'flitr::TiXmlHandle']]],
   ['nodeindices_5f',['nodeIndices_',['../structflitr_1_1_arc.html#ad8ed79e6e7c829f555f61edb931f5916',1,'flitr::Arc']]],
   ['nodevect_5f',['nodeVect_',['../classflitr_1_1_f_i_p_d_p_t.html#af9095e2021fe34bea2e67ae6cb26106b',1,'flitr::FIPDPT']]],

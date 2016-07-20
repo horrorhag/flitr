@@ -1,0 +1,8 @@
+<map id="main" name="main">
+<area shape="rect" id="node2" href="$classflitr_1_1_video_hub.html#a0cac362732dcf8548be2d0e3c50835ef" title="flitr::VideoHub::createVideo\lFileProducer" alt="" coords="107,5,289,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_video_hub.html#a0414096133006193b8078bf0c4b67cd9" title="flitr::VideoHub::createImage\lStabProcess" alt="" coords="105,71,291,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_video_hub.html#ad587c2e537d1c3bfeb408eee42e1c968" title="flitr::VideoHub::createMotion\lDetectProcess" alt="" coords="104,136,292,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_video_hub.html#a5d81dcccc033b7fff766a08559272f4d" title="flitr::VideoHub::createVideo\lFileConsumer" alt="" coords="107,201,289,243"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_video_hub.html#a4abd236f2a5183f5b86c5693dbba36dd" title="flitr::VideoHub::createWeb\lRTCConsumer" alt="" coords="110,267,286,308"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_video_hub.html#a35a1fab23317a74ec40047bb33972c28" title="Return a pointer to specific producer for use with an external consumer. " alt="" coords="107,333,289,359"/>
+</map>

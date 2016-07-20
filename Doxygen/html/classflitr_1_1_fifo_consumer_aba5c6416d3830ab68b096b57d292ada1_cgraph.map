@@ -1,0 +1,5 @@
+<map id="flitr::FifoConsumer::clearQueue" name="flitr::FifoConsumer::clearQueue">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_consumer.html#aa8d2103df0dac8755b1a0fdc206932f7" title="flitr::ImageConsumer\l::getNumReadSlotsAvailable" alt="" coords="184,5,375,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="207,71,351,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="207,136,351,177"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="flitr::FFmpegWriter::openFile" name="flitr::FFmpegWriter::openFile">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_format.html#a750b9204874a95e9f6b958df3806e0bf" title="flitr::ImageFormat\l::getWidth" alt="" coords="231,5,356,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_format.html#a52ec5edbc27c23acc188e5a85ce4690a" title="flitr::ImageFormat\l::getHeight" alt="" coords="231,71,356,112"/>
+<area shape="rect" id="node4" href="$namespaceflitr.html#a4e419afa3da6c4d4913f54515dafdf7a" title="flitr::PixelFormatFLITrTo\lFFmpeg" alt="" coords="211,136,375,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_format.html#aa020f1e1e2eebb2636b3c78e4c7bdb33" title="flitr::ImageFormat\l::getPixelFormat" alt="" coords="231,201,356,243"/>
+<area shape="rect" id="node6" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="234,267,353,294"/>
+<area shape="rect" id="node10" href="$classflitr_1_1_f_fmpeg_writer.html#a5e4cef1d8a54f42268639bb0e0862980" title="flitr::FFmpegWriter\l::getCodecContextPrivateOptions" alt="" coords="184,319,403,360"/>
+<area shape="rect" id="node11" href="$namespaceflitr.html#ab8c99780fb062a99dcf4c62748ef5c88" title="Get the current flags. " alt="" coords="197,385,390,411"/>
+<area shape="rect" id="node12" href="$namespaceflitr.html#a041bb1e4e5d19f66fe6e008b83750a95" title="flitr::allocFFmpegFrame" alt="" coords="213,435,373,462"/>
+<area shape="rect" id="node7" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="451,326,589,353"/>
+<area shape="rect" id="node8" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="673,275,797,302"/>
+<area shape="rect" id="node9" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="637,326,833,353"/>
+</map>

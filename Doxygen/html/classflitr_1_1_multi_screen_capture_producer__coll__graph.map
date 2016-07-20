@@ -1,0 +1,8 @@
+<map id="flitr::MultiScreenCaptureProducer" name="flitr::MultiScreenCaptureProducer">
+<area shape="rect" id="node2" href="$classflitr_1_1_image_producer.html" title="{flitr::ImageProducer\n|# SharedImageBuffer_\l# CreateMetadataFunction_\l|+ ImageProducer()\l+ ~ImageProducer()\l+ init()\l+ getFormat()\l+ getNumWriteSlotsAvailable()\l+ trigger()\l+ seek()\l+ getLeastNumReadSlotsAvailable()\l+ setCreateMetadataFunction()\l# releaseReadSlotCallback()\l# addConsumer()\l# removeConsumer()\l# reserveWriteSlot()\l# releaseWriteSlot()\l}" alt="" coords="142,987,377,1269"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_format.html" title="{flitr::ImageFormat\n|&#45; Width_\l&#45; Height_\l&#45; PixelFormat_\l&#45; BytesPerPixel_\l&#45; ComponentsPerPixel_\l&#45; DataType_\l&#45; flipV_\l&#45; flipH_\l|+ ImageFormat()\l+ getWidth()\l+ getHeight()\l+ getPixelFormat()\l+ getComponentsPerPixel()\l+ getBytesPerPixel()\l+ getDataType()\l+ getBytesPerImage()\l+ getFlipVertical()\l+ getFlipHorizontal()\land 8 more...\l&#45; setPixelFormatDetails()\l}" alt="" coords="83,145,265,487"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_image.html" title="{flitr::Image\n|&#45; Metadata_\l&#45; Data_\l|+ Image()\l+ ~Image()\l+ Image()\l+ operator=()\l+ format()\l+ format()\l+ metadata()\l+ setMetadata()\l+ data()\l+ data()\l&#45; deepCopy()\l&#45; outOfMem()\l}" alt="" coords="299,579,414,832"/>
+<area shape="rect" id="node5" title="STL class. " alt="" coords="475,277,591,355"/>
+<area shape="rect" id="node8" title="STL class. " alt="" coords="35,1089,115,1167"/>
+<area shape="rect" id="node9" title="STL class. " alt="" coords="5,659,132,751"/>
+</map>

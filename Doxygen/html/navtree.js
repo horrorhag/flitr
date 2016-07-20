@@ -1,3 +1,82 @@
+var NAVTREE =
+[
+  [ "FLITr", "index.html", [
+    [ "Framework for Live Image Transformation.", "index.html", [
+      [ "Introduction", "index.html#sec_main_introduction", null ],
+      [ "Building FLITr on Linux", "index.html#sec_main_build", [
+        [ "Tools and Pre-requisites", "index.html#subsec_main_build_tools", [
+          [ "FFmpeg", "index.html#subsub_main_build_tools_ffmpeg", null ],
+          [ "OpenSceneGraph", "index.html#subsub_main_build_tools_osg", null ]
+        ] ],
+        [ "Building FLITr", "index.html#subsec_main_build_steps", null ],
+        [ "Running an example", "index.html#subsec_main_example", null ]
+      ] ]
+    ] ],
+    [ "Todo List", "todo.html", null ],
+    [ "Deprecated List", "deprecated.html", null ],
+    [ "Namespaces", null, [
+      [ "Namespace List", "namespaces.html", "namespaces" ],
+      [ "Namespace Members", "namespacemembers.html", [
+        [ "All", "namespacemembers.html", null ],
+        [ "Functions", "namespacemembers_func.html", null ],
+        [ "Variables", "namespacemembers_vars.html", null ],
+        [ "Typedefs", "namespacemembers_type.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ],
+        [ "Enumerator", "namespacemembers_eval.html", null ]
+      ] ]
+    ] ],
+    [ "Classes", null, [
+      [ "Class List", "annotated.html", "annotated" ],
+      [ "Class Index", "classes.html", null ],
+      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
+      [ "Class Members", "functions.html", [
+        [ "All", "functions.html", "functions_dup" ],
+        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Variables", "functions_vars.html", "functions_vars" ],
+        [ "Typedefs", "functions_type.html", null ],
+        [ "Enumerations", "functions_enum.html", null ],
+        [ "Enumerator", "functions_eval.html", null ],
+        [ "Related Functions", "functions_rela.html", null ]
+      ] ]
+    ] ],
+    [ "Files", null, [
+      [ "File List", "files.html", "files" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", "globals_dup" ],
+        [ "Functions", "globals_func.html", null ],
+        [ "Variables", "globals_vars.html", null ],
+        [ "Typedefs", "globals_type.html", null ],
+        [ "Enumerations", "globals_enum.html", null ],
+        [ "Enumerator", "globals_eval.html", null ],
+        [ "Macros", "globals_defs.html", null ]
+      ] ]
+    ] ]
+  ] ]
+];
+
+var NAVTREEINDEX =
+[
+"_c_make_c_compiler_id_8c.html",
+"_i_e_e_e1394__id_8cpp.html#a3f49f7aa983a6f032e3b62343d7d338f",
+"class_pick_handler.html#ab1dc86447f4a1d0cf1282b77365bc4c7",
+"classflitr_1_1_circle_overlay.html#afe74107f3feec1249fc811019cfc24b0",
+"classflitr_1_1_f_i_p_gaussian_downsample.html#a862e630ae508ef52ef799b6849de89d3",
+"classflitr_1_1_f_i_p_tonemap.html#a8b5f7da972bb736ecceb4e6cd7a9d8d3",
+"classflitr_1_1_g_l_s_l_sigmoid_pass.html",
+"classflitr_1_1_image_format.html#a855fea1bb02ffed92f45b6848a986a0b",
+"classflitr_1_1_image_stabiliser_multi_l_k.html#a3f9194213e86e3c51f6d558ffea7e654",
+"classflitr_1_1_multi_screen_capture_producer.html#ad0c82ae249f3da004897457ad5d98703",
+"classflitr_1_1_raw_video_file_reader.html#af0a96b07519f1c3c5f8ba76cf5cc1d8b",
+"classflitr_1_1_ti_xml_attribute.html#a19e6b6862a80b188571c47947e88d030",
+"classflitr_1_1_ti_xml_node.html#a01b934d45a4698773b055bc92b9f08fc",
+"classpitched__2d__range.html",
+"functions_u.html",
+"namespacemembers_func.html",
+"tinyxml_8h.html#ac7b6a48dba397233123a85c3e8e518fa"
+];
+
+var SYNCONMSG = 'click to disable panel synchronisation';
+var SYNCOFFMSG = 'click to enable panel synchronisation';
 var navTreeSubIndices = new Array();
 
 function getData(varName)
@@ -105,7 +184,7 @@ function createIndent(o,domNode,node,level)
     node.expandToggle.onclick = function() {
       if (node.expanded) {
         $(node.getChildrenUL()).slideUp("fast");
-        node.plus_img.src = node.relpath+"arrowright.png";
+        node.plus_img.src = node.relpath+"ftv2pnode.png";
         node.expanded = false;
       } else {
         expandNode(o, node, false, false);
@@ -113,7 +192,7 @@ function createIndent(o,domNode,node,level)
     }
     node.expandToggle.appendChild(imgNode);
     domNode.appendChild(node.expandToggle);
-    imgNode.src = node.relpath+"arrowright.png";
+    imgNode.src = node.relpath+"ftv2pnode.png";
   } else {
     var span = document.createElement("span");
     span.style.display = 'inline-block';
@@ -269,9 +348,9 @@ function expandNode(o, node, imm, showRoot)
         $(node.getChildrenUL()).slideDown("fast");
       }
       if (node.isLast) {
-        node.plus_img.src = node.relpath+"arrowdown.png";
+        node.plus_img.src = node.relpath+"ftv2mlastnode.png";
       } else {
-        node.plus_img.src = node.relpath+"arrowdown.png";
+        node.plus_img.src = node.relpath+"ftv2mnode.png";
       }
       node.expanded = true;
     }
@@ -341,7 +420,11 @@ function showNode(o, node, index, hash)
         getNode(o, node);
       }
       $(node.getChildrenUL()).css({'display':'block'});
-      node.plus_img.src = node.relpath+"arrowdown.png";
+      if (node.isLast) {
+        node.plus_img.src = node.relpath+"ftv2mlastnode.png";
+      } else {
+        node.plus_img.src = node.relpath+"ftv2mnode.png";
+      }
       node.expanded = true;
       var n = node.children[o.breadcrumbs[index]];
       if (index+1<o.breadcrumbs.length) {
@@ -479,7 +562,7 @@ function initNavTree(toroot,relpath)
   o.node.expanded = false;
   o.node.isLast = true;
   o.node.plus_img = document.createElement("img");
-  o.node.plus_img.src = relpath+"arrowright.png";
+  o.node.plus_img.src = relpath+"ftv2pnode.png";
   o.node.plus_img.width = 16;
   o.node.plus_img.height = 22;
 

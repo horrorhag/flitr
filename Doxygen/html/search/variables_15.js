@@ -15,5 +15,6 @@ var searchData=
   ['videoprocamp',['videoProcAmp',['../class_d_s_v_l___graph_manager.html#af9f775416ac0d3b1b49a7f9c557696d8',1,'DSVL_GraphManager']]],
   ['videostream_5f',['VideoStream_',['../classflitr_1_1_f_fmpeg_writer.html#adc9b0359d8353701d511b306ccfbc6e6',1,'flitr::FFmpegWriter']]],
   ['videostreamindex_5f',['VideoStreamIndex_',['../classflitr_1_1_f_fmpeg_reader.html#a7884240cbe2686284a5407d6bdb8f43e',1,'flitr::FFmpegReader']]],
-  ['view_5f',['view_',['../classflitr_1_1_screen_capture_producer.html#a71c13c3ad1555718aa772a2b581c847f',1,'flitr::ScreenCaptureProducer']]]
+  ['view_5f',['view_',['../classflitr_1_1_screen_capture_producer.html#a71c13c3ad1555718aa772a2b581c847f',1,'flitr::ScreenCaptureProducer']]],
+  ['views_5f',['views_',['../classflitr_1_1_multi_screen_capture_producer.html#ad0c82ae249f3da004897457ad5d98703',1,'flitr::MultiScreenCaptureProducer']]]
 ];

@@ -22,6 +22,7 @@ var ffmpeg__writer_8h =
     [ "VideoContainer", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edba", [
       [ "FLITR_ANY_CONTAINER", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edbaa61972ff35efb866168daecc5240b8830", null ],
       [ "FLITR_AVI_CONTAINER", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edbaa337d880334ae7fdbe19348cbd0abdda0", null ],
-      [ "FLITR_MKV_CONTAINER", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edbaa68179305e2ce0977bb52ab39cec0bdc8", null ]
+      [ "FLITR_MKV_CONTAINER", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edbaa68179305e2ce0977bb52ab39cec0bdc8", null ],
+      [ "FLITR_RTSP_CONTAINER", "ffmpeg__writer_8h.html#af8d7be93e1289330f6daf03193a8edbaaf44cad8d15f5ce3c799fce0fee172cdf", null ]
     ] ]
 ];

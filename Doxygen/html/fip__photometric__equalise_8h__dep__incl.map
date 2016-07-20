@@ -1,6 +1,7 @@
 <map id="fip_photometric_equalise.h" name="fip_photometric_equalise.h">
-<area shape="rect" id="node2" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="5,87,171,114"/>
-<area shape="rect" id="node3" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="195,87,354,114"/>
-<area shape="rect" id="node4" href="$photometric__equalise__example_8cpp.html" title="photometric_equalise\l_example.cpp" alt="" coords="379,80,528,121"/>
-<area shape="rect" id="node5" href="$fip__photometric__equalise_8cpp.html" title="fip_photometric_equalise.cpp" alt="" coords="553,87,749,114"/>
+<area shape="rect" id="node2" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="5,87,168,114"/>
+<area shape="rect" id="node3" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="193,87,349,114"/>
+<area shape="rect" id="node4" href="$main_8cpp.html" title="main.cpp" alt="" coords="373,87,448,114"/>
+<area shape="rect" id="node5" href="$photometric__equalise__example_8cpp.html" title="photometric_equalise\l_example.cpp" alt="" coords="473,80,618,121"/>
+<area shape="rect" id="node6" href="$fip__photometric__equalise_8cpp.html" title="fip_photometric_equalise.cpp" alt="" coords="642,87,833,114"/>
 </map>

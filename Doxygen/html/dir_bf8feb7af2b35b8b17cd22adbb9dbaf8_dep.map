@@ -1,0 +1,26 @@
+<map id="flitr_image_processors" name="flitr_image_processors">
+<area shape="rect" id="node2" href="dir_273c1ec79d2c4bec68dfda46ca29de28.html" title="average_image" alt="" coords="2513,63,2623,111"/>
+<area shape="rect" id="node3" href="dir_65d78e6f9a90874d08bdf4c5bcd33cfe.html" title="beat_image" alt="" coords="2399,63,2489,111"/>
+<area shape="rect" id="node4" href="dir_6b7c151bcdc48d3cb759630da920f914.html" title="cnvrt_to_8bit" alt="" coords="2278,63,2375,111"/>
+<area shape="rect" id="node5" href="dir_dbfb0cc9c73063265c4516b9598719bb.html" title="cnvrt_to_float" alt="" coords="2152,63,2253,111"/>
+<area shape="rect" id="node6" href="dir_2e1b2d57210aa5a98f7738c6a8903c23.html" title="crop" alt="" coords="2056,63,2128,111"/>
+<area shape="rect" id="node7" href="dir_2caa37317476c61634ca7a5c734438ff.html" title="dewarp" alt="" coords="1960,63,2032,111"/>
+<area shape="rect" id="node8" href="dir_595bdbd19fd26a5e1f295dc8b2b95138.html" title="dpt" alt="" coords="1864,63,1936,111"/>
+<area shape="rect" id="node9" href="dir_1173e3a88716db0906891977d7d0872d.html" title="flip" alt="" coords="1768,63,1840,111"/>
+<area shape="rect" id="node10" href="dir_061862f24bc7616705856f10355951a6.html" title="gaussian_downsample" alt="" coords="1589,63,1744,111"/>
+<area shape="rect" id="node11" href="dir_8211717a13f84d91af47981e638a4207.html" title="gaussian_filter" alt="" coords="1459,63,1565,111"/>
+<area shape="rect" id="node12" href="dir_ea0fa842a62e88409ba2a2ea456afcaa.html" title="gradient_image" alt="" coords="1323,63,1434,111"/>
+<area shape="rect" id="node13" href="dir_a9a8281d49c138f5147515bc86ff727f.html" title="median" alt="" coords="1227,63,1299,111"/>
+<area shape="rect" id="node14" href="dir_4f54f2c15dd10b977668c5757290b21d.html" title="morphological_filter" alt="" coords="1067,63,1202,111"/>
+<area shape="rect" id="node15" href="dir_27e866e7b1e706dceebfe83aae52c738.html" title="motion_detect" alt="" coords="939,63,1043,111"/>
+<area shape="rect" id="node16" href="dir_e064ad40efa4e8e16c08af4e6d1cb64b.html" title="msr" alt="" coords="843,63,915,111"/>
+<area shape="rect" id="node17" href="dir_059ec3c9cb450cf2e81ee2d58965ff02.html" title="photometric_equalise" alt="" coords="673,63,818,111"/>
+<area shape="rect" id="node18" href="dir_1c01155c9607231d7050483a21963fc4.html" title="rotate" alt="" coords="576,63,648,111"/>
+<area shape="rect" id="node19" href="dir_0c1b0ccdce47b891b6c1ccfb87a01777.html" title="simulate" alt="" coords="480,63,552,111"/>
+<area shape="rect" id="node20" href="dir_c4171252c544839f27cc3b4f35f49790.html" title="stabilise" alt="" coords="384,63,456,111"/>
+<area shape="rect" id="node21" href="dir_00094c4eb401cf2c308293776bfaefec.html" title="tonemap" alt="" coords="288,63,360,111"/>
+<area shape="rect" id="node22" href="dir_6740d700eca52214972eb7ff61eeb864.html" title="transform2D" alt="" coords="169,63,263,111"/>
+<area shape="rect" id="node23" href="dir_2cc82c7704460dc05fcb08e3a32faba9.html" title="unsharp_mask" alt="" coords="37,63,144,111"/>
+<area shape="rect" id="clust2" href="dir_bf8feb7af2b35b8b17cd22adbb9dbaf8.html" alt="" coords="27,52,2812,121"/>
+<area shape="rect" id="clust1" href="dir_eeb3e7ac6a6b8306d285567bc5289ff2.html" title="modules" alt="" coords="16,16,2823,132"/>
+</map>

@@ -1,10 +1,11 @@
 <map id="flitr::Image::setMetadata" name="flitr::Image::setMetadata">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_fmpeg_producer.html#a5dcce214520a811994878e2ed32d91a7" title="flitr::FFmpegProducer\l::seek" alt="" coords="245,5,396,47"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_multi_lib_tiff_producer.html#a9883e1ecc59f8a6e6c643248f4095ea5" title="Read current (already open) tiff directory images/pages and write to shared image buffer..." alt="" coords="238,71,403,112"/>
-<area shape="rect" id="node7" href="$classflitr_1_1_raw_video_file_producer.html#a3ae0009adf250aa551d3112238e32198" title="flitr::RawVideoFileProducer\l::seek" alt="" coords="229,136,413,177"/>
-<area shape="rect" id="node9" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="219,202,423,258"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_producer.html#a2dd4099b87c7bc4e3593c54d972139a2" title="flitr::FFmpegProducer\l::trigger" alt="" coords="487,5,638,47"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_multi_lib_tiff_producer.html#a6ffd632f6a4af1f82482247226da525d" title="flitr::MultiLibTiffProducer\l::seek" alt="" coords="480,71,645,112"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_multi_lib_tiff_producer.html#af0c850cb58e9effb4eda7488c42cc4e2" title="flitr::MultiLibTiffProducer\l::trigger" alt="" coords="703,71,868,112"/>
-<area shape="rect" id="node8" href="$classflitr_1_1_raw_video_file_producer.html#a9b0e719d5a4d7a758e91bc18b9d061ee" title="flitr::RawVideoFileProducer\l::trigger" alt="" coords="471,136,655,177"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_fmpeg_producer.html#a5dcce214520a811994878e2ed32d91a7" title="flitr::FFmpegProducer\l::seek" alt="" coords="245,5,393,47"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_flip.html#a29bebaa20ade3be087a3214c2dc8b17b" title="flitr::FIPFlip::trigger" alt="" coords="251,71,386,98"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_multi_lib_tiff_producer.html#a9883e1ecc59f8a6e6c643248f4095ea5" title="Read current (already open) tiff directory images/pages and write to shared image buffer..." alt="" coords="237,123,401,164"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_raw_video_file_producer.html#a3ae0009adf250aa551d3112238e32198" title="flitr::RawVideoFileProducer\l::seek" alt="" coords="228,188,409,229"/>
+<area shape="rect" id="node10" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="217,253,420,309"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_fmpeg_producer.html#a2dd4099b87c7bc4e3593c54d972139a2" title="flitr::FFmpegProducer\l::trigger" alt="" coords="485,5,633,47"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_multi_lib_tiff_producer.html#a6ffd632f6a4af1f82482247226da525d" title="flitr::MultiLibTiffProducer\l::seek" alt="" coords="477,123,641,164"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_multi_lib_tiff_producer.html#af0c850cb58e9effb4eda7488c42cc4e2" title="flitr::MultiLibTiffProducer\l::trigger" alt="" coords="697,123,861,164"/>
+<area shape="rect" id="node9" href="$classflitr_1_1_raw_video_file_producer.html#a9b0e719d5a4d7a758e91bc18b9d061ee" title="flitr::RawVideoFileProducer\l::trigger" alt="" coords="468,188,649,229"/>
 </map>

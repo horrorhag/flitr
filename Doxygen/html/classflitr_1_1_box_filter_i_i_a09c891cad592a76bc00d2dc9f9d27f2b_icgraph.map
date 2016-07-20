@@ -1,5 +1,6 @@
 <map id="flitr::BoxFilterII::setKernelWidth" name="flitr::BoxFilterII::setKernelWidth">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#a5b5151fdd4fb47f3497bed349cb2d04e" title="flitr::FIPAverageImageIIR\l::trigger" alt="" coords="173,5,345,47"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="183,71,336,112"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_m_s_r.html#a1cdcd646613ebc8d3bfff69582143cad" title="flitr::FIPMSR::trigger" alt="" coords="188,137,331,163"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_average_image_i_i_r.html#a5b5151fdd4fb47f3497bed349cb2d04e" title="flitr::FIPAverageImageIIR\l::trigger" alt="" coords="172,5,343,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="181,71,334,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_motion_detect.html#abbff3326c668d4a5099a2305a5012f99" title="flitr::FIPMotionDetect\l::setKernelWidth" alt="" coords="184,136,331,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_m_s_r.html#a1cdcd646613ebc8d3bfff69582143cad" title="flitr::FIPMSR::trigger" alt="" coords="186,202,329,229"/>
 </map>

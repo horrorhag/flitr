@@ -1,0 +1,12 @@
+<map id="flitr::FifoConsumer::FifoConsumer" name="flitr::FifoConsumer::FifoConsumer">
+<area shape="rect" id="node2" href="$classflitr_1_1_fifo_consumer.html#a30515b57a6e28db2dc09f1bf248f28f6" title="flitr::FifoConsumer\l::writeThread" alt="" coords="184,135,315,176"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_fifo_consumer.html#aba5c6416d3830ab68b096b57d292ada1" title="flitr::FifoConsumer\l::clearQueue" alt="" coords="363,73,493,115"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_image_consumer.html#a384a5dbebf79677f73a53688edda4d71" title="flitr::ImageConsumer\l::reserveReadSlot" alt="" coords="565,5,709,47"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_image_consumer.html#a7a84273411d105818dd6f1212cb78724" title="flitr::ImageConsumer\l::releaseReadSlot" alt="" coords="565,136,709,177"/>
+<area shape="rect" id="node7" href="$namespaceflitr.html#ade64a6ebeb22a24d7202a8c9cd8dceb2" title="Actually log. " alt="" coords="369,193,487,219"/>
+<area shape="rect" id="node11" href="$classflitr_1_1_image.html#aeb00d15b5939a2da458677c9797f7c0d" title="Get a pointer to the image data for reading and writing. " alt="" coords="369,243,487,270"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_image_consumer.html#aa8d2103df0dac8755b1a0fdc206932f7" title="flitr::ImageConsumer\l::getNumReadSlotsAvailable" alt="" coords="541,71,732,112"/>
+<area shape="rect" id="node8" href="$namespaceflitr.html#ab607eb6aa8d6055d192b78f2d635c2d8" title="Init the flags. " alt="" coords="567,202,706,229"/>
+<area shape="rect" id="node9" href="$log__message_8cpp.html#a60c5c2565f195f3f6e4aefd629a74d26" title="setInEnvironment" alt="" coords="816,151,940,178"/>
+<area shape="rect" id="node10" href="$namespaceflitr.html#ab8702f45e18dd67adc18d12db04b4853" title="Add flags. " alt="" coords="780,202,976,229"/>
+</map>
