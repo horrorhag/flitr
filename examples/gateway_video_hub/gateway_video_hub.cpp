@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
     videoHub.createVideoFileConsumer("video_output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
     
     videoHub.createImageBufferConsumer("image_output", "imotion");
-    const flitr::VideoHubImageFormat imf=videoHub.getImageFormat("imotion");
-    uint8_t * const imageBuffer=new uint8_t[imf._width * imf._height *  imf._bytesPerPixel];
+    const flitr::VideoHubImageFormat imageBufferFormat=videoHub.getImageFormat("imotion");
+    uint8_t * const imageBuffer=new uint8_t[imageBufferFormat._width * imageBufferFormat._height *  imageBufferFormat._bytesPerPixel];
     videoHub.imageBufferConsumerSetBuffer("image_output", imageBuffer);
     
     //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
@@ -74,6 +74,7 @@ int main(int argc, char *argv[])
     
     while(!viewer.done())
     {
+        //This trigger is ignores for producers that does not require a trigger.
         videoHub.getProducer("input")->trigger();
         
         if (osgc->getNext())
@@ -81,11 +82,21 @@ int main(int argc, char *argv[])
             viewer.frame();
         }
         
+        videoHub.imageBufferConsumerHold("image_output", true);
+        for (int x=0; x<imageBufferFormat._width; ++x)
+        {
+            std::cout << int(imageBuffer[(100*imageBufferFormat._width*3) + x*3 + 0]) << " ";
+        }
+        std::cout.flush();
+        videoHub.imageBufferConsumerHold("image_output", false);
+        
         OpenThreads::Thread::microSleep(1000);
     }
     
     
     videoHub.stopAllThreads();
+    videoHub.cleanup();
+    
     delete [] imageBuffer;
     
     return 0;

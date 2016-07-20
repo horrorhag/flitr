@@ -56,6 +56,7 @@ namespace flitr
         
         bool init();
         void stopAllThreads();
+        void cleanup();
         
         //=== Producers
         /** Create and image producer to play back a video file.
@@ -155,6 +156,8 @@ namespace flitr
         
         //!Vector of consumers.
         std::map<std::string, std::shared_ptr<flitr::ImageConsumer>> _consumerMap;
+        
+        std::vector<std::pair<std::string, std::string>> _processorDependentVec;
     };
     
 }

@@ -18,6 +18,19 @@ flitr::VideoHub::VideoHub()
 //====
 flitr::VideoHub::~VideoHub()
 {
+    stopAllThreads();
+    cleanup();
+}
+
+//====
+bool flitr::VideoHub::init()
+{
+    return true;
+}
+
+//====
+void flitr::VideoHub::stopAllThreads()
+{
     //Stop the trigger threads of all image processors.
     for (auto ipp : _producerMap)
     {
@@ -31,14 +44,16 @@ flitr::VideoHub::~VideoHub()
 }
 
 //====
-bool flitr::VideoHub::init()
+void flitr::VideoHub::cleanup()
 {
-    return true;
-}
+    while (_consumerMap.size())
+    {
+        _consumerMap.erase(_consumerMap.begin());
+    }
 
-//====
-void flitr::VideoHub::stopAllThreads()
-{
+    while (_producerMap.size())
+    {
+    }
 }
 
 //====

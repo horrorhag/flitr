@@ -83,7 +83,7 @@ namespace flitr
         MultiImageBufferConsumerThread *_thread;
         
         //!Mutex used with setBufferHold(...).
-        std::shared_ptr<OpenThreads::Mutex> _accessMutex;
+        OpenThreads::Mutex _buffersHoldMutex;
     };
     
 }

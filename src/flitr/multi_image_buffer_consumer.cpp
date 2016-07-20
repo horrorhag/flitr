@@ -36,26 +36,26 @@ void MultiImageBufferConsumerThread::run()
         
         if (imv.size() > 0)
         {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*_consumer->_accessMutex);
+            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_consumer->_buffersHoldMutex);
             
             if (!_consumer->_buffersHold)
-            {
+            {//Only update buffer if not on hold.
                 for (int imNum=0; imNum<(int)_consumer->_imagesPerSlot; imNum++)
-                {// Calculate the histogram.
+                {
                     Image* im = *(imv[imNum]);
                     
                     if (im->format()->getPixelFormat() == flitr::ImageFormat::FLITR_PIX_FMT_RGB_8)
                     {
                         const uint32_t width=im->format()->getWidth();
                         const uint32_t height=im->format()->getHeight();
-                        const uint32_t componentsPerPixel=im->format()->getComponentsPerPixel();
+                        const uint32_t bytesPerPixel=im->format()->getBytesPerPixel();
                         
                         //!Pointer to flitr image pixel data. Only valid until _consumer->releaseReadSlot() below.
                         unsigned char const * const data=(unsigned char const * const)im->data();
                         
                         if ((imNum < _consumer->_bufferVec.size()) && (_consumer->_bufferVec[imNum]!=nullptr))
                         {
-                            memcpy(_consumer->_bufferVec[imNum], data, width*height*componentsPerPixel);
+                            memcpy(_consumer->_bufferVec[imNum], data, width*height*bytesPerPixel);
                         }
                     }
                 }
@@ -80,8 +80,8 @@ void MultiImageBufferConsumerThread::run()
 MultiImageBufferConsumer::MultiImageBufferConsumer(ImageProducer& producer,
                                                    const uint32_t imagesPerSlot) :
 ImageConsumer(producer),
-_imagesPerSlot(imagesPerSlot),
-_buffersHold(false)
+_buffersHold(false),
+_imagesPerSlot(imagesPerSlot)
 {
     for (uint32_t i=0; i<imagesPerSlot; i++)
     {
@@ -113,13 +113,15 @@ bool MultiImageBufferConsumer::init()
 
 void MultiImageBufferConsumer::setBufferVec(const std::vector<uint8_t *> bufferVec)
 {
+    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_buffersHoldMutex);
+
     _bufferVec=bufferVec;
 }
 
 
 void MultiImageBufferConsumer::setBufferHold(const bool hold)
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*_accessMutex);
+    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_buffersHoldMutex);
     
     _buffersHold=hold;
 }
