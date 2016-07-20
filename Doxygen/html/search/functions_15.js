@@ -5,6 +5,8 @@ var searchData=
   ['valuetstr',['ValueTStr',['../classflitr_1_1_ti_xml_node.html#a2549bf2bdc74e4b0e4058de333ca8cf7',1,'flitr::TiXmlNode']]],
   ['vc_5finit_5fmmap',['vc_init_mmap',['../video__linux__v4l_2video__producer_8cpp.html#a16643beccf8858e18e26f7f2859e7cde',1,'video_producer.cpp']]],
   ['version',['Version',['../classflitr_1_1_ti_xml_declaration.html#a79234a71bc578fcf48b6630d4584211b',1,'flitr::TiXmlDeclaration']]],
+  ['videohub',['VideoHub',['../classflitr_1_1_video_hub.html#a360e8379829538e8169846be2622c6c5',1,'flitr::VideoHub']]],
+  ['videohubimageformat',['VideoHubImageFormat',['../structflitr_1_1_video_hub_image_format.html#a280591b252de195b8a8c00ef26ae7956',1,'flitr::VideoHubImageFormat']]],
   ['videoinputdevicetostring',['VideoInputDeviceToString',['../_d_s_v_l___graph_manager_8cpp.html#a4e270f38500be0174c3bbddf8daebc4c',1,'DSVL_GraphManager.cpp']]],
   ['videoproducer',['VideoProducer',['../classflitr_1_1_video_producer.html#aa05f75169a54949fe0943f4c57c5db2d',1,'flitr::VideoProducer::VideoProducer(flitr::ImageFormat::PixelFormat pixelFormat=flitr::ImageFormat::FLITR_PIX_FMT_Y_8, unsigned int imageSlots=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS, const std::string &amp;deviceName=&quot;&quot;, int frameWidth=1280, int frameHeight=720)'],['../classflitr_1_1_video_producer.html#a8ef46fcb7e7c30820c2a0e80b20793b7',1,'flitr::VideoProducer::VideoProducer(const std::string &amp;config, flitr::ImageFormat::PixelFormat pixelFormat=flitr::ImageFormat::FLITR_PIX_FMT_Y_8, unsigned int imageSlots=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS)']]],
   ['videoproducerthread',['VideoProducerThread',['../classflitr_1_1_video_producer_1_1_video_producer_thread.html#a25b7b427ecde0326b36fd6fce7b059a1',1,'flitr::VideoProducer::VideoProducerThread']]],

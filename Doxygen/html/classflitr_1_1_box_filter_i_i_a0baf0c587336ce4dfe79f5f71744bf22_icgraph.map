@@ -1,3 +1,4 @@
 <map id="flitr::BoxFilterII::filterRGB" name="flitr::BoxFilterII::filterRGB">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="160,5,313,47"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="161,5,315,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_motion_detect.html#a0b73f8d531376a2880e14bb12cbc54d7" title="flitr::FIPMotionDetect\l::trigger" alt="" coords="165,71,311,112"/>
 </map>

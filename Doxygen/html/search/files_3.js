@@ -1,12 +1,9 @@
 var searchData=
 [
   ['de_5fmotion_5fblur_2ecpp',['de_motion_blur.cpp',['../de__motion__blur_8cpp.html',1,'']]],
-  ['de_5fmotion_5fblur_2ed',['de_motion_blur.d',['../de__motion__blur_8d.html',1,'']]],
   ['de_5fmotion_5fblur_2eh',['de_motion_blur.h',['../de__motion__blur_8h.html',1,'']]],
   ['de_5fmotion_5fblur_5fexample_2ecpp',['de_motion_blur_example.cpp',['../de__motion__blur__example_8cpp.html',1,'']]],
-  ['de_5fmotion_5fblur_5fexample_2ed',['de_motion_blur_example.d',['../de__motion__blur__example_8d.html',1,'']]],
   ['dpt_2ecpp',['dpt.cpp',['../dpt_8cpp.html',1,'']]],
-  ['dpt_2ed',['dpt.d',['../dpt_8d.html',1,'']]],
   ['dsvl_2ecpp',['DSVL.cpp',['../_d_s_v_l_8cpp.html',1,'']]],
   ['dsvl_2eh',['DSVL.h',['../_d_s_v_l_8h.html',1,'']]],
   ['dsvl_5fdefines_2eh',['DSVL_Defines.h',['../_d_s_v_l___defines_8h.html',1,'']]],

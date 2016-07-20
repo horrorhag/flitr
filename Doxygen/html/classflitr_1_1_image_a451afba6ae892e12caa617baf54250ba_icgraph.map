@@ -1,4 +1,5 @@
 <map id="flitr::Image::format" name="flitr::Image::format">
-<area shape="rect" id="node2" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html#acccdac29b5ca600265e885dcf22a2699" title="flitr::MultiCPUHistogram\lConsumerThread::run" alt="" coords="203,5,367,47"/>
-<area shape="rect" id="node3" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="183,71,387,127"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_multi_c_p_u_histogram_consumer_thread.html#acccdac29b5ca600265e885dcf22a2699" title="flitr::MultiCPUHistogram\lConsumerThread::run" alt="" coords="201,5,367,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_multi_web_r_t_c_consumer_thread.html#a17f9510c1b8e279e58e6a6a4fbbb5e8c" title="flitr::MultiWebRTCConsumer\lThread::run" alt="" coords="189,71,379,112"/>
+<area shape="rect" id="node4" href="$structflitr_1_1_texture_capture_producer_1_1_texture_capture_draw_callback.html#a2d91effe8069e501df546bdbe3508d9b" title="flitr::TextureCaptureProducer\l::TextureCaptureDrawCallback\l::operator()" alt="" coords="183,135,385,191"/>
 </map>

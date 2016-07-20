@@ -6,7 +6,7 @@ var searchData=
   ['oldestimageinwindow_5f',['oldestImageInWindow_',['../class_c_p_u_a_v_r_g_i_m_g___shader.html#a1041fff3d4e04b14d9c0719f36463e34',1,'CPUAVRGIMG_Shader']]],
   ['oldx_5f',['oldX_',['../classflitr_1_1_f_i_p_camera_shake.html#a3f7814520773cb9adf4269620efa9ded',1,'flitr::FIPCameraShake']]],
   ['oldy_5f',['oldY_',['../classflitr_1_1_f_i_p_camera_shake.html#acdce840924705ccc9769d6df40f61e49',1,'flitr::FIPCameraShake']]],
-  ['osg_5fimage_5f',['osg_image_',['../classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#a3f821b6b9ee4d7b0241a46b346f5ea29',1,'flitr::ScreenCaptureProducer::ScreenCaptureCallback']]],
+  ['osg_5fimage_5f',['osg_image_',['../classflitr_1_1_multi_screen_capture_producer_1_1_screen_capture_callback.html#a74e66471228ca703cc2b79db73de34ae',1,'flitr::MultiScreenCaptureProducer::ScreenCaptureCallback::osg_image_()'],['../classflitr_1_1_screen_capture_producer_1_1_screen_capture_callback.html#a3f821b6b9ee4d7b0241a46b346f5ea29',1,'flitr::ScreenCaptureProducer::ScreenCaptureCallback::osg_image_()']]],
   ['osgc_5f',['osgc_',['../class_key_pressed_handler.html#a0bcd2310445801816b37fd8dc46100a6',1,'KeyPressedHandler']]],
   ['osgimages_5f',['OSGImages_',['../classflitr_1_1_t_multi_o_s_g_consumer.html#a539a2245a5719c4bcab3bb116829b205',1,'flitr::TMultiOSGConsumer']]],
   ['out_5fpix_5ffmt_5f',['out_pix_fmt_',['../classflitr_1_1_s_multi_f_fmpeg_producer.html#a4756a6f0dde57e5b3a5638a416ad7741',1,'flitr::SMultiFFmpegProducer::out_pix_fmt_()'],['../classflitr_1_1_s_multi_raw_video_file_producer.html#a9b557d82e73a76c99e3023eb992441ae',1,'flitr::SMultiRawVideoFileProducer::out_pix_fmt_()']]],

@@ -1,7 +1,5 @@
 var annotated =
 [
-    [ "anonymous_namespace{cpu_find_discreet_objects_pass.cpp}", "namespaceanonymous__namespace_02cpu__find__discreet__objects__pass_8cpp_03.html", null ],
-    [ "anonymous_namespace{video_producer.cpp}", "namespaceanonymous__namespace_02video__producer_8cpp_03.html", null ],
     [ "flitr", "namespaceflitr.html", "namespaceflitr" ],
     [ "_DS_MEDIA_FORMAT", "struct___d_s___m_e_d_i_a___f_o_r_m_a_t.html", "struct___d_s___m_e_d_i_a___f_o_r_m_a_t" ],
     [ "BackgroundTriggerThread", "class_background_trigger_thread.html", "class_background_trigger_thread" ],

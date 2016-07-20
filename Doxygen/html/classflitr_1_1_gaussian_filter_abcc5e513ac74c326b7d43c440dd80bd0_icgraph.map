@@ -1,6 +1,7 @@
 <map id="flitr::GaussianFilter::filter" name="flitr::GaussianFilter::filter">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="187,5,340,47"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_l_k_dewarp.html#ab1190b4a2e8beac0aa07a39f1152b611" title="flitr::FIPLKDewarp\l::trigger" alt="" coords="198,71,329,112"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_l_k_dewarp_ex.html#a9c39bc902c641865f6840b808c0b3bd8" title="flitr::FIPLKDewarpEx\l::trigger" alt="" coords="191,136,336,177"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_unsharp_mask.html#aba076ee2fb184b92d5fcf32d4fbb2a32" title="flitr::FIPUnsharpMask\l::trigger" alt="" coords="188,201,339,243"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#adc1694a8d46c05ab5c48bccc49f50271" title="flitr::FIPGaussianFilter\l::trigger" alt="" coords="185,5,339,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_l_k_dewarp.html#ab1190b4a2e8beac0aa07a39f1152b611" title="flitr::FIPLKDewarp\l::trigger" alt="" coords="197,71,327,112"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_l_k_dewarp_ex.html#a9c39bc902c641865f6840b808c0b3bd8" title="flitr::FIPLKDewarpEx\l::trigger" alt="" coords="189,136,335,177"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_motion_detect.html#a0b73f8d531376a2880e14bb12cbc54d7" title="flitr::FIPMotionDetect\l::trigger" alt="" coords="189,201,335,243"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_unsharp_mask.html#aba076ee2fb184b92d5fcf32d4fbb2a32" title="flitr::FIPUnsharpMask\l::trigger" alt="" coords="187,267,337,308"/>
 </map>

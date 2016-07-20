@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_simple_shader_pass.html" title="SimpleShaderPass" alt="" coords="5,5,139,32"/>
+<area shape="rect" id="node1" href="$class_post_render_callback.html" title="PostRenderCallback" alt="" coords="5,46,148,73"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_image_stabiliser_bi_l_k_1_1_post_bi_pyramid_rebuilt_callback.html" title="flitr::ImageStabiliserBi\lLK::PostBiPyramidRebuiltCallback" alt="" coords="196,5,421,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_image_stabiliser_multi_l_k_1_1_post_n_pyramid_rebuilt_callback.html" title="flitr::ImageStabiliserMulti\lLK::PostNPyramidRebuiltCallback" alt="" coords="197,71,420,112"/>
 </map>

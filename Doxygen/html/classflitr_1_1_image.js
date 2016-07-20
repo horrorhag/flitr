@@ -8,7 +8,7 @@ var classflitr_1_1_image =
     [ "deepCopy", "classflitr_1_1_image.html#a47c59c3ac2d56a49daa821b1e7c34a9f", null ],
     [ "format", "classflitr_1_1_image.html#a451afba6ae892e12caa617baf54250ba", null ],
     [ "format", "classflitr_1_1_image.html#abc0555d284c89073f2de45f891ac0ed4", null ],
-    [ "metadata", "classflitr_1_1_image.html#ae1b1c892ff1e244effe9083905fe6715", null ],
+    [ "metadata", "classflitr_1_1_image.html#ae469eb2ebcf354349f1859ff38dc62be", null ],
     [ "operator=", "classflitr_1_1_image.html#ab1ad048539b188fe63c1fa6e3df4649d", null ],
     [ "outOfMem", "classflitr_1_1_image.html#a8180f49979648efeec9cf79aab1ebe06", null ],
     [ "setMetadata", "classflitr_1_1_image.html#a03ee2b506064a1f1f3424f435e05c7b5", null ],

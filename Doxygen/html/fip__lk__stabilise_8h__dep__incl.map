@@ -1,5 +1,6 @@
 <map id="fip_lk_stabilise.h" name="fip_lk_stabilise.h">
-<area shape="rect" id="node2" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="5,80,171,107"/>
-<area shape="rect" id="node3" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="195,80,354,107"/>
-<area shape="rect" id="node4" href="$fip__lk__stabilise_8cpp.html" title="fip_lk_stabilise.cpp" alt="" coords="379,80,512,107"/>
+<area shape="rect" id="node2" href="$flitr__video__hub_8cpp.html" title="flitr_video_hub.cpp" alt="" coords="5,80,136,107"/>
+<area shape="rect" id="node3" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="160,80,323,107"/>
+<area shape="rect" id="node4" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="347,80,503,107"/>
+<area shape="rect" id="node5" href="$fip__lk__stabilise_8cpp.html" title="fip_lk_stabilise.cpp" alt="" coords="528,80,661,107"/>
 </map>

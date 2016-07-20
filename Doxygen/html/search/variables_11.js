@@ -13,6 +13,7 @@ var searchData=
   ['rectangles',['rectangles',['../namespaceanonymous__namespace_02cpu__find__discreet__objects__pass_8cpp_03.html#a3d01b0e9733929803c3347227fa5cb53',1,'anonymous_namespace{cpu_find_discreet_objects_pass.cpp}']]],
   ['refimgvec_5f',['refImgVec_',['../classflitr_1_1_f_i_p_l_k_dewarp.html#a1e802e046ec5397efbcac6dd9f941ba0',1,'flitr::FIPLKDewarp::refImgVec_()'],['../classflitr_1_1_f_i_p_l_k_dewarp_ex.html#acd49662221d8443216da845c715ccb87',1,'flitr::FIPLKDewarpEx::refImgVec_()'],['../classflitr_1_1_f_i_p_l_k_stabilise.html#a5fa3238becdaff3e00d08425ad8c7e70',1,'flitr::FIPLKStabilise::refImgVec_()']]],
   ['rendererfilter',['rendererFilter',['../class_d_s_v_l___graph_manager.html#ad1ce11167107c6092ebe834e7ff9c6de',1,'DSVL_GraphManager']]],
+  ['req_5fbits_5f',['req_bits_',['../classflitr_1_1_multi_screen_capture_producer.html#acbe7afb08dd1e1b1a5852eb4591f9d7f',1,'flitr::MultiScreenCaptureProducer']]],
   ['resize_5fhandler_5f',['resize_handler_',['../classflitr_1_1_h_u_d.html#a6d623ce879c562558e20e2280381578f',1,'flitr::HUD']]],
   ['right',['right',['../structflitr_1_1_c_p_u_find_discreet_objects_pass_1_1_rect.html#a6c96e6faff6408d01e5b27c8af48e760',1,'flitr::CPUFindDiscreetObjectsPass::Rect']]],
   ['rootelement_5f',['RootElement_',['../classflitr_1_1_x_m_l_config.html#a259d66c9e620fc3f998eed2cde3d1af7',1,'flitr::XMLConfig']]],

@@ -1,6 +1,7 @@
 <map id="fip_cnvrt_to_rgb_8.h" name="fip_cnvrt_to_rgb_8.h">
-<area shape="rect" id="node2" href="$gaussian__filter__example_8cpp.html" title="gaussian_filter_example.cpp" alt="" coords="5,87,196,114"/>
-<area shape="rect" id="node3" href="$morphological__filter__example_8cpp.html" title="morphological_filter\l_example.cpp" alt="" coords="220,80,357,121"/>
-<area shape="rect" id="node4" href="$main_8cpp.html" title="main.cpp" alt="" coords="381,87,457,114"/>
-<area shape="rect" id="node5" href="$fip__cnvrt__to__rgb__8_8cpp.html" title="fip_cnvrt_to_rgb_8.cpp" alt="" coords="482,87,639,114"/>
+<area shape="rect" id="node2" href="$flitr__video__hub_8cpp.html" title="flitr_video_hub.cpp" alt="" coords="5,87,136,114"/>
+<area shape="rect" id="node3" href="$gaussian__filter__example_8cpp.html" title="gaussian_filter_example.cpp" alt="" coords="160,87,347,114"/>
+<area shape="rect" id="node4" href="$morphological__filter__example_8cpp.html" title="morphological_filter\l_example.cpp" alt="" coords="371,80,506,121"/>
+<area shape="rect" id="node5" href="$main_8cpp.html" title="main.cpp" alt="" coords="531,87,605,114"/>
+<area shape="rect" id="node6" href="$fip__cnvrt__to__rgb__8_8cpp.html" title="fip_cnvrt_to_rgb_8.cpp" alt="" coords="629,87,784,114"/>
 </map>

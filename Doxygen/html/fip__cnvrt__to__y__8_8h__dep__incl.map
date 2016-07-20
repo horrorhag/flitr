@@ -1,10 +1,11 @@
 <map id="fip_cnvrt_to_y_8.h" name="fip_cnvrt_to_y_8.h">
-<area shape="rect" id="node2" href="$average__image__example_8cpp.html" title="average_image_example.cpp" alt="" coords="5,87,203,114"/>
-<area shape="rect" id="node3" href="$beat__image__example_8cpp.html" title="beat_image_example.cpp" alt="" coords="227,87,402,114"/>
-<area shape="rect" id="node4" href="$gaussian__filter__example_8cpp.html" title="gaussian_filter_example.cpp" alt="" coords="426,87,617,114"/>
-<area shape="rect" id="node5" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="641,87,807,114"/>
-<area shape="rect" id="node6" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="831,87,990,114"/>
-<area shape="rect" id="node7" href="$morphological__filter__example_8cpp.html" title="morphological_filter\l_example.cpp" alt="" coords="1014,80,1151,121"/>
-<area shape="rect" id="node8" href="$main_8cpp.html" title="main.cpp" alt="" coords="1175,87,1251,114"/>
-<area shape="rect" id="node9" href="$fip__cnvrt__to__y__8_8cpp.html" title="fip_cnvrt_to_y_8.cpp" alt="" coords="1275,87,1421,114"/>
+<area shape="rect" id="node2" href="$average__image__example_8cpp.html" title="average_image_example.cpp" alt="" coords="5,87,196,114"/>
+<area shape="rect" id="node3" href="$beat__image__example_8cpp.html" title="beat_image_example.cpp" alt="" coords="221,87,391,114"/>
+<area shape="rect" id="node4" href="$flitr__video__hub_8cpp.html" title="flitr_video_hub.cpp" alt="" coords="415,87,546,114"/>
+<area shape="rect" id="node5" href="$gaussian__filter__example_8cpp.html" title="gaussian_filter_example.cpp" alt="" coords="570,87,757,114"/>
+<area shape="rect" id="node6" href="$lk__dewarp__example_8cpp.html" title="lk_dewarp_example.cpp" alt="" coords="781,87,943,114"/>
+<area shape="rect" id="node7" href="$cpu_2lucas__kanade__test_8cpp.html" title="lucas_kanade_test.cpp" alt="" coords="968,87,1124,114"/>
+<area shape="rect" id="node8" href="$morphological__filter__example_8cpp.html" title="morphological_filter\l_example.cpp" alt="" coords="1148,80,1283,121"/>
+<area shape="rect" id="node9" href="$main_8cpp.html" title="main.cpp" alt="" coords="1307,87,1382,114"/>
+<area shape="rect" id="node10" href="$fip__cnvrt__to__y__8_8cpp.html" title="fip_cnvrt_to_y_8.cpp" alt="" coords="1405,87,1548,114"/>
 </map>

@@ -19,6 +19,7 @@ var searchData=
   ['_7edsvl_5fvideosource',['~DSVL_VideoSource',['../class_d_s_v_l___video_source.html#aae54f93886f7e7e1b954a3f203119f5c',1,'DSVL_VideoSource']]],
   ['_7effmpegreader',['~FFmpegReader',['../classflitr_1_1_f_fmpeg_reader.html#a54913c14f571e55ecff0e64543346a0c',1,'flitr::FFmpegReader']]],
   ['_7effmpegwriter',['~FFmpegWriter',['../classflitr_1_1_f_fmpeg_writer.html#a1ced1693723b252d09e8aeafdb1d3f3b',1,'flitr::FFmpegWriter']]],
+  ['_7efifoconsumer',['~FifoConsumer',['../classflitr_1_1_fifo_consumer.html#ab8469e95af7079a1570911e2994398b1',1,'flitr::FifoConsumer']]],
   ['_7efipaverageimage',['~FIPAverageImage',['../classflitr_1_1_f_i_p_average_image.html#a4fa15db1b0eee36edb57e9a035d32222',1,'flitr::FIPAverageImage']]],
   ['_7efipaverageimageiir',['~FIPAverageImageIIR',['../classflitr_1_1_f_i_p_average_image_i_i_r.html#a19d690bcc87873ec47dec6e2d0488986',1,'flitr::FIPAverageImageIIR']]],
   ['_7efipbeatimage',['~FIPBeatImage',['../classflitr_1_1_f_i_p_beat_image.html#ad980400f89b703027d9c220de7e00e51',1,'flitr::FIPBeatImage']]],
@@ -40,6 +41,7 @@ var searchData=
   ['_7efiplocalphotometricequalise',['~FIPLocalPhotometricEqualise',['../classflitr_1_1_f_i_p_local_photometric_equalise.html#ae0f9393b4e1d1e020bfdc751e4ecf5bc',1,'flitr::FIPLocalPhotometricEqualise']]],
   ['_7efipmedian',['~FIPMedian',['../classflitr_1_1_f_i_p_median.html#a44eab221ee391975aae5e9c08f11634b',1,'flitr::FIPMedian']]],
   ['_7efipmorphologicalfilter',['~FIPMorphologicalFilter',['../classflitr_1_1_f_i_p_morphological_filter.html#a44a928ea46339dc677b1bb1e1a0fa9a0',1,'flitr::FIPMorphologicalFilter']]],
+  ['_7efipmotiondetect',['~FIPMotionDetect',['../classflitr_1_1_f_i_p_motion_detect.html#a5bd796d6510e02d4056e59a862ab4854',1,'flitr::FIPMotionDetect']]],
   ['_7efipmsr',['~FIPMSR',['../classflitr_1_1_f_i_p_m_s_r.html#aded2c659ddf18b087ba2ae70aef983a9',1,'flitr::FIPMSR']]],
   ['_7efipphotometricequalise',['~FIPPhotometricEqualise',['../classflitr_1_1_f_i_p_photometric_equalise.html#aae225b090f8107eab950c07e79b6361e',1,'flitr::FIPPhotometricEqualise']]],
   ['_7efiprotate',['~FIPRotate',['../classflitr_1_1_f_i_p_rotate.html#a5c492612a316ddff379f5a89537c94ac',1,'flitr::FIPRotate']]],
@@ -89,6 +91,7 @@ var searchData=
   ['_7emultilibtiffproducer',['~MultiLibTiffProducer',['../classflitr_1_1_multi_lib_tiff_producer.html#ad1282af37064838b4a2a472b991ddb48',1,'flitr::MultiLibTiffProducer']]],
   ['_7emultirawvideofileconsumer',['~MultiRawVideoFileConsumer',['../classflitr_1_1_multi_raw_video_file_consumer.html#a92a214a38749608efd93d83fba7fa69d',1,'flitr::MultiRawVideoFileConsumer']]],
   ['_7emultitexturedquad',['~MultiTexturedQuad',['../classflitr_1_1_multi_textured_quad.html#a1ea99d0ec96752a55244e586c848200a',1,'flitr::MultiTexturedQuad']]],
+  ['_7emultiwebrtcconsumer',['~MultiWebRTCConsumer',['../classflitr_1_1_multi_web_r_t_c_consumer.html#ab065257919c493269aac1022f9991452',1,'flitr::MultiWebRTCConsumer']]],
   ['_7eorthotexturemanipulator',['~OrthoTextureManipulator',['../classflitr_1_1_ortho_texture_manipulator.html#a1b2d6423c063a89f9d4bc51ec36274b4',1,'flitr::OrthoTextureManipulator']]],
   ['_7eparameters',['~Parameters',['../classflitr_1_1_parameters.html#a912fd86e81c97ca58928969fc9de32d5',1,'flitr::Parameters']]],
   ['_7epickhandler',['~PickHandler',['../class_pick_handler.html#adfd5132548824783394ed72ba81ace45',1,'PickHandler::~PickHandler()'],['../class_pick_handler.html#adfd5132548824783394ed72ba81ace45',1,'PickHandler::~PickHandler()'],['../class_pick_handler.html#a30c5da9195c06eadd5a3697d9a798b46',1,'PickHandler::~PickHandler()']]],
@@ -115,6 +118,7 @@ var searchData=
   ['_7etixmlvisitor',['~TiXmlVisitor',['../classflitr_1_1_ti_xml_visitor.html#ab2abfd0988024feb26f53db12851641f',1,'flitr::TiXmlVisitor']]],
   ['_7etmultiosgconsumer',['~TMultiOSGConsumer',['../classflitr_1_1_t_multi_o_s_g_consumer.html#af161f41dfeb86757faddafb0631cc983',1,'flitr::TMultiOSGConsumer']]],
   ['_7etriangleoverlay',['~TriangleOverlay',['../classflitr_1_1_triangle_overlay.html#a3e6699b35789a34f2610aa7aab924bb1',1,'flitr::TriangleOverlay']]],
+  ['_7evideohub',['~VideoHub',['../classflitr_1_1_video_hub.html#a9618130b2cbb8da6319674aaf9566688',1,'flitr::VideoHub']]],
   ['_7evideoproducer',['~VideoProducer',['../classflitr_1_1_video_producer.html#a9de9d5800bf876f69889629c605ef63a',1,'flitr::VideoProducer']]],
   ['_7exmlconfig',['~XMLConfig',['../classflitr_1_1_x_m_l_config.html#a7cda6154d42fc6d6986b8e71312b10c8',1,'flitr::XMLConfig']]]
 ];

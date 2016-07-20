@@ -13,6 +13,5 @@ var searchData=
   ['buffercb',['BufferCB',['../class_d_s_v_l___graph_manager.html#a258a6b476f60f3281321e63dda6a88d7',1,'DSVL_GraphManager::BufferCB()'],['../_d_s_v_l___defines_8h.html#a2a8635c1379a2cd558a3a72e8507ec69',1,'BufferCB():&#160;DSVL_Defines.h']]],
   ['buildgraphfromxmlfile',['BuildGraphFromXMLFile',['../class_d_s_v_l___video_source.html#a3ada413cd7dd64c719835ac3676f4651',1,'DSVL_VideoSource::BuildGraphFromXMLFile()'],['../class_d_s_v_l___graph_manager.html#acc425fc1272bceee0532c6f7faa47bbe',1,'DSVL_GraphManager::BuildGraphFromXMLFile()']]],
   ['buildgraphfromxmlhandle',['BuildGraphFromXMLHandle',['../class_d_s_v_l___graph_manager.html#a884f4ad131c9acff191799cdc97e03fb',1,'DSVL_GraphManager']]],
-  ['buildgraphfromxmlstring',['BuildGraphFromXMLString',['../class_d_s_v_l___video_source.html#af15df6b4485430034422b00b3fd878a3',1,'DSVL_VideoSource::BuildGraphFromXMLString()'],['../class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9',1,'DSVL_GraphManager::BuildGraphFromXMLString()']]],
-  ['burnoutputtransform',['burnOutputTransform',['../classflitr_1_1_f_i_p_l_k_stabilise.html#ae8d3627b35888b9ec6c3cc8dd933579e',1,'flitr::FIPLKStabilise']]]
+  ['buildgraphfromxmlstring',['BuildGraphFromXMLString',['../class_d_s_v_l___video_source.html#af15df6b4485430034422b00b3fd878a3',1,'DSVL_VideoSource::BuildGraphFromXMLString()'],['../class_d_s_v_l___graph_manager.html#a2de777bed8ef6737611042f30ec7e4f9',1,'DSVL_GraphManager::BuildGraphFromXMLString()']]]
 ];

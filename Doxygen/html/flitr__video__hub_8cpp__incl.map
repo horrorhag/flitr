@@ -1,0 +1,27 @@
+<map id="flitr_video_hub.cpp" name="flitr_video_hub.cpp">
+<area shape="rect" id="node2" href="$flitr__video__hub_8h.html" title="flitr_video_hub.h" alt="" coords="410,206,527,233"/>
+<area shape="rect" id="node15" href="$ffmpeg__producer_8h.html" title="flitr/ffmpeg_producer.h" alt="" coords="727,206,879,233"/>
+<area shape="rect" id="node29" href="$multi__ffmpeg__consumer_8h.html" title="flitr/multi_ffmpeg\l_consumer.h" alt="" coords="1558,199,1677,240"/>
+<area shape="rect" id="node36" href="$fifo__consumer_8h.html" title="flitr/fifo_consumer.h" alt="" coords="1981,206,2118,233"/>
+<area shape="rect" id="node42" href="$fip__cnvrt__to__y__f32_8h.html" title="flitr/modules/flitr\l_image_processors/cnvrt\l_to_float/fip_cnvrt_to\l_y_f32.h" alt="" coords="795,80,963,151"/>
+<area shape="rect" id="node45" href="$fip__lk__stabilise_8h.html" title="flitr/modules/flitr\l_image_processors/stabilise\l/fip_lk_stabilise.h" alt="" coords="1406,87,1592,143"/>
+<area shape="rect" id="node46" href="$fip__motion__detect_8h.html" title="flitr/modules/flitr\l_image_processors/motion\l_detect/fip_motion_detect.h" alt="" coords="1685,87,1868,143"/>
+<area shape="rect" id="node49" href="$fip__cnvrt__to__y__8_8h.html" title="flitr/modules/flitr\l_image_processors/cnvrt\l_to_8bit/fip_cnvrt_to_y_8.h" alt="" coords="987,87,1166,143"/>
+<area shape="rect" id="node50" href="$fip__cnvrt__to__rgb__8_8h.html" title="flitr/modules/flitr\l_image_processors/cnvrt\l_to_8bit/fip_cnvrt_to_rgb_8.h" alt="" coords="1190,87,1381,143"/>
+<area shape="rect" id="node3" href="$image__format_8h.html" title="flitr/image_format.h" alt="" coords="642,527,777,553"/>
+<area shape="rect" id="node6" href="$image__producer_8h.html" title="flitr/image_producer.h" alt="" coords="1006,288,1152,315"/>
+<area shape="rect" id="node4" href="$flitr__stdint_8h.html" title="flitr/flitr_stdint.h" alt="" coords="496,601,608,628"/>
+<area shape="rect" id="node5" href="$flitr__export_8h.html" title="flitr/flitr_export.h" alt="" coords="642,601,758,628"/>
+<area shape="rect" id="node7" href="$image_8h.html" title="flitr/image.h" alt="" coords="747,452,838,479"/>
+<area shape="rect" id="node10" href="$shared__image__buffer_8h.html" title="flitr/shared_image\l_buffer.h" alt="" coords="1555,363,1680,404"/>
+<area shape="rect" id="node8" href="$log__message_8h.html" title="flitr/log_message.h" alt="" coords="486,527,618,553"/>
+<area shape="rect" id="node16" href="$ffmpeg__reader_8h.html" title="flitr/ffmpeg_reader.h" alt="" coords="891,370,1030,397"/>
+<area shape="rect" id="node26" href="$metadata__reader_8h.html" title="flitr/metadata_reader.h" alt="" coords="427,370,579,397"/>
+<area shape="rect" id="node17" href="$stats__collector_8h.html" title="flitr/stats_collector.h" alt="" coords="100,452,240,479"/>
+<area shape="rect" id="node30" href="$ffmpeg__utils_8h.html" title="flitr/ffmpeg_utils.h" alt="" coords="1669,452,1796,479"/>
+<area shape="rect" id="node31" href="$image__consumer_8h.html" title="flitr/image_consumer.h" alt="" coords="1540,288,1695,315"/>
+<area shape="rect" id="node32" href="$ffmpeg__writer_8h.html" title="flitr/ffmpeg_writer.h" alt="" coords="1332,370,1466,397"/>
+<area shape="rect" id="node34" href="$metadata__writer_8h.html" title="flitr/metadata_writer.h" alt="" coords="604,370,752,397"/>
+<area shape="rect" id="node43" href="$image__processor_8h.html" title="flitr/image_processor.h" alt="" coords="1174,206,1328,233"/>
+<area shape="rect" id="node47" href="$image__processor__utils_8h.html" title="flitr/image_processor\l_utils.h" alt="" coords="1722,199,1865,240"/>
+</map>

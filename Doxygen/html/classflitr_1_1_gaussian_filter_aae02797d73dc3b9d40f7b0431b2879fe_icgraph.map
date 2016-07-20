@@ -1,7 +1,9 @@
 <map id="flitr::GaussianFilter::updateKernel1D" name="flitr::GaussianFilter::updateKernel1D">
-<area shape="rect" id="node2" href="$classflitr_1_1_gaussian_filter.html#a2f51ba8348d114c1ae0fe4a60f74e965" title="flitr::GaussianFilter\l::GaussianFilter" alt="" coords="187,5,320,47"/>
-<area shape="rect" id="node3" href="$classflitr_1_1_gaussian_filter.html#ae3a1b82f8eb21b3d45ab7a97a86c2901" title="flitr::GaussianFilter\l::setFilterRadius" alt="" coords="187,71,320,112"/>
-<area shape="rect" id="node5" href="$classflitr_1_1_gaussian_filter.html#a5c35cf4582a2d512ae06147f9ab344a7" title="flitr::GaussianFilter\l::setKernelWidth" alt="" coords="187,136,320,177"/>
-<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_gaussian_filter.html#a62045db309d24e949b4cbac653f572ee" title="flitr::FIPGaussianFilter\l::setFilterRadius" alt="" coords="368,71,521,112"/>
-<area shape="rect" id="node6" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="368,136,521,177"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_gaussian_filter.html#a2f51ba8348d114c1ae0fe4a60f74e965" title="flitr::GaussianFilter\l::GaussianFilter" alt="" coords="185,5,317,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_gaussian_filter.html#ae3a1b82f8eb21b3d45ab7a97a86c2901" title="flitr::GaussianFilter\l::setFilterRadius" alt="" coords="185,71,317,112"/>
+<area shape="rect" id="node6" href="$classflitr_1_1_gaussian_filter.html#a5c35cf4582a2d512ae06147f9ab344a7" title="flitr::GaussianFilter\l::setKernelWidth" alt="" coords="185,136,317,177"/>
+<area shape="rect" id="node4" href="$classflitr_1_1_f_i_p_gaussian_filter.html#a62045db309d24e949b4cbac653f572ee" title="flitr::FIPGaussianFilter\l::setFilterRadius" alt="" coords="365,5,519,47"/>
+<area shape="rect" id="node5" href="$classflitr_1_1_f_i_p_motion_detect.html#a29ccc9e9d1d68baaee7dbf418cc61a2c" title="flitr::FIPMotionDetect\l::setFilterRadius" alt="" coords="369,71,515,112"/>
+<area shape="rect" id="node7" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="365,136,519,177"/>
+<area shape="rect" id="node8" href="$classflitr_1_1_f_i_p_motion_detect.html#abbff3326c668d4a5099a2305a5012f99" title="flitr::FIPMotionDetect\l::setKernelWidth" alt="" coords="369,201,515,243"/>
 </map>

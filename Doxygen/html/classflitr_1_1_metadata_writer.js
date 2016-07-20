@@ -1,5 +1,6 @@
 var classflitr_1_1_metadata_writer =
 [
+    [ "MetadataWriter", "classflitr_1_1_metadata_writer.html#aecec61eca32960913cf2c9345d197ced", null ],
     [ "MetadataWriter", "classflitr_1_1_metadata_writer.html#a2e09417dc908c814ae2a9190768f2ca9", null ],
     [ "~MetadataWriter", "classflitr_1_1_metadata_writer.html#acce4287ee3be097f76fcdb8dcdf532a7", null ],
     [ "closeFile", "classflitr_1_1_metadata_writer.html#a7623ea5400270cf40dd555734b6c4ada", null ],

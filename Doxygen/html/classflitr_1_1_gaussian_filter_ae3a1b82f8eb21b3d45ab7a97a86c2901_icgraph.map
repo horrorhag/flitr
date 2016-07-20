@@ -1,3 +1,4 @@
 <map id="flitr::GaussianFilter::setFilterRadius" name="flitr::GaussianFilter::setFilterRadius">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#a62045db309d24e949b4cbac653f572ee" title="flitr::FIPGaussianFilter\l::setFilterRadius" alt="" coords="187,5,340,47"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#a62045db309d24e949b4cbac653f572ee" title="flitr::FIPGaussianFilter\l::setFilterRadius" alt="" coords="185,5,339,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_motion_detect.html#a29ccc9e9d1d68baaee7dbf418cc61a2c" title="flitr::FIPMotionDetect\l::setFilterRadius" alt="" coords="189,71,335,112"/>
 </map>

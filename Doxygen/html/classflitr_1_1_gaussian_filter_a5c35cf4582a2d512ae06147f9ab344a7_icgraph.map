@@ -1,3 +1,4 @@
 <map id="flitr::GaussianFilter::setKernelWidth" name="flitr::GaussianFilter::setKernelWidth">
-<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="187,5,340,47"/>
+<area shape="rect" id="node2" href="$classflitr_1_1_f_i_p_gaussian_filter.html#abef4c8dc49d674042fb775ee66942330" title="flitr::FIPGaussianFilter\l::setKernelWidth" alt="" coords="185,5,339,47"/>
+<area shape="rect" id="node3" href="$classflitr_1_1_f_i_p_motion_detect.html#abbff3326c668d4a5099a2305a5012f99" title="flitr::FIPMotionDetect\l::setKernelWidth" alt="" coords="189,71,335,112"/>
 </map>

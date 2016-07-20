@@ -1,7 +1,7 @@
 var searchData=
 [
+  ['quad_5fgeom_5f',['quad_geom_',['../classflitr_1_1_g_l_s_l_crop_pass.html#ab931f957ceed00a6e721b874d1d20c12',1,'flitr::GLSLCropPass']]],
   ['quad_5foverlay_2ecpp',['quad_overlay.cpp',['../quad__overlay_8cpp.html',1,'']]],
-  ['quad_5foverlay_2ed',['quad_overlay.d',['../quad__overlay_8d.html',1,'']]],
   ['quad_5foverlay_2eh',['quad_overlay.h',['../quad__overlay_8h.html',1,'']]],
   ['quadcoords_5f',['QuadCoords_',['../classflitr_1_1_homography_shader_pass.html#ab85c63bb2b34d8f35295a526646f2512',1,'flitr::HomographyShaderPass']]],
   ['quadoverlay',['QuadOverlay',['../classflitr_1_1_quad_overlay.html',1,'flitr']]],
