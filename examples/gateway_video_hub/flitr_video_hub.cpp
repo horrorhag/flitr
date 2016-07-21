@@ -16,6 +16,7 @@
 #include <flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
+#include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 
 //====
 flitr::VideoHub::VideoHub()
@@ -57,7 +58,6 @@ void flitr::VideoHub::cleanup()
         _consumerMap.erase(_consumerMap.begin());
     }
 
-    
     while (_processorOrder.size())
     {
         const std::string &processorName=_processorOrder.back();
@@ -143,7 +143,6 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
             return false;
         }
         
-        cnvrtToRGBF32->startTriggerThread();
         
         //==
         std::shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToRGBF32, 1, FIPLKStabilise::Mode::INTSTAB, 2));
@@ -153,7 +152,6 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
             return false;
         }
         lkstabilise->setupOutputTransformBurn(outputFilter, outputFilter); //High pass filter output transform.
-        lkstabilise->startTriggerThread();
         
         
         //==
@@ -163,8 +161,12 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
             std::cerr << "Could not initialise the cnvrtToY8 processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
-        cnvrtToRGB8->startTriggerThread();
         
+        
+        cnvrtToRGBF32->startTriggerThread();
+        lkstabilise->startTriggerThread();
+        cnvrtToRGB8->startTriggerThread();
+
         
         //Add new map entries and store the image producers.
         _producerMap[name+std::string("_cnvrtToF32")]=cnvrtToRGBF32;
@@ -196,6 +198,7 @@ bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const s
             std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
+        
         motionDetect->startTriggerThread();
         
         //Add new map entry and store the image producer.
@@ -253,12 +256,26 @@ bool flitr::VideoHub::createRTSPConsumer(const std::string &name, const std::str
 
 //====
 bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::string &producerName,
+                                           const int cropWidth, const int cropHeight,
                                            const std::string &fifoName)
 {
     const auto it=_producerMap.find(producerName);
     
     if (it!=_producerMap.end())
     {
+        flitr::VideoHubImageFormat imf=getImageFormat(producerName);
+        
+        std::shared_ptr<flitr::FIPCrop> crop(new flitr::FIPCrop(*(it->second), 1,
+                                                                (imf._width-cropWidth)>>1,
+                                                                (imf._height-cropHeight)>>1,
+                                                                cropWidth, cropHeight, 2));
+        
+        if (!crop->init())
+        {
+            std::cerr << "Could not initialise WebRTC Crop" << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+
         std::shared_ptr<flitr::FifoConsumer> fifo(new flitr::FifoConsumer(*(it->second), fifoName));
         
         if (!fifo->init())
@@ -267,6 +284,13 @@ bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::s
             return false;
         }
         
+        crop->startTriggerThread();
+        
+        //Add new map entries and store the image producers.
+        _producerMap[name+std::string("_crop")]=crop;
+        
+        _processorOrder.push_back(name+std::string("_crop"));
+
         //Add new map entry and store the image consumer.
         _consumerMap[name]=fifo;
         

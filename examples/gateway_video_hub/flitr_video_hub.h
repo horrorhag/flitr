@@ -120,6 +120,7 @@ namespace flitr
          \param fifoName WebRTC fifo file buffer.
          */
         bool createWebRTCConsumer(const std::string &name, const std::string &producerName,
+                                  const int cropWidth, const int cropHeight,
                                   const std::string &fifoName);
         
         /** Create an image consumer that copies the raw data to a user allocated 'buffer'.
@@ -148,7 +149,7 @@ namespace flitr
         std::shared_ptr<flitr::ImageProducer> getProducer(const std::string &producerName);
         
         //!Get the image format of the first image in the slot of a specific producer.
-        VideoHubImageFormat getImageFormat(const std::string &producer) const;
+        VideoHubImageFormat getImageFormat(const std::string &producerName) const;
         
     private:
         //!Vector of producers and processors that consumers may attach to.
