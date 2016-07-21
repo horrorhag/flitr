@@ -6,7 +6,7 @@
 #include <flitr/multi_image_buffer_consumer.h>
 
 #ifdef __linux
-#include <flitr/v4l_producer.h>
+#include <flitr/v4l2_producer.h>
 #endif //__linux
 
 
@@ -111,7 +111,7 @@ bool flitr::VideoHub::createRTSPProducer(const std::string &name, const std::str
 bool flitr::VideoHub::createV4LProducer(const std::string &name, const std::string &device)
 {
 #ifdef __linux
-    std::shared_ptr<flitr::V4LProducer> ip(new flitr::V4LProducer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, device));
+    std::shared_ptr<flitr::V4L2Producer> ip(new flitr::V4L2Producer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, device, 2));
     
     if (!ip->init())
     {

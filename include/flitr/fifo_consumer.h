@@ -1,10 +1,10 @@
 #ifndef FIFO_CONSUMER_H
 #define FIFO_CONSUMER_H
 
-#include <thread>
-
 #include <flitr/image_producer.h>
 #include <flitr/image_consumer.h>
+
+#include <thread>
 
 #include <unistd.h>
 #include <signal.h>
