@@ -26,7 +26,7 @@ extern "C" {
 #include <asm/types.h>
 #include <linux/videodev2.h>
 
-#include "default_metadata.h"
+//#include "default_metadata.h"
 
 #include <flitr/ffmpeg_utils.h>
 #include <flitr/image_format.h>
@@ -34,6 +34,7 @@ extern "C" {
 #include <flitr/log_message.h>
 #include <flitr/high_resolution_time.h>
 
+#include <thread>
 
 namespace flitr {
 
@@ -56,6 +57,8 @@ class V4L2Producer : public flitr::ImageProducer {
     
   private:
     void read_thread();
+
+    std::thread readThread_;
 
     int xioctl(int fd, int request, void * arg);
     bool open_device();

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 {
     flitr::VideoHub videoHub;
     
-    //videoHub.createV4LProducer("input", "/dev/video0");
+    //videoHub.createV4LProducer("input", "/dev/video1");
     //videoHub.createRTSPProducer("input", "rtsp://192.168.0.90:554/axis-media/media.amp");//PC set to 192.168.0.100
     //videoHub.createRTSPProducer("input", "rtsp://mpv.cdn3.bigCDN.com:554/bigCDN/mp4:bigbuckbunnyiphone_400.mp4");
     //videoHub.createVideoFileProducer("input", "/Users/bduvenhage/Desktop/nikon_compressed.mp4");
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     videoHub.createImageStabProcess("istab", "input", 0.9925);
     //videoHub.createMotionDetectProcess("imotion", "istab", true, true);
     
-    videoHub.createVideoFileConsumer("video_output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
+    videoHub.createVideoFileConsumer("video_output", "istab", "output.avi", 20);
     //videoHub.createVideoFileConsumer("video_output", "imotion", "/Users/bduvenhage/Desktop/output.avi", 20);
     
     videoHub.createImageBufferConsumer("image_output", "istab");

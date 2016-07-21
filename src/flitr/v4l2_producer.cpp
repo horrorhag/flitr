@@ -25,6 +25,7 @@ flitr::V4L2Producer::V4L2Producer(ImageFormat::PixelFormat out_pix_fmt,
 flitr::V4L2Producer::~V4L2Producer()
 {
     ShouldExit_=true;
+    readThread_.join();
 }
 
 bool flitr::V4L2Producer::init()
@@ -65,8 +66,9 @@ bool flitr::V4L2Producer::init()
     {
         return false;
     }
-    // start thread
-    boost::thread rthread(boost::bind(&V4L2Producer::read_thread, this));
+
+    std::thread t(&V4L2Producer::read_thread, this);
+    readThread_.swap(t);
 
     return true;
 }
@@ -184,7 +186,8 @@ bool flitr::V4L2Producer::init_device()
             return false;
         }
     }
-    
+
+    /*
     v4l2_std_id pal_std = V4L2_STD_PAL;
     if(-1 == xioctl(DeviceFD_, VIDIOC_S_STD, &pal_std))
     {
@@ -194,6 +197,7 @@ bool flitr::V4L2Producer::init_device()
         close(DeviceFD_);
         return false;
     }
+*/
 
     //initlaize memory map.
     if (!vc_init_mmap()) {
@@ -358,6 +362,7 @@ bool flitr::V4L2Producer::get_frame(void)
               InputV42LFrame_->data, InputV42LFrame_->linesize, 0, DeviceHeight_,
               FinalFrame_->data, FinalFrame_->linesize);
 
+    /*
     // timestamp
     if (CreateMetadataFunction_) {
         out_image.setMetadata(CreateMetadataFunction_());
@@ -366,6 +371,7 @@ bool flitr::V4L2Producer::get_frame(void)
         meta->PCTimeStamp_ = currentTimeNanoSec();
         out_image.setMetadata(meta);
     }
+*/
 
     // Notify that new data has been written to buffer.
     releaseWriteSlot();
