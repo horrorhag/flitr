@@ -137,7 +137,7 @@ namespace flitr
          \sa getImageFormat
          \sa createImageBufferConsumer
          */
-        bool imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer);
+        bool imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer, uint64_t *bufferNumber);
         
         /** Method to hold the buffer updates for read access.
          \param consumerName The name of the image buffer consumer.

@@ -56,6 +56,7 @@ void MultiImageBufferConsumerThread::run()
                         if ((imNum < _consumer->_bufferVec.size()) && (_consumer->_bufferVec[imNum]!=nullptr))
                         {
                             memcpy(_consumer->_bufferVec[imNum], data, width*height*bytesPerPixel);
+                            *(_consumer->_bufferSeqNumberVec[imNum])+=1;
                         }
                     }
                 }
@@ -111,11 +112,12 @@ bool MultiImageBufferConsumer::init()
 }
 
 
-void MultiImageBufferConsumer::setBufferVec(const std::vector<uint8_t *> bufferVec)
+void MultiImageBufferConsumer::setBufferVec(const std::vector<uint8_t *> bufferVec, const std::vector<uint64_t *> bufferSeqNumberVec)
 {
     OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_buffersHoldMutex);
 
     _bufferVec=bufferVec;
+    _bufferSeqNumberVec=bufferSeqNumberVec;
 }
 
 

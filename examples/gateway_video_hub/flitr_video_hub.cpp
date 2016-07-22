@@ -334,7 +334,7 @@ bool flitr::VideoHub::createImageBufferConsumer(const std::string &name, const s
 }
 
 //====
-bool flitr::VideoHub::imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer)
+bool flitr::VideoHub::imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer, uint64_t *bufferSeqNumber)
 {
     const auto it=_consumerMap.find(consumerName);
     
@@ -347,7 +347,10 @@ bool flitr::VideoHub::imageBufferConsumerSetBuffer(const std::string &consumerNa
             std::vector<uint8_t *> bufferVec;
             bufferVec.push_back(buffer);
             
-            mibc->setBufferVec(bufferVec);
+            std::vector<uint64_t *> bufferSeqNumberVec;
+            bufferSeqNumberVec.push_back(bufferSeqNumber);
+            
+            mibc->setBufferVec(bufferVec, bufferSeqNumberVec);
             
             return true;
         }
