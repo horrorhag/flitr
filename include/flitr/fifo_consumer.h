@@ -65,7 +65,7 @@ namespace flitr
                 //printf("waiting for readers\n");
                 fd = open(fifo_name_.c_str(), O_WRONLY | O_NONBLOCK);
                 if (fd == -1) {
-                    usleep(100000);
+                    usleep(1000);
                     clearQueue();
                     continue;
                 }

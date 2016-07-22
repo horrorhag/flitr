@@ -185,14 +185,17 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
 
 //====
 bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const std::string &producerName,
-                                                const bool showOverlays, const bool produceOnlyMotionImages)
+                                                const bool showOverlays, const bool produceOnlyMotionImages,
+                                                const int motionThreshold)
 {
     const auto it=_producerMap.find(producerName);
     
     if (it!=_producerMap.end())
     {
         //==
-        std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*(it->second), 1, 2));
+        std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*(it->second), 1,
+                                                                          showOverlays, produceOnlyMotionImages, motionThreshold,
+                                                                          2));
         if (!motionDetect->init())
         {
             std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
@@ -231,8 +234,15 @@ bool flitr::VideoHub::createVideoFileConsumer(const std::string &name, const std
         //Add new map entry and store the image consumer.
         _consumerMap[name]=mffc;
         
+        OpenThreads::Thread::microSleep(300000);
+        
         mffc->openFiles(fileName, frameRate);
+
+        OpenThreads::Thread::microSleep(300000);
+        
         mffc->startWriting();
+        
+        OpenThreads::Thread::microSleep(300000);
         
         return true;
     }

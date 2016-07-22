@@ -91,9 +91,11 @@ namespace flitr
          \param producerName The name of the producer to attach to.
          \oaram showOverlays If true the areas of motion are indicated by a bounding box.
          \oaram produceOnlyMotionImages If true then images are only produced when there is motion.
+         \param motionThreshold Threshold above which motion is registered.
          */
         bool createMotionDetectProcess(const std::string &name, const std::string &producerName,
-                                       const bool showOverlays, const bool produceOnlyMotionImages);
+                                       const bool showOverlays, const bool produceOnlyMotionImages,
+                                       const int motionThreshold);
         
         
         //=== Consumers
