@@ -185,8 +185,7 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
 
 //====
 bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const std::string &producerName,
-                                                const bool showOverlays, const bool produceOnlyMotionImages,
-                                                const int motionThreshold)
+                                                const bool showOverlays, const bool produceOnlyMotionImages, const int motionThreshold)
 {
     const auto it=_producerMap.find(producerName);
     

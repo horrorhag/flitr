@@ -105,6 +105,8 @@ bool FIPMotionDetect::trigger()
     {
         std::vector<Image**> imvRead=reserveReadSlot();
         
+        //The write slot will be reserved later.
+        
         const int intImgApprox=2;
         
         //Start stats measurement event.
@@ -157,7 +159,7 @@ bool FIPMotionDetect::trigger()
                 const bool frameMotion=(M / (width*height/10)) > (motionThreshold_);
                 
                 if ((!produceOnlyMotionImages_) || frameMotion)
-                {
+                {//Add motion blob overlay.
                     std::vector<Image**> imvWrite=reserveWriteSlot();
                     Image * const imWriteDS = *(imvWrite[imgNum]);
                     uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
@@ -180,7 +182,7 @@ bool FIPMotionDetect::trigger()
                             }
                         }
                     } else
-                    {
+                    {//Don't add motion overlay. Just copy the data from the input.
                         memcpy(dataWriteDS, dataReadUS, width*height*3);
                     }
                     

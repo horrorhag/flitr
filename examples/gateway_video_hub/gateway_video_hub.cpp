@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 #endif
 
     videoHub.createImageStabProcess("istab", "input", 0.9925);
-    videoHub.createMotionDetectProcess("imotion", "istab", false, true, 5);
+    videoHub.createMotionDetectProcess("imotion", "istab", true, true, 5);
 
     //videoHub.createVideoFileConsumer("video_output", "istab", "output.avi", 20);
     videoHub.createVideoFileConsumer("video_output", "imotion", "output.avi", 20);
