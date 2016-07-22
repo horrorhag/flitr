@@ -156,7 +156,7 @@ bool FIPMotionDetect::trigger()
                     }
                 }
                 
-                const bool frameMotion=(M / (width*height/10)) > (motionThreshold_);
+                const bool frameMotion=(M / (width*height/30)) > (motionThreshold_);
                 
                 if ((!produceOnlyMotionImages_) || frameMotion)
                 {//Add motion blob overlay.
