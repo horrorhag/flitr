@@ -26,10 +26,6 @@ namespace webrtc {
 class VideoCaptureModule;
 }  // namespace webrtc
 
-namespace cricket {
-class VideoRenderer;
-}  // namespace cricket
-
 class Conductor
   : public webrtc::PeerConnectionObserver,
     public webrtc::CreateSessionDescriptionObserver,
@@ -99,7 +95,7 @@ class Conductor
   virtual void OnServerConnectionFailure();
 
   //
-  // MainWndCallback implementation.
+  // MainConsoleCallback implementation.
   //
 
   virtual void StartLogin(const std::string& server, int port);

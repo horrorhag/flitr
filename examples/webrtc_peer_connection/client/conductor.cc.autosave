@@ -57,9 +57,9 @@ Conductor::Conductor(PeerConnectionClient* client, MainConsole* main_console)
   : peer_id_(-1),
     loopback_(false),
     client_(client),
-    main_console_(main_wnd) {
+    main_console_(main_console) {
   client_->RegisterObserver(this);
-  main_wnd->RegisterObserver(this);
+  main_console->RegisterObserver(this);
 }
 
 Conductor::~Conductor() {
