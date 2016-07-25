@@ -124,20 +124,6 @@ endif()
 ENDIF(FLITR_USE_OPENMP)
 
 
-OPTION(FLITR_USE_WEBRTC "Include and use WebRTC." OFF)
-IF(FLITR_USE_WEBRTC)
-  #Note: Assuming for the moment that libWebRTC, if present, is installed amongst the default system includes and libs.
-  ADD_DEFINITIONS(-DUSE_WEBRTC)
-# === find WebRTC ===
-#find_package(WebRTC)
-#if (WEBRTC_FOUND)
-#    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WebRTC_C_FLAGS}")
-#    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WebRTC_CXX_FLAGS}")
-#    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${WebRTC_EXE_LINKER_FLAGS}")
-#    ADD_DEFINITIONS(-DUSE_WEBRTC)
-#endif()
-# ===================
-ENDIF(FLITR_USE_WEBRTC)
 
 
 #default include and lib directories.
@@ -416,6 +402,10 @@ if(WIN32)
 endif(WIN32)
 if(UNIX)
     IF(NOT APPLE)
+        SET(LIB_SOURCES ${LIB_SOURCES}
+            src/flitr/v4l2_producer.cpp
+            include/flitr/v4l2_producer.h
+        )
         ADD_SUBDIRECTORY(src/flitr/video_linux_v4l)
     ENDIF()
 endif(UNIX)
@@ -476,9 +466,7 @@ IF(FLITR_USE_LIBTIFF)
 ENDIF()
 
 
-IF(FLITR_USE_WEBRTC)
-    ADD_SUBDIRECTORY(examples/gateway_video_hub)
-ENDIF(FLITR_USE_WEBRTC)
+ADD_SUBDIRECTORY(examples/gateway_video_hub)
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)

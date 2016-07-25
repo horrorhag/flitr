@@ -18,31 +18,40 @@ int main(int argc, char *argv[])
 {
     flitr::VideoHub videoHub;
     
-    //videoHub.createV4LProducer("input", "/dev/video0");
+    //videoHub.createV4LProducer("input", "/dev/video1");
+    //videoHub.createRTSPProducer("input", "rtsp://freja.hiof.no:1935/rtplive/_definst_/hessdalen03.stream");
     //videoHub.createRTSPProducer("input", "rtsp://192.168.0.90:554/axis-media/media.amp");//PC set to 192.168.0.100
     videoHub.createVideoFileProducer("input", "/home/gateway/Downloads/Full_Moon_Atmos_Turb.mp4");
     
+#ifdef __linux
+    //videoHub.createV4LProducer("input4vl", "/dev/video0");
+#endif
+
     videoHub.createImageStabProcess("istab", "input", 0.9925);
-    //videoHub.createMotionDetectProcess("imotion", "istab", true, true);
+    //videoHub.createMotionDetectProcess("imotion", "istab", true, true, 5);
+
+    videoHub.createVideoFileConsumer("video_output", "istab", "output.avi", 20);
+    //videoHub.createVideoFileConsumer("video_output", "imotion", "output.avi", 20);
     
-    //videoHub.createVideoFileConsumer("video_output", "istab", "/Users/bduvenhage/Desktop/output.avi", 20);
-    videoHub.createVideoFileConsumer("video_output", "imotion", "/home/gateway/Downloads/output.avi", 20);
-    
-    videoHub.createImageBufferConsumer("image_output", "imotion");
-    const flitr::VideoHubImageFormat imf=videoHub.getImageFormat("imotion");
-    uint8_t * const imageBuffer=new uint8_t[imf._width * imf._height *  imf._bytesPerPixel];
-    videoHub.imageBufferConsumerSetBuffer("image_output", imageBuffer);
+    videoHub.createImageBufferConsumer("image_output", "istab");
+    //videoHub.createImageBufferConsumer("image_output", "imotion");
+    const flitr::VideoHubImageFormat imageBufferFormat=videoHub.getImageFormat("input");
+    uint8_t * const imageBuffer=new uint8_t[imageBufferFormat._width * imageBufferFormat._height *  imageBufferFormat._bytesPerPixel];
+    uint64_t imageBufferSeqNumber=0;
+    videoHub.imageBufferConsumerSetBuffer("image_output", imageBuffer, &imageBufferSeqNumber);
     
     //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
-    videoHub.createWebRTCConsumer("webrtc_output", "istab", "/tmp/webrtc_fifo");
+    videoHub.createWebRTCConsumer("webrtc_output", "istab", 640, 480, "/tmp/webrtc_fifo");
     
+
     
     
     //=============================//
     //=== OSG and Viewer things ===//
     //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("input")), 1, 1));
-    //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("istab")), 1, 1));
     std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("istab")), 1, 1));
+    //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("imotion")), 1, 1));
+
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
@@ -75,6 +84,7 @@ int main(int argc, char *argv[])
     
     while(!viewer.done())
     {
+        //This trigger is ignores for producers that does not require a trigger.
         videoHub.getProducer("input")->trigger();
         
         if (osgc->getNext())
@@ -82,11 +92,24 @@ int main(int argc, char *argv[])
             viewer.frame();
         }
         
+        videoHub.imageBufferConsumerHold("image_output", true);
+        //for (int x=0; x<imageBufferFormat._width; ++x)
+        //{
+        //    std::cout << int(imageBuffer[(100*imageBufferFormat._width*3) + x*3 + 0]) << " ";
+        //}
+        std::cout << imageBufferSeqNumber << "\n";
+        std::cout.flush();
+        videoHub.imageBufferConsumerHold("image_output", false);
+        
         OpenThreads::Thread::microSleep(1000);
     }
     
+    osgc.reset();
     
     videoHub.stopAllThreads();
+
+    videoHub.cleanup();
+
     //delete [] imageBuffer;
     
     return 0;

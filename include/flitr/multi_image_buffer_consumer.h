@@ -60,7 +60,7 @@ namespace flitr
         bool init();
         
         //!Set the buffers to user defined memory location.
-        void setBufferVec(const std::vector<uint8_t *> bufferVec);
+        void setBufferVec(const std::vector<uint8_t *> bufferVec, const std::vector<uint64_t *> bufferSeqNumberVec);
         
         //!Set buffer hold.
         void setBufferHold(const bool hold);
@@ -73,6 +73,9 @@ namespace flitr
         //!Vector of user defined buffer locations.
         std::vector<uint8_t *> _bufferVec;
         
+        //!Vector of user defined buffer seq numbers.
+        std::vector<uint64_t *> _bufferSeqNumberVec;
+        
         //!Indicates if buffers are on hold i.e. not being updated!
         bool _buffersHold;
         
@@ -83,7 +86,7 @@ namespace flitr
         MultiImageBufferConsumerThread *_thread;
         
         //!Mutex used with setBufferHold(...).
-        std::shared_ptr<OpenThreads::Mutex> _accessMutex;
+        OpenThreads::Mutex _buffersHoldMutex;
     };
     
 }

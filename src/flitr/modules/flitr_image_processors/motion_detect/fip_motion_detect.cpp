@@ -24,16 +24,17 @@
 using namespace flitr;
 using std::shared_ptr;
 
-FIPMotionDetect::FIPMotionDetect(ImageProducer& upStreamProducer, uint32_t images_per_slot, uint32_t buffer_size) :
+FIPMotionDetect::FIPMotionDetect(ImageProducer& upStreamProducer, uint32_t images_per_slot,
+                                 const bool showOverlays, const bool produceOnlyMotionImages, const int motionThreshold,
+                                 uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-intImgApprox_(2),
+upStreamFrameCount_(0),
 scratchData_(nullptr),
 intImageScratchData_(nullptr),
-gaussianFilter_(10.0, 40),
-boxFilter_(20),
-Title_(std::string("Gaussian Filter")),
-FilterRadius_(10),
-KernelWidth_(20)
+boxFilter_(30),
+showOverlays_(showOverlays),
+produceOnlyMotionImages_(produceOnlyMotionImages),
+motionThreshold_(motionThreshold)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -47,17 +48,6 @@ FIPMotionDetect::~FIPMotionDetect()
 {
     delete [] scratchData_;
     delete [] intImageScratchData_;
-}
-
-void FIPMotionDetect::setFilterRadius(const float filterRadius)
-{
-    gaussianFilter_.setFilterRadius(filterRadius);
-}
-
-void FIPMotionDetect::setKernelWidth(const int kernelWidth)
-{
-    gaussianFilter_.setKernelWidth(kernelWidth);
-    boxFilter_.setKernelWidth(kernelWidth);
 }
 
 bool FIPMotionDetect::init()
@@ -99,6 +89,13 @@ bool FIPMotionDetect::init()
     intImageScratchData_=new double[maxScratchDataValues];
     memset(intImageScratchData_, 0, maxScratchDataValues*sizeof(double));
     
+    
+    currentFrame_=new uint8_t[maxScratchDataSize];
+    memset(currentFrame_, 0, maxScratchDataSize);
+    
+    previousFrame_=new uint8_t[maxScratchDataSize];
+    memset(previousFrame_, 0, maxScratchDataSize);
+    
     return rValue;
 }
 
@@ -108,114 +105,95 @@ bool FIPMotionDetect::trigger()
     {
         std::vector<Image**> imvRead=reserveReadSlot();
         
-        std::vector<Image**> imvWrite=reserveWriteSlot();
+        //The write slot will be reserved later.
+        
+        const int intImgApprox=2;
         
         //Start stats measurement event.
         ProcessorStats_->tick();
         
-        for (size_t imgNum=0; imgNum<ImagesPerSlot_; ++imgNum)
+        ++upStreamFrameCount_;
+        
+        
+        size_t imgNum=0;
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
-            Image * const imWriteDS = *(imvWrite[imgNum]);
             const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
-            const size_t width=imFormat.getWidth();
-            const size_t height=imFormat.getHeight();
+            const int width=imFormat.getWidth();
+            const int height=imFormat.getHeight();
+            //const int components=width * imFormat.getComponentsPerPixel();
             
             
-            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
             {
-                float const * const dataReadUS=(float const * const)imReadUS->data();
-                float * const dataWriteDS=(float * const)imWriteDS->data();
+                uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
                 
-                if (intImgApprox_==0)
+                memcpy(previousFrame_, currentFrame_, width*height*3);
+                
+                boxFilter_.filterRGB(currentFrame_, dataReadUS, width, height,
+                                     intImageScratchData_, true);
+                
+                for (int i=1; i<intImgApprox; ++i)
                 {
-                    gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
-                } else
-                {
-                    boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
-                                      intImageScratchData_, true);
+                    memcpy(scratchData_, currentFrame_, width*height*sizeof(uint8_t)*3);
                     
-                    for (short i=1; i<intImgApprox_; ++i)
+                    boxFilter_.filterRGB(currentFrame_, scratchData_, width, height,
+                                         intImageScratchData_, true);
+                }
+                
+                
+                int64_t M=0;
+                
+                for (int y=0; y<height; ++y)
+                {
+                    const int lineOffset=y*width*3;
+                    
+                    for (int x=0; x<width; ++x)
                     {
-                        memcpy(scratchData_, dataWriteDS, width*height*sizeof(float));
+                        const int offset=lineOffset + x*3;
                         
-                        boxFilter_.filter(dataWriteDS, (float *)scratchData_, width, height,
-                                          intImageScratchData_, true);
+                        M+=std::abs(currentFrame_[offset+1] - previousFrame_[offset+1]);
                     }
                 }
-            } else
-                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
-                {
-                    uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                
+                const bool frameMotion=(M / (width*height/30)) > (motionThreshold_);
+                
+                if ((!produceOnlyMotionImages_) || frameMotion)
+                {//Add motion blob overlay.
+                    std::vector<Image**> imvWrite=reserveWriteSlot();
+                    Image * const imWriteDS = *(imvWrite[imgNum]);
                     uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
                     
-                    if (intImgApprox_==0)
+                    if ((frameMotion) && (showOverlays_))
                     {
-                        gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, (uint8_t *)scratchData_);
-                    } else
-                    {
-                        boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
-                                          intImageScratchData_, true);
-                        
-                        for (short i=1; i<intImgApprox_; ++i)
+                        for (int y=0; y<height; ++y)
                         {
-                            memcpy(scratchData_, dataWriteDS, width*height*sizeof(uint8_t));
+                            const int lineOffset=y*width*3;
                             
-                            boxFilter_.filter(dataWriteDS, (uint8_t *)scratchData_, width, height,
-                                              intImageScratchData_, true);
-                        }
-                    }
-                } else
-                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
-                {
-                    float const * const dataReadUS=(float const * const)imReadUS->data();
-                    float * const dataWriteDS=(float * const)imWriteDS->data();
-                    
-                    if (intImgApprox_==0)
-                    {
-                        gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
-                    } else
-                    {
-                        boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
-                                          intImageScratchData_, true);
-                        
-                        for (short i=1; i<intImgApprox_; ++i)
-                        {
-                            memcpy(scratchData_, dataWriteDS, width*height*sizeof(float)*3);
-                            
-                            boxFilter_.filterRGB(dataWriteDS, (float *)scratchData_, width, height,
-                                                 intImageScratchData_, true);
-                        }
-                    }
-                } else
-                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
-                    {
-                        uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
-                        uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
-                        
-                        if (intImgApprox_==0)
-                        {
-                            gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, scratchData_);
-                        } else
-                        {
-                            boxFilter_.filterRGB(dataWriteDS, dataReadUS, width, height,
-                                                 intImageScratchData_, true);
-                            
-                            for (short i=1; i<intImgApprox_; ++i)
+                            for (int x=0; x<width; ++x)
                             {
-                                memcpy(scratchData_, dataWriteDS, width*height*sizeof(uint8_t)*3);
+                                const int offset=lineOffset + x*3;
                                 
-                                boxFilter_.filterRGB(dataWriteDS, scratchData_, width, height,
-                                                     intImageScratchData_, true);
+                                const int mv=std::abs(currentFrame_[offset+1] - previousFrame_[offset+1]);
+                                
+                                dataWriteDS[offset + 0] = dataReadUS[offset + 0];
+                                dataWriteDS[offset + 1] = mv > motionThreshold_ ? (128+(dataReadUS[offset + 1]>>1)) : dataReadUS[offset + 1];
+                                dataWriteDS[offset + 2] = dataReadUS[offset + 2];
                             }
                         }
+                    } else
+                    {//Don't add motion overlay. Just copy the data from the input.
+                        memcpy(dataWriteDS, dataReadUS, width*height*3);
                     }
+                    
+                    releaseWriteSlot();
+                }
+            }
         }
         
         //Stop stats measurement event.
         ProcessorStats_->tock();
         
-        releaseWriteSlot();
         releaseReadSlot();
         
         return true;

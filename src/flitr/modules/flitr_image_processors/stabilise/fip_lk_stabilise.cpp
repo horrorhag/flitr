@@ -146,6 +146,7 @@ bool FIPLKStabilise::trigger()
             const ImageFormat imFormat=getUpstreamFormat(imgNum);
             const ptrdiff_t uncroppedWidth=imFormat.getWidth();
             const ptrdiff_t uncroppedHeight=imFormat.getHeight();
+            const size_t bytesPerPixel=imFormat.getBytesPerPixel();
             
             //=== Image will be cropped so that at least all levels of the pyramid is divisible by 2 ===
             const ptrdiff_t croppedWidth=(uncroppedWidth>>(numLevels_-1))<<(numLevels_-1);
@@ -170,13 +171,30 @@ bool FIPLKStabilise::trigger()
                 }
                 
                 //=== Crop copy input data to level 0 of scale space ===//
-                for (size_t y=startCroppedY; y<=endCroppedY; ++y)
+                if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
                 {
-                    const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
-                    const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
-                    memcpy(imgData+croppedLineOffset, dataRead+uncroppedLineOffset, croppedWidth*sizeof(float));
-                }
+                    for (size_t y=startCroppedY; y<=endCroppedY; ++y)
+                    {
+                        const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
+                        const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
+                        memcpy(imgData+croppedLineOffset, dataRead+uncroppedLineOffset, croppedWidth*sizeof(float));
+                    }
+                } else
+                    if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                    {
+                        for (size_t y=startCroppedY; y<=endCroppedY; ++y)
+                        {
+                            const ptrdiff_t uncroppedLineOffset=(y*uncroppedWidth + startCroppedX)*3;
+                            const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
+                            
+                            for (int x=0; x<croppedWidth; ++x)
+                            {
+                                imgData[croppedLineOffset+x]=dataRead[uncroppedLineOffset + x*3 + 1];//Use the green channel to stabilise!
+                            }
+                        }
+                    }
             }//=== ===
+            
             
             {//=== Calculate scale space pyramid. ===
                 for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
@@ -412,9 +430,8 @@ bool FIPLKStabilise::trigger()
             
             
             //=== Results ===
+            memset(dataWrite, 0, uncroppedWidth*uncroppedHeight*bytesPerPixel);//Clear the output buffer.
             
-            memset(dataWrite, 0, uncroppedWidth*uncroppedHeight*sizeof(float));//Clear the output buffer.
-
             if (outputMode_==Mode::CROP_FILTER_SUBPIXELSTAB)
             {
                 float const * const imgDataGF=imgVec_[0];
@@ -428,22 +445,25 @@ bool FIPLKStabilise::trigger()
                 const float frac_hx=hx - floor_hx;
                 const float frac_hy=hy - floor_hy;
                 
-                for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
+                if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
                 {
-                    const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
-                    const ptrdiff_t croppedY=uncroppedY-startCroppedY;
-                    const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
-                    
-                    for (ptrdiff_t croppedX=0; croppedX<croppedWidth; ++croppedX)
+                    for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
                     {
-                        const ptrdiff_t croppedOffset=croppedLineOffset + croppedX;
-                        const ptrdiff_t unCroppedOffset=uncroppedLineOffset + croppedX;
+                        const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
+                        const ptrdiff_t croppedY=uncroppedY-startCroppedY;
+                        const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
                         
-                        if ( ((croppedX+int_hx)>((ptrdiff_t)1)) && ((croppedY+int_hy)>((ptrdiff_t)1)) && ((croppedX+int_hx)<(croppedWidth-1)) && ((croppedY+int_hy)<(croppedHeight-1)) )
+                        for (ptrdiff_t croppedX=0; croppedX<croppedWidth; ++croppedX)
                         {
-                            const ptrdiff_t offsetLT=croppedOffset + int_hx + int_hy * croppedWidth;
+                            const ptrdiff_t croppedOffset=croppedLineOffset + croppedX;
+                            const ptrdiff_t unCroppedOffset=uncroppedLineOffset + croppedX;
                             
-                            dataWrite[unCroppedOffset]=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                            if ( ((croppedX+int_hx)>((ptrdiff_t)1)) && ((croppedY+int_hy)>((ptrdiff_t)1)) && ((croppedX+int_hx)<(croppedWidth-1)) && ((croppedY+int_hy)<(croppedHeight-1)) )
+                            {
+                                const ptrdiff_t offsetLT=croppedOffset + int_hx + int_hy * croppedWidth;
+                                
+                                dataWrite[unCroppedOffset]=bilinear(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                            }
                         }
                     }
                 }
@@ -459,29 +479,8 @@ bool FIPLKStabilise::trigger()
                     const float frac_hx=hx - floor_hx;
                     const float frac_hy=hy - floor_hy;
                     
-                    for (ptrdiff_t uncroppedY=0; uncroppedY<uncroppedHeight; ++uncroppedY)
+                    if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
                     {
-                        const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth;
-                        
-                        for (ptrdiff_t uncroppedX=0; uncroppedX<uncroppedWidth; ++uncroppedX)
-                        {
-                            const ptrdiff_t unCroppedOffset=uncroppedLineOffset + uncroppedX;
-                            
-                            if (((uncroppedX+int_hx)>((ptrdiff_t)1)) && ((uncroppedY+int_hy)>((ptrdiff_t)1)) &&
-                                ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
-                            {
-                                const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
-                                
-                                dataWrite[unCroppedOffset]=bilinear(dataRead, offsetLT, uncroppedWidth, frac_hx, frac_hy);
-                            }
-                        }
-                    }
-                } else
-                    if (outputMode_==Mode::INTSTAB)
-                    {
-                        const ptrdiff_t int_hx=lroundf(-sumHx_);
-                        const ptrdiff_t int_hy=lroundf(-sumHy_);
-                        
                         for (ptrdiff_t uncroppedY=0; uncroppedY<uncroppedHeight; ++uncroppedY)
                         {
                             const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth;
@@ -494,7 +493,59 @@ bool FIPLKStabilise::trigger()
                                     ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
                                 {
                                     const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
-                                    dataWrite[unCroppedOffset]=dataRead[offsetLT];
+                                    
+                                    dataWrite[unCroppedOffset]=bilinear(dataRead, offsetLT, uncroppedWidth, frac_hx, frac_hy);
+                                }
+                            }
+                        }
+                    } else
+                        if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                        {
+                            //Not implemented yet.
+                        }
+                } else
+                    if (outputMode_==Mode::INTSTAB)
+                    {
+                        const ptrdiff_t int_hx=lroundf(-sumHx_);
+                        const ptrdiff_t int_hy=lroundf(-sumHy_);
+                        
+                        if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
+                        {
+                            for (ptrdiff_t uncroppedY=0; uncroppedY<uncroppedHeight; ++uncroppedY)
+                            {
+                                const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth;
+                                
+                                for (ptrdiff_t uncroppedX=0; uncroppedX<uncroppedWidth; ++uncroppedX)
+                                {
+                                    const ptrdiff_t unCroppedOffset=uncroppedLineOffset + uncroppedX;
+                                    
+                                    if (((uncroppedX+int_hx)>((ptrdiff_t)1)) && ((uncroppedY+int_hy)>((ptrdiff_t)1)) &&
+                                        ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
+                                    {
+                                        const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
+                                        dataWrite[unCroppedOffset*3]=dataRead[offsetLT*3];
+                                    }
+                                }
+                            }
+                        } else
+                        if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                        {
+                            for (ptrdiff_t uncroppedY=0; uncroppedY<uncroppedHeight; ++uncroppedY)
+                            {
+                                const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth;
+                                
+                                for (ptrdiff_t uncroppedX=0; uncroppedX<uncroppedWidth; ++uncroppedX)
+                                {
+                                    const ptrdiff_t unCroppedOffset=uncroppedLineOffset + uncroppedX;
+                                    
+                                    if (((uncroppedX+int_hx)>((ptrdiff_t)1)) && ((uncroppedY+int_hy)>((ptrdiff_t)1)) &&
+                                        ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
+                                    {
+                                        const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
+                                        dataWrite[unCroppedOffset*3+0]=dataRead[offsetLT*3+0];
+                                        dataWrite[unCroppedOffset*3+1]=dataRead[offsetLT*3+1];
+                                        dataWrite[unCroppedOffset*3+2]=dataRead[offsetLT*3+2];
+                                    }
                                 }
                             }
                         }
@@ -502,7 +553,7 @@ bool FIPLKStabilise::trigger()
                         if (outputMode_==Mode::NOTRANSFORM)
                         {
                             //Copy input to output image slot.
-                            memcpy(dataWrite, dataRead, uncroppedWidth*uncroppedHeight*sizeof(float));
+                            memcpy(dataWrite, dataRead, uncroppedWidth*uncroppedHeight*bytesPerPixel);
                         }
         }
         

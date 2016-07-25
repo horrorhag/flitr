@@ -94,6 +94,7 @@ bool FIPCrop::trigger()
             const size_t widthDS=imFormatDS.getWidth();
             const size_t heightDS=imFormatDS.getHeight();
             
+            //Works for all pixel formats!
             for (size_t yDS=0; yDS<heightDS; ++yDS)
             {
                 const size_t lineOffsetUS=((yDS+startY_) * widthUS + startX_) * bytesPerPixel;

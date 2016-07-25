@@ -180,7 +180,7 @@ bool FIPGaussianFilter::trigger()
                         gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
                     } else
                     {
-                        boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
+                        boxFilter_.filterRGB(dataWriteDS, dataReadUS, width, height,
                                           intImageScratchData_, true);
                         
                         for (short i=1; i<intImgApprox_; ++i)

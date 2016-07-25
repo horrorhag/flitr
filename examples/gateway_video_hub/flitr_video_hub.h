@@ -56,6 +56,7 @@ namespace flitr
         
         bool init();
         void stopAllThreads();
+        void cleanup();
         
         //=== Producers
         /** Create and image producer to play back a video file.
@@ -90,9 +91,11 @@ namespace flitr
          \param producerName The name of the producer to attach to.
          \oaram showOverlays If true the areas of motion are indicated by a bounding box.
          \oaram produceOnlyMotionImages If true then images are only produced when there is motion.
+         \param motionThreshold Threshold above which motion is registered.
          */
         bool createMotionDetectProcess(const std::string &name, const std::string &producerName,
-                                       const bool showOverlays, const bool produceOnlyMotionImages);
+                                       const bool showOverlays, const bool produceOnlyMotionImages,
+                                       const int motionThreshold);
         
         
         //=== Consumers
@@ -119,6 +122,7 @@ namespace flitr
          \param fifoName WebRTC fifo file buffer.
          */
         bool createWebRTCConsumer(const std::string &name, const std::string &producerName,
+                                  const int cropWidth, const int cropHeight,
                                   const std::string &fifoName);
         
         /** Create an image consumer that copies the raw data to a user allocated 'buffer'.
@@ -133,7 +137,7 @@ namespace flitr
          \sa getImageFormat
          \sa createImageBufferConsumer
          */
-        bool imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer);
+        bool imageBufferConsumerSetBuffer(const std::string &consumerName, uint8_t * const buffer, uint64_t *bufferNumber);
         
         /** Method to hold the buffer updates for read access.
          \param consumerName The name of the image buffer consumer.
@@ -147,7 +151,7 @@ namespace flitr
         std::shared_ptr<flitr::ImageProducer> getProducer(const std::string &producerName);
         
         //!Get the image format of the first image in the slot of a specific producer.
-        VideoHubImageFormat getImageFormat(const std::string &producer) const;
+        VideoHubImageFormat getImageFormat(const std::string &producerName) const;
         
     private:
         //!Vector of producers and processors that consumers may attach to.
@@ -155,6 +159,8 @@ namespace flitr
         
         //!Vector of consumers.
         std::map<std::string, std::shared_ptr<flitr::ImageConsumer>> _consumerMap;
+        
+        std::vector<std::string> _processorOrder;
     };
     
 }
