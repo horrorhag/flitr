@@ -44,28 +44,37 @@ void flitr::FifoProducer::readThread()
     
     while(!_shouldExit)
     {
-        if (fd==-1) fd = open(_fifoName.c_str(), O_RDONLY | O_NONBLOCK);
+        if (fd==-1)
+        {
+            fd = open(_fifoName.c_str(), O_RDONLY | O_NONBLOCK);
+            if (fd>=0) fcntl(fd, F_SETFL, O_NONBLOCK);
+        }
         
         if (fd == -1)
         {
             usleep(1000);
             continue;
         }
-        
-        //fcntl(fd, F_SETFL, O_NONBLOCK);
+
         
         uint32_t bytesRead=0;
         
-        while (bytesRead < bytesPerImage)
+        while ((bytesRead < bytesPerImage) && (!_shouldExit))
         {
             int r=read(fd, fifoData + bytesRead, bytesPerImage - bytesRead);
             
             if (r<0)
-            {//Some error occured.
-                usleep(1000);
-                //close(fd);
-                //fd=-1;
-                //break;
+            {
+                if (errno == EAGAIN)
+                {
+                    usleep(100);
+                    continue;
+                } else
+                {
+                    close(fd);
+                    fd=-1;
+                    break;
+                }
             } else
             {
                 bytesRead+=r;
@@ -91,7 +100,7 @@ void flitr::FifoProducer::readThread()
     }
     
     close(fd);
-
+    
     delete [] fifoData;
 }
 

@@ -75,7 +75,7 @@ namespace flitr
                 flitr::logMessage(flitr::LOG_CRITICAL) << "Reader connected to " << fifo_name_ << "\n";
                 
                 uint8_t count=0;
-                while(1) {
+                while(!should_exit_) {
                     clearQueue();
                     // get an image
                     std::vector<flitr::Image**> imv = reserveReadSlot();

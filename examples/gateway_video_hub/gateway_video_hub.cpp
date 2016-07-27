@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
     videoHub.createWebRTCConsumer("webrtc_output", "istab", 640, 480, "webrtc.fifo");
 
-    videoHub.createFifoProducer("fifo", "webrtc.fifo", 640, 480);
+    //videoHub.createFifoProducer("fifo", "webrtc.fifo", 640, 480);
     
 
     
@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
     //=============================//
     //=== OSG and Viewer things ===//
     //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("input")), 1, 1));
-    //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("istab")), 1, 1));
-    std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("fifo")), 1, 1));
+    std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("istab")), 1, 1));
+    //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("fifo")), 1, 1));
     //std::shared_ptr<flitr::MultiOSGConsumer> osgc(new flitr::MultiOSGConsumer(*(videoHub.getProducer("imotion")), 1, 1));
 
     if (!osgc->init()) {
