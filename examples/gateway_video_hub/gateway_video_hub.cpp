@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
     //videoHub.createV4LProducer("input4vl", "/dev/video0");
 #endif
 
-    videoHub.createImageStabProcess("istab", "input", 0.9925);
-    //videoHub.createMotionDetectProcess("imotion", "istab", true, true, 5);
+    videoHub.createImageStabProcess("istab", "input", 0.99);
+    //videoHub.createMotionDetectProcess("imotion", "istab", true, false, 5);
 
     videoHub.createVideoFileConsumer("video_output", "istab", "output.avi", 20);
     //videoHub.createVideoFileConsumer("video_output", "imotion", "output.avi", 20);
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         //{
         //    std::cout << int(imageBuffer[(100*imageBufferFormat._width*3) + x*3 + 0]) << " ";
         //}
-        std::cout << imageBufferSeqNumber << "\n";
+        //std::cout << imageBufferSeqNumber << "\n";
         std::cout.flush();
         videoHub.imageBufferConsumerHold("image_output", false);
         

@@ -31,7 +31,7 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 upStreamFrameCount_(0),
 scratchData_(nullptr),
 intImageScratchData_(nullptr),
-boxFilter_(30),
+boxFilter_(20),
 showOverlays_(showOverlays),
 produceOnlyMotionImages_(produceOnlyMotionImages),
 motionThreshold_(motionThreshold)

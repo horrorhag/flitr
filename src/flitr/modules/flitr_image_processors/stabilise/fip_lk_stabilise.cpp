@@ -329,7 +329,7 @@ bool FIPLKStabilise::trigger()
             float Hx=0.0f;
             float Hy=0.0f;
             
-            const ptrdiff_t levelsToSkip=0;
+            const ptrdiff_t levelsToSkip=1;
             
             for (ptrdiff_t levelNum=(numLevels_-1); levelNum>=levelsToSkip; --levelNum)
             {
