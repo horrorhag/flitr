@@ -173,11 +173,18 @@ bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const ui
                 if (Container_==FLITR_MKV_CONTAINER)
                 {
                     video_filename=std::string(filenames[i] + ".mkv");
-                }
+                } else
+                    if (Container_==FLITR_RTSP_CONTAINER)
+                    {
+                        video_filename=std::string(filenames[i]);
+                    }
 
                 std::string metadata_filename(filenames[i] + ".meta");
 
                 FFmpegWriters_[i] = new FFmpegWriter(video_filename, ImageFormat_[i], frame_rate, Container_, Codec_, BitRate_);
+                
+                
+                
                 if(useDefaultMetadataWriter == true) {
                     MetadataWriters_[i] = new MetadataWriter(metadata_filename);
                 } else {

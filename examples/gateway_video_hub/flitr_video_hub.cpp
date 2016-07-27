@@ -274,13 +274,46 @@ bool flitr::VideoHub::createVideoFileConsumer(const std::string &name, const std
 
 //====
 bool flitr::VideoHub::createRTSPConsumer(const std::string &name, const std::string &producerName,
-                                         const int port)
+                                          const std::string &remoteIP)
 {
     const auto it=_producerMap.find(producerName);
     
     if (it!=_producerMap.end())
     {
-        return false;
+        std::shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*(it->second), 1));
+        
+        if (!mffc->init())
+        {
+            std::cerr << "Could not initialise MultiFFmpegConsumer" << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            return false;
+        }
+        
+        //Add new map entry and store the image consumer.
+        _consumerMap[name]=mffc;
+        
+        mffc->setContainer(flitr::VideoContainer::FLITR_RTSP_CONTAINER);
+        //mffc->setCodec(flitr::VideoCodec::FLITR_MPEG4_CODEC);
+        mffc->setCodec(flitr::VideoCodec::FLITR_NONE_CODEC);
+        
+        OpenThreads::Thread::microSleep(300000);
+        
+        std::stringstream urlss;
+        
+        urlss << "rtsp://" << remoteIP << ":8554/mystream.sdp";
+        //urlss << "http://127.0.0.1:8090/feed1.ffm";
+        
+        std::vector<std::string> urlVec;
+        urlVec.push_back(urlss.str());
+        
+        mffc->openFiles(urlVec, 20);
+        
+        OpenThreads::Thread::microSleep(300000);
+        
+        mffc->startWriting();
+        
+        OpenThreads::Thread::microSleep(300000);
+        
+        return true;
     }
     
     return false;

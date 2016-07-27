@@ -121,7 +121,7 @@ namespace flitr
          \param port The port number where the RTSP stream is served.
          */
         bool createRTSPConsumer(const std::string &name, const std::string &producerName,
-                                const int port);
+                                const std::string &remoteIP);
         
         /** Create and image consumer that streams the video using WebRTC.
          \param name The name of the new consumer.

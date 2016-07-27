@@ -43,7 +43,11 @@ int main(int argc, char *argv[])
     
     //videoHub.createWebRTCConsumer("webrtc_output", "istab", "webrtc.fifo");
     videoHub.createWebRTCConsumer("webrtc_output", "istab", 640, 480, "webrtc.fifo");
-
+    
+    
+    videoHub.createRTSPConsumer("rtsp_output", "istab", "127.0.0.1"); //Creates an rtsp client stream to remote host...
+    //Do 'ffplay -rtsp_flags listen -i rtsp://127.0.0.1:8554/mystream.sdp' on remote host before running video hub.
+    
     //videoHub.createFifoProducer("fifo", "webrtc.fifo", 640, 480);
     
 
