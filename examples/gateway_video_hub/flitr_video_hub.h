@@ -61,21 +61,28 @@ namespace flitr
         //=== Producers
         /** Create and image producer to play back a video file.
          \param name The name of the new processor/producer.
-         \param fileName The name of the producer to attach to.
+         \param filename The name of video file.
          */
         bool createVideoFileProducer(const std::string &name, const std::string &filename);
         
         /** Create and image producer to play an RTSP stream.
          \param name The name of the new processor/producer.
-         \param fileName The name of the producer to attach to.
+         \param url The rtsp url.
          */
         bool createRTSPProducer(const std::string &name, const std::string &url);
         
         /** Create and image producer to open and get images from a v4l device.
          \param name The name of the new processor/producer.
-         \param fileName The name of the producer to attach to.
+         \param device The v4l device.
          */
         bool createV4LProducer(const std::string &name, const std::string &device);
+        
+        /** Create and image producer to open and get images from a fifo.
+         \param name The name of the new processor/producer.
+         \param fifoName The name of the fifo.
+         */
+        bool createFifoProducer(const std::string &name, const std::string &fifoName,
+                                const int width, const int height);
         
         
         //=== Image processors

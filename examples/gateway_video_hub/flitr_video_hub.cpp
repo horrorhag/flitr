@@ -3,6 +3,7 @@
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
 #include <flitr/fifo_consumer.h>
+#include <flitr/fifo_producer.h>
 #include <flitr/multi_image_buffer_consumer.h>
 
 #ifdef __linux
@@ -57,7 +58,7 @@ void flitr::VideoHub::cleanup()
     {
         _consumerMap.erase(_consumerMap.begin());
     }
-
+    
     while (_processorOrder.size())
     {
         const std::string &processorName=_processorOrder.back();
@@ -129,6 +130,28 @@ bool flitr::VideoHub::createV4LProducer(const std::string &name, const std::stri
 }
 
 //====
+bool flitr::VideoHub::createFifoProducer(const std::string &name, const std::string &fifoName,
+                                         const int width, const int height)
+{
+#ifndef WIN32
+    std::shared_ptr<flitr::FifoProducer> ip(new flitr::FifoProducer(fifoName, flitr::ImageFormat(width, height, flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_RGB_8), 2));
+    
+    if (!ip->init())
+    {
+        std::cerr << "Could not open " << fifoName << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+        return false;
+    }
+    
+    //Add new map entry and store the image producer.
+    _producerMap[name]=ip;
+    
+    return true;
+#else
+    return false;
+#endif
+}
+
+//====
 bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std::string &producerName, const double outputFilter)
 {
     const auto it=_producerMap.find(producerName);
@@ -166,7 +189,7 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
         cnvrtToRGBF32->startTriggerThread();
         lkstabilise->startTriggerThread();
         cnvrtToRGB8->startTriggerThread();
-
+        
         
         //Add new map entries and store the image producers.
         _producerMap[name+std::string("_cnvrtToF32")]=cnvrtToRGBF32;
@@ -236,7 +259,7 @@ bool flitr::VideoHub::createVideoFileConsumer(const std::string &name, const std
         OpenThreads::Thread::microSleep(300000);
         
         mffc->openFiles(fileName, frameRate);
-
+        
         OpenThreads::Thread::microSleep(300000);
         
         mffc->startWriting();
@@ -268,6 +291,7 @@ bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::s
                                            const int cropWidth, const int cropHeight,
                                            const std::string &fifoName)
 {
+#ifndef WIN32
     const auto it=_producerMap.find(producerName);
     
     if (it!=_producerMap.end())
@@ -284,8 +308,8 @@ bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::s
             std::cerr << "Could not initialise WebRTC Crop" << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
-
-        std::shared_ptr<flitr::FifoConsumer> fifo(new flitr::FifoConsumer(*(it->second), fifoName));
+        
+        std::shared_ptr<flitr::FifoConsumer> fifo(new flitr::FifoConsumer(*crop, fifoName));
         
         if (!fifo->init())
         {
@@ -299,12 +323,13 @@ bool flitr::VideoHub::createWebRTCConsumer(const std::string &name, const std::s
         _producerMap[name+std::string("_crop")]=crop;
         
         _processorOrder.push_back(name+std::string("_crop"));
-
+        
         //Add new map entry and store the image consumer.
         _consumerMap[name]=fifo;
         
         return true;
     }
+#endif
     
     return false;
 }

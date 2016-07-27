@@ -17,7 +17,7 @@ namespace flitr
     class FifoConsumer : public flitr::ImageConsumer
     {
     public:
-        FifoConsumer(flitr::ImageProducer& producer, std::string fifo_name) :
+        FifoConsumer(flitr::ImageProducer& producer, const std::string fifo_name) :
         flitr::ImageConsumer(producer),
         total_frame_size_((producer.getFormat().getBytesPerImage())),
         should_exit_(false),

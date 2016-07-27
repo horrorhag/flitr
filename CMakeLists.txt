@@ -282,7 +282,6 @@ SET(LIB_SOURCES
   include/flitr/metadata_reader.h
   include/flitr/multi_example_consumer.h
   include/flitr/multi_image_buffer_consumer.h
-  include/flitr/fifo_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
   include/flitr/multi_ffmpeg_producer.h
@@ -373,6 +372,14 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.h
 )
 
+
+IF(NOT WIN32)
+  SET(LIB_SOURCES ${LIB_SOURCES}
+    src/flitr/fifo_producer.cpp
+    include/flitr/fifo_producer.h
+    include/flitr/fifo_consumer.h
+  )
+ENDIF()
 
 IF(FLITR_USE_LIBTIFF)
 SET(LIB_SOURCES ${LIB_SOURCES}
@@ -466,7 +473,9 @@ IF(FLITR_USE_LIBTIFF)
 ENDIF()
 
 
-ADD_SUBDIRECTORY(examples/gateway_video_hub)
+IF(NOT WIN32)
+  ADD_SUBDIRECTORY(examples/gateway_video_hub)
+ENDIF()
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)

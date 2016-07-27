@@ -59,7 +59,7 @@ namespace flitr
         //!Calls the base class initialiser and starts up the consumer thread.
         bool init();
         
-        //!Open the connection to WebRTC sink.
+        //!Open the connection to some image sink.
         bool openConnection(const std::string &streamName);
         
         //!Close the connection.
