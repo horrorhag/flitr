@@ -25,6 +25,7 @@
 using std::shared_ptr;
 using namespace flitr;
 
+
 class BackgroundTriggerThread : public OpenThreads::Thread {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
@@ -48,6 +49,7 @@ private:
 
 #define USE_BACKGROUND_TRIGGER_THREAD 1
 
+
 int main(int argc, char *argv[])
 {
     if (argc != 2) {
@@ -61,6 +63,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
+    
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
@@ -94,6 +97,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     averageImage->startTriggerThread();
+    
     
     shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*averageImage, 1, 0.95f, 1));
     if (!cnvrtToY8->init()) {
@@ -141,6 +145,7 @@ int main(int argc, char *argv[])
         quad->setTransform(translate);
     }
     
+    
     shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
     root_node->addChild(quadOrig->getRoot().get());
     {
@@ -152,12 +157,13 @@ int main(int argc, char *argv[])
     }
     
     
+    //=== Setup OSG Viewer ===//
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
     
-    viewer.setUpViewInWindow(100, 100, 640, 480);
+    viewer.setUpViewInWindow(100, 100, 1280, 480);
     viewer.realize();
     
     const int use_trackball = 0;
@@ -171,12 +177,12 @@ int main(int argc, char *argv[])
         OrthoTextureManipulator* om = new OrthoTextureManipulator(osgc->getOutputTexture()->getTextureWidth(), osgc->getOutputTexture()->getTextureHeight());
         viewer.setCameraManipulator(om);
     }
+    //========================//
     
     size_t numFrames=0;
     
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
-        
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
         //Read from the video, but don't get more than n frames ahead.
         if (ip->getLeastNumReadSlotsAvailable()<5)

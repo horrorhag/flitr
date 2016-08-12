@@ -5,7 +5,7 @@
 {\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid102\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid2}
 {\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid202\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid203\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li2160\lin2160 }{\listname ;}\listid3}}
 {\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}}
-\paperw11900\paperh16840\margl1440\margr1440\vieww24780\viewh15120\viewkind0
+\paperw11900\paperh16840\margl1440\margr1440\vieww24780\viewh14500\viewkind0
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
 \f0\b\fs48 \cf0 C++ Coding Standard\
@@ -34,7 +34,8 @@
 \ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}Don't block users from doing things (that your API doesn't do) on their own.\
 {\listtext	\uc0\u8259 	}Define interface/API before design and implementation of internals.\
 \pard\tx220\tx720\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\li720\fi-720\pardirnatural\partightenfactor0
-\ls1\ilvl0\cf0 {\listtext	\'95	}etc.\
+\ls1\ilvl0\cf0 {\listtext	\'95	}Unit testing.\
+{\listtext	\'95	}etc.\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \
 What is not included here, but rather as part of the research group's general standard/master-plan/cook-book...:\
@@ -50,10 +51,12 @@ What is not included here, but rather as part of the research group's general st
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b\fs40 1. Coding Style Guide\
+\b\fs40 \cf0 1. Coding Style Guide\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b0\fs36 In 2014 we reviewed Google's C++ Style Guide (https://google.github.io/styleguide/cppguide.html). Their parting words are "Use common sense and BE CONSISTENT. If you are editing code, take a few minutes to look at the code around you..."  Good style is to the benefit of your future readers which includes yourself.\
+\b0\fs36 \cf0 In 2014 we reviewed Google's C++ Style Guide (https://google.github.io/styleguide/cppguide.html). Their parting words are "Use common sense and BE CONSISTENT. If you are editing code, take a few minutes to look at the code around you..."  Good style is to the benefit of your future readers which includes yourself.\
 \
 We'll start our style guidelines with "BE CONSISTENT." However, to converge to a consistent code base...\
 \
@@ -127,25 +130,33 @@ We'll start our style guidelines with "BE CONSISTENT." However, to converge to a
 {\listtext	\'95	}function pre and post conditions ...\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b\fs40 2. CMake \
+\b\fs40 \cf0 2. CMake \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b0\fs36 \
+\b0\fs36 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b\fs40 3. How To Comment Your Code\
+\b\fs40 \cf0 3. How To Comment Your Code\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b0\fs36 We use Doxygen http://www.doxygen.org/index.html\
+\b0\fs36 \cf0 We use Doxygen http://www.doxygen.org/index.html\
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b Single line comments:\
+\b \cf0 Single line comments:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b0 //!... text ...\
+\b0 \cf0 //!... text ...\
 /// ... text ...\
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b Multi line comments:\
+\b \cf0 Multi line comments:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b0 /**\
+\b0 \cf0 /**\
  ... text ...\
  */\
 \
@@ -167,10 +178,12 @@ Brief vs. Detailed descriptions:\
 //!Detailed multi line\
 //!description of the code.\
 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b Documenting members:\
+\b \cf0 Documenting members:\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 
-\b0 int var; //!< Description after the member\
+\b0 \cf0 int var; //!< Description after the member\
 \
 //!Description before the member\
 int var;}

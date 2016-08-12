@@ -54,6 +54,10 @@ void CrosshairOverlay::makeCrosshair()
     geom->setUseDisplayList(false);
     geom->setCullingActive(false);
 
+//    osg::ref_ptr<osg::StateSet> StateSet_;
+//    StateSet_ = geom->getOrCreateStateSet();
+//    StateSet_->setMode(GL_DEPTH_TEST,osg::StateAttribute::OFF);
+
     geode->addDrawable(geom.get());
     geode->setCullingActive(false);
 

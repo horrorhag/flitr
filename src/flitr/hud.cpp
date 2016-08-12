@@ -20,13 +20,15 @@
 
 #include <flitr/hud.h>
 
-flitr::HUD::HUD(osgViewer::View *view, const double minX, const double maxX, const double minY, const double maxY) :
+flitr::HUD::HUD(osgViewer::View *view, const double minX, const double maxX, const double minY, const double maxY, const double near, const double far) :
     anchor_mode_(HUD_ANCHOR_CENTER),
-    aspect_mode_(HUD_ASPECT_FIXED)
+    aspect_mode_(HUD_ASPECT_STRETCHED)
 {
 	setMinMax(minX, maxX, minY, maxY);
 	
-	this->setProjectionMatrix(osg::Matrix::ortho2D(min_x_, max_x_, min_y_, max_y_));
+	//this->setProjectionMatrix(osg::Matrix::ortho2D(min_x_, max_x_, min_y_, max_y_));
+    this->setProjectionMatrixAsOrtho(min_x_, max_x_, min_y_, max_y_, near, far);
+    this->setComputeNearFarMode(osg::CullSettings::DO_NOT_COMPUTE_NEAR_FAR);
 	
     resize_handler_ = new ResizeHandler(this);
 
@@ -43,11 +45,15 @@ flitr::HUD::HUD(osgViewer::View *view, const double minX, const double maxX, con
     // we don't want the camera to grab event focus from the viewers main camera(s).
     this->setAllowEventFocus(false);
 
-    view->addSlave(this, false);
     setGraphicsContext(view->getCamera()->getGraphicsContext());
     osg::Viewport *vp=view->getCamera()->getViewport();
     setViewport(vp->x(), vp->y(), vp->width(), vp->height());
+
+    view->addSlave(this, false);
+    
     view->addEventHandler(getResizeHandler());
+    
+    this->setCullingMode(0);
 }
 
 flitr::HUD::~HUD()

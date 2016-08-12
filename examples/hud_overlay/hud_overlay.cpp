@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
-    viewer.addEventHandler(new osgViewer::WindowSizeHandler);
+    //viewer.addEventHandler(new osgViewer::WindowSizeHandler);
         
     ImageFormat imf = ffp->getFormat();
     double w = imf.getWidth();
@@ -209,17 +209,20 @@ int main(int argc, char *argv[])
 
 
     viewer.setSceneData(root_node);
+    viewer.setUpViewInWindow(100, 100, 1280, 480);
     viewer.realize();//Make sure that the camera, etc is set up. Otherwise the HUD overlay can't be set up!!!
 
 
     OrthoTextureManipulator* om = new OrthoTextureManipulator(w, h);
     viewer.setCameraManipulator(om);
+    
 
    //NOTE!!:Make sure to call viewer.realize() such that the camera, etc is set up. Otherwise the HUD overlay can't be set up!!!
     HUD* hud=new HUD(&viewer, -1.0, 1.0, -1.0, 1.0);
-    hud->setAspectMode(HUD::HUD_ASPECT_FIXED);   
+    hud->setAspectMode(HUD::HUD_ASPECT_STRETCHED);
+    hud->setAnchorMode(HUD::HUD_ANCHOR_CENTER);
 
-    CrosshairOverlay* ch0 = new CrosshairOverlay(0.0,0.0,0.1,0.1);
+    CrosshairOverlay* ch0 = new CrosshairOverlay(0.0,0.0,1.0,1.0);
       ch0->setLineWidth(2);
       ch0->setColour(osg::Vec4d(1.0, 1.0, 1.0, 1.0));
       hud->addChild(ch0);
@@ -239,6 +242,10 @@ int main(int argc, char *argv[])
       ch4->setLineWidth(2);
       ch4->setColour(osg::Vec4d(1.0, 1.0, 0.0, 1.0));
       hud->addChild(ch4);
+
+    QuadOverlay* qovh = new QuadOverlay(0,0,0.2,0.2);
+    qovh->setLineWidth(2);
+    hud->addChild(qovh);
 
 
     // disable all culling

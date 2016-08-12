@@ -506,10 +506,11 @@ ADD_SUBDIRECTORY(examples/video_producer)
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
   ADD_SUBDIRECTORY(examples/save_texture_to_video_file)
-  ADD_SUBDIRECTORY(examples/hud_overlay)
   ADD_SUBDIRECTORY(examples/points_overlay)
   ADD_SUBDIRECTORY(examples/screen_capture)
 ENDIF()
+
+ADD_SUBDIRECTORY(examples/hud_overlay)
 
 
 IF(FLITR_WITH_OSGCUDA)

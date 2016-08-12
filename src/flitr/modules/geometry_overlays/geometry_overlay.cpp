@@ -51,7 +51,7 @@ GeometryOverlay::GeometryOverlay()
 
     setAllChildrenOn();
 
-    setDepth(100.0);
+    setDepth(1.0);
 }
 
 void GeometryOverlay::setDepth(double z)
