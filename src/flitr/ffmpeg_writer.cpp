@@ -548,7 +548,10 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
         std::cout << "FFmpegWriter: Assert " << VideoStream_->pts.val << "==" << WrittenFrameCount_ << "\n";
         std::cout.flush();
         
-        av_write_trailer(FormatContext_);
+        if (WrittenFrameCount_ > 0)
+        {
+            av_write_trailer(FormatContext_);
+        }
         
         // check for lib version > 52.1.0
 #if LIBAVFORMAT_VERSION_INT >= ((53<<16) + (21<<8) + 0)

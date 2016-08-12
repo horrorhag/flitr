@@ -9,6 +9,7 @@ flitr::V4L2Producer::V4L2Producer(ImageFormat::PixelFormat out_pix_fmt,
                            int32_t channel_to_set) :
     OutputPixelFormat_(out_pix_fmt),
     DeviceFile_(device_file),
+    DeviceFD_(-1),
     DeviceWidth_(width_to_set),
     DeviceHeight_(height_to_set),
     DeviceChannel_(channel_to_set),
@@ -25,7 +26,13 @@ flitr::V4L2Producer::V4L2Producer(ImageFormat::PixelFormat out_pix_fmt,
 flitr::V4L2Producer::~V4L2Producer()
 {
     ShouldExit_=true;
-    readThread_.join();
+
+    if (readThread_.joinable() == true)
+    {
+        readThread_.join();
+    }
+
+    close(DeviceFD_);
 }
 
 bool flitr::V4L2Producer::init()
