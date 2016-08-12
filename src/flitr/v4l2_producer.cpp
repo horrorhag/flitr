@@ -9,6 +9,7 @@ flitr::V4L2Producer::V4L2Producer(ImageFormat::PixelFormat out_pix_fmt,
                            int32_t channel_to_set) :
     OutputPixelFormat_(out_pix_fmt),
     DeviceFile_(device_file),
+    DeviceFD_(-1),
     DeviceWidth_(width_to_set),
     DeviceHeight_(height_to_set),
     DeviceChannel_(channel_to_set),
@@ -25,7 +26,19 @@ flitr::V4L2Producer::V4L2Producer(ImageFormat::PixelFormat out_pix_fmt,
 flitr::V4L2Producer::~V4L2Producer()
 {
     ShouldExit_=true;
-    readThread_.join();
+
+    if (readThread_.joinable() == true)
+    {
+        readThread_.join();
+    }
+
+    if (DeviceFD_ != -1)
+    {
+        //turn off camera streaming
+        v4l2_buf_type type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+        xioctl(DeviceFD_, VIDIOC_STREAMOFF, &type);
+        close(DeviceFD_);
+    }
 }
 
 bool flitr::V4L2Producer::init()
@@ -105,9 +118,11 @@ bool flitr::V4L2Producer::open_device()
                     << DeviceFile_
                     << ": is not a V4L2 device\n";
             close(DeviceFD_);
+            DeviceFD_ = -1;
             return false;
         } else {
             close(DeviceFD_);
+            DeviceFD_ = -1;
             return false;
         }
     }
@@ -117,6 +132,7 @@ bool flitr::V4L2Producer::open_device()
                 << DeviceFile_
                 << ": is not a capture device\n";
         close(DeviceFD_);
+        DeviceFD_ = -1;
         return false;
     }
     
@@ -125,6 +141,7 @@ bool flitr::V4L2Producer::open_device()
                 << DeviceFile_
                 << ": does not support streaming I/O\n";
         close(DeviceFD_);
+        DeviceFD_ = -1;
         return false;
     }
 
@@ -144,6 +161,7 @@ bool flitr::V4L2Producer::init_device()
                     << DeviceFile_
                     << ": failure in VIDIOC_G_FMT\n";
             close(DeviceFD_);
+            DeviceFD_ = -1;
             return false;
         }
         DeviceWidth_ = cap_fmt.fmt.pix.width;
@@ -167,6 +185,7 @@ bool flitr::V4L2Producer::init_device()
                 << DeviceFile_
                 << ": failure in VIDIOC_S_FMT\n";
         close(DeviceFD_);
+        DeviceFD_ = -1;
         return false;
     }
 
@@ -183,6 +202,7 @@ bool flitr::V4L2Producer::init_device()
                     << DeviceFile_
                     << ": cannot set channel\n";
             close(DeviceFD_);
+            DeviceFD_ = -1;
             return false;
         }
     }
@@ -195,6 +215,7 @@ bool flitr::V4L2Producer::init_device()
                 << DeviceFile_
                 << ": cannot set video standard to PAL\n";
         close(DeviceFD_);
+            DeviceFD_ = -1;
         return false;
     }
 */
@@ -202,6 +223,7 @@ bool flitr::V4L2Producer::init_device()
     //initlaize memory map.
     if (!vc_init_mmap()) {
         close(DeviceFD_);
+        DeviceFD_ = -1;
         return false;
     }
 
@@ -222,6 +244,7 @@ bool flitr::V4L2Producer::vc_init_mmap()
                 << DeviceFile_
                 << ": failure in VIDIOC_REQBUFS\n";
         close(DeviceFD_);
+        DeviceFD_ = -1;
         return false;
     }
     
@@ -231,6 +254,7 @@ bool flitr::V4L2Producer::vc_init_mmap()
                 << DeviceFile_
                 << ": insufficient buffer memory\n";
         close(DeviceFD_);
+        DeviceFD_ = -1;
         return false;
     }
 
@@ -258,6 +282,7 @@ bool flitr::V4L2Producer::vc_init_mmap()
                     << DeviceFile_
                     << ": failure in VIDIOC_QUERYBUF\n";
             close(DeviceFD_);
+            DeviceFD_ = -1;
             return false;
         }
         
@@ -273,6 +298,7 @@ bool flitr::V4L2Producer::vc_init_mmap()
                     << DeviceFile_
                     << ": failure in mmap\n";
             close(DeviceFD_);
+            DeviceFD_ = -1;
             return false;
         }
     }
