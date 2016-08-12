@@ -53,7 +53,7 @@ flitr::HUD::HUD(osgViewer::View *view, const double minX, const double maxX, con
     
     view->addEventHandler(getResizeHandler());
     
-    this->setCullingMode(0);
+    //this->setCullingMode(0);
 }
 
 flitr::HUD::~HUD()

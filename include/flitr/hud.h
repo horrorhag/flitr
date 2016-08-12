@@ -178,7 +178,7 @@ namespace flitr {
         friend struct ResizeHandler;
         
     public:
-        HUD(osgViewer::View *view, const double minX=0.0, const double maxX=1.0, const double minY=0.0, const double maxY=1.0, const double near=-10.0, const double far=10.0);
+        HUD(osgViewer::View *view, const double minX=0.0, const double maxX=1.0, const double minY=0.0, const double maxY=1.0, const double near=10.0, const double far=-10.0);
         virtual ~HUD();
         
         osgGA::GUIEventHandler* getResizeHandler()

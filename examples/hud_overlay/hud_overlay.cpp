@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
     
 
    //NOTE!!:Make sure to call viewer.realize() such that the camera, etc is set up. Otherwise the HUD overlay can't be set up!!!
-    HUD* hud=new HUD(&viewer, -1.0, 1.0, -1.0, 1.0);
+    HUD* hud=new HUD(&viewer, -1.0, 1.0, -1.0, 1.0, 10.0, -10.0);
     hud->setAspectMode(HUD::HUD_ASPECT_STRETCHED);
     hud->setAnchorMode(HUD::HUD_ANCHOR_CENTER);
 
@@ -249,7 +249,7 @@ int main(int argc, char *argv[])
 
 
     // disable all culling
-    viewer.getCamera()->setCullingMode(0);
+    //viewer.getCamera()->setCullingMode(0);
 
     // add pick handler
     PickHandler* ph = new PickHandler; 
