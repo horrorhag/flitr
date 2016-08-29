@@ -32,6 +32,13 @@ flitr::V4L2Producer::~V4L2Producer()
         readThread_.join();
     }
 
+    //first free allocated memory
+    for (int n = 0; n < DeviceNumBuffers_; n++)
+    {
+        vc_buffer buf = DeviceBuffers_[n];
+        munmap(buf.start, buf.length);
+    }
+
     if (DeviceFD_ != -1)
     {
         //turn off camera streaming
