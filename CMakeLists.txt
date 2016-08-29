@@ -401,6 +401,8 @@ IF(NOT APPLE)
   )
 ENDIF() 
 
+# tinyxml
+ADD_SUBDIRECTORY(src/flitr/tinyxml)
   
 # Video
 if(WIN32)
