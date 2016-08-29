@@ -18,6 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <iostream>
 
 #include <osgDB/FileUtils>

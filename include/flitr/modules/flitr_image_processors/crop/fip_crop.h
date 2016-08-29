@@ -23,6 +23,8 @@
 
 #include <flitr/image_processor.h>
 
+#include <algorithm>
+
 namespace flitr {
     
     /*! Crops the image. */

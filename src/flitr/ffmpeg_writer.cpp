@@ -21,13 +21,15 @@
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/ffmpeg_utils.h>
 
+#include <map>
+
 using namespace flitr;
 using std::shared_ptr;
 
 //"The output format is automatically guessed according to the file extension and bit depth.\n"
 //"Raw images can also be output by using '%%d' in the filename\n"
 
-FFmpegWriter::FFmpegWriter() noexcept :
+FFmpegWriter::FFmpegWriter() NOEXCEPT :
 AVCodec_(0),
 AVCodecContext_(0),
 WrittenFrameCount_(0)

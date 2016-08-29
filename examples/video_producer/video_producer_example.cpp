@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
 {
     int width = 1280;
     int height = 720;
-    //shared_ptr<VideoProducer> producer(new VideoProducer(flitr::ImageFormat::FLITR_PIX_FMT_Y_8, 32, "", width, height));
-    shared_ptr<FFmpegProducer> producer(new FFmpegProducer("d:\\roofcam\\2013-10-15_13h34m20s_rtspcam_01.avi", ImageFormat::FLITR_PIX_FMT_RGB_8));
+    shared_ptr<VideoProducer> producer(new VideoProducer(flitr::ImageFormat::FLITR_PIX_FMT_Y_8, 32, "", width, height));
+    //shared_ptr<FFmpegProducer> producer(new FFmpegProducer("d:\\roofcam\\2013-10-15_13h34m20s_rtspcam_01.avi", ImageFormat::FLITR_PIX_FMT_RGB_8));
     if (!producer->init())
     {
         std::cerr << "Failed to init producer\n";

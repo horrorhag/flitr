@@ -21,6 +21,12 @@
 #ifndef LOG_MESSAGE_H
 #define LOG_MESSAGE_H 1
 
+#ifndef _MSC_VER
+#define NOEXCEPT noexcept
+#else
+#define NOEXCEPT
+#endif
+
 #include <flitr/flitr_export.h>
 #include <ostream>
 

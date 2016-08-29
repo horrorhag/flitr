@@ -28,7 +28,7 @@
 using namespace flitr;
 using std::shared_ptr;
 
-FFmpegReader::FFmpegReader() noexcept :
+FFmpegReader::FFmpegReader() NOEXCEPT :
     FrameRate_(FLITR_DEFAULT_VIDEO_FRAME_RATE),
     SingleFrameSource_(false),
     SingleFrameDone_(false)

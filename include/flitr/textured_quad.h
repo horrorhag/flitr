@@ -21,6 +21,8 @@
 #ifndef FLITR_TEXTURED_QUAD
 #define FLITR_TEXTURED_QUAD 1
 
+#define _USE_MATH_DEFINES
+
 #include <flitr/flitr_export.h>
 
 #include <osg/ref_ptr>
@@ -31,6 +33,8 @@
 #include <osg/Texture2D>
 #include <osg/TexEnv>
 #include <osg/MatrixTransform>
+
+
 
 namespace flitr {
 
