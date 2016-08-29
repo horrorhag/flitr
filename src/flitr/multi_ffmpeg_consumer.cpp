@@ -33,7 +33,8 @@ void MultiFFmpegConsumerThread::run()
         imv.clear();
         imv = Consumer_->reserveReadSlot();
         if (imv.size() >= num_writers) { // allow selection of some sources                       
-            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(Consumer_->WritingMutex_);
+            std::lock_guard<std::mutex> scopedLock(Consumer_->WritingMutex_);
+            
             if (Consumer_->Writing_) {
                 Consumer_->MultiWriteStats_->tick();
 
@@ -59,7 +60,7 @@ void MultiFFmpegConsumerThread::run()
             Consumer_->releaseReadSlot();
         } else {
             // wait a while for producers.
-            Thread::microSleep(1000);
+            FThread::microSleep(1000);
         }
         // check for exit
         if (ShouldExit_) {
@@ -116,7 +117,7 @@ bool MultiFFmpegConsumer::init()
 
     Thread_ = new MultiFFmpegConsumerThread(this);
     Thread_->startThread();
-    
+
     return true;
 }
 
@@ -206,14 +207,14 @@ bool MultiFFmpegConsumer::openFiles(std::vector<std::string> filenames, const ui
 
 bool MultiFFmpegConsumer::startWriting()
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
+    std::lock_guard<std::mutex> scopedLock(WritingMutex_);
     Writing_ = true;
     return true;
 }
 
 bool MultiFFmpegConsumer::stopWriting()
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
+    std::lock_guard<std::mutex> scopedLock(WritingMutex_);
     Writing_ = false;
     return true;
 }

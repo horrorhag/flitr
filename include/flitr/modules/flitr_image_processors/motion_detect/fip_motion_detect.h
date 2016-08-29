@@ -44,8 +44,10 @@ namespace flitr {
         virtual ~FIPMotionDetect();
         
         /*! Method to initialise the object.
+         @todo  Does doxygen take the comment from base class? Look at inherit docs config setting. Does IDE bring up base comments?
          *@return Boolean result flag. True indicates successful initialisation.*/
         virtual bool init();
+        
         
         /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
@@ -57,7 +59,7 @@ namespace flitr {
         uint64_t upStreamFrameCount_;
 
         uint8_t *scratchData_;
-        double *intImageScratchData_;
+        double *integralImageScratchData_;
         BoxFilterII boxFilter_; //No significant state associated with this.
         
         uint8_t *currentFrame_;

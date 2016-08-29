@@ -26,15 +26,14 @@
 #include <flitr/metadata_writer.h>
 #include <flitr/raw_video_file_writer.h>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <flitr/flitr_thread.h>
 
 namespace flitr {
 
 class MultiRawVideoFileConsumer;
 
 /* This thread can be reused from the multi FFmpeg consumer */
-class MultiRawVideoFileConsumerThread : public OpenThreads::Thread {
+class MultiRawVideoFileConsumerThread : public FThread {
   public: 
     MultiRawVideoFileConsumerThread(MultiRawVideoFileConsumer *consumer) :
         Consumer_(consumer),
@@ -85,7 +84,7 @@ class FLITR_EXPORT MultiRawVideoFileConsumer : public ImageConsumer {
     std::vector<RawVideoFileWriter *> RawVideoFileWriters_;
     std::vector<MetadataWriter *> MetadataWriters_;
 
-    OpenThreads::Mutex WritingMutex_;
+    std::mutex WritingMutex_;
     bool Writing_;
 
     std::shared_ptr<StatsCollector> MultiWriteStats_;

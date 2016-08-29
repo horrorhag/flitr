@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
 
+#ifdef FLITR_USE_OSG
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
+#endif //FLITR_USE_OSG
 
 #include <flitr/modules/flitr_image_processors/flip/fip_flip.h>
 #include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
@@ -20,15 +22,18 @@
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
+
+#ifdef FLITR_USE_OSG
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
+#endif //FLITR_USE_OSG
 
 using std::shared_ptr;
 using namespace flitr;
 
-class BackgroundTriggerThread : public OpenThreads::Thread {
+class BackgroundTriggerThread : public FThread {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
     Producer_(p),
@@ -38,7 +43,7 @@ public:
     {
         while(!ShouldExit_)
         {
-            if (!Producer_->trigger()) Thread::microSleep(5000);
+            if (!Producer_->trigger()) FThread::microSleep(5000);
         }
     }
     
@@ -82,8 +87,8 @@ int main(int argc, char *argv[])
      */
     
     shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*ip, 1,
-                                                                  2.0, 4,
-                                                                  1));
+                                                                  20.0, 40,
+                                                                  2));
     if (!gaussFilt->init())
     {
         std::cerr << "Could not initialise the gaussFilt processor.\n";
@@ -103,13 +108,13 @@ int main(int argc, char *argv[])
      */
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
+#ifdef FLITR_USE_OSG
+shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
-    
     
     shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
     if (!osgcOrig->init())
@@ -117,20 +122,25 @@ int main(int argc, char *argv[])
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
     }
+#endif //FLITR_USE_OSG
     
     
-    /*
-     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
-     if (!mffc->init()) {
+    
+     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*gaussFilt,1));
+     if (!mffc->init())
+     {
      std::cerr << "Could not init FFmpeg consumer\n";
      exit(-1);
      }
+    
      std::stringstream filenameStringStream;
-     filenameStringStream << argv[1] << "_improved";
+     filenameStringStream << argv[1] << "_out";
      mffc->openFiles(filenameStringStream.str());
-     */
+     mffc->startWriting();
     
     
+    
+#ifdef FLITR_USE_OSG
     osg::Group *root_node = new osg::Group;
     
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
@@ -173,12 +183,15 @@ int main(int argc, char *argv[])
         OrthoTextureManipulator* om = new OrthoTextureManipulator(osgc->getOutputTexture()->getTextureWidth(), osgc->getOutputTexture()->getTextureHeight());
         viewer.setCameraManipulator(om);
     }
+#endif //FLITR_USE_OSG
+
     
+    
+#ifdef FLITR_USE_OSG
     size_t numFrames=0;
     
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
-        
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
         //Read from the video, but don't get more than n frames ahead.
         if (ip->getLeastNumReadSlotsAvailable()<5)
@@ -187,30 +200,34 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        bool renderFrame=false;
-        
-        if (osgc->getNext()) renderFrame=true;
-        if (osgcOrig->getNext()) renderFrame=true;
-        
-        if (renderFrame)
+        if (osgc->getNext() || osgcOrig->getNext())
         {
             viewer.frame();
-            
-            /*
-             if (numFrames==15)
-             {
-             mffc->startWriting();
-             }
-             */
-            
             numFrames++;
         }
         
-        OpenThreads::Thread::microSleep(5000);
+        FThread::microSleep(5000);
     }
+#else
     
-    //     mffc->stopWriting();
-    //     mffc->closeFiles();
+    while(true)
+    {
+#ifndef USE_BACKGROUND_TRIGGER_THREAD
+        //Read from the video, but don't get more than n frames ahead.
+        if (ip->getLeastNumReadSlotsAvailable()<5)
+        {
+            ip->trigger();
+        }
+#endif
+        
+        FThread::microSleep(5000);
+    }
+#endif
+
+    
+         mffc->stopWriting();
+         mffc->closeFiles();
+    
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD

@@ -33,7 +33,8 @@ void MultiRawVideoFileConsumerThread::run()
         imv.clear();
         imv = Consumer_->reserveReadSlot();
         if (imv.size() >= num_writers) { // allow selection of some sources                       
-            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(Consumer_->WritingMutex_);
+            std::lock_guard<std::mutex> scopedLock(Consumer_->WritingMutex_);
+            
             if (Consumer_->Writing_) {
                 Consumer_->MultiWriteStats_->tick();
 
@@ -59,7 +60,7 @@ void MultiRawVideoFileConsumerThread::run()
             Consumer_->releaseReadSlot();
         } else {
             // wait a while for producers.
-            Thread::microSleep(1000);
+            FThread::microSleep(1000);
         }
         // check for exit
         if (ShouldExit_) {
@@ -98,7 +99,7 @@ bool MultiRawVideoFileConsumer::init()
 
     Thread_ = new MultiRawVideoFileConsumerThread(this);
     Thread_->startThread();
-    
+
     return true;
 }
 
@@ -163,14 +164,14 @@ bool MultiRawVideoFileConsumer::openFiles(std::vector<std::string> filenames, co
 
 bool MultiRawVideoFileConsumer::startWriting()
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
+    std::lock_guard<std::mutex> scopedLock(WritingMutex_);
     Writing_ = true;
     return true;
 }
 
 bool MultiRawVideoFileConsumer::stopWriting()
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(WritingMutex_);
+    std::lock_guard<std::mutex> scopedLock(WritingMutex_);
     Writing_ = false;
     return true;
 }

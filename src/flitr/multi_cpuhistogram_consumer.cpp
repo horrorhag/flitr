@@ -47,7 +47,7 @@ void MultiCPUHistogramConsumerThread::run()
                     {// Calculate the histogram.
                         Image* im = *(imv[imNum]);
                         
-                        OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(Consumer_->CalcMutexes_[imNum]));
+                        std::lock_guard<std::mutex> scopedLock(*(Consumer_->CalcMutexes_[imNum]));
                         
                         std::vector<int32_t>* histogram=Consumer_->Histograms_[imNum].get();
                         
@@ -86,7 +86,7 @@ void MultiCPUHistogramConsumerThread::run()
         } else
         {
             // wait a while for producers.
-            Thread::microSleep(1000);
+            FThread::microSleep(1000);
         }
         // check for exit
         if (ShouldExit_) {
@@ -225,7 +225,7 @@ ImageStride_(image_stride)
     {
         ImageFormat_.push_back(producer.getFormat(i));
         
-        CalcMutexes_.push_back(std::shared_ptr<OpenThreads::Mutex>(new OpenThreads::Mutex()));
+        CalcMutexes_.push_back(std::shared_ptr<std::mutex>(new std::mutex()));
         
         Histograms_.push_back(std::shared_ptr< std::vector<int32_t> >(new std::vector<int32_t>));
         Histograms_[i]->resize(256);
@@ -247,6 +247,6 @@ bool MultiCPUHistogramConsumer::init()
     
     Thread_ = new MultiCPUHistogramConsumerThread(this);
     Thread_->startThread();
-    
+
     return true;
 }

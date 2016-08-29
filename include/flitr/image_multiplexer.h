@@ -26,15 +26,14 @@
 #include <flitr/image_producer.h>
 #include <flitr/stats_collector.h>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <flitr/flitr_thread.h>
 
 namespace flitr {
 
 class ImageMultiplexer;
 
 /*! Helper/Service thread class for ImageMultiplexer that consumes and produces images as they become available from the upstream producers.*/
-class ImageMultiplexerThread : public OpenThreads::Thread
+class ImageMultiplexerThread : public FThread
 {
 public:
 

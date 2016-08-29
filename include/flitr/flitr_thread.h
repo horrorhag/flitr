@@ -1,5 +1,5 @@
 /* Framework for Live Image Transformation (FLITr) 
- * Copyright (c) 2010 CSIR
+ * Copyright (c) 2016 CSIR
  * 
  * This file is part of FLITr.
  *
@@ -18,12 +18,36 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLITR_STDINT_H
-#define FLITR_STDINT_H 1
+#ifndef FLITR_THREAD_H
+#define FLITR_THREAD_H 1
 
-// On unix we use system stdint
-// On Windows we rely on the one coming with FFmpeg
+#include <flitr/flitr_export.h>
 
-#include <stdint.h>
+#include <thread>
+#include <chrono>
 
-#endif //FLITR_STDINT_H
+class FLITR_EXPORT FThread
+{
+public:
+    FThread();
+    virtual ~FThread();
+    
+    void startThread();
+    
+    virtual void run() = 0;
+    
+    void join()
+    {
+        _thread.join();
+    }
+    
+    static void microSleep(const uint32_t us)
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(us));
+    }
+    
+private:
+    std::thread _thread;
+};
+
+#endif // FLITR_THREAD_H

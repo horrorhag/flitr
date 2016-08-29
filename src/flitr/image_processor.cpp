@@ -35,7 +35,7 @@ void ImageProcessorThread::run()
             IP_->triggerMutex_.unlock();
 
             // wait a while for producers and consumers if trigger() method didn't do anything...
-            Thread::microSleep(500);
+            FThread::microSleep(500);
             //Thread::YieldCurrentThread();
         } else
         {
@@ -102,7 +102,7 @@ bool ImageProcessor::startTriggerThread()
     {//If thread not already started.
         Thread_ = new ImageProcessorThread(this);
         Thread_->startThread();
-        
+
         return true;
     }
     

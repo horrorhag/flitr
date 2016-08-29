@@ -26,14 +26,13 @@
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/metadata_writer.h>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <flitr/flitr_thread.h>
 
 namespace flitr {
 
 class MultiFFmpegConsumer;
 
-class MultiFFmpegConsumerThread : public OpenThreads::Thread {
+class MultiFFmpegConsumerThread : public FThread {
   public: 
     MultiFFmpegConsumerThread(MultiFFmpegConsumer *consumer) :
         Consumer_(consumer),
@@ -101,7 +100,7 @@ class FLITR_EXPORT MultiFFmpegConsumer : public ImageConsumer {
     std::vector<FFmpegWriter *> FFmpegWriters_;
     std::vector<MetadataWriter *> MetadataWriters_;
 
-    OpenThreads::Mutex WritingMutex_;
+    std::mutex WritingMutex_;
     bool Writing_;
 
     std::shared_ptr<StatsCollector> MultiWriteStats_;

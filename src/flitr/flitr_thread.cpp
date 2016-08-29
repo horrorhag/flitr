@@ -1,5 +1,5 @@
 /* Framework for Live Image Transformation (FLITr) 
- * Copyright (c) 2010 CSIR
+ * Copyright (c) 2016 CSIR
  * 
  * This file is part of FLITr.
  *
@@ -18,12 +18,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FLITR_STDINT_H
-#define FLITR_STDINT_H 1
+#include <flitr/flitr_thread.h>
 
-// On unix we use system stdint
-// On Windows we rely on the one coming with FFmpeg
 
-#include <stdint.h>
+FThread::FThread()
+{
+}
 
-#endif //FLITR_STDINT_H
+void FThread::startThread()
+{
+    std::thread t(&FThread::run, this);
+    _thread.swap(t);
+}
+
+FThread::~FThread()
+{
+    if (_thread.joinable()) _thread.join();
+}

@@ -143,7 +143,7 @@ uint32_t SharedImageBuffer::numAvailable(const ImageConsumer& consumer)
 
 bool SharedImageBuffer::addConsumer(ImageConsumer& consumer)
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
 
     // init both to the current write tail
     ReadTails_[&consumer] = WriteTail_;
@@ -155,7 +155,8 @@ bool SharedImageBuffer::addConsumer(ImageConsumer& consumer)
 }
 
 bool SharedImageBuffer::removeConsumer(ImageConsumer& consumer) {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
+
     int numErased;
     numErased  = ReadTails_.erase(&consumer);
     numErased += ReadHeads_.erase(&consumer);
@@ -175,7 +176,7 @@ uint32_t SharedImageBuffer::getNumWriteSlotsAvailable() const
 
 std::vector<Image**> SharedImageBuffer::reserveWriteSlot()
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
 	
 	std::vector<Image**> v;
 	
@@ -198,7 +199,7 @@ std::vector<Image**> SharedImageBuffer::reserveWriteSlot()
 
 void SharedImageBuffer::releaseWriteSlot()
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
 	// assert !filled
 	// assert NumWriteReserved_>0
 	WriteTail_ = (WriteTail_ + 1)  % NumSlots_;
@@ -207,7 +208,7 @@ void SharedImageBuffer::releaseWriteSlot()
 
 uint32_t SharedImageBuffer::getLeastNumReadSlotsAvailable()
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
     typedef std::map< const ImageConsumer*, uint32_t >::iterator map_it;
 	uint32_t least_num = NumSlots_;
     for (map_it i = ReadTails_.begin(); i != ReadTails_.end(); ++i)
@@ -224,19 +225,19 @@ uint32_t SharedImageBuffer::getLeastNumReadSlotsAvailable()
 
 uint32_t SharedImageBuffer::getNumReadSlotsAvailable(const ImageConsumer& consumer)
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
 	return numAvailable(consumer);
 }
 
 uint32_t SharedImageBuffer::getNumReadSlotsReserved(const ImageConsumer& consumer)
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
     return NumReadReserved_[&consumer];
 }
 
 std::vector<Image**> SharedImageBuffer::reserveReadSlot(const ImageConsumer& consumer)
 {
-	OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
 	
 	std::vector<Image**> v;
 
@@ -262,7 +263,7 @@ void SharedImageBuffer::releaseReadSlot(const ImageConsumer& consumer)
 	// assert readreserved > 0
 	bool do_notify = false;
 	{
-		OpenThreads::ScopedLock<OpenThreads::Mutex> buflock(BufferMutex_);
+        std::lock_guard<std::mutex> scopedLock(BufferMutex_);
 		// assert numAvailable > 0
 		ReadTails_[&consumer] = (ReadTails_[&consumer] + 1) % NumSlots_;
 		NumReadReserved_[&consumer]--;

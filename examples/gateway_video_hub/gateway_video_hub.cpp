@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
             std::cout.flush();
             videoHub.imageBufferConsumerHold("image_output", false);
             
-            OpenThreads::Thread::microSleep(1000);
+            FThread::microSleep(1000);
         }
         
         osgc.reset();

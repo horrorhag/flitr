@@ -76,7 +76,7 @@ void MultiExampleConsumerThread::run()
         } else
         {
             // wait a while for producers.
-            Thread::microSleep(1000);
+            FThread::microSleep(1000);
         }
         // check for exit
         if (_shouldExit) {

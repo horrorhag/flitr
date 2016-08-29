@@ -22,8 +22,7 @@
 #define VIDEO_PRODUCER_H 1
 
 #include <flitr/image_producer.h>
-
-#include <OpenThreads/Thread>
+#include <flitr/flitr_thread.h>
 
 #ifdef _WIN32
 #  include <flitr/video_win32_directshow.h>
@@ -52,7 +51,7 @@ class FLITR_EXPORT VideoProducer : public ImageProducer
     /*!
     *   Updates of the producer image buffer
     */
-    class VideoProducerThread : public OpenThreads::Thread
+    class VideoProducerThread : public FThread
     {
     public:
         VideoProducerThread(VideoProducer* _producer) : producer(_producer), shouldExit(false) {}

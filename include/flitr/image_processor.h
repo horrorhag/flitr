@@ -26,7 +26,8 @@
 #include <flitr/image_producer.h>
 #include <flitr/stats_collector.h>
 
-#include <OpenThreads/Thread>
+#include <flitr/flitr_thread.h>
+
 #include <mutex>
 
 namespace flitr {
@@ -34,7 +35,7 @@ namespace flitr {
     class ImageProcessor;
     
     /*! Helper/Service thread class for ImageProcessor that consumes and produces images as they become available from the upstream producer.*/
-    class ImageProcessorThread : public OpenThreads::Thread
+    class ImageProcessorThread : public FThread
     {
     public:
         

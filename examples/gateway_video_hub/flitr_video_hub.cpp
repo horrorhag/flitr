@@ -5,6 +5,7 @@
 #include <flitr/fifo_consumer.h>
 #include <flitr/fifo_producer.h>
 #include <flitr/multi_image_buffer_consumer.h>
+#include <flitr/flitr_thread.h>
 
 #ifdef __linux
 #include <flitr/v4l2_producer.h>
@@ -256,15 +257,15 @@ bool flitr::VideoHub::createVideoFileConsumer(const std::string &name, const std
         //Add new map entry and store the image consumer.
         _consumerMap[name]=mffc;
         
-        OpenThreads::Thread::microSleep(300000);
+        FThread::microSleep(300000);
         
         mffc->openFiles(fileName, frameRate);
         
-        OpenThreads::Thread::microSleep(300000);
+        FThread::microSleep(300000);
         
         mffc->startWriting();
         
-        OpenThreads::Thread::microSleep(300000);
+        FThread::microSleep(300000);
         
         return true;
     }
@@ -295,7 +296,7 @@ bool flitr::VideoHub::createRTSPConsumer(const std::string &name, const std::str
         //mffc->setCodec(flitr::VideoCodec::FLITR_MPEG4_CODEC);
         mffc->setCodec(flitr::VideoCodec::FLITR_NONE_CODEC);
         
-        OpenThreads::Thread::microSleep(300000);
+        FThread::microSleep(300000);
         
         std::stringstream urlss;
         
@@ -307,11 +308,11 @@ bool flitr::VideoHub::createRTSPConsumer(const std::string &name, const std::str
         
         mffc->openFiles(urlVec, 20);
         
-        OpenThreads::Thread::microSleep(300000);
+        FThread::microSleep(300000);
         
         mffc->startWriting();
         
-        OpenThreads::Thread::microSleep(300000);
+        FThread::microSleep(300000);
         
         return true;
     }

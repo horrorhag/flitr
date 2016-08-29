@@ -21,8 +21,7 @@
 #include <flitr/ffmpeg_reader.h>
 #include <flitr/ffmpeg_utils.h>
 
-#include <OpenThreads/Mutex>
-
+#include <mutex>
 #include <sstream>
 
 using namespace flitr;
@@ -395,9 +394,9 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
 
 int FFmpegReader::lockManager(void **mutex, enum AVLockOp op)
 {
-    OpenThreads::Mutex **m = (OpenThreads::Mutex**)mutex;
+    std::mutex **m = (std::mutex**)mutex;
     if (op==AV_LOCK_CREATE) {
-        *m = new OpenThreads::Mutex;
+        *m = new std::mutex;
         return !*m;
     }
     else if (op==AV_LOCK_DESTROY) {
