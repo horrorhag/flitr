@@ -36,7 +36,7 @@ void MultiImageBufferConsumerThread::run()
         
         if (imv.size() > 0)
         {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_consumer->_buffersHoldMutex);
+            std::lock_guard<std::mutex> scopedLock(_consumer->_buffersHoldMutex);
             
             if (!_consumer->_buffersHold)
             {//Only update buffer if not on hold.
@@ -67,7 +67,7 @@ void MultiImageBufferConsumerThread::run()
         } else
         {
             // wait a while for producers.
-            Thread::microSleep(1000);
+            FThread::microSleep(1000);
         }
         // check for exit
         if (_shouldExit) {
@@ -114,7 +114,7 @@ bool MultiImageBufferConsumer::init()
 
 void MultiImageBufferConsumer::setBufferVec(const std::vector<uint8_t *> bufferVec, const std::vector<uint64_t *> bufferSeqNumberVec)
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_buffersHoldMutex);
+    std::lock_guard<std::mutex> scopedLock(_buffersHoldMutex);
 
     _bufferVec=bufferVec;
     _bufferSeqNumberVec=bufferSeqNumberVec;
@@ -123,7 +123,7 @@ void MultiImageBufferConsumer::setBufferVec(const std::vector<uint8_t *> bufferV
 
 void MultiImageBufferConsumer::setBufferHold(const bool hold)
 {
-    OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(_buffersHoldMutex);
+    std::lock_guard<std::mutex> scopedLock(_buffersHoldMutex);
     
     _buffersHold=hold;
 }

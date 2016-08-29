@@ -21,6 +21,8 @@
 #ifndef MULTI_FFMPEG_PRODUCER_H
 #define MULTI_FFMPEG_PRODUCER_H 1
 
+
+
 #include <OpenThreads/Thread>
 #include <OpenThreads/Mutex>
 #include <OpenThreads/Barrier>
@@ -34,7 +36,7 @@ namespace flitr {
 
 class MultiFFmpegProducer;
 
-class MultiFFmpegProducerThread : public OpenThreads::Thread {
+    class MultiFFmpegProducerThread : public OpenThreads::Thread {
   public: 
     MultiFFmpegProducerThread(MultiFFmpegProducer *producer, uint32_t thread_index) :
         Parent_(producer),

@@ -20,7 +20,7 @@
 
 #include <sstream>
 
-#include <OpenThreads/Thread>
+#include <flitr/flitr_thread.h>
 
 #include <flitr/image_multiplexer.h>
 
@@ -33,7 +33,7 @@ void ImageMultiplexerThread::run()
     {
         IM_->trigger();
 
-        Thread::microSleep(1000);
+        FThread::microSleep(1000);
 
         // check for exit
         if (ShouldExit_) {
@@ -105,7 +105,7 @@ bool ImageMultiplexer::startTriggerThread()
     {//If thread not already started.
         Thread_ = new ImageMultiplexerThread(this);
         Thread_->startThread();
-
+        
         return true;
     }
 

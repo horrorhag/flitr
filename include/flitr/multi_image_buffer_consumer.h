@@ -26,14 +26,13 @@
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/metadata_writer.h>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <flitr/flitr_thread.h>
 
 namespace flitr
 {
     class MultiImageBufferConsumer;
     
-    class MultiImageBufferConsumerThread : public OpenThreads::Thread
+    class MultiImageBufferConsumerThread : public FThread
     {
     public:
         MultiImageBufferConsumerThread(MultiImageBufferConsumer *consumer) :
@@ -86,7 +85,7 @@ namespace flitr
         MultiImageBufferConsumerThread *_thread;
         
         //!Mutex used with setBufferHold(...).
-        OpenThreads::Mutex _buffersHoldMutex;
+        std::mutex _buffersHoldMutex;
     };
     
 }

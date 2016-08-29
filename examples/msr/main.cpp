@@ -82,7 +82,7 @@ public:
 };
 
 
-class BackgroundTriggerThread : public OpenThreads::Thread {
+class BackgroundTriggerThread : public FThread {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
     Producer_(p),
@@ -92,7 +92,7 @@ public:
     {
         while(!ShouldExit_)
         {
-            if (!Producer_->trigger()) Thread::microSleep(5000);
+            if (!Producer_->trigger()) FThread::microSleep(5000);
         }
     }
     

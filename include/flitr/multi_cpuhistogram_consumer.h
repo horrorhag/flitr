@@ -26,14 +26,13 @@
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/metadata_writer.h>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <flitr/flitr_thread.h>
 
 namespace flitr {
 
 class MultiCPUHistogramConsumer;
 
-class MultiCPUHistogramConsumerThread : public OpenThreads::Thread {
+class MultiCPUHistogramConsumerThread : public FThread {
   public: 
     MultiCPUHistogramConsumerThread(MultiCPUHistogramConsumer *consumer) :
         Consumer_(consumer),
@@ -62,7 +61,7 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
 
     std::vector<int32_t> getHistogram(uint32_t im_number)
     {
-        OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(CalcMutexes_[im_number]));
+        std::lock_guard<std::mutex> scopedLock(*(CalcMutexes_[im_number]));
 
         HistogramUpdatedVect_[im_number]=false;
         return *(Histograms_[im_number]);
@@ -70,7 +69,7 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
 
     bool isHistogramUpdated(uint32_t im_number) const
     {
-        OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*(CalcMutexes_[im_number]));
+        std::lock_guard<std::mutex> scopedLock(*(CalcMutexes_[im_number]));
 
         return HistogramUpdatedVect_[im_number];
     }
@@ -89,7 +88,7 @@ class FLITR_EXPORT MultiCPUHistogramConsumer : public ImageConsumer {
     const uint32_t ImageStride_;
 
     MultiCPUHistogramConsumerThread *Thread_;
-    std::vector< std::shared_ptr<OpenThreads::Mutex> > CalcMutexes_;
+    std::vector< std::shared_ptr<std::mutex> > CalcMutexes_;
 
     std::vector< std::shared_ptr< std::vector<int32_t> > > Histograms_;
     std::vector<bool> HistogramUpdatedVect_;

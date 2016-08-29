@@ -81,6 +81,9 @@ FIPLKDewarp::~FIPLKDewarp()
         
         delete [] hyVec_.back();
         hyVec_.pop_back();
+        
+        delete [] avrgHxData_;
+        delete [] avrgHyData_;
     }
 }
 
@@ -135,6 +138,12 @@ bool FIPLKDewarp::init()
             hyVec_.push_back(new float[(croppedWidth>>levelNum) * (croppedHeight>>levelNum)]);
             memset(hyVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
         }
+        
+        avrgHxData_=new float[croppedWidth * croppedHeight];
+        memset(avrgHxData_, 0, croppedWidth * croppedHeight * sizeof(float));
+        
+        avrgHyData_=new float[croppedWidth * croppedHeight];
+        memset(avrgHyData_, 0, croppedWidth * croppedHeight * sizeof(float));
         
         //Push zero h vectors to ordinal numLevels_+1
         hxVec_.push_back(new float[(croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2)]);
@@ -450,9 +459,11 @@ bool FIPLKDewarp::trigger()
                     memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
                     
                     float * const imgDataGF=inputImgData_;
+
                     float * const hxDataGF=hxVec_[0];
                     float * const hyDataGF=hyVec_[0];
                     
+
                     for (ptrdiff_t y=0; y<croppedHeight; ++y)
                     {
                         const ptrdiff_t lineOffset=y*croppedWidth;
@@ -471,6 +482,11 @@ bool FIPLKDewarp::trigger()
 #ifdef DESCINT_SCATTER
                                     const float hx=-hxDataGF[offset];
                                     const float hy=-hyDataGF[offset];
+                                    
+                                    const float f=0.1;
+                                    avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                    avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                    const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                     
                                     const float floor_hx=floorf(hx);
                                     const float floor_hy=floorf(hy);
@@ -493,6 +509,11 @@ bool FIPLKDewarp::trigger()
                                     const float hx=hxDataGF[offset];
                                     const float hy=hyDataGF[offset];
                                     
+                                    const float f=0.1;
+                                    avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                    avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                    const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                    
                                     const float floor_hx=floorf(hx);
                                     const float floor_hy=floorf(hy);
                                     const ptrdiff_t int_hx=lroundf(floor_hx);
@@ -508,7 +529,8 @@ bool FIPLKDewarp::trigger()
                                         const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
                                         
                                         const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                        finalImgData_[offset]=img;
+                                        //finalImgData_[offset]=img;
+                                        finalImgData_[offset]=avrgHSq * 10.0;
                                     }
 #endif
                                 }

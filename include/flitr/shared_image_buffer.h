@@ -25,9 +25,7 @@
 
 #include <map>
 #include <vector>
-
-#include <OpenThreads/ScopedLock>
-#include <OpenThreads/Mutex>
+#include <mutex>
 
 namespace flitr {
 
@@ -256,7 +254,7 @@ class FLITR_EXPORT SharedImageBuffer {
     ImageProducer *ImageProducer_;
 		
     /// Protects read and write positions
-    OpenThreads::Mutex BufferMutex_;
+    std::mutex BufferMutex_;
 
     /// The number of slots in the buffer.
     uint32_t NumSlots_;

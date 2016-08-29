@@ -77,6 +77,7 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     #ENDIF(NOT Boost_FOUND)
 # ==================
 
+
 #=== Find LIBTIFF ===# 
 OPTION(FLITR_USE_LIBTIFF "Include LibTiff and LibTiffProducer." OFF)
 IF(FLITR_USE_LIBTIFF)
@@ -84,12 +85,27 @@ IF(FLITR_USE_LIBTIFF)
 ENDIF(FLITR_USE_LIBTIFF)
 #====================#
 
+
+OPTION(FLITR_USE_OSG "Use OpenSceneGraph." OFF)
+IF(FLITR_USE_OSG)
 # === Find OSG ===#
 SET(OpenSceneGraph_MARK_AS_ADVANCED ON)
 FIND_PACKAGE(OpenSceneGraph REQUIRED osgViewer osgUtil osgTerrain osgGA osgFX osgDB osgText osgSim osgParticle)
 INCLUDE_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIR})
 LINK_DIRECTORIES(${OPENSCENEGRAPH_INCLUDE_DIRS}/../bin ${OPENSCENEGRAPH_LIBRARY_DIRS})
 #=================#
+
+OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda and CUDA are installed." OFF)
+
+IF(FLITR_WITH_OSGCUDA)
+        # uses FindCUDA from CMake
+        FIND_PACKAGE(CUDA 4.0 REQUIRED)
+        LINK_DIRECTORIES(/usr/local/cuda/lib64)
+        INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES}/C/common/inc)
+ENDIF()
+
+ADD_DEFINITIONS(-DFLITR_USE_OSG)
+ENDIF(FLITR_USE_OSG)
 
 
 # === find FFmpeg ===
@@ -125,23 +141,14 @@ ENDIF(FLITR_USE_OPENMP)
 
 
 
-
 #default include and lib directories.
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR};${CMAKE_SOURCE_DIR}/include;/usr/local/include;/opt/local/include;${AVFORMAT_PATH};${SWSCALE_PATH};${FLITR_3RDPARTY_ROOT}/include/)
 LINK_DIRECTORIES(${CMAKE_SOURCE_DIR} /usr/local/lib /opt/local/lib ${FLITR_3RDPARTY_ROOT}/lib ${FLITR_3RDPARTY_ROOT}/bin)
 
 
 OPTION(FLITR_PROFILE "Enable profiling code." ON)
-OPTION(FLITR_WITH_OSGCUDA "Use osgCuda textures in the OSG consumer. Assume osgCuda and CUDA are installed." OFF)
+
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h.in ${CMAKE_SOURCE_DIR}/include/flitr/flitr_config.h)
-
-
-IF(FLITR_WITH_OSGCUDA)
-        # uses FindCUDA from CMake
-        FIND_PACKAGE(CUDA 4.0 REQUIRED)
-        LINK_DIRECTORIES(/usr/local/cuda/lib64)
-        INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES}/C/common/inc)
-ENDIF()
 
 
 # to get e.g. UINT64_C or UINT64_MAX from stdint.h
@@ -160,23 +167,18 @@ SET(LIB_SOURCES
   src/flitr/ffmpeg_reader.cpp
   src/flitr/ffmpeg_utils.cpp
   src/flitr/ffmpeg_writer.cpp
+  src/flitr/flitr_thread.cpp
   src/flitr/high_resolution_time.cpp
   src/flitr/image_consumer.cpp
   src/flitr/image_processor.cpp
   src/flitr/image_processor_utils.cpp
-  src/flitr/glsl_image_processor.cpp
-  src/flitr/hud.cpp
   src/flitr/log_message.cpp
-  src/flitr/manipulator_utils.cpp
   src/flitr/metadata_writer.cpp
   src/flitr/metadata_reader.cpp
   src/flitr/multi_example_consumer.cpp
   src/flitr/multi_image_buffer_consumer.cpp
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
-  src/flitr/multi_ffmpeg_producer.cpp
-  src/flitr/multi_osg_consumer.cpp
-  src/flitr/ortho_texture_manipulator.cpp
   src/flitr/image_multiplexer.cpp
 
   src/flitr/modules/xml_config/tinyxml.cpp
@@ -184,25 +186,7 @@ SET(LIB_SOURCES
   src/flitr/modules/xml_config/tinyxmlparser.cpp
   src/flitr/modules/xml_config/xml_config.cpp
 
-  src/flitr/modules/geometry_overlays/crosshair_overlay.cpp
-  src/flitr/modules/geometry_overlays/geometry_overlay.cpp
-  src/flitr/modules/geometry_overlays/points_overlay.cpp
-  src/flitr/modules/geometry_overlays/quad_overlay.cpp
-  src/flitr/modules/geometry_overlays/triangle_overlay.cpp
-  src/flitr/modules/geometry_overlays/circle_overlay.cpp
-  src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
-  src/flitr/modules/geometry_overlays/text_label_overlay.cpp
-
   src/flitr/shared_image_buffer.cpp
-  src/flitr/textured_quad.cpp
-
-  src/flitr/modules/cpu_shader_passes/cpu_shader_pass.cpp
-  src/flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.cpp
-  
-  src/flitr/modules/lucas_kanade/ImageMultiPyramid.cpp
-  src/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.cpp
-  #src/flitr/modules/lucas_kanade/ImageBiPyramid.cpp
-  #src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
 
   src/flitr/modules/target_injector/target_injector.cpp
   src/flitr/modules/de_motion_blur/de_motion_blur.cpp
@@ -234,30 +218,12 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_test_pattern.cpp
 
-  src/flitr/modules/glsl_shader_passes/glsl_masked_gain_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_gamma_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_sigmoid_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_copy_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_crop_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_translate_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_downsample_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_downsample_x_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_downsample_y_pass.cpp
-  src/flitr/modules/glsl_shader_passes/homography_shader_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_threshold_pass.cpp
-  src/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.cpp
-
   #find include/ | grep .h | grep -v .svn | sort
   include/flitr/raw_video_file_utils.h
   include/flitr/multi_raw_video_file_consumer.h
   include/flitr/raw_video_file_writer.h
   include/flitr/raw_video_file_reader.h
   include/flitr/raw_video_file_producer.h
-  include/flitr/hud.h
   include/flitr/ffmpeg_producer.h
   include/flitr/test_pattern_producer.h
   include/flitr/smulti_ffmpeg_producer.h
@@ -267,8 +233,8 @@ SET(LIB_SOURCES
   include/flitr/ffmpeg_writer.h
   include/flitr/flitr_export.h
   include/flitr/flitr_stdint.h
+  include/flitr/flitr_thread.h
   include/flitr/high_resolution_time.h
-  include/flitr/glsl_image_processor.h
   include/flitr/image_consumer.h
   include/flitr/image_processor.h
   include/flitr/image_processor_utils.h
@@ -284,9 +250,6 @@ SET(LIB_SOURCES
   include/flitr/multi_image_buffer_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
-  include/flitr/multi_ffmpeg_producer.h
-  include/flitr/multi_osg_consumer.h
-  include/flitr/ortho_texture_manipulator.h
   include/flitr/image_multiplexer.h
 
   include/flitr/modules/xml_config/tinyxml.h
@@ -294,35 +257,13 @@ SET(LIB_SOURCES
 
   include/flitr/modules/parameters/parameters.h
 
-  include/flitr/modules/geometry_overlays/crosshair_overlay.h
-  include/flitr/modules/geometry_overlays/geometry_overlay.h
-  include/flitr/modules/geometry_overlays/points_overlay.h
-  include/flitr/modules/geometry_overlays/quad_overlay.h
-  include/flitr/modules/geometry_overlays/triangle_overlay.h
-  include/flitr/modules/geometry_overlays/circle_overlay.h
-  include/flitr/modules/geometry_overlays/plot2D_overlay.h
-  include/flitr/modules/geometry_overlays/text_label_overlay.h
-
   include/flitr/shared_image_buffer.h
   include/flitr/stats_collector.h
-  include/flitr/textured_quad.h
 
   # Video
   include/flitr/video_producer.h
   # include/flitr/video_linux_v4l.h
   include/flitr/video_win32_directshow.h
-
-  include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h
-  include/flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h
-  include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
-  include/flitr/modules/cpu_shader_passes/cpu_local_photometric_equalisation.h
-  include/flitr/modules/cpu_shader_passes/cpu_uniform_noise_shader.h
-  include/flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.h
-
-  include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
-  include/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h
-  #include/flitr/modules/lucas_kanade/ImageBiPyramid.h
-  #include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 
   include/flitr/modules/target_injector/target_injector.h
   include/flitr/modules/de_motion_blur/de_motion_blur.h
@@ -353,7 +294,70 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h
   include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
   include/flitr/modules/flitr_image_processors/simulate/fip_test_pattern.h
+)
 
+
+IF(FLITR_USE_OSG)
+  SET(LIB_SOURCES ${LIB_SOURCES}
+   src/flitr/ortho_texture_manipulator.cpp
+    include/flitr/ortho_texture_manipulator.h
+    src/flitr/multi_osg_consumer.cpp
+    include/flitr/multi_osg_consumer.h
+
+    src/flitr/multi_ffmpeg_producer.cpp
+    include/flitr/multi_ffmpeg_producer.h
+
+  src/flitr/hud.cpp
+  src/flitr/manipulator_utils.cpp
+
+  src/flitr/modules/geometry_overlays/crosshair_overlay.cpp
+  src/flitr/modules/geometry_overlays/geometry_overlay.cpp
+  src/flitr/modules/geometry_overlays/points_overlay.cpp
+  src/flitr/modules/geometry_overlays/quad_overlay.cpp
+  src/flitr/modules/geometry_overlays/triangle_overlay.cpp
+  src/flitr/modules/geometry_overlays/circle_overlay.cpp
+  src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
+  src/flitr/modules/geometry_overlays/text_label_overlay.cpp
+  src/flitr/textured_quad.cpp
+  
+  src/flitr/glsl_image_processor.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_masked_gain_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_gamma_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_sigmoid_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_copy_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_crop_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_translate_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_downsample_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_downsample_x_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_downsample_y_pass.cpp
+  src/flitr/modules/glsl_shader_passes/homography_shader_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_x_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_gaussian_filter_y_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_threshold_pass.cpp
+  src/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.cpp
+
+    src/flitr/modules/lucas_kanade/ImageMultiPyramid.cpp
+    src/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.cpp
+    #src/flitr/modules/lucas_kanade/ImageBiPyramid.cpp
+    #src/flitr/modules/lucas_kanade/ImageStabiliserBiLK.cpp
+
+
+
+  include/flitr/hud.h
+
+  include/flitr/modules/geometry_overlays/crosshair_overlay.h
+  include/flitr/modules/geometry_overlays/geometry_overlay.h
+  include/flitr/modules/geometry_overlays/points_overlay.h
+  include/flitr/modules/geometry_overlays/quad_overlay.h
+  include/flitr/modules/geometry_overlays/triangle_overlay.h
+  include/flitr/modules/geometry_overlays/circle_overlay.h
+  include/flitr/modules/geometry_overlays/plot2D_overlay.h
+  include/flitr/modules/geometry_overlays/text_label_overlay.h
+  include/flitr/textured_quad.h
+
+  include/flitr/glsl_image_processor.h
   include/flitr/modules/glsl_shader_passes/glsl_masked_gain_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_shader_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_gamma_pass.h
@@ -370,7 +374,34 @@ SET(LIB_SOURCES
   include/flitr/modules/glsl_shader_passes/glsl_keep_history_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_threshold_pass.h
   include/flitr/modules/glsl_shader_passes/glsl_grayscale_pass.h
+
+  src/flitr/modules/cpu_shader_passes/cpu_shader_pass.cpp
+  src/flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.cpp
+  include/flitr/modules/cpu_shader_passes/cpu_shader_pass.h
+  include/flitr/modules/cpu_shader_passes/cpu_palette_remap_shader.h
+  include/flitr/modules/cpu_shader_passes/cpu_photometric_equalisation.h
+  include/flitr/modules/cpu_shader_passes/cpu_local_photometric_equalisation.h
+  include/flitr/modules/cpu_shader_passes/cpu_uniform_noise_shader.h
+  include/flitr/modules/cpu_shader_passes/cpu_find_discreet_objects_pass.h
+
+    include/flitr/modules/lucas_kanade/ImageMultiPyramid.h
+    include/flitr/modules/lucas_kanade/ImageStabiliserMultiLK.h
+    #include/flitr/modules/lucas_kanade/ImageBiPyramid.h
+    #include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 )
+
+  #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
+  IF(NOT APPLE)
+    SET(LIB_SOURCES ${LIB_SOURCES}
+      src/flitr/multi_screen_capture_producer.cpp
+      src/flitr/screen_capture_producer.cpp
+      src/flitr/texture_capture_producer.cpp
+      include/flitr/multi_screen_capture_producer.h
+      include/flitr/screen_capture_producer.h
+      include/flitr/texture_capture_producer.h
+    )
+  ENDIF() 
+ENDIF()
 
 
 IF(NOT WIN32)
@@ -381,6 +412,7 @@ IF(NOT WIN32)
   )
 ENDIF()
 
+
 IF(FLITR_USE_LIBTIFF)
 SET(LIB_SOURCES ${LIB_SOURCES}
     src/flitr/libtiff_producer.cpp
@@ -388,22 +420,9 @@ SET(LIB_SOURCES ${LIB_SOURCES}
 )
 ENDIF(FLITR_USE_LIBTIFF)
 
-
-#Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
-IF(NOT APPLE)
-  SET(LIB_SOURCES ${LIB_SOURCES}
-    src/flitr/multi_screen_capture_producer.cpp
-    src/flitr/screen_capture_producer.cpp
-    src/flitr/texture_capture_producer.cpp
-    include/flitr/multi_screen_capture_producer.h
-    include/flitr/screen_capture_producer.h
-    include/flitr/texture_capture_producer.h
-  )
-ENDIF() 
-
 # tinyxml
 ADD_SUBDIRECTORY(src/flitr/tinyxml)
-  
+
 # Video
 if(WIN32)
 	ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)
@@ -437,20 +456,24 @@ ELSEIF(APPLE)
 #  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSE()
-#  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} m rt)
   TARGET_LINK_LIBRARIES(flitr m rt)
+
+IF(NOT FLITR_USE_OSG)
+  TARGET_LINK_LIBRARIES(flitr z bz2)
+ENDIF()
 
   TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr lzma)
 
-
-  MESSAGE(${OPENSCENEGRAPH_LIBRARIES})
+  #MESSAGE(${OPENSCENEGRAPH_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
-#TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
-#TARGET_LINK_LIBRARIES(flitr debug OpenThreadsd osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
+  #TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
+  #TARGET_LINK_LIBRARIES(flitr debug OpenThreadsd osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
 ENDIF()
 
+
 TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} ${LIB_LINK_LIBRARIES})
+
 
 IF(FLITR_WITH_OSGCUDA)
   TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} debug osgCuda)
@@ -468,7 +491,12 @@ SET_TARGET_PROPERTIES(flitr PROPERTIES COMPILE_FLAGS "-DFLITR_SHARED_LIBRARY")
 
 ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
+ADD_SUBDIRECTORY(examples/gaussian_filter)
 
+ADD_SUBDIRECTORY(apps/laser_interlock)
+
+#================
+IF(FLITR_USE_OSG)
 
 IF(FLITR_USE_LIBTIFF)
   ADD_SUBDIRECTORY(apps/viewer_colour_night)
@@ -483,7 +511,6 @@ ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
 ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
-ADD_SUBDIRECTORY(examples/gaussian_filter)
 ADD_SUBDIRECTORY(examples/morphological_filter)
 ADD_SUBDIRECTORY(examples/target_injector)
 ADD_SUBDIRECTORY(examples/de_motion_blur)
@@ -496,14 +523,21 @@ ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
-ADD_SUBDIRECTORY(examples/glsl_shader_pass)
-ADD_SUBDIRECTORY(examples/cpu_shader_pass)
+
 ADD_SUBDIRECTORY(examples/ortho_pick_overlay)
 ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
 ADD_SUBDIRECTORY(examples/geometry_overlays)
 ADD_SUBDIRECTORY(examples/video_producer)
+ENDIF()
+
+
+#================
+IF(FLITR_USE_OSG)
+ADD_SUBDIRECTORY(examples/hud_overlay)
+ADD_SUBDIRECTORY(examples/glsl_shader_pass)
+ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
@@ -511,8 +545,8 @@ IF(NOT APPLE)
   ADD_SUBDIRECTORY(examples/points_overlay)
   ADD_SUBDIRECTORY(examples/screen_capture)
 ENDIF()
+ENDIF()
 
-ADD_SUBDIRECTORY(examples/hud_overlay)
 
 
 IF(FLITR_WITH_OSGCUDA)

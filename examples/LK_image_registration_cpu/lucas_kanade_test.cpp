@@ -35,7 +35,7 @@ using std::shared_ptr;
 using namespace flitr;
 
 
-class BackgroundTriggerThread : public OpenThreads::Thread
+class BackgroundTriggerThread : public FThread
 {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
@@ -46,7 +46,7 @@ public:
     {
         while(!ShouldExit_)
         {
-            if (!Producer_->trigger()) Thread::microSleep(5000);
+            if (!Producer_->trigger()) FThread::microSleep(5000);
         }
     }
     
@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
             //std::cout.flush();
         }
         
-        OpenThreads::Thread::microSleep(3000);
+        FThread::microSleep(3000);
     }
     
     mffc->stopWriting();

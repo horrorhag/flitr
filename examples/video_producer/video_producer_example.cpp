@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            OpenThreads::Thread::microSleep(5000);
+            FThread::microSleep(5000);
         }
     }
 

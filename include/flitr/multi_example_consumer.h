@@ -26,14 +26,13 @@
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/metadata_writer.h>
 
-#include <OpenThreads/Thread>
-#include <OpenThreads/Mutex>
+#include <flitr/flitr_thread.h>
 
 namespace flitr
 {
     class MultiExampleConsumer;
     
-    class MultiExampleConsumerThread : public OpenThreads::Thread
+    class MultiExampleConsumerThread : public FThread
     {
     public:
         MultiExampleConsumerThread(MultiExampleConsumer *consumer) :
@@ -68,7 +67,8 @@ namespace flitr
         //!Example of using a scoped lock.
         int getterThatMightRequireAScopedLock(const uint32_t imNumber)
         {
-            OpenThreads::ScopedLock<OpenThreads::Mutex> wlock(*_accessMutex);
+            std::lock_guard<std::mutex> scopedLock(_accessMutex);
+
             return 0;
         }
         
@@ -83,7 +83,7 @@ namespace flitr
         MultiExampleConsumerThread *_thread;
         
         //!Example of mutex that may be used for access control if required.
-        std::shared_ptr<OpenThreads::Mutex> _accessMutex;
+        std::mutex _accessMutex;
     };
     
 }
