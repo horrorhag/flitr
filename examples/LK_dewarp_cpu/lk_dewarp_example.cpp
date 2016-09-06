@@ -20,7 +20,6 @@
 #include <flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h>
 
 #include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h>
-#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
 #include <flitr/ffmpeg_producer.h>

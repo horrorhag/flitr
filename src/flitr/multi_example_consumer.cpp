@@ -46,7 +46,7 @@ void MultiExampleConsumerThread::run()
                 const uint32_t height=im->format()->getHeight();
                 
                 //!Pixels per image.
-                const uint32_t numPixels=width*height;
+                //const uint32_t numPixels=width*height;
                 
                 //!Colour channels per pixel.
                 const uint32_t componentsPerPixel=im->format()->getComponentsPerPixel();

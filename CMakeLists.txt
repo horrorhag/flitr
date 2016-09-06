@@ -209,10 +209,10 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
+  src/flitr/modules/flitr_image_processors/adaptive_threshold/fip_adaptive_threshold.cpp
   src/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.cpp
   src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
-  src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.cpp
   src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
   src/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
@@ -286,10 +286,10 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
+  include/flitr/modules/flitr_image_processors/adaptive_threshold/fip_adaptive_threshold.h
   include/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h
   include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
-  include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h
   include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
   include/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h
   include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
@@ -490,6 +490,7 @@ SET_TARGET_PROPERTIES(flitr PROPERTIES COMPILE_FLAGS "-DFLITR_SHARED_LIBRARY")
 ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
+ADD_SUBDIRECTORY(examples/adaptive_threshold)
 
 ADD_SUBDIRECTORY(apps/laser_interlock)
 

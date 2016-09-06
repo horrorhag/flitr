@@ -53,6 +53,26 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
+        void setTitle(const std::string &title)
+        {
+            _title=title;
+        }
+        
+        virtual std::string getTitle()
+        {
+            return _title;
+        }
+        
+        virtual void enable(bool state=true)
+        {
+            _enabled = state;
+        }
+        
+        virtual bool isEnabled()
+        {
+            return _enabled;
+        }
+        
         
     private:
         inline float bilinearRead(float const * const data,
@@ -75,6 +95,9 @@ namespace flitr {
             data[offsetLT+(((ptrdiff_t)1)+width)] += value * (fx * fy);
         }
         
+        bool _enabled;
+        std::string _title;
+
         const float avrgImageLongevity_;
         const float recipGradientThreshold_;
         

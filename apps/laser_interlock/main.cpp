@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    const auto channelElementVec=cfg->getAttributeVector("channel_setup");
-    const size_t numChannels=channelElementVec.size();
+    //const auto channelElementVec=cfg->getAttributeVector("channel_setup");
+    //const size_t numChannels=channelElementVec.size();
     //=====================//
     
     

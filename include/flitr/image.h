@@ -98,10 +98,10 @@ class FLITR_EXPORT Image {
     }
     
     //!Get a const pointer to the image format.
-    ImageFormat const * const format() const { return &Format_; }
+    ImageFormat const * format() const { return &Format_; }
 
     //!Get a non-const pointer to the image format. (Legacy method - included for older code that didn't use a const pointer to hold the return.)
-    ImageFormat * const format() { return &Format_; }
+    ImageFormat * format() { return &Format_; }
     
     //!Get the image mata data.
     const std::shared_ptr<ImageMetadata> metadata() const { return Metadata_; }
@@ -110,10 +110,10 @@ class FLITR_EXPORT Image {
     void setMetadata(std::shared_ptr<ImageMetadata> md) { Metadata_ = md; }
 
     //!Get a pointer to the image data for reading and writing.
-    uint8_t * const data() { return &(Data_[0]); }
+    uint8_t * data() { return &(Data_[0]); }
     
     //!Get a pointer to const image data for reading.
-    uint8_t const * const data() const { return &(Data_[0]); }
+    uint8_t const * data() const { return &(Data_[0]); }
 
   private:
     void deepCopy(const Image& rh)
