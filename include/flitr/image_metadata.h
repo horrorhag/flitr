@@ -42,8 +42,16 @@ class FLITR_EXPORT ImageMetadata {
 
     virtual std::string getString() const = 0; // used for printing when debugging, etc.
 };
-    
+
 typedef std::function < std::shared_ptr<ImageMetadata> () > CreateMetadataFunction;
+/*! Typedef for the PassMetadata function used by the ImageProcessor base class.
+ *
+ * The input is a shared pointer to image metadata and returns a pointer
+ * to image metadata. The signature looks as follow:
+ * @code
+ * std::shared_ptr<ImageMetadata> someFunction(std::shared_ptr<ImageMetadata> input_metadata);
+ * @endcode */
+typedef std::function < std::shared_ptr<ImageMetadata> (std::shared_ptr<ImageMetadata>) > PassMetadataFunction;
 
 }
 
