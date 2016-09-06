@@ -24,6 +24,8 @@
 #include <flitr/image_processor.h>
 #include <flitr/image_processor_utils.h>
 
+#include <algorithm>
+
 namespace flitr {
     
     /*! Applies photometric equalisation to the image stream. */

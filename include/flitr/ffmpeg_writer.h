@@ -155,7 +155,7 @@ public:
      * options using the setCodecContextPrivateOptions() function before
      * opening the file for writing openVideo() function.
      */
-    FFmpegWriter() noexcept;
+    FFmpegWriter() /*noexcept*/;
     /**
      * Construct the FFmpegWriter and open the file for writing.
      *

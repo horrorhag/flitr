@@ -420,7 +420,9 @@ SET(LIB_SOURCES ${LIB_SOURCES}
 )
 ENDIF(FLITR_USE_LIBTIFF)
 
-  
+# tinyxml
+ADD_SUBDIRECTORY(src/flitr/tinyxml)
+
 # Video
 if(WIN32)
 	ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)

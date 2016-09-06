@@ -94,7 +94,7 @@ class FLITR_EXPORT FFmpegReader {
      * setDictionaryOptions() function before opening the video file with the
      * openVideo() function.
      */
-    FFmpegReader() noexcept;
+    FFmpegReader() /*noexcept*/;
 
     /** 
      * Creates a reader for a video file.
