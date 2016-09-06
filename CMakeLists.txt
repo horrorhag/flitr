@@ -530,7 +530,9 @@ ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
 ADD_SUBDIRECTORY(examples/geometry_overlays)
+IF(WIN32)
 ADD_SUBDIRECTORY(examples/video_producer)
+ENDIF()
 ENDIF()
 
 

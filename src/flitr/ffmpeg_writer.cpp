@@ -18,6 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <flitr/log_message.h>
 #include <flitr/ffmpeg_writer.h>
 #include <flitr/ffmpeg_utils.h>
 
