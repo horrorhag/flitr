@@ -54,13 +54,21 @@ class FLITR_EXPORT TexturedQuad
     osg::ref_ptr<osg::Group> getRoot() { return RootGroup_; }
     
     //=== Geomtric transformations of quad ===//
+    /*! Set a new matrix transform on the texture, overwriting any existing transforms. */
     void setTransform(osg::Matrixd& m) { MatrixTransform_->setMatrix(m); }
+    /*! Get the current matrix transform that is currently applied to the texture. */
+    osg::Matrixd getTransform() const { return MatrixTransform_->getMatrix(); }
+    /*! Reset the transform, discarding any existing transforms. */
     void resetTransform() { MatrixTransform_->setMatrix(osg::Matrixd()); }
     
-    void translate(double x, double y)
+    /*! Translate or move the TextureQuad.
+     *
+     * This function will keep all previous transformations and perform the
+     * new translation as well on the texture. */
+    void translate(double x, double y, double z = 0.0)
     {
         osg::Matrixd m=MatrixTransform_->getMatrix();
-        m*=osg::Matrixd::translate(osg::Vec3d(x, y, 0.0));
+        m*=osg::Matrixd::translate(osg::Vec3d(x, y, z));
         MatrixTransform_->setMatrix(m);
     }
     
