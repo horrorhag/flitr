@@ -51,27 +51,48 @@ namespace flitr {
         
         void setGFScale(size_t scale)
         {
-            GFScale_=scale;
+            if (scale <2) scale=2;
+            _GFScale=scale;
+        }
+        
+        size_t getGFScale() const
+        {
+            return _GFScale;
+        }
+
+        void setNumGaussianScales(const size_t numScales)
+        {
+            _numScales=numScales;
         }
         
     private:
+        //!Box filter helper. No significant state.
+        BoxFilterII _GF;
+        
+        //!Integral image used if true local adaptive enhancement used.
+        IntegralImage _II;
+        
+        size_t _GFScale;
+        size_t _numScales;
+        
         /*! The grayscale image per slot. */
-        BoxFilterII GF_;
-        IntegralImage II_;
-        size_t GFScale_;
-        
-        float *IntScratchData_;
-        float *GFScratchData_;
-        float *MSRScratchData_;
+        float *_intensityScratchData;
 
-        float *floatScratchData_;
-        double *doubleScratchData1_;
-        double *doubleScratchData2_;
+        float *_GFScratchData;
+        float *_MSRScratchData;
+        float *_floatScratchData;
         
-#define histoBinArrSize_ 2000
-        size_t *histoBins_;
+        //!Integral image of input image.
+        double *_doubleScratchData1;
         
-        size_t triggerCount_;
+        //!Integral image used for approximate gaussian filter.
+        double *_doubleScratchData2;
+        
+#define _histoBinArrSize 1000
+        
+        size_t *_histoBins;
+        
+        size_t _triggerCount;
     };
     
 }

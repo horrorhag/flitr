@@ -28,16 +28,17 @@ using std::shared_ptr;
 FIPMSR::FIPMSR(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-GF_(8),
-GFScale_(15),
-IntScratchData_(nullptr),
-GFScratchData_(nullptr),
-MSRScratchData_(nullptr),
-floatScratchData_(nullptr),
-doubleScratchData1_(nullptr),
-doubleScratchData2_(nullptr),
-histoBins_(nullptr),
-triggerCount_(0)
+_GF(1),
+_GFScale(15),
+_numScales(1),
+_intensityScratchData(nullptr),
+_GFScratchData(nullptr),
+_MSRScratchData(nullptr),
+_floatScratchData(nullptr),
+_doubleScratchData1(nullptr),
+_doubleScratchData2(nullptr),
+_histoBins(nullptr),
+_triggerCount(0)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -52,13 +53,13 @@ triggerCount_(0)
 
 FIPMSR::~FIPMSR()
 {
-    delete [] IntScratchData_;
-    delete [] GFScratchData_;
-    delete [] MSRScratchData_;
-    delete [] floatScratchData_;
-    delete [] doubleScratchData1_;
-    delete [] doubleScratchData2_;
-    delete [] histoBins_;
+    delete [] _intensityScratchData;
+    delete [] _GFScratchData;
+    delete [] _MSRScratchData;
+    delete [] _floatScratchData;
+    delete [] _doubleScratchData1;
+    delete [] _doubleScratchData2;
+    delete [] _histoBins;
 }
 
 bool FIPMSR::init()
@@ -80,25 +81,25 @@ bool FIPMSR::init()
         if (height>maxHeight) maxHeight=height;
     }
     
-    IntScratchData_=new float[maxWidth*maxHeight];
-    memset(IntScratchData_, 0, maxWidth*maxHeight*sizeof(float));
+    _intensityScratchData=new float[maxWidth*maxHeight];
+    memset(_intensityScratchData, 0, maxWidth*maxHeight*sizeof(float));
     
-    GFScratchData_=new float[maxWidth*maxHeight];
-    memset(GFScratchData_, 0, maxWidth*maxHeight*sizeof(float));
+    _GFScratchData=new float[maxWidth*maxHeight];
+    memset(_GFScratchData, 0, maxWidth*maxHeight*sizeof(float));
     
-    MSRScratchData_=new float[maxWidth*maxHeight];
-    memset(MSRScratchData_, 0, maxWidth*maxHeight*sizeof(float));
+    _MSRScratchData=new float[maxWidth*maxHeight];
+    memset(_MSRScratchData, 0, maxWidth*maxHeight*sizeof(float));
     
-    floatScratchData_=new float[maxWidth*maxHeight];
-    memset(floatScratchData_, 0, maxWidth*maxHeight*sizeof(float));
+    _floatScratchData=new float[maxWidth*maxHeight];
+    memset(_floatScratchData, 0, maxWidth*maxHeight*sizeof(float));
     
-    doubleScratchData1_=new double[maxWidth*maxHeight];
-    memset(doubleScratchData1_, 0, maxWidth*maxHeight*sizeof(double));
+    _doubleScratchData1=new double[maxWidth*maxHeight];
+    memset(_doubleScratchData1, 0, maxWidth*maxHeight*sizeof(double));
     
-    doubleScratchData2_=new double[maxWidth*maxHeight];
-    memset(doubleScratchData2_, 0, maxWidth*maxHeight*sizeof(double));
+    _doubleScratchData2=new double[maxWidth*maxHeight];
+    memset(_doubleScratchData2, 0, maxWidth*maxHeight*sizeof(double));
     
-    histoBins_=new size_t[histoBinArrSize_];
+    _histoBins=new size_t[_histoBinArrSize];
     
     return rValue;
 }
@@ -110,7 +111,7 @@ bool FIPMSR::trigger()
         std::vector<Image**> imvRead=reserveReadSlot();
         std::vector<Image**> imvWrite=reserveWriteSlot();
         
-        ++triggerCount_;
+        ++_triggerCount;
         
         //Start stats measurement event.
         ProcessorStats_->tick();
@@ -145,44 +146,42 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        IntScratchData_[writeOffset]=(dataRead[readOffset+0] + dataRead[readOffset+1] + dataRead[readOffset+2])*(1.0f/3.0f);
+                        _intensityScratchData[writeOffset]=(dataRead[readOffset+0] + dataRead[readOffset+1] + dataRead[readOffset+2])*(1.0f/3.0f);
                         readOffset+=3;
                         ++writeOffset;
                     }
                 }
                 
-                F32Image=IntScratchData_;
+                F32Image=_intensityScratchData;
             }
             //=== ===//
             
             
             
-            memset(MSRScratchData_, 0, width*height*sizeof(float));
+            memset(_MSRScratchData, 0, width*height*sizeof(float));
             
-            const size_t numScales=3;
-            const float recipNumScales=1.0f/numScales;
+            const float recipNumScales=1.0f/_numScales;
             
-            for (size_t scaleIndex=0; scaleIndex<numScales; ++scaleIndex)
+            for (size_t scaleIndex=0; scaleIndex<_numScales; ++scaleIndex)
             {
-                const size_t kernelWidth=(imFormatUS.getWidth() / (GFScale_*(1<<(scaleIndex*1)))) | 1;
-                //const size_t halfKernelWidth=kernelWidth >> 1;
+                const size_t kernelWidth=(imFormatUS.getWidth() / (_GFScale*(1 << scaleIndex))) | 1; // | 1 to make sure kernelWidth is odd.
                 
-                GF_.setKernelWidth(kernelWidth);
+                _GF.setKernelWidth(kernelWidth);
                 
                 // #parallel
-                GF_.filter(GFScratchData_, F32Image, width, height,
-                                          doubleScratchData1_,
+                _GF.filter(_GFScratchData, F32Image, width, height,
+                                          _doubleScratchData1,
                            scaleIndex==0 ? true : false);
                 
                 //Approximate Gaussian filt kernel...
                 for (int i=0; i<1; ++i)
                 {
                     // #parallel?
-                    memcpy(floatScratchData_, GFScratchData_, width*height*sizeof(float));
+                    memcpy(_floatScratchData, _GFScratchData, width*height*sizeof(float));
                     
                     // #parallel
-                    GF_.filter(GFScratchData_, floatScratchData_, width, height,
-                                              doubleScratchData2_, true);
+                    _GF.filter(_GFScratchData, _floatScratchData, width, height,
+                                              _doubleScratchData2, true);
                 }
                 
                 //Calc SSR image...
@@ -193,20 +192,23 @@ bool FIPMSR::trigger()
                     for (size_t x=0; x<width; ++x)
                     {
                         //const float r=(log10f(F32Image[offset]+1.0f) - log10f(GFScratchData_[offset]+1.0f));//+1.0f in case the intensities are zero.
-                        const float r=(F32Image[offset] - GFScratchData_[offset]);
+                        const float r=(F32Image[offset] - _GFScratchData[offset]);
                         //Note: The log version (true retinex) seems to not have a big impact AND it is slower.
                         //      The gain and chromatGain below may be used to tweak the image.
                         
-                        floatScratchData_[offset]=r * 1.0f;
+                        _floatScratchData[offset]=r * 1.0f;
                         
                         ++offset;
                     }
                 }
-                
-                /*
+
+//#define SR_LOCAL_CONTRAST 1
+#ifdef SR_LOCAL_CONTRAST
                 //=== Update MSR with SSR scaled using local min/max : Local DC level has very little impact; SLOW!===//
-                II_.process(doubleScratchData2_, floatScratchData_, width, height);
+                _II.process(_doubleScratchData2, _floatScratchData, width, height);
                 
+                const size_t halfKernelWidth=kernelWidth >> 1;
+
                 for (size_t y=halfKernelWidth; y<(height-halfKernelWidth); ++y)
                 {
                     const size_t offset=y*width;
@@ -222,7 +224,7 @@ bool FIPMSR::trigger()
                             
                             for (int lx=-int(halfKernelWidth); lx<=int(halfKernelWidth); ++lx)
                             {
-                                const float r=floatScratchData_[offset+lx];
+                                const float r=_floatScratchData[offset+lx];
                                 
                                 if (r<rmin) rmin=r;
                                 if (r>rmax) rmax=r;
@@ -231,19 +233,18 @@ bool FIPMSR::trigger()
                         
                         const float recipRange=1.0f/(rmax - rmin);
 
-                        const float r=(floatScratchData_[offset+x]-rmin) * (recipRange * recipNumScales);
-                        MSRScratchData_[offset+x]+=r;
+                        const float r=(_floatScratchData[offset+x]-rmin) * (recipRange * recipNumScales);
+                        _MSRScratchData[offset+x]+=r;
                     }
                 }
                 //=====================================//
-                 */
-                //=== OR ===//
+#else                
                 //=== Update MSR with global min/max minus outliers : MUCH faster than local min/max window; Global min/max means filter is not strictly local, but results still very good ===//
                 float rmin=-1.0f;
                 float rmax=1.0f;
                 
                 size_t numHistoSamples=0;
-                memset(histoBins_, 0, histoBinArrSize_*sizeof(size_t));
+                memset(_histoBins, 0, _histoBinArrSize*sizeof(size_t));
                 
                 for (size_t y=height/4; y<(height*3)/4; ++y)
                 {
@@ -251,13 +252,13 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=width/4; x<(width*3/4); ++x)
                     {
-                        const float r=floatScratchData_[offset+x];
+                        const float r=_floatScratchData[offset+x];
                         
-                        const int histoBinNum=int(((r + 1.0f)*0.5f) * (histoBinArrSize_-1) + 0.5f);
+                        const int histoBinNum=int(((r + 1.0f)*0.5f) * (_histoBinArrSize-1) + 0.5f);
                         
-                        if ((histoBinNum>=0) && (histoBinNum<histoBinArrSize_))
+                        if ((histoBinNum>=0) && (histoBinNum<_histoBinArrSize))
                         {
-                            histoBins_[histoBinNum]=histoBins_[histoBinNum]+1;
+                            _histoBins[histoBinNum]=_histoBins[histoBinNum]+1;
                         }
                         
                         ++numHistoSamples;
@@ -268,11 +269,11 @@ bool FIPMSR::trigger()
                 size_t lowerToRemove=numHistoSamples*0.001f;
                 size_t lowerRemoved=0;
                 
-                for (int binNum=0; binNum<histoBinArrSize_; ++binNum)
+                for (int binNum=0; binNum<_histoBinArrSize; ++binNum)
                 {
-                    size_t removedFromThisBin=std::min(histoBins_[binNum], lowerToRemove - lowerRemoved);
+                    const size_t removedFromThisBin=std::min(_histoBins[binNum], lowerToRemove - lowerRemoved);
                     lowerRemoved+=removedFromThisBin;
-                    histoBins_[binNum]=0;
+                    _histoBins[binNum]=0;
                     
                     if (lowerRemoved>=lowerToRemove) break;
                 }
@@ -280,30 +281,30 @@ bool FIPMSR::trigger()
                 size_t upperToRemove=numHistoSamples*0.001f;
                 size_t upperRemoved=0;
                 
-                for (int binNum=histoBinArrSize_-1; binNum>=0; --binNum)
+                for (int binNum=_histoBinArrSize-1; binNum>=0; --binNum)
                 {
-                    size_t removedFromThisBin=std::min(histoBins_[binNum], upperToRemove - upperRemoved);
+                    const size_t removedFromThisBin=std::min(_histoBins[binNum], upperToRemove - upperRemoved);
                     upperRemoved+=removedFromThisBin;
-                    histoBins_[binNum]=0;
+                    _histoBins[binNum]=0;
                     
                     if (upperRemoved>=upperToRemove) break;
                 }
                 
                 
                 //Find min/max from histoBins_.
-                for (int binNum=0; binNum<histoBinArrSize_; ++binNum)
+                for (int binNum=0; binNum<_histoBinArrSize; ++binNum)
                 {
-                    if (histoBins_[binNum])
+                    if (_histoBins[binNum])
                     {
-                        rmin=(binNum/float(histoBinArrSize_))*2.0f-1.0f;
+                        rmin=(binNum/float(_histoBinArrSize))*2.0f-1.0f;
                         break;
                     }
                 }
-                for (int binNum=histoBinArrSize_-1; binNum>=0; --binNum)
+                for (int binNum=_histoBinArrSize-1; binNum>=0; --binNum)
                 {
-                    if (histoBins_[binNum]) 
+                    if (_histoBins[binNum])
                     {
-                        rmax=((binNum+1)/float(histoBinArrSize_))*2.0f-1.0f;
+                        rmax=((binNum+1)/float(_histoBinArrSize))*2.0f-1.0f;
                         break;
                     }
                 }
@@ -318,18 +319,18 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float r=(floatScratchData_[offset+x]-rmin) * (recipRange * recipNumScales);
-                        MSRScratchData_[offset+x]+=r;
+                        const float r=(_floatScratchData[offset+x]-rmin) * (recipRange * recipNumScales);
+                        _MSRScratchData[offset+x]+=r;
                     }
                 }
                  //=====================================================//
-                
+#endif
             }
             
             //MSR cont.
             const float gain=0.9f;//Boosts image intensity.
             const float chromatGain=1.0f;//Boosts colour.
-            const float blacknessFloor=0.05f/255.0f;//Limits the enhancement of low signal (black) areas.
+            const float blacknessFloor=1.0f/255.0f;//Limits the enhancement of low signal (black) areas.
             
             if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
             {
@@ -340,7 +341,7 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float r=MSRScratchData_[intensityOffset] * gain;
+                        const float r=_MSRScratchData[intensityOffset] * gain;
                         const float intInput=F32Image[intensityOffset];
                         
                         const float recipIntInput=1.0f/(intInput+blacknessFloor);//Bias very dark colours more towards black...
@@ -361,7 +362,7 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float r=MSRScratchData_[offset+x] * gain;
+                        const float r=_MSRScratchData[offset+x] * gain;
                         const float intInput=F32Image[offset+x];
                         
                         dataWrite[offset+x]=r * (intInput/(intInput+blacknessFloor));//Bias very dark colours more towards black...
