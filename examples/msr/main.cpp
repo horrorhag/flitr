@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToF32->stopTriggerThread();
-//    msr->stopTriggerThread();
+    msr->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;
