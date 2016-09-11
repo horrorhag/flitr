@@ -63,6 +63,8 @@ ImageProcessor::ImageProcessor(ImageProducer& upStreamProducer,
     stats_name << " ImageProcessor::process";
     ProcessorStats_ = std::shared_ptr<StatsCollector>(new StatsCollector(stats_name.str()));
 
+    /* Set the default pass function to copy metadata */
+    setPassMetadataFunction([](std::shared_ptr<ImageMetadata> readMetadata){ return readMetadata; });
 }
 
 ImageProcessor::~ImageProcessor()
