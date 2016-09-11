@@ -45,8 +45,8 @@ latestHy_(0.0),
 latestHFrameNumber_(0),
 sumHx_(0.0f),
 sumHy_(0.0f),
-burnFx_(0.0f),
-burnFy_(0.0f)
+burnFx_(1.0f),
+burnFy_(1.0f)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
@@ -523,7 +523,7 @@ bool FIPLKStabilise::trigger()
                                         ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
                                     {
                                         const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
-                                        dataWrite[unCroppedOffset*3]=dataRead[offsetLT*3];
+                                        dataWrite[unCroppedOffset]=dataRead[offsetLT];
                                     }
                                 }
                             }

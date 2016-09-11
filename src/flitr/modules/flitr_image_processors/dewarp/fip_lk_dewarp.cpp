@@ -38,9 +38,9 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 _enabled(true),
 _title(std::string("LK Dewarp")),
 avrgImageLongevity_(avrgImageLongevity),
-recipGradientThreshold_(1.0f / 0.003f),
+recipGradientThreshold_(1.0f / 0.004f),
 numLevels_(4),//Num levels searched for scint motion.
-gaussianFilter_(2.0f, 8),
+gaussianFilter_(2.0f, 7),
 gaussianDownsample_(1.0f, 4),
 gaussianReguFilter_(2.5f, 11),
 scratchData_(0),
@@ -83,10 +83,10 @@ FIPLKDewarp::~FIPLKDewarp()
         
         delete [] hyVec_.back();
         hyVec_.pop_back();
-        
+    }
+    
         delete [] avrgHxData_;
         delete [] avrgHyData_;
-    }
 }
 
 bool FIPLKDewarp::init()
@@ -494,9 +494,9 @@ bool FIPLKDewarp::trigger()
                                         const float hy=-hyDataGF[offset];
                                         
                                         const float f=0.1;
-                                        avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -520,9 +520,9 @@ bool FIPLKDewarp::trigger()
                                         const float hy=hyDataGF[offset];
                                         
                                         const float f=0.1;
-                                        avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -534,15 +534,15 @@ bool FIPLKDewarp::trigger()
                                             ((x+int_hx)<(croppedWidth-1)) &&
                                             ((y+int_hy)<(croppedHeight-1)) )
                                         {
-                                            /*
+                                            
                                              const float frac_hx=hx - floor_hx;
                                              const float frac_hy=hy - floor_hy;
                                              const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
                                              
                                              const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
                                              finalImgData_[offset]=img;
-                                             */
-                                            finalImgData_[offset]=avrgHSq * 10.0;
+                                            
+                                            //finalImgData_[offset]=avrgHSq * 10.0;
                                         }
 #endif
                                     }
