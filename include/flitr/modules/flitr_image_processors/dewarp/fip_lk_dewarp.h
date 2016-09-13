@@ -40,7 +40,6 @@ namespace flitr {
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                     const float avrgImageLongevity,
-                    const bool inFastMode,
                     uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -100,7 +99,6 @@ namespace flitr {
         std::string _title;
 
         const float avrgImageLongevity_;
-        const bool inFastMode_;
         const float recipGradientThreshold_;
         
         const size_t numLevels_;

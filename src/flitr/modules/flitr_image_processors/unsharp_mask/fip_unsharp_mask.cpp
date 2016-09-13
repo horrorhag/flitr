@@ -142,3 +142,10 @@ bool FIPUnsharpMask::trigger()
     return false;
 }
 
+void FIPUnsharpMask::setFilterRadius(const float filterRadius)
+{
+    std::lock_guard<std::mutex> scopedLock(triggerMutex_);
+    
+    gaussianFilter_.setFilterRadius(filterRadius);
+}
+

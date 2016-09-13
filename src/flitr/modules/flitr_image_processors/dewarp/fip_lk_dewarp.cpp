@@ -33,14 +33,12 @@ using std::shared_ptr;
 
 FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                          const float avrgImageLongevity,
-                         const bool inFastMode,
                          uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 _enabled(true),
 _title(std::string("LK Dewarp")),
 avrgImageLongevity_(avrgImageLongevity),
-inFastMode_(inFastMode),
-recipGradientThreshold_(1.0f / 0.004f),
+recipGradientThreshold_(1.0f / 0.00025f),
 numLevels_(4),//Num levels searched for scint motion.
 gaussianFilter_(1.0f, 5),
 gaussianDownsample_(1.0f, 4),
@@ -87,8 +85,8 @@ FIPLKDewarp::~FIPLKDewarp()
         hyVec_.pop_back();
     }
     
-        delete [] avrgHxData_;
-        delete [] avrgHyData_;
+    delete [] avrgHxData_;
+    delete [] avrgHyData_;
 }
 
 bool FIPLKDewarp::init()
@@ -174,7 +172,7 @@ bool FIPLKDewarp::trigger()
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
-
+            
             // Pass the metadata from the read image to the write image.
             // By Default the base implementation will copy the pointer if no custom
             // pass function was set.
@@ -247,13 +245,7 @@ bool FIPLKDewarp::trigger()
                         }
                         
                         //=== Do Gaussian filter of initial input ===//
-                        if (inFastMode_)
-                        {
-                            memcpy(imgVec_[0], inputImgData_, croppedWidth * croppedHeight * sizeof(float));
-                        } else
-                        {
-                            gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
-                        }
+                        gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
                         
                     }//=== ===
                     
@@ -468,10 +460,10 @@ bool FIPLKDewarp::trigger()
                                 }
                                 
                                 
-                                //if (levelNum>=1)
+                                if (levelNum>=1)
                                 {//=== Smooth/regularise the vector field of this iteration using Gaussian filters in x and y ===//
-                                    //gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
-                                    //gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
+                                    gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
+                                    gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
                                 }//=== ===
                                 
                             }
@@ -553,12 +545,12 @@ bool FIPLKDewarp::trigger()
                                             ((y+int_hy)<(croppedHeight-1)) )
                                         {
                                             
-                                             const float frac_hx=hx - floor_hx;
-                                             const float frac_hy=hy - floor_hy;
-                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
-                                             
-                                             const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                             finalImgData_[offset]=img;
+                                            const float frac_hx=hx - floor_hx;
+                                            const float frac_hy=hy - floor_hy;
+                                            const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
+                                            
+                                            const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                            finalImgData_[offset]=img;
                                             
                                             //finalImgData_[offset]=avrgHSq * 10.0;
                                         }
@@ -568,12 +560,12 @@ bool FIPLKDewarp::trigger()
                                 }
                                 else //OR
                                 {
-                                    const size_t levelIndex=3;//(numLevels_-1) - 5;
+                                    const size_t levelIndex=0;//(numLevels_-1) - 5;
                                     const size_t offsetB=(x>>levelIndex) + (y>>levelIndex)*(croppedWidth>>levelIndex);
                                     //const float i=imgVec_[levelIndex][offsetB];
                                     const float hxB=hxVec_[levelIndex][offsetB];
                                     const float hyB=hyVec_[levelIndex][offsetB];
-                                    finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*1.0f;
+                                    finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1f;
                                 }
                             }
                         }

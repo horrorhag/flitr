@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
     
     
     //=== Photometric equalisation to improve accuracy of optical flow. ===
+    //===  * Use setTargetAverage(...) to set the target average brightness at run-time.
     shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToYF32, 1,
                                                                                       0.6,//target average brightness.
                                                                                       2));//SharedImageBuffer size.
@@ -168,6 +169,7 @@ int main(int argc, char *argv[])
     
     
     //=== Optical flow based image stabilisation to nearest integer...
+    //===  * Use setupOutputTransformBurn to accommodate a panning camera. Smaller values is more accommodating.
     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*photometricEqualise, 1,
                                                               FIPLKStabilise::Mode::INTSTAB, //Stabilise to nearest int.
                                                               //FIPLKStabilise::Mode::SUBPIXELSTAB, //Stabilise to sub-pixel accuracy (resamples the image).
@@ -177,7 +179,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not initialise the lkstabilise processor.\n";
         exit(-1);
     }
-    lkstabilise->setupOutputTransformBurn(0.975, 0.975); //High pass filter output transform.
+    lkstabilise->setupOutputTransformBurn(0.8, 0.8); //High pass filter output transform.
     lkstabilise->startTriggerThread();
     
     
@@ -185,8 +187,7 @@ int main(int argc, char *argv[])
     
     //=== Optical flow based image dewarp...
     shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
-                                                     0.5f, //Internal average image longevity.
-                                                     true, //true = in fast possibly less accurate mode.
+                                                     0.95f, //Internal average image longevity.
                                                      2));  //Buffer size.
     if (!lkdewarp->init())
     {
@@ -199,7 +200,7 @@ int main(int argc, char *argv[])
     
     //=== Post dewarp average image to reduce noise/artifacts...
     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1,
-                                                                 5,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
+                                                                 2,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
                                                                  2));
     if (!averageImage->init())
     {
@@ -211,6 +212,7 @@ int main(int argc, char *argv[])
     
     
     //=== Sharpening/de-blur pass. ===//
+    //===  * Use setFilterRadius(...) to at runtime adjust the filter radius to best sharpen the image.
     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1,
                                                               20.0f, //unsharp mask gain.
                                                               1.49f, //unsharp mask filter radius.
@@ -338,6 +340,8 @@ int main(int argc, char *argv[])
             ip->trigger();
         }
 #endif
+        
+        //unsharpMask->setFilterRadius(numFrames * 0.01 + 0.5);
         
         if (osgc->getNext())
         {
