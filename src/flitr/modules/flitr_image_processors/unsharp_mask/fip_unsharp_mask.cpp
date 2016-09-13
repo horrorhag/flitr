@@ -30,7 +30,7 @@ FIPUnsharpMask::FIPUnsharpMask(ImageProducer& upStreamProducer, uint32_t images_
                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 gain_(gain),
-gaussianFilter_(filterRadius, ceilf(filterRadius*4.0f)) //Kernel size/width is 4x radius to allow for four standard deviations to the left and four to the right of the centre.
+gaussianFilter_(filterRadius, int(ceilf(filterRadius*2.0f+0.5)+0.5)*2 - 1)//Filter size includes 2xradius to each side.
 {
     
     //Setup image format being produced to downstream.
