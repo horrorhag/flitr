@@ -120,6 +120,14 @@ bool FIPMSR::trigger()
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
+            }
             
             float const * const dataRead=(float *)imRead->data();
             
