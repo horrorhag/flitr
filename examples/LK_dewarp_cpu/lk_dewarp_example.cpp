@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
     
     
     //=== Optical flow based image stabilisation to nearest integer...
-    //===  * Use setupOutputTransformBurn to accommodate a panning camera. Smaller values is more accommodating.
+    //===  * Use setupOutputTransformBurn(...) to accommodate a panning camera. Smaller values are more accommodating.
     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*photometricEqualise, 1,
                                                               FIPLKStabilise::Mode::INTSTAB, //Stabilise to nearest int.
                                                               //FIPLKStabilise::Mode::SUBPIXELSTAB, //Stabilise to sub-pixel accuracy (resamples the image).

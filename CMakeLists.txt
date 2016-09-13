@@ -541,6 +541,7 @@ IF(FLITR_USE_OSG)
 ADD_SUBDIRECTORY(examples/hud_overlay)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/cpu_shader_pass)
+ADD_SUBDIRECTORY(examples/histogram_processing)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
