@@ -94,6 +94,14 @@ bool FIPUnsharpMask::trigger()
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWriteDS->setMetadata(PassMetadataFunction_(imReadUS->metadata()));
+            }
             
             const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
             

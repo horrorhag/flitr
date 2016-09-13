@@ -142,6 +142,14 @@ bool FIPLKStabilise::trigger()
             Image * const imWrite = *(imvWrite[imgNum]);
             float const * const dataRead=(float const * const)imRead->data();
             float * const dataWrite=(float * const)imWrite->data();
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
+            }
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);
             const ptrdiff_t uncroppedWidth=imFormat.getWidth();
