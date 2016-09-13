@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 5));
     if (!ip->init())
     {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     
     //=== Photometric equalisation to improve accuracy of optical flow. ===
     shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToYF32, 1,
-                                                                                      0.6, //target average
+                                                                                      0.6,//target average brightness.
                                                                                       2));//SharedImageBuffer size.
     
     if (!photometricEqualise->init())
@@ -186,6 +186,7 @@ int main(int argc, char *argv[])
     //=== Optical flow based image dewarp...
     shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
                                                      0.5f, //Internal average image longevity.
+                                                     true, //true = in fast possibly less accurate mode.
                                                      2));  //Buffer size.
     if (!lkdewarp->init())
     {

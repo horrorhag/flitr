@@ -33,14 +33,16 @@ using std::shared_ptr;
 
 FIPLKDewarp::FIPLKDewarp(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                          const float avrgImageLongevity,
+                         const bool inFastMode,
                          uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 _enabled(true),
 _title(std::string("LK Dewarp")),
 avrgImageLongevity_(avrgImageLongevity),
+inFastMode_(inFastMode),
 recipGradientThreshold_(1.0f / 0.004f),
 numLevels_(4),//Num levels searched for scint motion.
-gaussianFilter_(2.0f, 7),
+gaussianFilter_(1.0f, 5),
 gaussianDownsample_(1.0f, 4),
 gaussianReguFilter_(2.5f, 11),
 scratchData_(0),
@@ -232,11 +234,19 @@ bool FIPLKDewarp::trigger()
                         {
                             const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
                             const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
+                            
                             memcpy((inputImgData_+croppedLineOffset), (dataRead+uncroppedLineOffset), croppedWidth*sizeof(float));
                         }
                         
                         //=== Do Gaussian filter of initial input ===//
-                        gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
+                        if (inFastMode_)
+                        {
+                            memcpy(imgVec_[0], inputImgData_, croppedWidth * croppedHeight * sizeof(float));
+                        } else
+                        {
+                            gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
+                        }
+                        
                     }//=== ===
                     
                     {//=== Calculate scale space pyramid. ===
@@ -493,7 +503,7 @@ bool FIPLKDewarp::trigger()
                                         const float hx=-hxDataGF[offset];
                                         const float hy=-hyDataGF[offset];
                                         
-                                        const float f=0.1;
+                                        //const float f=0.1;
                                         //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
                                         //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
                                         //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
@@ -519,7 +529,7 @@ bool FIPLKDewarp::trigger()
                                         const float hx=hxDataGF[offset];
                                         const float hy=hyDataGF[offset];
                                         
-                                        const float f=0.1;
+                                        //const float f=0.1;
                                         //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
                                         //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
                                         //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
