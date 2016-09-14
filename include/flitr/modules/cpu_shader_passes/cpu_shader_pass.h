@@ -97,7 +97,11 @@ public:
 
     void setPostRenderCPUShader(CPUShader *cpuShader);
 
-    void setGPUShader(std::string filename);
+    //!Set GPU shader from shader source file.
+    void setGPUShader(const std::string &filename);
+    
+    //!Set GPU shader from shader source string.
+    void setGPUShaderSource(const std::string &name, const std::string &source);
 
 private:
     osg::ref_ptr<osg::Image> getInImage() { return InImage_; }

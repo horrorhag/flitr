@@ -55,7 +55,14 @@ int main(int argc, char *argv[])
     }
     
     shared_ptr<flitr::CPUShaderPass> cpuShaderPass(new flitr::CPUShaderPass(osgc->getOutputTexture()));
-    cpuShaderPass->setGPUShader("copy.frag");
+    cpuShaderPass->setGPUShaderSource("copy_pass",
+                                      "uniform sampler2DRect textureID0; \
+                                      void main(void) \
+                                      { \
+                                        vec2 texCoord = gl_TexCoord[0].xy; \
+                                        vec4 c  = texture2DRect(textureID0, texCoord); \
+                                        gl_FragColor = c; \
+                                      }");
 
     osg::ref_ptr<flitr::CPUPaletteRemap_Shader> prmCPUShader;
     prmCPUShader=osg::ref_ptr<flitr::CPUPaletteRemap_Shader>(new flitr::CPUPaletteRemap_Shader(cpuShaderPass->getOutImage()));

@@ -167,7 +167,7 @@ void CPUShaderPass::setPostRenderCPUShader(CPUShader *cpuShader)
     Camera_->setPostDrawCallback(cpuShader);
 }
 
-void CPUShaderPass::setGPUShader(std::string filename)
+void CPUShaderPass::setGPUShader(const std::string &filename)
 {
     osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT );
     fshader->loadShaderSourceFromFile(filename);
@@ -177,5 +177,18 @@ void CPUShaderPass::setGPUShader(std::string filename)
     FragmentProgram_->setName(filename);
     FragmentProgram_->addShader(fshader.get());
 
+    StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
+}
+
+void CPUShaderPass::setGPUShaderSource(const std::string &name, const std::string &source)
+{
+    osg::ref_ptr<osg::Shader> fshader = new osg::Shader( osg::Shader::FRAGMENT );
+    fshader->setShaderSource(source);
+    
+    FragmentProgram_ = 0;
+    FragmentProgram_ = new osg::Program;
+    FragmentProgram_->setName(name);
+    FragmentProgram_->addShader(fshader.get());
+    
     StateSet_->setAttributeAndModes(FragmentProgram_.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE );
 }
