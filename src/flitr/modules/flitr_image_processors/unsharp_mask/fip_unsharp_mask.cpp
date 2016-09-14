@@ -44,6 +44,17 @@ gaussianFilter_(filterRadius, int(ceilf(filterRadius*2.0f+0.5)+0.5)*2 - 1)//Filt
 
 FIPUnsharpMask::~FIPUnsharpMask()
 {
+    // First stop the trigger thread. The stopTriggerThread() function will
+    // also wait for the thread to stop using the join() function.
+    // It is essential to wait for the thread to exit before starting
+    // to clean up otherwise if the thread is still in the trigger() function
+    // and cleaning up starts, the application will crash.
+    // If the user called stopTriggerThread() manually, this call will do
+    // nothing. stopTriggerThread() will get called in the base destructor, but
+    // at that time it might be too late.
+    stopTriggerThread();
+    // Thread should be done, cleaning up can start. This might still be a problem
+    // if the application calls trigger() and not the triggerThread.
     delete [] xFiltData_;
     delete [] filtData_;
 }
