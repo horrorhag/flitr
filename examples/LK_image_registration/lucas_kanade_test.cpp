@@ -100,7 +100,14 @@ int main(int argc, char *argv[])
 
     //=== CPU Photometric calibration pass ===
     shared_ptr<flitr::CPUShaderPass> gfp(new flitr::CPUShaderPass(dsY->getOutputTexture()));
-    gfp->setGPUShader("copy.frag");
+    gfp->setGPUShaderSource("copy_pass",
+                                      "uniform sampler2DRect textureID0; \
+                                      void main(void) \
+                                      { \
+                                      vec2 texCoord = gl_TexCoord[0].xy; \
+                                      vec4 c = texture2DRect(textureID0, texCoord); \
+                                      gl_FragColor = c; \
+                                      }");
     gfp->setPostRenderCPUShader(new CPUPhotometricEqualisation_Shader(gfp->getOutImage(), 0.5, 0.01));
     root_node->addChild(gfp->getRoot().get());
     //===
@@ -108,7 +115,14 @@ int main(int argc, char *argv[])
 
     //=== Add uniform pixel noise after downsample ===
     shared_ptr<flitr::CPUShaderPass> noisePass(new flitr::CPUShaderPass(gfp->getOutputTexture()));
-    noisePass->setGPUShader("copy.frag");
+    noisePass->setGPUShaderSource("copy_pass",
+                            "uniform sampler2DRect textureID0; \
+                            void main(void) \
+                            { \
+                            vec2 texCoord = gl_TexCoord[0].xy; \
+                            vec4 c = texture2DRect(textureID0, texCoord); \
+                            gl_FragColor = c; \
+                            }");
     noisePass->setPostRenderCPUShader(new CPUUniformNoise_Shader(noisePass->getOutImage(), 0.0));
     root_node->addChild(noisePass->getRoot().get());
     //===
