@@ -24,6 +24,7 @@
 
 #include <flitr/image_processor_utils.h>
 #include <sstream>
+#include <vector>
 
 using namespace flitr;
 using std::shared_ptr;
@@ -525,8 +526,9 @@ bool BoxFilterRS::filter(float * const dataWriteDS, float const * const dataRead
         }
     }
     
-    float yHistoryRing[width * kernelWidth_];
-    float yRS[width];
+    std::vector<float> yHistoryRing(width * kernelWidth_);
+    std::vector<float> yRS(width);
+    
     size_t yHistoryPos=0;
     
     for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
