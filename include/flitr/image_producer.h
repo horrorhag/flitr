@@ -21,6 +21,8 @@
 #ifndef IMAGE_PRODUCER_H
 #define IMAGE_PRODUCER_H 1
 
+#include <flitr/flitr_export.h>
+
 namespace flitr {
 //Prototype of class defined in this file in case of circular includes.		
   class ImageProducer;

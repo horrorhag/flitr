@@ -21,6 +21,8 @@
 #ifndef IMAGE_PROCESSOR_H
 #define IMAGE_PROCESSOR_H 1
 
+#include <flitr/flitr_export.h>
+
 #include <flitr/modules/parameters/parameters.h>
 #include <flitr/image_consumer.h>
 #include <flitr/image_producer.h>
