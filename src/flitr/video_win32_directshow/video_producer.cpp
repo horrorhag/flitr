@@ -135,7 +135,7 @@ void VideoProducer::VideoProducerThread::run()
             
             if (!ready)
             {
-                Thread::microSleep(1000);
+                FThread::microSleep(1000);
             }
 
         } while (!ready && !shouldExit);
@@ -154,7 +154,7 @@ void VideoProducer::VideoProducerThread::run()
             aImages = producer->reserveWriteSlot();
             if (aImages.size() != 1)
             {
-                Thread::microSleep(1000);
+                FThread::microSleep(1000);
             }
         } while ((aImages.size() != 1) && !shouldExit);
 
@@ -175,7 +175,7 @@ void VideoProducer::VideoProducerThread::run()
 
         producer->releaseWriteSlot();
 
-        Thread::microSleep(1000);
+        FThread::microSleep(1000);
     }
 }
 
