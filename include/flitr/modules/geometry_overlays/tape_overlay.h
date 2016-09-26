@@ -36,6 +36,8 @@
 #include <osg/Material>
 #include <osg/LineWidth>
 
+#include <stdint.h>
+
 namespace flitr {
 
 /**
