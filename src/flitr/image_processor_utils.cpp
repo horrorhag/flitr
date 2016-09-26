@@ -460,6 +460,294 @@ bool BoxFilterII::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const d
     
     return true;
 }
+
+//=========================================//
+//=========== BoxFilterRS ==========//
+
+BoxFilterRS::BoxFilterRS(const size_t kernelWidth) :
+historyRing_(nullptr)
+{
+    setKernelWidth(kernelWidth);
+}
+
+BoxFilterRS::~BoxFilterRS()
+{
+    delete [] historyRing_;
+}
+
+void BoxFilterRS::setKernelWidth(const int kernelWidth)
+{
+    kernelWidth_=kernelWidth|1;//Make sure the kernel width is odd.
+    
+    if (historyRing_!=nullptr) delete [] historyRing_;
+    
+    historyRing_=new float[kernelWidth_];
+    
+    memset(historyRing_, 0, kernelWidth_ * sizeof(float));
+}
+
+bool BoxFilterRS::filter(float * const dataWriteDS, float const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       float * const dataScratch)
+{
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const float recipKernelWidth=1.0f/kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetUS=y * width;
+        const size_t lineOffsetFS=y * width - halfKernelWidth;
+        
+        float rs=0.0;
+        size_t historyPos=0;
+        
+        for (size_t x=0; x<(kernelWidth_-1); ++x)
+        {
+            rs += dataReadUS[lineOffsetUS + x];
+            historyRing_[historyPos++]=dataReadUS[lineOffsetUS + x];
+        }
+        
+        for (size_t x=(kernelWidth_-1); x<width; ++x)
+        {
+            rs += dataReadUS[lineOffsetUS + x];
+            historyRing_[historyPos]=dataReadUS[lineOffsetUS + x];
+            
+            //historyPos=(historyPos+1)%kernelWidth_;
+            ++historyPos;
+            if (historyPos>=kernelWidth_) historyPos=0;
+            
+            dataScratch[lineOffsetFS + x]=rs * recipKernelWidth;
+            
+            rs -= historyRing_[historyPos];
+        }
+    }
+    
+    float yHistoryRing[width * kernelWidth_];
+    float yRS[width];
+    size_t yHistoryPos=0;
+    
+    for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+    {
+        yRS[x] = 0.0;
+    }
+    
+    for (size_t y=0; y<(kernelWidth_-1); ++y)
+    {
+        const size_t lineOffsetFS=y * width;
+        
+        const size_t historyLineOffset=(yHistoryPos++) * width;
+
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            yRS[x] += dataScratch[lineOffsetFS + x];
+            yHistoryRing[historyLineOffset + x]=dataScratch[lineOffsetFS + x];
+        }
+    }
+
+    for (size_t y=(kernelWidth_-1); y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width;
+        const size_t lineOffsetDS=(y - halfKernelWidth) * width;
+        
+        const size_t historyLineOffset=yHistoryPos*width;
+
+        const size_t yNextHistoryPos=(yHistoryPos+1)%kernelWidth_;
+        const size_t nextHistoryLineOffset=yNextHistoryPos*width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            yRS[x] += dataScratch[lineOffsetFS + x];
+            yHistoryRing[historyLineOffset + x]=dataScratch[lineOffsetFS + x];
+            
+            dataWriteDS[lineOffsetDS + x]=yRS[x] * recipKernelWidth;
+            
+            yRS[x] -= yHistoryRing[nextHistoryLineOffset + x];
+        }
+        
+        yHistoryPos = yNextHistoryPos;
+    }
+    
+    return true;
+}
+
+bool BoxFilterRS::filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+                          const size_t width, const size_t height,
+                          float * const dataScratch)
+{
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const float recipKernelWidth=1.0f/kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            float xFiltValueR=0.0f;
+            float xFiltValueG=0.0f;
+            float xFiltValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValueR += dataReadUS[((lineOffsetUS + x) + j)*3 + 0];
+                xFiltValueG += dataReadUS[((lineOffsetUS + x) + j)*3 + 1];
+                xFiltValueB += dataReadUS[((lineOffsetUS + x) + j)*3 + 2];
+            }
+            
+            dataScratch[(lineOffsetFS + x)*3 + 0]=xFiltValueR*recipKernelWidth;
+            dataScratch[(lineOffsetFS + x)*3 + 1]=xFiltValueG*recipKernelWidth;
+            dataScratch[(lineOffsetFS + x)*3 + 2]=xFiltValueB*recipKernelWidth;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            float filtValueR=0.0f;
+            float filtValueG=0.0f;
+            float filtValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValueR += dataScratch[((lineOffsetFS + x) + j*width)*3 + 0];
+                filtValueG += dataScratch[((lineOffsetFS + x) + j*width)*3 + 1];
+                filtValueB += dataScratch[((lineOffsetFS + x) + j*width)*3 + 2];
+            }
+            
+            dataWriteDS[(lineOffsetDS + x)*3 + 0]=filtValueR*recipKernelWidth;
+            dataWriteDS[(lineOffsetDS + x)*3 + 1]=filtValueG*recipKernelWidth;
+            dataWriteDS[(lineOffsetDS + x)*3 + 2]=filtValueB*recipKernelWidth;
+        }
+    }
+    
+    return true;
+}
+
+bool BoxFilterRS::filter(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       uint8_t * const dataScratch)
+{
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t xFiltValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValue += dataReadUS[(lineOffsetUS + x) + j];
+            }
+            
+            dataScratch[lineOffsetFS + x]=xFiltValue/kernelWidth_;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t filtValue=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValue += dataScratch[(lineOffsetFS + x) + j*width];
+                //Performance note: The XCode profiler shows that the above multiply by width has little performance overhead compared to the loop in x above.
+                //                  Is the code memory bandwidth limited?
+            }
+            
+            dataWriteDS[lineOffsetDS + x]=filtValue/kernelWidth_;
+        }
+    }
+    
+    return true;
+}
+
+bool BoxFilterRS::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                          const size_t width, const size_t height,
+                          uint8_t * const dataScratch)
+{
+    const size_t widthMinusKernel=width-kernelWidth_;
+    const size_t heightMinusKernel=height-kernelWidth_;
+    const size_t halfKernelWidth=(kernelWidth_>>1);
+    const size_t widthMinusHalfKernel=width-halfKernelWidth;
+    
+    for (size_t y=0; y<height; ++y)
+    {
+        const size_t lineOffsetFS=y * width + halfKernelWidth;
+        const size_t lineOffsetUS=y * width;
+        
+        for (size_t x=0; x<widthMinusKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t xFiltValueR=0.0f;
+            size_t xFiltValueG=0.0f;
+            size_t xFiltValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                xFiltValueR += dataReadUS[((lineOffsetUS + x) + j)*3 + 0];
+                xFiltValueG += dataReadUS[((lineOffsetUS + x) + j)*3 + 1];
+                xFiltValueB += dataReadUS[((lineOffsetUS + x) + j)*3 + 2];
+            }
+            
+            dataScratch[(lineOffsetFS + x)*3 + 0]=xFiltValueR/kernelWidth_;
+            dataScratch[(lineOffsetFS + x)*3 + 1]=xFiltValueG/kernelWidth_;
+            dataScratch[(lineOffsetFS + x)*3 + 2]=xFiltValueB/kernelWidth_;
+        }
+    }
+    
+    for (size_t y=0; y<heightMinusKernel; ++y)
+    {
+        const size_t lineOffsetDS=(y + halfKernelWidth) * width;
+        const size_t lineOffsetFS=y * width;
+        
+        for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
+        {
+            //Variable to hold sum across kernel. Need more bits than the 8 of the uint8_t.
+            size_t filtValueR=0.0f;
+            size_t filtValueG=0.0f;
+            size_t filtValueB=0.0f;
+            
+            for (size_t j=0; j<kernelWidth_; ++j)
+            {
+                filtValueR += dataScratch[((lineOffsetFS + x) + j*width)*3 + 0];
+                filtValueG += dataScratch[((lineOffsetFS + x) + j*width)*3 + 1];
+                filtValueB += dataScratch[((lineOffsetFS + x) + j*width)*3 + 2];
+            }
+            
+            dataWriteDS[(lineOffsetDS + x)*3 + 0]=filtValueR/kernelWidth_;
+            dataWriteDS[(lineOffsetDS + x)*3 + 1]=filtValueG/kernelWidth_;
+            dataWriteDS[(lineOffsetDS + x)*3 + 2]=filtValueB/kernelWidth_;
+        }
+    }
+    
+    return true;
+}
+
 //=========================================//
 //=========================================//
 

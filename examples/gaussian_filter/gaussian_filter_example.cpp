@@ -43,7 +43,10 @@ public:
     {
         while(!ShouldExit_)
         {
-            if (!Producer_->trigger()) FThread::microSleep(5000);
+            if (!Producer_->trigger())
+            {
+                FThread::microSleep(1000);
+            }
         }
     }
     
@@ -76,19 +79,17 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
-    /*
-     shared_ptr<FIPConvertToRGBF32> cnvrtToRGBF32(new FIPConvertToRGBF32(*ip, 1, 1));
-     if (!cnvrtToRGBF32->init())
+     shared_ptr<FIPConvertToYF32> cnvrtToF32(new FIPConvertToYF32(*ip, 1, 1));
+     if (!cnvrtToF32->init())
      {
      std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
      exit(-1);
      }
-     cnvrtToRGBF32->startTriggerThread();
-     */
+     cnvrtToF32->startTriggerThread();
     
-    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*ip, 1,
-                                                                  20.0, 40,
-                                                                  2));
+    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1,
+                                                                  10.0, 10,
+                                                                  1));
     if (!gaussFilt->init())
     {
         std::cerr << "Could not initialise the gaussFilt processor.\n";
@@ -97,19 +98,17 @@ int main(int argc, char *argv[])
     gaussFilt->startTriggerThread();
     
     
-    /*
-     shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 1));
-     if (!cnvrtToRGB8->init())
+     shared_ptr<FIPConvertToY8> cnvrtTo8bit(new FIPConvertToY8(*gaussFilt, 1, 0.95f, 1));
+     if (!cnvrtTo8bit->init())
      {
      std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
      exit(-1);
      }
-     cnvrtToRGB8->startTriggerThread();
-     */
+     cnvrtTo8bit->startTriggerThread();
     
     
 #ifdef FLITR_USE_OSG
-shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
+shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtTo8bit, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -125,7 +124,7 @@ shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
 #endif //FLITR_USE_OSG
     
     
-    
+    /*
      shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*gaussFilt,1));
      if (!mffc->init())
      {
@@ -137,7 +136,7 @@ shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
      filenameStringStream << argv[1] << "_out";
      mffc->openFiles(filenameStringStream.str());
      mffc->startWriting();
-    
+    */
     
     
 #ifdef FLITR_USE_OSG
@@ -199,14 +198,16 @@ shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
             ip->trigger();
         }
 #endif
-        
-        if (osgc->getNext() || osgcOrig->getNext())
+
+        if (osgc->getNext())
         {
+            osgcOrig->getNext();
+            
             viewer.frame();
             numFrames++;
         }
         
-        FThread::microSleep(5000);
+        FThread::microSleep(1000);
     }
 #else
     
@@ -220,13 +221,13 @@ shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*gaussFilt, 1, 1));
         }
 #endif
         
-        FThread::microSleep(5000);
+        FThread::microSleep(1000);
     }
 #endif
 
     
-         mffc->stopWriting();
-         mffc->closeFiles();
+         //mffc->stopWriting();
+         //mffc->closeFiles();
     
     
     

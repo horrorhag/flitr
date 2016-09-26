@@ -208,7 +208,8 @@ int main(int argc, char *argv[])
             ip->trigger();
         }
 
-        if (osgc->getNext()) {
+        if (osgc->getNext())
+        {
             if (numFramesDone>=2)
             {
                 iStab->triggerInput();

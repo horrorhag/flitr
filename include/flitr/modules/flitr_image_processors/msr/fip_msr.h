@@ -66,11 +66,36 @@ namespace flitr {
         }
         
     private:
-        //!Box filter helper. No significant state.
-        BoxFilterII _GF;
+
         
+        
+//#define MSR_USE_GFXY 1
+//OR
+//#define MSR_USE_BFII 1
+//OR
+#define MSR_USE_BFRS 1
+        
+        
+#ifdef MSR_USE_GFXY
+        //!Box filter helper. No significant state.
+        GaussianFilter _GFXY;
+#endif
+        
+#ifdef MSR_USE_BFII
+        //!Box filter helper. No significant state.
+        BoxFilterII _GFII;
+#endif
+
+#ifdef MSR_USE_BFRS
+        //!Box filter helper. No significant state.
+        BoxFilterRS _GFRS;
+#endif
+
+//#define SR_LOCAL_CONTRAST 1
+#ifdef SR_LOCAL_CONTRAST
         //!Integral image used if true local adaptive enhancement used.
         IntegralImage _II;
+#endif
         
         size_t _GFScale;
         size_t _numScales;
@@ -88,7 +113,7 @@ namespace flitr {
         //!Integral image used for approximate gaussian filter.
         double *_doubleScratchData2;
         
-#define _histoBinArrSize 1000
+#define _histoBinArrSize 10000
         
         size_t *_histoBins;
         

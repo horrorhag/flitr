@@ -206,13 +206,10 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        bool renderFrame=false;
-        
-        if (osgc->getNext()) renderFrame=true;
-        if (osgcOrig->getNext()) renderFrame=true;
-        
-        if (renderFrame)
+        if (osgc->getNext())
         {
+            osgcOrig->getNext();
+            
             viewer.frame();
             
             /*

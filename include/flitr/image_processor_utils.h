@@ -144,8 +144,10 @@ namespace flitr {
     {
     public:
         
-        BoxFilter(const size_t kernelWidth//Width of filter kernel in pixels in US image.
-        );
+        /*! Constructor
+         @param kernelWidth Width of filter kernel in pixels in US image.
+         */
+        BoxFilter(const size_t kernelWidth);
         
         /*! destructor */
         ~BoxFilter();
@@ -168,6 +170,7 @@ namespace flitr {
             return *this;
         }
         
+        //!Set the width of the box filter.
         void setKernelWidth(const int kernelWidth);
         
         float getStandardDeviation() const
@@ -210,10 +213,12 @@ namespace flitr {
     {
     public:
         
-        BoxFilterII(const size_t kernelWidth//Width of filter kernel in pixels in US image.
-        );
+        /*! Constructor
+         @param kernelWidth Width of filter kernel in pixels in US image.
+         */
+        BoxFilterII(const size_t kernelWidth);
         
-        /*! destructor */
+        /*! Destructor */
         ~BoxFilterII();
         
         //! Copy constructor
@@ -234,7 +239,7 @@ namespace flitr {
             return *this;
         }
         
-        //!Sets the width of the average filter.
+        //!Sets the width of the box filter.
         void setKernelWidth(const int kernelWidth);
         
         //!Gets the standard deviation of the average filter.
@@ -280,14 +285,87 @@ namespace flitr {
     };
     
     
+    //! General purpose Box filter USING A RUNNING SUM.
+    class FLITR_EXPORT BoxFilterRS
+    {
+    public:
+        
+        /*! Constructor
+         @param kernelWidth Width of filter kernel in pixels in US image.
+         */
+        BoxFilterRS(const size_t kernelWidth);
+        
+        /*! Destructor */
+        ~BoxFilterRS();
+        
+        //! Copy constructor
+        BoxFilterRS(const BoxFilterRS& rh) :
+        kernelWidth_(rh.kernelWidth_)
+        {}
+        
+        //! Assignment operator
+        BoxFilterRS& operator=(const BoxFilterRS& rh)
+        {
+            if (this == &rh)
+            {
+                return *this;
+            }
+            
+            kernelWidth_=rh.kernelWidth_;
+            
+            return *this;
+        }
+        
+        //!Set the width of the box filter.
+        void setKernelWidth(const int kernelWidth);
+        
+        float getStandardDeviation() const
+        {
+            return sqrtf((kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
+        }
+        
+        size_t getKernelWidth() const
+        {
+            return kernelWidth_;
+        }
+        
+        /*!Synchronous process method for float pixel format.*/
+        bool filter(float * const dataWriteDS, float const * const dataReadUS,
+                    const size_t width, const size_t height,
+                    float * const dataScratch);
+        
+        /*!Synchronous process method for float RGB pixel format.*/
+        bool filterRGB(float * const dataWriteDS, float const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       float * const dataScratch);
+        
+        /*!Synchronous process method for uint8_t pixel format.*/
+        bool filter(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                    const size_t width, const size_t height,
+                    uint8_t * const dataScratch);
+        
+        /*!Synchronous process method for uint8_t RGB pixel format.*/
+        bool filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
+                       const size_t width, const size_t height,
+                       uint8_t * const dataScratch);
+        
+        
+    private:
+        size_t kernelWidth_;
+        float *historyRing_;
+    };
+    
+    
     //! General purpose Gaussian filter.
     class FLITR_EXPORT GaussianFilter
     {
     public:
         
+        /*! Constructor
+         @param kernelWidth Width of filter kernel in pixels in US image.
+         */
         GaussianFilter(const float filterRadius,//filterRadius = standardDeviation * 2.0 in US image.
-                       const size_t kernelWidth//Width of filter kernel in pixels in US image.
-        );
+                       const size_t kernelWidth);
         
         /*! destructor */
         ~GaussianFilter();
@@ -316,7 +394,10 @@ namespace flitr {
             return *this;
         }
         
+        //!Sets the radius of the Gaussian.
         void setFilterRadius(const float filterRadius);
+        
+        //!Set the width of the convolution kernel.
         void setKernelWidth(const int kernelWidth);
         
         float getStandardDeviation() const
@@ -360,9 +441,11 @@ namespace flitr {
     {
     public:
         
+        /*! Constructor
+         @param kernelWidth Width of filter kernel in pixels in US image.
+         */
         GaussianDownsample(const float filterRadius,//filterRadius = standardDeviation * 2.0 in US image.
-                           const size_t kernelWidth//Width of filter kernel in pixels in US image.
-        );
+                           const size_t kernelWidth);
         
         /*! destructor */
         ~GaussianDownsample();
@@ -391,7 +474,10 @@ namespace flitr {
             return *this;
         }
         
+        //!Sets the radius of the Gaussian.
         void setFilterRadius(const float filterRadius);
+        
+        //!Set the width of the convolution kernel.
         void setKernelWidth(const int kernelWidth);
         
         /*!Synchronous process method for float pixel format..*/
@@ -424,7 +510,7 @@ namespace flitr {
         //! Destructor
         ~MorphologicalFilter() {}
         
-        //!Synchronous process method for float pixel format.
+        //!Synchronous process method for T pixel format.
         template<typename T>
         bool erode(T * const dataWriteDS, T const * const dataReadUS,
                    size_t structElemWidth,
@@ -487,7 +573,7 @@ namespace flitr {
             return true;
         }
         
-        //!Synchronous process method for float RGB pixel format.
+        //!Synchronous process method for T RGB pixel format.
         template<typename T>
         bool erodeRGB(T * const dataWriteDS, T const * const dataReadUS,
                       size_t structElemWidth,
@@ -570,7 +656,7 @@ namespace flitr {
             return true;
         }
         
-        //!Synchronous process method for float pixel format.
+        //!Synchronous process method for T pixel format.
         template<typename T>
         bool dilate(T * const dataWriteDS, T const * const dataReadUS,
                     size_t structElemWidth,
@@ -633,7 +719,7 @@ namespace flitr {
             return true;
         }
         
-        //!Synchronous process method for float RGB pixel format.
+        //!Synchronous process method for T RGB pixel format.
         template<typename T>
         bool dilateRGB(T * const dataWriteDS, T const * const dataReadUS,
                        size_t structElemWidth,
@@ -717,7 +803,7 @@ namespace flitr {
         }
         
         
-        //!Synchronous process method for float pixel format.
+        //!Synchronous process method for T pixel format.
         template<typename T>
         bool difference(T * const dataWriteDS,
                         T const * const dataReadUS_A,//Will implement A-B
@@ -737,7 +823,7 @@ namespace flitr {
             return true;
         }
         
-        //!Synchronous process method for float RGB pixel format.
+        //!Synchronous process method for T RGB pixel format.
         template<typename T>
         bool differenceRGB(T * const dataWriteDS,
                            T const * const dataReadUS_A,//Will implement A-B
@@ -761,7 +847,7 @@ namespace flitr {
             return true;
         }
         
-        //!Synchronous process method for float pixel format.
+        //!Synchronous process method for T pixel format.
         template<typename T>
         bool threshold(T * const dataWriteDS,
                        T const * const dataReadUS,
@@ -784,7 +870,7 @@ namespace flitr {
             return true;
         }
         
-        //!Synchronous process method for float RGB pixel format.
+        //!Synchronous process method for T RGB pixel format.
         template<typename T>
         bool thresholdRGB(T * const dataWriteDS,
                           T const * const dataReadUS,

@@ -28,8 +28,16 @@ using std::shared_ptr;
 FIPMSR::FIPMSR(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-_GF(1),
-_GFScale(15),
+#ifdef MSR_USE_GFXY
+_GFXY(1.0, 4),
+#endif
+#ifdef MSR_USE_BFII
+_GFII(1),
+#endif
+#ifdef MSR_USE_BFRS
+_GFRS(1),
+#endif
+_GFScale(20),
 _numScales(1),
 _intensityScratchData(nullptr),
 _GFScratchData(nullptr),
@@ -174,23 +182,48 @@ bool FIPMSR::trigger()
             {
                 const size_t kernelWidth=(imFormatUS.getWidth() / (_GFScale*(1 << scaleIndex))) | 1; // | 1 to make sure kernelWidth is odd.
                 
-                _GF.setKernelWidth(kernelWidth);
+#ifdef MSR_USE_GFXY
+                _GFXY.setKernelWidth(kernelWidth);
+                _GFXY.setFilterRadius(kernelWidth*0.25f);
                 
                 // #parallel
-                _GF.filter(_GFScratchData, F32Image, width, height,
+                _GFXY.filter(_GFScratchData, F32Image, width, height, _floatScratchData);
+#endif
+#ifdef MSR_USE_BFII
+                _GFII.setKernelWidth(kernelWidth);
+                
+                // #parallel
+                _GFII.filter(_GFScratchData, F32Image, width, height,
                                           _doubleScratchData1,
                            scaleIndex==0 ? true : false);
                 
                 //Approximate Gaussian filt kernel...
-                for (int i=0; i<1; ++i)
+                for (int i=0; i<2; ++i)
                 {
                     // #parallel?
                     memcpy(_floatScratchData, _GFScratchData, width*height*sizeof(float));
                     
                     // #parallel
-                    _GF.filter(_GFScratchData, _floatScratchData, width, height,
+                    _GFII.filter(_GFScratchData, _floatScratchData, width, height,
                                               _doubleScratchData2, true);
                 }
+#endif
+#ifdef MSR_USE_BFRS
+                _GFRS.setKernelWidth(kernelWidth);
+                
+                // #parallel
+                _GFRS.filter(_GFScratchData, F32Image, width, height, _floatScratchData);
+                
+                //Approximate Gaussian filt kernel...
+                for (int i=0; i<2; ++i)
+                {
+                    // #parallel?
+                    memcpy(_floatScratchData, _GFScratchData, width*height*sizeof(float));
+                    
+                    // #parallel
+                    _GFRS.filter(_GFScratchData, _floatScratchData, width, height, _floatScratchData);
+                }
+#endif
                 
                 //Calc SSR image...
                 for (size_t y=0; y<height; ++y)
@@ -210,7 +243,6 @@ bool FIPMSR::trigger()
                     }
                 }
 
-//#define SR_LOCAL_CONTRAST 1
 #ifdef SR_LOCAL_CONTRAST
                 //=== Update MSR with SSR scaled using local min/max : Local DC level has very little impact; SLOW!===//
                 _II.process(_doubleScratchData2, _floatScratchData, width, height);
@@ -274,7 +306,7 @@ bool FIPMSR::trigger()
                 }
                  
                 //Remove outliers.
-                size_t lowerToRemove=numHistoSamples*0.001f;
+                size_t lowerToRemove=numHistoSamples*0.0001f;
                 size_t lowerRemoved=0;
                 
                 for (int binNum=0; binNum<_histoBinArrSize; ++binNum)
@@ -286,7 +318,7 @@ bool FIPMSR::trigger()
                     if (lowerRemoved>=lowerToRemove) break;
                 }
 
-                size_t upperToRemove=numHistoSamples*0.001f;
+                size_t upperToRemove=numHistoSamples*0.0005f;
                 size_t upperRemoved=0;
                 
                 for (int binNum=_histoBinArrSize-1; binNum>=0; --binNum)

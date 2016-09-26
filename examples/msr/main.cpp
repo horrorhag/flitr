@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
     cnvrtToF32->startTriggerThread();
     
     
-    
+    /*
     //=== Simple Gaussian noise filter ===
     shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1, //Mono-colour input will take less time to process!
                                                                   2.0, //filter radius
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
     gaussFilt->startTriggerThread();
-    
+    */
     
     
     /*
@@ -175,14 +175,14 @@ int main(int argc, char *argv[])
     
     
     //=== The multi-scale retinex algorithm ===
-    shared_ptr<FIPMSR> msr(new FIPMSR(*gaussFilt, 1, 1));
+    shared_ptr<FIPMSR> msr(new FIPMSR(*cnvrtToF32, 1, 2));
     if (!msr->init())
     {
         std::cerr << "Could not initialise the msr image processor.\n";
         exit(-1);
     }
-    msr->setGFScale(15); //Sets the divider of the image width to calculate the MSR Gaussian scale.
-    msr->setNumGaussianScales(1); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
+    msr->setGFScale(20); //Sets the divider of the image width to calculate the MSR Gaussian scale.
+    msr->setNumGaussianScales(3); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
     msr->startTriggerThread();
     
     
@@ -292,14 +292,9 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        bool renderFrame=false;
-        
-        if (osgc->getNext()) renderFrame=true;
-        //if (osgcOrig->getNext()) renderFrame=true;
-        
         msr->setGFScale(kbHandler->_GFScale);
         
-        if (renderFrame)
+        if (osgc->getNext())
         {
             osgcOrig->getNext();
             

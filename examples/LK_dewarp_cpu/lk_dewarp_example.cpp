@@ -8,6 +8,7 @@
 
 #include <flitr/modules/geometry_overlays/points_overlay.h>
 
+#include <flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h>
 #include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
@@ -252,7 +253,8 @@ int main(int argc, char *argv[])
     
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1));
+    
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";

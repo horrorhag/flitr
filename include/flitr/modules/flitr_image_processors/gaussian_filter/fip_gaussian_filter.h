@@ -39,7 +39,7 @@ namespace flitr {
         FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                           const float filterRadius,//filterRadius = standardDeviation * 2.0
                           const size_t kernelWidth,//Width of filter kernel in pixels.
-                          const short intImgApprox,
+                          const short approxIterations,
                           uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -56,13 +56,13 @@ namespace flitr {
         //Returns the Gaussian standard deviation or approximate boxfilter Gaussian.
         float getStandardDeviation() const
         {
-            if (_intImgApprox==0)
+            if (_approxIterations==0)
             {
                 return _gaussianFilter.getStandardDeviation();
             } else
             {//Gaussian approximated by multiple average filters.
                 const size_t kernelWidth_=_boxFilter.getKernelWidth();
-                return sqrtf(_intImgApprox * (kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
+                return sqrtf(_approxIterations * (kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
             }
         }
         
@@ -176,7 +176,7 @@ namespace flitr {
         }
 
     private:
-        short _intImgApprox;
+        short _approxIterations;
         
         uint8_t *_scratchData;
         
@@ -184,7 +184,15 @@ namespace flitr {
         
         GaussianFilter _gaussianFilter; //No significant state associated with this.
 
-        BoxFilterII _boxFilter; //No significant state associated with this.
+
+#define APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+        BoxFilterII _boxFilter;//No significant state associated with this.
+#else
+        BoxFilterRS _boxFilter;//No significant state associated with this.
+#endif
+
         
         bool _enabled;
         std::string _title;

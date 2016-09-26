@@ -201,8 +201,10 @@ shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*adaptiveThreshold, 1, 1)
         }
 #endif
         
-        if (osgc->getNext() || osgcOrig->getNext())
+        if (osgc->getNext())
         {
+            osgcOrig->getNext();
+            
             viewer.frame();
             numFrames++;
         }

@@ -503,10 +503,10 @@ bool FIPLKDewarp::trigger()
                                         const float hx=-hxDataGF[offset];
                                         const float hy=-hyDataGF[offset];
                                         
-                                        //const float f=0.1;
-                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                        const float f=0.1;
+                                        avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                        avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                        const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -529,10 +529,10 @@ bool FIPLKDewarp::trigger()
                                         const float hx=hxDataGF[offset];
                                         const float hy=hyDataGF[offset];
                                         
-                                        //const float f=0.1;
-                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                        const float f=0.05;
+                                        avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                        avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                        const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -552,7 +552,7 @@ bool FIPLKDewarp::trigger()
                                             const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
                                             finalImgData_[offset]=img;
                                             
-                                            //finalImgData_[offset]=avrgHSq * 10.0;
+                                            finalImgData_[offset]=avrgHSq * 0.1;
                                         }
 #endif
                                     }

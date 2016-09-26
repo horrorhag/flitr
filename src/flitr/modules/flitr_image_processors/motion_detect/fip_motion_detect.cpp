@@ -43,6 +43,8 @@ motionThreshold_(motionThreshold)
     {
         ImageFormat downStreamFormat=upStreamProducer.getFormat(i);
         
+        if (downStreamFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8) downStreamFormat.setPixelFormat(ImageFormat::FLITR_PIX_FMT_RGB_8);
+        
         ImageFormat_.push_back(downStreamFormat);
     }
 }
@@ -121,18 +123,15 @@ bool FIPMotionDetect::trigger()
         for (size_t imgNum=0; imgNum<ImagesPerSlot_; ++imgNum)
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
-            const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
+            const ImageFormat imFormat=getUpstreamFormat(imgNum);//down stream and up stream image dimensions are the same.
             const int width=imFormat.getWidth();
             const int height=imFormat.getHeight();
-            //const int components=width * imFormat.getComponentsPerPixel();
             
             
             if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
             {
                 uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
-                
                 memcpy(previousFrame_, currentFrame_, width*height*3);
-                
                 boxFilter_.filterRGB(currentFrame_, dataReadUS, width, height,
                                      integralImageScratchData_, true);
                 
@@ -150,17 +149,12 @@ bool FIPMotionDetect::trigger()
                 int offset=1;
                 for (int i=0; i<(width*height); ++i)
                 {
-                    //int lineOffset=y*width*3 + 1;
-                    
-                    {
-                        //const int offset=lineOffset + x*3;
-                        
                         M+=std::abs(currentFrame_[offset] - previousFrame_[offset]);
                         offset+=3;
-                    }
                 }
                 
                 const bool frameMotion=(M / (width*height/30)) > (motionThreshold_);
+                
                 
                 if ((!produceOnlyMotionImages_) || frameMotion)
                 {
@@ -183,6 +177,65 @@ bool FIPMotionDetect::trigger()
                                 dataWriteDS[offset + 0] = dataReadUS[offset + 0];
                                 dataWriteDS[offset + 1] = mv > motionThreshold_ ? (128+(dataReadUS[offset + 1]>>1)) : dataReadUS[offset + 1];
                                 dataWriteDS[offset + 2] = dataReadUS[offset + 2];
+                            }
+                        }
+                    } else
+                    {//Don't add motion overlay. Just copy the data from the input.
+                        memcpy(dataWriteDS, dataReadUS, width*height*3);
+                    }
+                    
+                    releaseWriteSlot();
+                }
+            } else
+            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
+            {
+                uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                memcpy(previousFrame_, currentFrame_, width*height);
+                boxFilter_.filter(currentFrame_, dataReadUS, width, height,
+                                     integralImageScratchData_, true);
+                
+                for (int i=1; i<intImgApprox; ++i)
+                {
+                    memcpy(scratchData_, currentFrame_, width*height*sizeof(uint8_t));
+                    
+                    boxFilter_.filter(currentFrame_, scratchData_, width, height,
+                                         integralImageScratchData_, true);
+                }
+                
+                
+                int64_t M=0;
+                
+                for (int i=0; i<(width*height); ++i)
+                {
+                    M+=std::abs(currentFrame_[i] - previousFrame_[i]);
+                }
+                
+                const bool frameMotion=(M / (width*height/30)) > (motionThreshold_);
+                
+                
+                if ((!produceOnlyMotionImages_) || frameMotion)
+                {
+                    std::vector<Image**> imvWrite=reserveWriteSlot();
+                    Image * const imWriteDS = *(imvWrite[imgNum]);
+                    uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+                    
+                    if ((frameMotion) && (showOverlays_))
+                    {//Add motion blob overlay.
+                        for (int y=0; y<height; ++y)
+                        {
+                            const int lineOffsetUS=y*width;
+                            const int lineOffsetDS=y*width*3;
+                            
+                            for (int x=0; x<width; ++x)
+                            {
+                                const int offsetUS=lineOffsetUS + x;
+                                const int offsetDS=lineOffsetDS + x*3;
+                                
+                                const int mv=std::abs(currentFrame_[offsetUS] - previousFrame_[offsetUS]);
+                                
+                                dataWriteDS[offsetDS + 0] = dataReadUS[offsetUS];
+                                dataWriteDS[offsetDS + 1] = mv > motionThreshold_ ? (128+(dataReadUS[offsetUS]>>1)) : dataReadUS[offsetUS];
+                                dataWriteDS[offsetDS + 2] = dataReadUS[offsetUS];
                             }
                         }
                     } else
