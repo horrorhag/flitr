@@ -180,6 +180,7 @@ SET(LIB_SOURCES
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
   src/flitr/image_multiplexer.cpp
+  src/flitr/graph_manager.cpp
 
   src/flitr/modules/xml_config/tinyxml.cpp
   src/flitr/modules/xml_config/tinyxmlerror.cpp
@@ -234,6 +235,7 @@ SET(LIB_SOURCES
   include/flitr/flitr_export.h
   include/flitr/flitr_stdint.h
   include/flitr/flitr_thread.h
+  include/flitr/graph_manager.h
   include/flitr/high_resolution_time.h
   include/flitr/image_consumer.h
   include/flitr/image_processor.h
@@ -318,6 +320,8 @@ IF(FLITR_USE_OSG)
   src/flitr/modules/geometry_overlays/circle_overlay.cpp
   src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
   src/flitr/modules/geometry_overlays/text_label_overlay.cpp
+  src/flitr/modules/geometry_overlays/arrow_overlay.cpp
+  src/flitr/modules/geometry_overlays/tape_overlay.cpp
   src/flitr/textured_quad.cpp
   
   src/flitr/glsl_image_processor.cpp
@@ -355,6 +359,8 @@ IF(FLITR_USE_OSG)
   include/flitr/modules/geometry_overlays/circle_overlay.h
   include/flitr/modules/geometry_overlays/plot2D_overlay.h
   include/flitr/modules/geometry_overlays/text_label_overlay.h
+  include/flitr/modules/geometry_overlays/arrow_overlay.h
+  include/flitr/modules/geometry_overlays/tape_overlay.h
   include/flitr/textured_quad.h
 
   include/flitr/glsl_image_processor.h
@@ -530,6 +536,7 @@ ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
 ADD_SUBDIRECTORY(examples/geometry_overlays)
+ADD_SUBDIRECTORY(examples/graph_manager)
 IF(WIN32)
 ADD_SUBDIRECTORY(examples/video_producer)
 ENDIF()
