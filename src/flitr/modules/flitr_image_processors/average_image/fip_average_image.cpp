@@ -42,6 +42,17 @@ oldestHistorySlot_(0)
 
 FIPAverageImage::~FIPAverageImage()
 {
+    // First stop the trigger thread. The stopTriggerThread() function will
+    // also wait for the thread to stop using the join() function.
+    // It is essential to wait for the thread to exit before starting
+    // to clean up otherwise if the thread is still in the trigger() function
+    // and cleaning up starts, the application will crash.
+    // If the user called stopTriggerThread() manually, this call will do
+    // nothing. stopTriggerThread() will get called in the base destructor, but
+    // at that time it might be too late.
+    stopTriggerThread();
+    // Thread should be done, cleaning up can start. This might still be a problem
+    // if the application calls trigger() and not the triggerThread.
     for (uint32_t i=0; i<ImagesPerSlot_; ++i)
     {
         delete [] sumImageVec_[i];
@@ -98,6 +109,14 @@ bool FIPAverageImage::trigger()
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
+            }
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);//Downstream format is same as upstream format.
             

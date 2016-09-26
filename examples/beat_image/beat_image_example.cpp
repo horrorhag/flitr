@@ -193,16 +193,10 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        bool renderFrame=false;
-        
-        if (osgc->getNext()) renderFrame=true;
-        if (osgcOrig->getNext())
+        if (osgc->getNext())
         {
-            //renderFrame=true;
-        }
-
-        if (renderFrame)
-        {
+            osgcOrig->getNext();
+            
             viewer.frame();
             
             /*

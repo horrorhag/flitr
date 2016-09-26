@@ -11,14 +11,19 @@
 #include <vector>
 #include <utility>
 
+
+namespace flitr {
+
+typedef std::vector<std::string> StringVector;
+typedef std::pair<std::string, std::string> Attribute;
+typedef std::vector<Attribute>  AttributeVector;
+typedef std::vector<AttributeVector> AttributeVectorVector;
+
 /**
  *  This class is a thin wrapper around the TinyXML parser. An XML
  *  configuration file is read into memory and attributes of elements
  *  can easily be accessed.
  */
-
-namespace flitr {
-
 class FLITR_EXPORT XMLConfig
 {
   public:
@@ -59,16 +64,14 @@ class FLITR_EXPORT XMLConfig
        \param attribute The element attribute to look for.
        \return Configuration string values. Returns all elements.
     */
-    std::vector<std::string> getStringVector(std::string element, std::string attribute);
+    StringVector getStringVector(std::string element, std::string attribute);
 
-    
     /**
        \brief Get a vector of elements (and each's attributes) with specified name from the configuration file.
        \param element The XML element to look for.
        \return Configuration string values. Returns all attributes of elements matching element.
     */
-    std::vector<std::vector<std::pair<std::string, std::string> > > getAttributeVector(const std::string &element);
-
+    AttributeVectorVector getAttributeVector(const std::string &element);
 
     /**
        \brief Write a vector of elements (and each's attributes) to the configuration file.
@@ -76,9 +79,8 @@ class FLITR_EXPORT XMLConfig
        \param Configuration string values. With all attributes of elements belonging to name element.
        \return True on success, false on failure.
     */
-    bool writeAttributeVector(const std::string &element, const std::vector<std::vector<std::pair<std::string, std::string> > > &vecvec);
+    bool writeAttributeVector(const std::string &element, const AttributeVectorVector &vecvec);
 
-    
     /**
        \brief Set the value of attribute in the configuration file.
        \param element The XML element to find or create.

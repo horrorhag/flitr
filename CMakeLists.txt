@@ -39,13 +39,13 @@ ELSEIF(APPLE)
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_C_LANGUAGE_STANDARD "c11")
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_C_LIBRARY "libc")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -g -Wall")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -g -march=native -mtune=native -ffast-math -funsafe-math-optimizations -Wall")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -g -Wall")
 ELSE()
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -Wall -std=c++11")
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -Wall -std=c++11")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -ffast-math -Wall -std=c++11")
+  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -ffast-math -funsafe-math-optimizations -Wall -std=c++11")
   SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -std=c++11")
 ENDIF()
 
@@ -180,6 +180,7 @@ SET(LIB_SOURCES
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
   src/flitr/image_multiplexer.cpp
+  src/flitr/graph_manager.cpp
 
   src/flitr/modules/xml_config/tinyxml.cpp
   src/flitr/modules/xml_config/tinyxmlerror.cpp
@@ -209,10 +210,10 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
+  src/flitr/modules/flitr_image_processors/adaptive_threshold/fip_adaptive_threshold.cpp
   src/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.cpp
   src/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.cpp
   src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.cpp
-  src/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.cpp
   src/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.cpp
   src/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.cpp
   src/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.cpp
@@ -234,6 +235,7 @@ SET(LIB_SOURCES
   include/flitr/flitr_export.h
   include/flitr/flitr_stdint.h
   include/flitr/flitr_thread.h
+  include/flitr/graph_manager.h
   include/flitr/high_resolution_time.h
   include/flitr/image_consumer.h
   include/flitr/image_processor.h
@@ -286,10 +288,10 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
+  include/flitr/modules/flitr_image_processors/adaptive_threshold/fip_adaptive_threshold.h
   include/flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h
   include/flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h
   include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h
-  include/flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h
   include/flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h
   include/flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h
   include/flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h
@@ -318,6 +320,8 @@ IF(FLITR_USE_OSG)
   src/flitr/modules/geometry_overlays/circle_overlay.cpp
   src/flitr/modules/geometry_overlays/plot2D_overlay.cpp
   src/flitr/modules/geometry_overlays/text_label_overlay.cpp
+  src/flitr/modules/geometry_overlays/arrow_overlay.cpp
+  src/flitr/modules/geometry_overlays/tape_overlay.cpp
   src/flitr/textured_quad.cpp
   
   src/flitr/glsl_image_processor.cpp
@@ -355,6 +359,8 @@ IF(FLITR_USE_OSG)
   include/flitr/modules/geometry_overlays/circle_overlay.h
   include/flitr/modules/geometry_overlays/plot2D_overlay.h
   include/flitr/modules/geometry_overlays/text_label_overlay.h
+  include/flitr/modules/geometry_overlays/arrow_overlay.h
+  include/flitr/modules/geometry_overlays/tape_overlay.h
   include/flitr/textured_quad.h
 
   include/flitr/glsl_image_processor.h
@@ -492,6 +498,7 @@ SET_TARGET_PROPERTIES(flitr PROPERTIES COMPILE_FLAGS "-DFLITR_SHARED_LIBRARY")
 ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
+ADD_SUBDIRECTORY(examples/adaptive_threshold)
 
 ADD_SUBDIRECTORY(apps/laser_interlock)
 
@@ -529,7 +536,10 @@ ADD_SUBDIRECTORY(examples/keep_history_pass)
 #ADD_SUBDIRECTORY(examples/targeting_task_performance)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
 ADD_SUBDIRECTORY(examples/geometry_overlays)
+ADD_SUBDIRECTORY(examples/graph_manager)
+IF(WIN32)
 ADD_SUBDIRECTORY(examples/video_producer)
+ENDIF()
 ENDIF()
 
 
@@ -538,6 +548,7 @@ IF(FLITR_USE_OSG)
 ADD_SUBDIRECTORY(examples/hud_overlay)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/cpu_shader_pass)
+ADD_SUBDIRECTORY(examples/histogram_processing)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)

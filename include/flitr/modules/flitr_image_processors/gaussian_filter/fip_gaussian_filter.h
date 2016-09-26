@@ -39,7 +39,7 @@ namespace flitr {
         FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                           const float filterRadius,//filterRadius = standardDeviation * 2.0
                           const size_t kernelWidth,//Width of filter kernel in pixels.
-                          const short intImgApprox,
+                          const short approxIterations,
                           uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -56,13 +56,13 @@ namespace flitr {
         //Returns the Gaussian standard deviation or approximate boxfilter Gaussian.
         float getStandardDeviation() const
         {
-            if (intImgApprox_==0)
+            if (_approxIterations==0)
             {
-                return gaussianFilter_.getStandardDeviation();
+                return _gaussianFilter.getStandardDeviation();
             } else
             {//Gaussian approximated by multiple average filters.
-                const size_t kernelWidth_=boxFilter_.getKernelWidth();                
-                return sqrtf(intImgApprox_ * (kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
+                const size_t kernelWidth_=_boxFilter.getKernelWidth();
+                return sqrtf(_approxIterations * (kernelWidth_*kernelWidth_ - 1) * (1.0f/12.0f));
             }
         }
         
@@ -77,29 +77,29 @@ namespace flitr {
 
         void setTitle(const std::string &title)
         {
-            Title_=title;
+            _title=title;
         }
 
         void setRadius(float r)//radius = sd * 2
         {
-            FilterRadius_ = r;
-            setFilterRadius(FilterRadius_);
+            _filterRadius = r;
+            setFilterRadius(_filterRadius);
         }
 
         void setWidth(float r)
         {
-            KernelWidth_ = r;
+            _kernelWidth= r;
             setKernelWidth(r);
         }
 
         float getRadius() const //radius = sd * 2
         {
-            return FilterRadius_;
+            return _filterRadius;
         }
 
         float getWidth() const
         {
-            return KernelWidth_;
+            return _kernelWidth;
         }
 
         virtual int getNumberOfParms()
@@ -124,7 +124,7 @@ namespace flitr {
 
         virtual std::string getTitle()
         {
-            return Title_;
+            return _title;
         }
 
         virtual float getFloat(int id)
@@ -167,29 +167,37 @@ namespace flitr {
 
         virtual void enable(bool state=true)
         {
-            Enabled_ = state;
+            _enabled = state;
         }
 
         virtual bool isEnabled()
         {
-            return Enabled_;
+            return _enabled;
         }
 
     private:
-        short intImgApprox_;
+        short _approxIterations;
         
-        uint8_t *scratchData_;
+        uint8_t *_scratchData;
         
-        double *intImageScratchData_;
+        double *_intImageScratchData;
         
-        GaussianFilter gaussianFilter_; //No significant state associated with this.
+        GaussianFilter _gaussianFilter; //No significant state associated with this.
 
-        BoxFilterII boxFilter_; //No significant state associated with this.
+
+#define APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+        BoxFilterII _boxFilter;//No significant state associated with this.
+#else
+        BoxFilterRS _boxFilter;//No significant state associated with this.
+#endif
+
         
-        bool Enabled_;
-        std::string Title_;
-        float FilterRadius_;
-        float KernelWidth_;
+        bool _enabled;
+        std::string _title;
+        float _filterRadius;
+        float _kernelWidth;
 
     };
     

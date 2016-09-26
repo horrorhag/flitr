@@ -51,27 +51,73 @@ namespace flitr {
         
         void setGFScale(size_t scale)
         {
-            GFScale_=scale;
+            if (scale <2) scale=2;
+            _GFScale=scale;
+        }
+        
+        size_t getGFScale() const
+        {
+            return _GFScale;
+        }
+
+        void setNumGaussianScales(const size_t numScales)
+        {
+            _numScales=numScales;
         }
         
     private:
-        /*! The grayscale image per slot. */
-        BoxFilterII GF_;
-        IntegralImage II_;
-        size_t GFScale_;
-        
-        float *IntScratchData_;
-        float *GFScratchData_;
-        float *MSRScratchData_;
 
-        float *floatScratchData_;
-        double *doubleScratchData1_;
-        double *doubleScratchData2_;
         
-#define histoBinArrSize_ 2000
-        size_t *histoBins_;
         
-        size_t triggerCount_;
+//#define MSR_USE_GFXY 1
+//OR
+//#define MSR_USE_BFII 1
+//OR
+#define MSR_USE_BFRS 1
+        
+        
+#ifdef MSR_USE_GFXY
+        //!Box filter helper. No significant state.
+        GaussianFilter _GFXY;
+#endif
+        
+#ifdef MSR_USE_BFII
+        //!Box filter helper. No significant state.
+        BoxFilterII _GFII;
+#endif
+
+#ifdef MSR_USE_BFRS
+        //!Box filter helper. No significant state.
+        BoxFilterRS _GFRS;
+#endif
+
+//#define SR_LOCAL_CONTRAST 1
+#ifdef SR_LOCAL_CONTRAST
+        //!Integral image used if true local adaptive enhancement used.
+        IntegralImage _II;
+#endif
+        
+        size_t _GFScale;
+        size_t _numScales;
+        
+        /*! The grayscale image per slot. */
+        float *_intensityScratchData;
+
+        float *_GFScratchData;
+        float *_MSRScratchData;
+        float *_floatScratchData;
+        
+        //!Integral image of input image.
+        double *_doubleScratchData1;
+        
+        //!Integral image used for approximate gaussian filter.
+        double *_doubleScratchData2;
+        
+#define _histoBinArrSize 10000
+        
+        size_t *_histoBins;
+        
+        size_t _triggerCount;
     };
     
 }

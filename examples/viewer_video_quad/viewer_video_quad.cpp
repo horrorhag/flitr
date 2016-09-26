@@ -37,7 +37,7 @@ private:
     bool ShouldExit_;
 };
 
-//#define USE_BACKGROUND_TRIGGER_THREAD 1
+#define USE_BACKGROUND_TRIGGER_THREAD 1
 
 int main(int argc, char *argv[])
 {

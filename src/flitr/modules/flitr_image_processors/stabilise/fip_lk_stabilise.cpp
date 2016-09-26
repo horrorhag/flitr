@@ -45,8 +45,8 @@ latestHy_(0.0),
 latestHFrameNumber_(0),
 sumHx_(0.0f),
 sumHy_(0.0f),
-burnFx_(0.0f),
-burnFy_(0.0f)
+burnFx_(1.0f),
+burnFy_(1.0f)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
@@ -58,6 +58,17 @@ burnFy_(0.0f)
 
 FIPLKStabilise::~FIPLKStabilise()
 {
+    // First stop the trigger thread. The stopTriggerThread() function will
+    // also wait for the thread to stop using the join() function.
+    // It is essential to wait for the thread to exit before starting
+    // to clean up otherwise if the thread is still in the trigger() function
+    // and cleaning up starts, the application will crash.
+    // If the user called stopTriggerThread() manually, this call will do
+    // nothing. stopTriggerThread() will get called in the base destructor, but
+    // at that time it might be too late.
+    stopTriggerThread();
+    // Thread should be done, cleaning up can start. This might still be a problem
+    // if the application calls trigger() and not the triggerThread.
     delete [] scratchData_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
@@ -142,6 +153,14 @@ bool FIPLKStabilise::trigger()
             Image * const imWrite = *(imvWrite[imgNum]);
             float const * const dataRead=(float const * const)imRead->data();
             float * const dataWrite=(float * const)imWrite->data();
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
+            }
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);
             const ptrdiff_t uncroppedWidth=imFormat.getWidth();
@@ -523,7 +542,7 @@ bool FIPLKStabilise::trigger()
                                         ((uncroppedX+int_hx)<(uncroppedWidth-1)) && ((uncroppedY+int_hy)<(uncroppedHeight-1)) )
                                     {
                                         const ptrdiff_t offsetLT=unCroppedOffset + int_hx + int_hy * uncroppedWidth;
-                                        dataWrite[unCroppedOffset*3]=dataRead[offsetLT*3];
+                                        dataWrite[unCroppedOffset]=dataRead[offsetLT];
                                     }
                                 }
                             }

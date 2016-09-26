@@ -30,7 +30,7 @@ FIPUnsharpMask::FIPUnsharpMask(ImageProducer& upStreamProducer, uint32_t images_
                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 gain_(gain),
-gaussianFilter_(filterRadius, ceilf(filterRadius*4.0f)) //Kernel size/width is 4x radius to allow for four standard deviations to the left and four to the right of the centre.
+gaussianFilter_(filterRadius, int(ceilf(filterRadius*2.0f+0.5)+0.5)*2 - 1)//Filter size includes 2xradius to each side.
 {
     
     //Setup image format being produced to downstream.
@@ -44,6 +44,17 @@ gaussianFilter_(filterRadius, ceilf(filterRadius*4.0f)) //Kernel size/width is 4
 
 FIPUnsharpMask::~FIPUnsharpMask()
 {
+    // First stop the trigger thread. The stopTriggerThread() function will
+    // also wait for the thread to stop using the join() function.
+    // It is essential to wait for the thread to exit before starting
+    // to clean up otherwise if the thread is still in the trigger() function
+    // and cleaning up starts, the application will crash.
+    // If the user called stopTriggerThread() manually, this call will do
+    // nothing. stopTriggerThread() will get called in the base destructor, but
+    // at that time it might be too late.
+    stopTriggerThread();
+    // Thread should be done, cleaning up can start. This might still be a problem
+    // if the application calls trigger() and not the triggerThread.
     delete [] xFiltData_;
     delete [] filtData_;
 }
@@ -94,6 +105,14 @@ bool FIPUnsharpMask::trigger()
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWriteDS->setMetadata(PassMetadataFunction_(imReadUS->metadata()));
+            }
             
             const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
             
@@ -132,5 +151,12 @@ bool FIPUnsharpMask::trigger()
     }
     
     return false;
+}
+
+void FIPUnsharpMask::setFilterRadius(const float filterRadius)
+{
+    std::lock_guard<std::mutex> scopedLock(triggerMutex_);
+    
+    gaussianFilter_.setFilterRadius(filterRadius);
 }
 

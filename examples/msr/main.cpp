@@ -41,7 +41,7 @@ class KeyPressedHandler : public osgGA::GUIEventHandler
 public:
     
     KeyPressedHandler(const float GFScale) :
-    GFScale_(GFScale)
+    _GFScale(GFScale)
     {}
     
     ~KeyPressedHandler()
@@ -59,14 +59,14 @@ public:
             {
                 if (ea.getKey()==']')
                 {
-                    ++GFScale_;
-                    std::cout << "GFScale_ = " << GFScale_ << "\n";
+                    ++_GFScale;
+                    std::cout << "GFScale_ = " << _GFScale << "\n";
                     std::cout.flush();
                 } else
                     if (ea.getKey()=='[')
                     {
-                        --GFScale_;
-                        std::cout << "GFScale_ = " << GFScale_ << "\n";
+                        --_GFScale;
+                        std::cout << "GFScale_ = " << _GFScale << "\n";
                         std::cout.flush();
                     }
                 break;
@@ -78,43 +78,50 @@ public:
         return false;
     }
     
-    size_t GFScale_;
+    size_t _GFScale;
 };
 
 
-class BackgroundTriggerThread : public FThread {
+//!Class to read the video input from disk in the background.
+class BackgroundTriggerThread : public FThread
+{
 public:
     BackgroundTriggerThread(ImageProducer* p) :
-    Producer_(p),
-    ShouldExit_(false) {}
+    _producer(p),
+    _shouldExit(false) {}
     
     void run()
     {
-        while(!ShouldExit_)
+        while(!_shouldExit)
         {
-            if (!Producer_->trigger()) FThread::microSleep(5000);
+            if (!_producer->trigger()) FThread::microSleep(5000);
         }
     }
     
-    void setExit() { ShouldExit_ = true; }
+    void setExit() { _shouldExit = true; }
     
 private:
-    ImageProducer* Producer_;
-    bool ShouldExit_;
+    ImageProducer* _producer;
+    bool _shouldExit;
 };
 
 #define USE_BACKGROUND_TRIGGER_THREAD 1
 
+
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
+    if (argc != 2)
+    {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
     
     
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_ANY, 2));
-    if (!ip->init()) {
+    
+    //===
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
+    if (!ip->init())
+    {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
@@ -124,18 +131,24 @@ int main(int argc, char *argv[])
     btt->startThread();
 #endif
     
+    
+    
+    //===
     shared_ptr<FIPConvertToYF32> cnvrtToF32(new FIPConvertToYF32(*ip, 1, 2));
-    if (!cnvrtToF32->init()) {
+    if (!cnvrtToF32->init())
+    {
         std::cerr << "Could not initialise the FIPConvertToYF32 processor.\n";
         exit(-1);
     }
     cnvrtToF32->startTriggerThread();
     
-
+    
     /*
-    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1,
-                                                                  2.0, 5,
-                                                                  0,
+    //=== Simple Gaussian noise filter ===
+    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1, //Mono-colour input will take less time to process!
+                                                                  2.0, //filter radius
+                                                                  5, //kernel width
+                                                                  0, //integral image approximation passes
                                                                   2));
     if (!gaussFilt->init())
     {
@@ -145,55 +158,59 @@ int main(int argc, char *argv[])
     gaussFilt->startTriggerThread();
     */
     
-
-    //===
-    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToF32, 1,
-                                                                                      0.5, //target average
-                                                                                      2));//Buffer size.
     
-    if (!photometricEqualise->init())
+    /*
+     //===
+     shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToF32, 1,
+     0.5, //target average
+     2));//Buffer size.
+     
+     if (!photometricEqualise->init())
+     {
+     std::cerr << "Could not initialise the photometricEqualise processor.\n";
+     exit(-1);
+     }
+     photometricEqualise->startTriggerThread();
+     */
+    
+    
+    //=== The multi-scale retinex algorithm ===
+    shared_ptr<FIPMSR> msr(new FIPMSR(*cnvrtToF32, 1, 2));
+    if (!msr->init())
     {
-        std::cerr << "Could not initialise the photometricEqualise processor.\n";
-        exit(-1);
-    }
-    photometricEqualise->startTriggerThread();
-    
-
-    shared_ptr<FIPMSR> msr(new FIPMSR(*photometricEqualise, 1, 1));
-    if (!msr->init()) {
         std::cerr << "Could not initialise the msr image processor.\n";
         exit(-1);
     }
+    msr->setGFScale(20); //Sets the divider of the image width to calculate the MSR Gaussian scale.
+    msr->setNumGaussianScales(3); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
     msr->startTriggerThread();
-
     
-    /*
-     shared_ptr<FIPAverageImageIIR> averageIIR(new FIPAverageImageIIR(*msr, 1, 50.0f, 1));
-     if (!averageIIR->init()) {
-     std::cerr << "Could not initialise the averageIIR image processor.\n";
-     exit(-1);
-     }
-     averageIIR->startTriggerThread();
-     */
     
-    /*
-    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 2));
-    if (!cnvrtToRGB8->init()) {
+    
+    //=== Convert back to 8 bit. ===
+    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr, 1, 0.95f, 2));
+    if (!cnvrtToRGB8->init())
+    {
         std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
         exit(-1);
     }
     cnvrtToRGB8->startTriggerThread();
-    */
     
+    
+    
+    //=== OSG display
     shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*msr, 1));
-    if (!osgc->init()) {
+    if (!osgc->init())
+    {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
     
+    //=== OSG display
     shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1));
-    if (!osgcOrig->init()) {
+    if (!osgcOrig->init())
+    {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
     }
@@ -242,7 +259,7 @@ int main(int argc, char *argv[])
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     
-    KeyPressedHandler *kbHandler=new KeyPressedHandler(3);
+    KeyPressedHandler *kbHandler=new KeyPressedHandler(msr->getGFScale());
     viewer.addEventHandler(kbHandler);
     
     viewer.setSceneData(root_node);
@@ -275,14 +292,9 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        bool renderFrame=false;
+        msr->setGFScale(kbHandler->_GFScale);
         
-        if (osgc->getNext()) renderFrame=true;
-        //if (osgcOrig->getNext()) renderFrame=true;
-        
-        msr->setGFScale(kbHandler->GFScale_);
-        
-        if (renderFrame)
+        if (osgc->getNext())
         {
             osgcOrig->getNext();
             
@@ -311,7 +323,7 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToF32->stopTriggerThread();
-//    msr->stopTriggerThread();
+    msr->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;

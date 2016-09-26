@@ -61,7 +61,11 @@ namespace flitr {
         bool ShouldExit_;
     };
     
-    /*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.*/
+    /*! A processor class inheriting from both ImageConsumer and ImageProducer. Consumes flitr images as input and then produces flitr images as output.
+     *
+     * Derived classes should make sure to pass metadata from the upstream images to the
+     * downstream image. The PassMetadataFunction_ member can be used when the passing
+     * function should be defined by the user. */
     class FLITR_EXPORT ImageProcessor : public ImageConsumer, public ImageProducer, virtual public Parameters
     {
         friend class ImageProcessorThread;
@@ -107,12 +111,49 @@ namespace flitr {
         /*! Get the processor target for this image processor */
         virtual flitr::Parameters::EPassType getPassType() { return flitr::Parameters::CPU_PASS; }
 
+        /*! Set a function that will pass the input image metadata to the output image.
+         *
+         * By default the PassMetadataFunction on the processor will set the metadata on the
+         * input image to the metadata on the output image. It will not clone the metadata
+         * but only copy the pointer. Due to this care must be taken when changing the metadata
+         * in the pass since it will affect the metadata of images before the pass. If this is not
+         * desired a pass can be set that clones the metadata.
+         *
+         * The default pass is implemented as follow:
+         * @code
+         * processor->setPassMetadataFunction([](std::shared_ptr<ImageMetadata> readMetadata){ return readMetadata; });
+         * @endcode
+         *
+         * If the metadata must be cloned the following code can be used:
+         * @code
+         * processor->setPassMetadataFunction([](std::shared_ptr<ImageMetadata> readMetadata){ return readMetadata; });
+         * @endcode
+         *
+         * It is recommended to call this function before startTriggerThread() is called
+         * to avoid potential threading issues. */
+        virtual void setPassMetadataFunction(PassMetadataFunction f)
+        {
+            PassMetadataFunction_ = f;
+        }
+
     protected:
         const uint32_t ImagesPerSlot_;
         const uint32_t buffer_size_;
         
         /*! StatsCollector member to measure the time taken by the processor.*/
         std::shared_ptr<StatsCollector> ProcessorStats_;
+        /*! Function to pass metadata from the upstream image to the downstream image.
+         *
+         * Can be used as follow in derived classes:
+         * @code
+         * if(PassMetadataFunction_ != nullptr)
+         * {
+         *     imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
+         * }
+         * @endcode
+         *
+         * @sa setPassMetadataFunction() */
+        PassMetadataFunction PassMetadataFunction_;
         
     private:
         ImageProcessorThread *Thread_;

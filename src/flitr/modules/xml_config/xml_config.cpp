@@ -54,9 +54,9 @@ std::string XMLConfig::getString(std::string element, std::string attribute, std
     return val;
 }
 
-std::vector<std::string> XMLConfig::getStringVector(std::string element, std::string attribute)
+StringVector XMLConfig::getStringVector(std::string element, std::string attribute)
 {
-    std::vector<std::string> vec;
+    StringVector vec;
     if (!RootElement_) return vec;//getDefault<std::string>(element, attribute, dflt);
     TiXmlElement* dataElement = RootElement_->FirstChildElement(element);
     if (!dataElement) return vec;//getDefault<std::string>(element, attribute, dflt);
@@ -73,7 +73,7 @@ std::vector<std::string> XMLConfig::getStringVector(std::string element, std::st
 }
 
 
-std::vector<std::vector<std::pair<std::string, std::string> > > XMLConfig::getAttributeVector(const std::string &element)
+AttributeVectorVector XMLConfig::getAttributeVector(const std::string &element)
 {
     std::vector<std::vector<std::pair<std::string, std::string> > > vecvec;
     if (!RootElement_)
@@ -110,7 +110,7 @@ std::vector<std::vector<std::pair<std::string, std::string> > > XMLConfig::getAt
     return vecvec;
 }
 
-bool XMLConfig::writeAttributeVector(const std::string &element, const std::vector<std::vector<std::pair<std::string, std::string> > > &vecvec)
+bool XMLConfig::writeAttributeVector(const std::string &element, const AttributeVectorVector& vecvec)
 {
     if (!RootElement_)
     {

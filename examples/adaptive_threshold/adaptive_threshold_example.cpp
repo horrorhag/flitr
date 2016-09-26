@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
 
+#ifdef FLITR_USE_OSG
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
+#endif //FLITR_USE_OSG
 
 #include <flitr/modules/flitr_image_processors/flip/fip_flip.h>
 #include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
@@ -14,16 +16,18 @@
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
-#include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
-#include <flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h>
+#include <flitr/modules/flitr_image_processors/adaptive_threshold/fip_adaptive_threshold.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
+
+#ifdef FLITR_USE_OSG
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
+#endif //FLITR_USE_OSG
 
 using std::shared_ptr;
 using namespace flitr;
@@ -81,38 +85,21 @@ int main(int argc, char *argv[])
      cnvrtToRGBF32->startTriggerThread();
      */
     
-    shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*ip, 1,
-                                                                                    15,//square structuring element size.
-                                                                                    15, 255,//threshold, binaryMax
-                                                                                    1));
-    
-    
-    //===WHITE TOP HAT===//
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
-    //=== ===//
-    
-    //===BLACK TOP HAT===//
-    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
-    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
-    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::MINUS_SOURCE);
-    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
-    //=== ===//
-    
-    
-    if (!morphologicalFilt->init())
+    shared_ptr<FIPAdaptiveThreshold> adaptiveThreshold(new FIPAdaptiveThreshold(*ip, 1,
+                                                                                256, 1,
+                                                                                0.1));
+    if (!adaptiveThreshold->init())
     {
-        std::cerr << "Could not initialise the morphologicalFilt processor.\n";
+        std::cerr << "Could not initialise the adaptiveThreshold processor.\n";
         exit(-1);
     }
+    adaptiveThreshold->startTriggerThread();
     
-    morphologicalFilt->startTriggerThread();
+    adaptiveThreshold->enable(true);
     
     
     /*
-     shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 1));
+     shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*adaptiveThreshold, 1, 0.95f, 1));
      if (!cnvrtToRGB8->init())
      {
      std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
@@ -122,13 +109,13 @@ int main(int argc, char *argv[])
      */
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFilt, 1, 1));
+#ifdef FLITR_USE_OSG
+shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*adaptiveThreshold, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
-    
     
     shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
     if (!osgcOrig->init())
@@ -136,20 +123,25 @@ int main(int argc, char *argv[])
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
     }
+#endif //FLITR_USE_OSG
     
     
-    /*
-     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
-     if (!mffc->init()) {
+    
+     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*adaptiveThreshold,1));
+     if (!mffc->init())
+     {
      std::cerr << "Could not init FFmpeg consumer\n";
      exit(-1);
      }
+    
      std::stringstream filenameStringStream;
-     filenameStringStream << argv[1] << "_improved";
+     filenameStringStream << argv[1] << "_out";
      mffc->openFiles(filenameStringStream.str());
-     */
+     mffc->startWriting();
     
     
+    
+#ifdef FLITR_USE_OSG
     osg::Group *root_node = new osg::Group;
     
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
@@ -192,12 +184,15 @@ int main(int argc, char *argv[])
         OrthoTextureManipulator* om = new OrthoTextureManipulator(osgc->getOutputTexture()->getTextureWidth(), osgc->getOutputTexture()->getTextureHeight());
         viewer.setCameraManipulator(om);
     }
+#endif //FLITR_USE_OSG
+
     
+    
+#ifdef FLITR_USE_OSG
     size_t numFrames=0;
     
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
     {
-        
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
         //Read from the video, but don't get more than n frames ahead.
         if (ip->getLeastNumReadSlotsAvailable()<5)
@@ -211,22 +206,34 @@ int main(int argc, char *argv[])
             osgcOrig->getNext();
             
             viewer.frame();
-            
-            /*
-             if (numFrames==15)
-             {
-             mffc->startWriting();
-             }
-             */
-            
             numFrames++;
         }
         
+        std::cout << adaptiveThreshold->getThresholdAvrg() << "\n";
+        std::cout.flush();
+        
         FThread::microSleep(5000);
     }
+#else
     
-    //     mffc->stopWriting();
-    //     mffc->closeFiles();
+    while(true)
+    {
+#ifndef USE_BACKGROUND_TRIGGER_THREAD
+        //Read from the video, but don't get more than n frames ahead.
+        if (ip->getLeastNumReadSlotsAvailable()<5)
+        {
+            ip->trigger();
+        }
+#endif
+    
+        FThread::microSleep(5000);
+    }
+#endif
+
+    
+         mffc->stopWriting();
+         mffc->closeFiles();
+    
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -235,7 +242,7 @@ int main(int argc, char *argv[])
 #endif
     
     //cnvrtToRGBF32->stopTriggerThread();
-    morphologicalFilt->stopTriggerThread();
+    adaptiveThreshold->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;

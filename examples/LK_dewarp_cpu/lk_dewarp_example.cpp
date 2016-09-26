@@ -8,6 +8,7 @@
 
 #include <flitr/modules/geometry_overlays/points_overlay.h>
 
+#include <flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h>
 #include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
@@ -20,7 +21,6 @@
 #include <flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h>
 
 #include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp.h>
-#include <flitr/modules/flitr_image_processors/dewarp/fip_lk_dewarp_ex.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
 #include <flitr/ffmpeg_producer.h>
@@ -34,6 +34,8 @@
 using std::shared_ptr;
 using namespace flitr;
 
+
+//!Class to read the video input from disk in the background.
 class BackgroundTriggerThread : public FThread
 {
 public:
@@ -57,7 +59,6 @@ private:
 };
 
 
-
 #define USE_BACKGROUND_TRIGGER_THREAD 1
 
 
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 5));
     if (!ip->init())
     {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -94,48 +95,49 @@ int main(int argc, char *argv[])
     }
     cnvrtToYF32->startTriggerThread();
     
-    
-    //===
-    shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
-                                         100,
-                                         100,
-                                         1160,
-                                         824,
-                                         2));
-    if (!crop->init())
-    {
-        std::cerr << "Could not initialise the crop processor.\n";
-        exit(-1);
-    }
-    crop->startTriggerThread();
-    
-    
-/*
-    //===
-    shared_ptr<FIPGaussianDownsample> gaussianDownSample0(new FIPGaussianDownsample(*crop, 1,
-                                                                                   2.0f,
-                                                                                   6,
-                                                                                   2));
-    if (!gaussianDownSample0->init())
-    {
-        std::cerr << "Could not initialise the gaussianDownSample0 processor.\n";
-        exit(-1);
-    }
-    gaussianDownSample0->startTriggerThread();
+    /*
+     //===
+     shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToYF32, 1,
+     100, //x0
+     100, //y0
+     1160, //width
+     824, //height
+     2));
+     if (!crop->init())
+     {
+     std::cerr << "Could not initialise the crop processor.\n";
+     exit(-1);
+     }
+     crop->startTriggerThread();
+     */
     
     
-    //===
-    shared_ptr<FIPGaussianDownsample> gaussianDownSample1(new FIPGaussianDownsample(*gaussianDownSample0, 1,
-                                                                                    2.0f,
-                                                                                    6,
-                                                                                    2));
-    if (!gaussianDownSample1->init())
-    {
-        std::cerr << "Could not initialise the gaussianDownSample1 processor.\n";
-        exit(-1);
-    }
-    gaussianDownSample1->startTriggerThread();
-*/
+    /*
+     //===
+     shared_ptr<FIPGaussianDownsample> gaussianDownSample0(new FIPGaussianDownsample(*crop, 1,
+     2.0f,
+     6,
+     2));
+     if (!gaussianDownSample0->init())
+     {
+     std::cerr << "Could not initialise the gaussianDownSample0 processor.\n";
+     exit(-1);
+     }
+     gaussianDownSample0->startTriggerThread();
+     
+     
+     //===
+     shared_ptr<FIPGaussianDownsample> gaussianDownSample1(new FIPGaussianDownsample(*gaussianDownSample0, 1,
+     2.0f,
+     6,
+     2));
+     if (!gaussianDownSample1->init())
+     {
+     std::cerr << "Could not initialise the gaussianDownSample1 processor.\n";
+     exit(-1);
+     }
+     gaussianDownSample1->startTriggerThread();
+     */
     
     /*
      //===
@@ -149,13 +151,14 @@ int main(int argc, char *argv[])
      exit(-1);
      }
      gaussianFilter->startTriggerThread();
-    */
+     */
     
     
-    //===
-    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*crop, 1,
-                                                                                      0.4, //target average
-                                                                                      2));//Buffer size.
+    //=== Photometric equalisation to improve accuracy of optical flow. ===
+    //===  * Use setTargetAverage(...) to set the target average brightness at run-time.
+    shared_ptr<FIPPhotometricEqualise> photometricEqualise(new FIPPhotometricEqualise(*cnvrtToYF32, 1,
+                                                                                      0.6,//target average brightness.
+                                                                                      2));//SharedImageBuffer size.
     
     if (!photometricEqualise->init())
     {
@@ -166,25 +169,27 @@ int main(int argc, char *argv[])
     
     
     
-    //==
-     shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*photometricEqualise, 1,
-     FIPLKStabilise::Mode::INTSTAB,
-     //FIPLKStabilise::Mode::SUBPIXELSTAB,
-     2));
-     if (!lkstabilise->init())
-     {
-     std::cerr << "Could not initialise the lkstabilise processor.\n";
-     exit(-1);
-     }
-     lkstabilise->startTriggerThread();
+    //=== Optical flow based image stabilisation to nearest integer...
+    //===  * Use setupOutputTransformBurn(...) to accommodate a panning camera. Smaller values are more accommodating.
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*photometricEqualise, 1,
+                                                              FIPLKStabilise::Mode::INTSTAB, //Stabilise to nearest int.
+                                                              //FIPLKStabilise::Mode::SUBPIXELSTAB, //Stabilise to sub-pixel accuracy (resamples the image).
+                                                              2));
+    if (!lkstabilise->init())
+    {
+        std::cerr << "Could not initialise the lkstabilise processor.\n";
+        exit(-1);
+    }
+    lkstabilise->setupOutputTransformBurn(0.8, 0.8); //High pass filter output transform.
+    lkstabilise->startTriggerThread();
     
-
     
     
-    //===
+    
+    //=== Optical flow based image dewarp...
     shared_ptr<FIPLKDewarp> lkdewarp(new FIPLKDewarp(*lkstabilise, 1,
-                                                         0.5f, //Internal average image longevity.
-                                                         2)); //Buffer size.
+                                                     0.95f, //Internal average image longevity.
+                                                     2));  //Buffer size.
     if (!lkdewarp->init())
     {
         std::cerr << "Could not initialise the lkdewarp processor.\n";
@@ -194,25 +199,36 @@ int main(int argc, char *argv[])
     
     
     
+    //=== Post dewarp average image to reduce noise/artifacts...
+    shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1,
+                                                                 2,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
+                                                                 2));
+    if (!averageImage->init())
+    {
+        std::cerr << "Could not initialise the average image processor.\n";
+        exit(-1);
+    }
+    averageImage->startTriggerThread();
+    
+    
+    
+    //=== Sharpening/de-blur pass. ===//
+    //===  * Use setFilterRadius(...) to at runtime adjust the filter radius to best sharpen the image.
+    shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1,
+                                                              20.0f, //unsharp mask gain.
+                                                              1.49f, //unsharp mask filter radius.
+                                                              2));
+    if (!unsharpMask->init())
+    {
+        std::cerr << "Could not initialise the unsharp mask processor.\n";
+        exit(-1);
+    }
+    unsharpMask->startTriggerThread();
+    
+    
+    
+    /*
      //===
-     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1, 5, 2));
-     if (!averageImage->init())
-     {
-     std::cerr << "Could not initialise the average image processor.\n";
-     exit(-1);
-     }
-     averageImage->startTriggerThread();
-     
-     
-     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1, 20.0f, 1.75f, 2));
-     if (!unsharpMask->init())
-     {
-     std::cerr << "Could not initialise the unsharp mask processor.\n";
-     exit(-1);
-     }
-     unsharpMask->startTriggerThread();
-     
-     /*
      shared_ptr<FIPTonemap> tonemap(new FIPTonemap(*unsharpMask, 1, 0.8f, 2));
      if (!tonemap->init())
      {
@@ -220,19 +236,25 @@ int main(int argc, char *argv[])
      exit(-1);
      }
      tonemap->startTriggerThread();
-    */
+     */
     
-    /*
-    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*unsharpMask, 1, 0.90f, 2));
+    
+    
+    //=== Convert float32 image back to 8 bit...
+    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*unsharpMask, 1,
+                                                            1.0f,
+                                                            2));
     if (!cnvrtToY8->init())
     {
         std::cerr << "Could not initialise the cnvrtToM8 processor.\n";
         exit(-1);
     }
     cnvrtToY8->startTriggerThread();
-    */
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*unsharpMask, 1, 2));
+    
+    
+    
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -321,6 +343,8 @@ int main(int argc, char *argv[])
         }
 #endif
         
+        //unsharpMask->setFilterRadius(numFrames * 0.01 + 0.5);
+        
         if (osgc->getNext())
         {
             osgcOrig->getNext();
@@ -347,13 +371,13 @@ int main(int argc, char *argv[])
     //gaussianDownSample0->stopTriggerThread();
     //gaussianDownSample1->stopTriggerThread();
     //gaussianFilter->stopTriggerThread();
+    photometricEqualise->stopTriggerThread();
     lkstabilise->stopTriggerThread();
-    //photometricEqualise->stopTriggerThread();
     lkdewarp->stopTriggerThread();
     averageImage->stopTriggerThread();
     unsharpMask->stopTriggerThread();
     //tonemap->stopTriggerThread();
-    //cnvrtToY8->stopTriggerThread();
+    cnvrtToY8->stopTriggerThread();
     
     return 0;
 }

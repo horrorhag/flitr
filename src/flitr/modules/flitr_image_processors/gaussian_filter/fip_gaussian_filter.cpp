@@ -27,17 +27,18 @@ using std::shared_ptr;
 FIPGaussianFilter::FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t images_per_slot,
                                      const float filterRadius,
                                      const size_t kernelWidth,
-                                     const short intImgApprox,
+                                     const short approxIterations,
                                      uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-intImgApprox_(intImgApprox),
-scratchData_(nullptr),
-intImageScratchData_(nullptr),
-gaussianFilter_(filterRadius, kernelWidth),
-boxFilter_(kernelWidth),
-Title_(std::string("Gaussian Filter")),
-FilterRadius_(filterRadius),
-KernelWidth_(kernelWidth)
+_approxIterations(approxIterations),
+_scratchData(nullptr),
+_intImageScratchData(nullptr),
+_gaussianFilter(filterRadius, kernelWidth),
+_boxFilter(kernelWidth),
+_enabled(true),
+_title(std::string("Gaussian Filter")),
+_filterRadius(filterRadius),
+_kernelWidth(kernelWidth)
 {
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -49,19 +50,30 @@ KernelWidth_(kernelWidth)
 
 FIPGaussianFilter::~FIPGaussianFilter()
 {
-    delete [] scratchData_;
-    delete [] intImageScratchData_;
+    // First stop the trigger thread. The stopTriggerThread() function will
+    // also wait for the thread to stop using the join() function.
+    // It is essential to wait for the thread to exit before starting
+    // to clean up otherwise if the thread is still in the trigger() function
+    // and cleaning up starts, the application will crash.
+    // If the user called stopTriggerThread() manually, this call will do
+    // nothing. stopTriggerThread() will get called in the base destructor, but
+    // at that time it might be too late.
+    stopTriggerThread();
+    // Thread should be done, cleaning up can start. This might still be a problem
+    // if the application calls trigger() and not the triggerThread.
+    delete [] _scratchData;
+    delete [] _intImageScratchData;
 }
 
 void FIPGaussianFilter::setFilterRadius(const float filterRadius)
 {
-    gaussianFilter_.setFilterRadius(filterRadius);
+    _gaussianFilter.setFilterRadius(filterRadius);
 }
 
 void FIPGaussianFilter::setKernelWidth(const int kernelWidth)
 {
-    gaussianFilter_.setKernelWidth(kernelWidth);
-    boxFilter_.setKernelWidth(kernelWidth);
+    _gaussianFilter.setKernelWidth(kernelWidth);
+    _boxFilter.setKernelWidth(kernelWidth);
 }
 
 bool FIPGaussianFilter::init()
@@ -97,11 +109,11 @@ bool FIPGaussianFilter::init()
     }
     
     //Allocate a buffer big enough for any of the image slots.
-    scratchData_=new uint8_t[maxScratchDataSize];
-    memset(scratchData_, 0, maxScratchDataSize);
+    _scratchData=new uint8_t[maxScratchDataSize];
+    memset(_scratchData, 0, maxScratchDataSize);
     
-    intImageScratchData_=new double[maxScratchDataValues];
-    memset(intImageScratchData_, 0, maxScratchDataValues*sizeof(double));
+    _intImageScratchData=new double[maxScratchDataValues];
+    memset(_intImageScratchData, 0, maxScratchDataValues*sizeof(double));
     
     return rValue;
 }
@@ -121,99 +133,141 @@ bool FIPGaussianFilter::trigger()
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
-            const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
-            const size_t width=imFormat.getWidth();
-            const size_t height=imFormat.getHeight();
-            
-            
-            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
             {
-                float const * const dataReadUS=(float const * const)imReadUS->data();
-                float * const dataWriteDS=(float * const)imWriteDS->data();
-                
-                if (intImgApprox_==0)
-                {
-                    gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
-                } else
-                {
-                    boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
-                                      intImageScratchData_, true);
-                    
-                    for (short i=1; i<intImgApprox_; ++i)
-                    {
-                        memcpy(scratchData_, dataWriteDS, width*height*sizeof(float));
-                        
-                        boxFilter_.filter(dataWriteDS, (float *)scratchData_, width, height,
-                                          intImageScratchData_, true);
-                    }
-                }
+                imWriteDS->setMetadata(PassMetadataFunction_(imReadUS->metadata()));
+            }
+            const ImageFormat imFormat=getDownstreamFormat(imgNum);//down stream and up stream formats are the same.
+            
+            if (!_enabled)
+            {
+                uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+                const size_t bytesPerImage=imFormat.getBytesPerImage();
+                memcpy(dataWriteDS, dataReadUS, bytesPerImage);
             } else
-                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
-                {
-                    uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
-                    uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
-                    
-                    if (intImgApprox_==0)
-                    {
-                        gaussianFilter_.filter(dataWriteDS, dataReadUS, width, height, (uint8_t *)scratchData_);
-                    } else
-                    {
-                        boxFilter_.filter(dataWriteDS, dataReadUS, width, height,
-                                          intImageScratchData_, true);
-                        
-                        for (short i=1; i<intImgApprox_; ++i)
-                        {
-                            memcpy(scratchData_, dataWriteDS, width*height*sizeof(uint8_t));
-                            
-                            boxFilter_.filter(dataWriteDS, (uint8_t *)scratchData_, width, height,
-                                              intImageScratchData_, true);
-                        }
-                    }
-                } else
-                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+            {
+                const size_t width=imFormat.getWidth();
+                const size_t height=imFormat.getHeight();
+                
+                
+                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
                 {
                     float const * const dataReadUS=(float const * const)imReadUS->data();
                     float * const dataWriteDS=(float * const)imWriteDS->data();
                     
-                    if (intImgApprox_==0)
+                    if (_approxIterations==0)
                     {
-                        gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, (float *)scratchData_);
+                        _gaussianFilter.filter(dataWriteDS, dataReadUS, width, height, (float *)_scratchData);
                     } else
                     {
-                        boxFilter_.filterRGB(dataWriteDS, dataReadUS, width, height,
-                                          intImageScratchData_, true);
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                        _boxFilter.filter(dataWriteDS, dataReadUS, width, height, _intImageScratchData, true);
+#else
+                        _boxFilter.filter(dataWriteDS, dataReadUS, width, height, (float *)_scratchData);
+#endif
                         
-                        for (short i=1; i<intImgApprox_; ++i)
+                        for (short i=1; i<_approxIterations; ++i)
                         {
-                            memcpy(scratchData_, dataWriteDS, width*height*sizeof(float)*3);
+                            memcpy(_scratchData, dataWriteDS, width*height*sizeof(float));
                             
-                            boxFilter_.filterRGB(dataWriteDS, (float *)scratchData_, width, height,
-                                                 intImageScratchData_, true);
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                            _boxFilter.filter(dataWriteDS, (float *)_scratchData, width, height, _intImageScratchData, true);
+#else
+                            _boxFilter.filter(dataWriteDS, (float *)_scratchData, width, height, (float *)_scratchData);
+#endif
                         }
                     }
                 } else
-                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
                     {
                         uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
                         uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
                         
-                        if (intImgApprox_==0)
+                        if (_approxIterations==0)
                         {
-                            gaussianFilter_.filterRGB(dataWriteDS, dataReadUS, width, height, scratchData_);
+                            _gaussianFilter.filter(dataWriteDS, dataReadUS, width, height, (uint8_t *)_scratchData);
                         } else
                         {
-                            boxFilter_.filterRGB(dataWriteDS, dataReadUS, width, height,
-                                                 intImageScratchData_, true);
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                            _boxFilter.filter(dataWriteDS, dataReadUS, width, height, _intImageScratchData, true);
+#else
+                            _boxFilter.filter(dataWriteDS, dataReadUS, width, height, (uint8_t *)_scratchData);
+#endif
                             
-                            for (short i=1; i<intImgApprox_; ++i)
+                            for (short i=1; i<_approxIterations; ++i)
                             {
-                                memcpy(scratchData_, dataWriteDS, width*height*sizeof(uint8_t)*3);
+                                memcpy(_scratchData, dataWriteDS, width*height*sizeof(uint8_t));
                                 
-                                boxFilter_.filterRGB(dataWriteDS, scratchData_, width, height,
-                                                     intImageScratchData_, true);
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                                _boxFilter.filter(dataWriteDS, dataReadUS, width, height, _intImageScratchData, true);
+#else
+                                _boxFilter.filter(dataWriteDS, (uint8_t *)_scratchData, width, height, (uint8_t *)_scratchData);
+#endif
                             }
                         }
-                    }
+                    } else
+                        if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                        {
+                            float const * const dataReadUS=(float const * const)imReadUS->data();
+                            float * const dataWriteDS=(float * const)imWriteDS->data();
+                            
+                            if (_approxIterations==0)
+                            {
+                                _gaussianFilter.filterRGB(dataWriteDS, dataReadUS, width, height, (float *)_scratchData);
+                            } else
+                            {
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                                _boxFilter.filterRGB(dataWriteDS, dataReadUS, width, height, _intImageScratchData, true);
+#else
+                                _boxFilter.filterRGB(dataWriteDS, dataReadUS, width, height, (float *)_scratchData);
+#endif
+                                
+                                for (short i=1; i<_approxIterations; ++i)
+                                {
+                                    memcpy(_scratchData, dataWriteDS, width*height*sizeof(float)*3);
+                                    
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                                    _boxFilter.filterRGB(dataWriteDS, (float *)_scratchData, width, height, _intImageScratchData, true);
+#else
+                                    _boxFilter.filterRGB(dataWriteDS, (float *)_scratchData, width, height, (float *)_scratchData);
+#endif
+                                }
+                            }
+                        } else
+                            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                            {
+                                uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                                uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+                                
+                                if (_approxIterations==0)
+                                {
+                                    _gaussianFilter.filterRGB(dataWriteDS, dataReadUS, width, height, (uint8_t *)_scratchData);
+                                } else
+                                {
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                                    _boxFilter.filterRGB(dataWriteDS, dataReadUS, width, height, _intImageScratchData, true);
+#else
+                                    _boxFilter.filterRGB(dataWriteDS, dataReadUS, width, height, (uint8_t *)_scratchData);
+#endif
+                                    
+                                    for (short i=1; i<_approxIterations; ++i)
+                                    {
+                                        memcpy(_scratchData, dataWriteDS, width*height*sizeof(uint8_t)*3);
+                                        
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+                                        _boxFilter.filterRGB(dataWriteDS, _scratchData, width, height, _intImageScratchData, true);
+#else
+                                        _boxFilter.filterRGB(dataWriteDS, _scratchData, width, height, (uint8_t *)_scratchData);
+#endif
+                                    }
+                                }
+                            }
+            }
         }
         
         //Stop stats measurement event.
