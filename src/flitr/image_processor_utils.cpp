@@ -21,6 +21,7 @@
 #define _USE_MATH_DEFINES
 #include <memory>
 #include <cmath>
+#include <cstring>
 
 #include <flitr/image_processor_utils.h>
 #include <sstream>
