@@ -32,8 +32,10 @@ FIPGaussianFilter::FIPGaussianFilter(ImageProducer& upStreamProducer, uint32_t i
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 _approxIterations(approxIterations),
 _scratchData(nullptr),
-_intImageScratchData(nullptr),
 _gaussianFilter(filterRadius, kernelWidth),
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+_intImageScratchData(nullptr),
+#endif
 _boxFilter(kernelWidth),
 _enabled(true),
 _title(std::string("Gaussian Filter")),
@@ -62,7 +64,9 @@ FIPGaussianFilter::~FIPGaussianFilter()
     // Thread should be done, cleaning up can start. This might still be a problem
     // if the application calls trigger() and not the triggerThread.
     delete [] _scratchData;
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
     delete [] _intImageScratchData;
+#endif
 }
 
 void FIPGaussianFilter::setFilterRadius(const float filterRadius)
@@ -112,8 +116,10 @@ bool FIPGaussianFilter::init()
     _scratchData=new uint8_t[maxScratchDataSize];
     memset(_scratchData, 0, maxScratchDataSize);
     
+#ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
     _intImageScratchData=new double[maxScratchDataValues];
     memset(_intImageScratchData, 0, maxScratchDataValues*sizeof(double));
+#endif
     
     return rValue;
 }

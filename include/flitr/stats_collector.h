@@ -79,6 +79,12 @@ class FLITR_EXPORT StatsCollector {
         }
     }
 
+    void setID(const std::string &ID)
+    {
+        ID_=ID;
+    }
+    
+    
   private:
     /// Identifier string to use when printing info
     std::string ID_;

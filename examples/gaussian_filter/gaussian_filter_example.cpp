@@ -88,8 +88,8 @@ int main(int argc, char *argv[])
      cnvrtToF32->startTriggerThread();
     
     shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1,
-                                                                  10.0, 10,
-                                                                  1));
+                                                                  10.0, 5,
+                                                                  3));
     if (!gaussFilt->init())
     {
         std::cerr << "Could not initialise the gaussFilt processor.\n";

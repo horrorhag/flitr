@@ -490,8 +490,8 @@ bool BoxFilterRS::filter(float * const dataWriteDS, float const * const dataRead
                        const size_t width, const size_t height,
                        float * const dataScratch)
 {
-    const size_t heightMinusKernel=height-kernelWidth_;
-    const float recipKernelWidth=1.0f/kernelWidth_;
+    //const size_t heightMinusKernel=height-kernelWidth_;
+    const float recipKernelWidthSq=1.0f/(kernelWidth_*kernelWidth_);
     const size_t halfKernelWidth=(kernelWidth_>>1);
     const size_t widthMinusHalfKernel=width-halfKernelWidth;
     
@@ -503,30 +503,36 @@ bool BoxFilterRS::filter(float * const dataWriteDS, float const * const dataRead
         
         float rs=0.0;
         size_t historyPos=0;
+        size_t x=0;
         
-        for (size_t x=0; x<(kernelWidth_-1); ++x)
+        for (; x<(kernelWidth_-1); ++x)
         {
             rs += dataReadUS[lineOffsetUS + x];
             historyRing_[historyPos++]=dataReadUS[lineOffsetUS + x];
         }
         
-        for (size_t x=(kernelWidth_-1); x<width; ++x)
+        for (; x<width; ++x)
         {
             rs += dataReadUS[lineOffsetUS + x];
             historyRing_[historyPos]=dataReadUS[lineOffsetUS + x];
             
             //historyPos=(historyPos+1)%kernelWidth_;
+            //OR
             ++historyPos;
             if (historyPos>=kernelWidth_) historyPos=0;
             
-            dataScratch[lineOffsetFS + x]=rs * recipKernelWidth;
+            dataScratch[lineOffsetFS + x]=rs;
             
             rs -= historyRing_[historyPos];
         }
     }
     
-    float yHistoryRing[width * kernelWidth_];
-    float yRS[width];
+    
+    //Allocate the buffers that are dependent on the image width which is only known in this method and may be different the next time this method is called.
+    //  ToDo: only reallocate this memory of the width or kernelWidth has been updated.
+    float *yHistoryRing=new float[width * kernelWidth_];
+    float *yRS=new float[width];
+    
     size_t yHistoryPos=0;
     
     for (size_t x=halfKernelWidth; x<widthMinusHalfKernel; ++x)
@@ -562,13 +568,16 @@ bool BoxFilterRS::filter(float * const dataWriteDS, float const * const dataRead
             yRS[x] += dataScratch[lineOffsetFS + x];
             yHistoryRing[historyLineOffset + x]=dataScratch[lineOffsetFS + x];
             
-            dataWriteDS[lineOffsetDS + x]=yRS[x] * recipKernelWidth;
+            dataWriteDS[lineOffsetDS + x]=yRS[x] * recipKernelWidthSq;
             
             yRS[x] -= yHistoryRing[nextHistoryLineOffset + x];
         }
         
         yHistoryPos = yNextHistoryPos;
     }
+    
+    delete [] yHistoryRing;
+    delete [] yRS;
     
     return true;
 }
@@ -577,6 +586,9 @@ bool BoxFilterRS::filterRGB(float * const dataWriteDS, float const * const dataR
                           const size_t width, const size_t height,
                           float * const dataScratch)
 {
+    //Implementation not yet done. See the filter(float *...) implementation above.
+    
+    /*
     const size_t widthMinusKernel=width-kernelWidth_;
     const size_t heightMinusKernel=height-kernelWidth_;
     const float recipKernelWidth=1.0f/kernelWidth_;
@@ -632,12 +644,17 @@ bool BoxFilterRS::filterRGB(float * const dataWriteDS, float const * const dataR
     }
     
     return true;
+     */
+    return false;
 }
 
 bool BoxFilterRS::filter(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
                        const size_t width, const size_t height,
                        uint8_t * const dataScratch)
 {
+    //Implementation not yet done. See the filter(float *...) implementation above.
+    
+    /*
     const size_t widthMinusKernel=width-kernelWidth_;
     const size_t heightMinusKernel=height-kernelWidth_;
     const size_t halfKernelWidth=(kernelWidth_>>1);
@@ -684,12 +701,17 @@ bool BoxFilterRS::filter(uint8_t * const dataWriteDS, uint8_t const * const data
     }
     
     return true;
+     */
+    return false;
 }
 
 bool BoxFilterRS::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const dataReadUS,
                           const size_t width, const size_t height,
                           uint8_t * const dataScratch)
 {
+    //Implementation not yet done. See the filter(float *...) implementation above.
+    
+    /*
     const size_t widthMinusKernel=width-kernelWidth_;
     const size_t heightMinusKernel=height-kernelWidth_;
     const size_t halfKernelWidth=(kernelWidth_>>1);
@@ -746,6 +768,8 @@ bool BoxFilterRS::filterRGB(uint8_t * const dataWriteDS, uint8_t const * const d
     }
     
     return true;
+     */
+    return false;
 }
 
 //=========================================//

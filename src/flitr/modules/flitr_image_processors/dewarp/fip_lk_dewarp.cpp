@@ -96,8 +96,8 @@ FIPLKDewarp::~FIPLKDewarp()
         hyVec_.pop_back();
     }
     
-    delete [] avrgHxData_;
-    delete [] avrgHyData_;
+    //delete [] avrgHxData_;
+    //delete [] avrgHyData_;
 }
 
 bool FIPLKDewarp::init()
@@ -152,11 +152,11 @@ bool FIPLKDewarp::init()
             memset(hyVec_.back(), 0, (croppedWidth>>levelNum) * (croppedHeight>>levelNum) * sizeof(float));
         }
         
-        avrgHxData_=new float[croppedWidth * croppedHeight];
-        memset(avrgHxData_, 0, croppedWidth * croppedHeight * sizeof(float));
+        //avrgHxData_=new float[croppedWidth * croppedHeight];
+        //memset(avrgHxData_, 0, croppedWidth * croppedHeight * sizeof(float));
         
-        avrgHyData_=new float[croppedWidth * croppedHeight];
-        memset(avrgHyData_, 0, croppedWidth * croppedHeight * sizeof(float));
+        //avrgHyData_=new float[croppedWidth * croppedHeight];
+        //memset(avrgHyData_, 0, croppedWidth * croppedHeight * sizeof(float));
         
         //Push zero h vectors to ordinal numLevels_+1
         hxVec_.push_back(new float[(croppedWidth>>numLevels_) * ((croppedHeight>>numLevels_)+2)]);
@@ -514,10 +514,10 @@ bool FIPLKDewarp::trigger()
                                         const float hx=-hxDataGF[offset];
                                         const float hy=-hyDataGF[offset];
                                         
-                                        const float f=0.1;
-                                        avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                        //const float f=0.1;
+                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -540,10 +540,10 @@ bool FIPLKDewarp::trigger()
                                         const float hx=hxDataGF[offset];
                                         const float hy=hyDataGF[offset];
                                         
-                                        const float f=0.05;
-                                        avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
+                                        //const float f=0.05;
+                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
+                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
+                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -563,7 +563,7 @@ bool FIPLKDewarp::trigger()
                                             const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
                                             finalImgData_[offset]=img;
                                             
-                                            finalImgData_[offset]=avrgHSq * 0.1;
+                                            //finalImgData_[offset]=avrgHSq * 0.1;
                                         }
 #endif
                                     }

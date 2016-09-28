@@ -113,8 +113,8 @@ namespace flitr {
         std::vector<float *> hxVec_;
         std::vector<float *> hyVec_;
         
-        float *avrgHxData_;
-        float *avrgHyData_;
+        //float *avrgHxData_;
+        //float *avrgHyData_;
         
         GaussianFilter gaussianFilter_;
         GaussianDownsample gaussianDownsample_;

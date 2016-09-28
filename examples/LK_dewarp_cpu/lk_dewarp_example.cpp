@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
     
     //=== Post dewarp average image to reduce noise/artifacts...
     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1,
-                                                                 2,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
+                                                                 3,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
                                                                  2));
     if (!averageImage->init())
     {
@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
     
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*averageImage, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
