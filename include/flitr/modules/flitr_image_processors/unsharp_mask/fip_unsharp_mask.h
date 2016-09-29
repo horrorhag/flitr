@@ -51,12 +51,14 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
         
+        //!Sets the filter gain. This method is thread safe.
+        virtual void setGain(const float gain);
+        
         //!Sets the filter radius. This method is thread safe.
         virtual void setFilterRadius(const float filterRadius);
         
     private:
-        /*! The result of the first pass of the seperable Gaussian filter. */
-        const float gain_;
+        float gain_;
         
         float *xFiltData_;
         float *filtData_;

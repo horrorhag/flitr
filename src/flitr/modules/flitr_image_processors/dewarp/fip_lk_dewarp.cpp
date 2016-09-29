@@ -194,13 +194,13 @@ bool FIPLKDewarp::trigger()
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);
             if (!_enabled)
-            {
+            {//Pass not enabled! Just copy the data from input to output.
                 uint8_t const * const dataReadUS=(uint8_t const * const)imRead->data();
                 uint8_t * const dataWriteDS=(uint8_t * const)imWrite->data();
                 const size_t bytesPerImage=imFormat.getBytesPerImage();
                 memcpy(dataWriteDS, dataReadUS, bytesPerImage);
             } else
-            {
+            {//Pass enabled...
                 const ptrdiff_t uncroppedWidth=imFormat.getWidth();
                 const ptrdiff_t uncroppedHeight=imFormat.getHeight();
                 

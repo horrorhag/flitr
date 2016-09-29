@@ -195,13 +195,14 @@ int main(int argc, char *argv[])
         std::cerr << "Could not initialise the lkdewarp processor.\n";
         exit(-1);
     }
+    lkdewarp->enable(true);
     lkdewarp->startTriggerThread();
     
     
     
     //=== Post dewarp average image to reduce noise/artifacts...
     shared_ptr<FIPAverageImage> averageImage(new FIPAverageImage(*lkdewarp, 1,
-                                                                 3,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
+                                                                 2,   //Exponent of average window length e.g. 5 -> window length = 2^5 = 32
                                                                  2));
     if (!averageImage->init())
     {
@@ -216,7 +217,7 @@ int main(int argc, char *argv[])
     //===  * Use setFilterRadius(...) to at runtime adjust the filter radius to best sharpen the image.
     shared_ptr<FIPUnsharpMask> unsharpMask(new FIPUnsharpMask(*averageImage, 1,
                                                               20.0f, //unsharp mask gain.
-                                                              1.49f, //unsharp mask filter radius.
+                                                              3.0f, //unsharp mask filter radius.
                                                               2));
     if (!unsharpMask->init())
     {
