@@ -30,13 +30,15 @@ namespace flitr {
     class FLITR_EXPORT FIPMSR : public ImageProcessor
     {
     public:
+        enum class FilterType : uint8_t { GausXY = 1, BoxII = 2, BoxRS = 3};
         
         /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
          *@param buffer_size The size of the shared image buffer of the downstream producer.*/
         FIPMSR(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                        uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
+               const FilterType filterType,
+               uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
         virtual ~FIPMSR();
@@ -59,50 +61,31 @@ namespace flitr {
         {
             return _GFScale;
         }
-
+        
         void setNumGaussianScales(const size_t numScales)
         {
             _numScales=numScales;
         }
         
     private:
-
+        const FilterType _filterType;
         
-        
-//#define MSR_USE_GFXY 1
-//OR
-//#define MSR_USE_BFII 1
-//OR
-#define MSR_USE_BFRS 1
-        
-        
-#ifdef MSR_USE_GFXY
         //!Box filter helper. No significant state.
         GaussianFilter _GFXY;
-#endif
         
-#ifdef MSR_USE_BFII
         //!Box filter helper. No significant state.
         BoxFilterII _GFII;
-#endif
-
-#ifdef MSR_USE_BFRS
+        
         //!Box filter helper. No significant state.
         BoxFilterRS _GFRS;
-#endif
-
-//#define SR_LOCAL_CONTRAST 1
-#ifdef SR_LOCAL_CONTRAST
-        //!Integral image used if true local adaptive enhancement used.
-        IntegralImage _II;
-#endif
+        
         
         size_t _GFScale;
         size_t _numScales;
         
         /*! The grayscale image per slot. */
         float *_intensityScratchData;
-
+        
         float *_GFScratchData;
         float *_MSRScratchData;
         float *_floatScratchData;
