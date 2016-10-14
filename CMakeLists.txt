@@ -179,6 +179,7 @@ SET(LIB_SOURCES
   src/flitr/multi_image_buffer_consumer.cpp
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
+  src/flitr/image_diff_and_scale.cpp
   src/flitr/image_multiplexer.cpp
   src/flitr/graph_manager.cpp
 
@@ -252,6 +253,7 @@ SET(LIB_SOURCES
   include/flitr/multi_image_buffer_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
+  include/flitr/image_diff_and_scale.h
   include/flitr/image_multiplexer.h
 
   include/flitr/modules/xml_config/tinyxml.h
