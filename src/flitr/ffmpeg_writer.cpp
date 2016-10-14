@@ -84,6 +84,12 @@ bool FFmpegWriter::openFile(std::string filename, const ImageFormat& image_forma
     VideoEncodeBuffer_ = (uint8_t *)av_malloc(VideoEncodeBufferSize_);
     
     InputFrameFormat_ = PixelFormatFLITrToFFmpeg(image_format.getPixelFormat());
+    if(InputFrameFormat_ == AV_PIX_FMT_NONE)  {
+        logMessage(LOG_CRITICAL) << "Input image format not supported: \n" <<
+                                    "FLITr input image format could not be converted to FFmpeg image format.\n";
+        logMessage(LOG_CRITICAL).flush();
+        return false;
+    }
     SaveFrameFormat_=AV_PIX_FMT_NONE;//Chosen below.
     
     

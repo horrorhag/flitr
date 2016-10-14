@@ -324,6 +324,7 @@ IF(FLITR_USE_OSG)
   src/flitr/modules/geometry_overlays/text_label_overlay.cpp
   src/flitr/modules/geometry_overlays/arrow_overlay.cpp
   src/flitr/modules/geometry_overlays/tape_overlay.cpp
+  src/flitr/modules/geometry_overlays/lines_overlay.cpp
   src/flitr/textured_quad.cpp
   
   src/flitr/glsl_image_processor.cpp
@@ -363,6 +364,7 @@ IF(FLITR_USE_OSG)
   include/flitr/modules/geometry_overlays/text_label_overlay.h
   include/flitr/modules/geometry_overlays/arrow_overlay.h
   include/flitr/modules/geometry_overlays/tape_overlay.h
+  include/flitr/modules/geometry_overlays/lines_overlay.h
   include/flitr/textured_quad.h
 
   include/flitr/glsl_image_processor.h
