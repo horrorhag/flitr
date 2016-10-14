@@ -183,7 +183,7 @@ namespace flitr {
         GaussianFilter _gaussianFilter; //No significant state associated with this.
 
 
-//#define APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+#define APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
 
 #ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
         double *_intImageScratchData;

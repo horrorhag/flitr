@@ -210,7 +210,7 @@ bool FIPGaussianFilter::trigger()
                                 memcpy(_scratchData, dataWriteDS, width*height*sizeof(uint8_t));
                                 
 #ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
-                                _boxFilter.filter(dataWriteDS, dataReadUS, width, height, _intImageScratchData, true);
+                                _boxFilter.filter(dataWriteDS, _scratchData, width, height, _intImageScratchData, true);
 #else
                                 _boxFilter.filter(dataWriteDS, (uint8_t *)_scratchData, width, height, (uint8_t *)_scratchData);
 #endif
