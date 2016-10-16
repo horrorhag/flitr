@@ -82,16 +82,28 @@ int main(int argc, char *argv[])
      */
     
     shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*ip, 1,
-                                                                                    15,//square structuring element size.
-                                                                                    15, 255,//threshold, binaryMax
+                                                                                    30,//square structuring element size.
+                                                                                    80, 255,//threshold, binaryMax
                                                                                     1));
+    //image_1280.jpg
+    //SE size = 8 -> 30 fps
+    //SE size = 12 -> 28 fps
+    //SE size = 16 -> 26 fps
+    //SE size = 20 -> 24 fps
+    //SE size = 24 -> 23 fps
+    //SE size = 48 -> 18 fps
+    //SE size = 72 -> 15 fps
+    //SE size = 96 -> 13 fps
+    //SE size = 120 -> 11 fps
+    //SE size = 240 -> 6.5 fps
+    //SE size = 360 -> 5.6 fps
     
     
     //===WHITE TOP HAT===//
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
     //=== ===//
     
     //===BLACK TOP HAT===//

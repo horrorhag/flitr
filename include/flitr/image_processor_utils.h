@@ -530,17 +530,44 @@ namespace flitr {
                 const size_t lineOffsetFS=y * width + halfStructElem;
                 const size_t lineOffsetUS=y * width;
                 
+                T minImgValue;
+                int minTTL=0;
+                
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
-                    size_t offsetUS=lineOffsetUS + x;
-                    T minImgValue=dataReadUS[offsetUS];
-                    ++offsetUS;
-                    
-                    for (size_t i=1; i<structElemWidth; ++i)
+                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    if (minTTL<=0)
                     {
-                        const T imgValue = dataReadUS[offsetUS];
-                        if (imgValue<minImgValue) minImgValue=imgValue;
+                        size_t offsetUS=lineOffsetUS + x;
+                        minImgValue=dataReadUS[offsetUS];
+                        minTTL=0;
                         ++offsetUS;
+                        
+                        for (size_t i=1; i<structElemWidth; ++i)
+                        {
+                            const T &imgValue = dataReadUS[offsetUS];
+                            
+                            if (imgValue<minImgValue)
+                            {
+                                minImgValue=imgValue;
+                                minTTL=i;
+                            }
+                            
+                            ++offsetUS;
+                        }
+                    } else
+                    {
+                        const size_t offsetUS=lineOffsetUS + x + (structElemWidth-1);
+                        const T &imgValue = dataReadUS[offsetUS];
+                        
+                        if (imgValue<=minImgValue)
+                        {
+                            minImgValue=imgValue;
+                            minTTL=structElemWidth-1;
+                        } else
+                        {
+                            --minTTL;
+                        }
                     }
                     
                     dataScratch[lineOffsetFS + x]=minImgValue;
@@ -548,6 +575,13 @@ namespace flitr {
             }
             
             //Second pass in y.
+            T *minImgValueArr=new T[width];
+            int *minTTLArr=new int[width];
+            for (size_t x=0; x<width; ++x)
+            {
+                minTTLArr[x]=0;
+            }
+            
             for (size_t y=0; y<heightMinusStructElem; ++y)
             {
                 const size_t lineOffsetDS=(y+halfStructElem) * width;
@@ -555,18 +589,42 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
-                    size_t offsetFS=lineOffsetFS + x;
-                    T minImgValue=dataScratch[offsetFS];
-                    offsetFS+=width;
-                    
-                    for (size_t j=1; j<structElemWidth; ++j)
+                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    if (minTTLArr[x]<=0)
                     {
-                        const T imgValue = dataScratch[offsetFS];
-                        if (imgValue<minImgValue) minImgValue=imgValue;
+                        size_t offsetFS=lineOffsetFS + x;
+                        minImgValueArr[x]=dataScratch[offsetFS];
+                        minTTLArr[x]=0;
                         offsetFS+=width;
+                        
+                        for (size_t j=1; j<structElemWidth; ++j)
+                        {
+                            const T &imgValue = dataScratch[offsetFS];
+                            
+                            if (imgValue<minImgValueArr[x])
+                            {
+                                minImgValueArr[x]=imgValue;
+                                minTTLArr[x]=j;
+                            }
+                            
+                            offsetFS+=width;
+                        }
+                    } else
+                    {
+                        const size_t offsetFS=lineOffsetFS + x + (structElemWidth-1)*width;
+                        const T &imgValue = dataScratch[offsetFS];
+                        
+                        if (imgValue<=minImgValueArr[x])
+                        {
+                            minImgValueArr[x]=imgValue;
+                            minTTLArr[x]=structElemWidth-1;
+                        } else
+                        {
+                            --minTTLArr[x];
+                        }
                     }
                     
-                    dataWriteDS[lineOffsetDS + x]=minImgValue;
+                    dataWriteDS[lineOffsetDS + x]=minImgValueArr[x];
                 }
             }
             
@@ -595,6 +653,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetUS=(lineOffsetUS + x)*3;
                     T minImgValueR=dataReadUS[offsetUS+0];
                     T minImgValueG=dataReadUS[offsetUS+1];
@@ -603,9 +662,9 @@ namespace flitr {
                     
                     for (size_t i=1; i<structElemWidth; ++i)
                     {
-                        const T imgValueR = dataReadUS[offsetUS + 0];
-                        const T imgValueG = dataReadUS[offsetUS + 1];
-                        const T imgValueB = dataReadUS[offsetUS + 2];
+                        const T &imgValueR = dataReadUS[offsetUS + 0];
+                        const T &imgValueG = dataReadUS[offsetUS + 1];
+                        const T &imgValueB = dataReadUS[offsetUS + 2];
                         
                         if (imgValueR<minImgValueR) minImgValueR=imgValueR;
                         if (imgValueG<minImgValueG) minImgValueG=imgValueG;
@@ -628,6 +687,7 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetFS=(lineOffsetFS + x)*3;
                     T minImgValueR=dataScratch[offsetFS + 0];
                     T minImgValueG=dataScratch[offsetFS + 1];
@@ -636,9 +696,9 @@ namespace flitr {
                     
                     for (size_t j=1; j<structElemWidth; ++j)
                     {
-                        const T imgValueR = dataScratch[offsetFS + 0];
-                        const T imgValueG = dataScratch[offsetFS + 1];
-                        const T imgValueB = dataScratch[offsetFS + 2];
+                        const T &imgValueR = dataScratch[offsetFS + 0];
+                        const T &imgValueG = dataScratch[offsetFS + 1];
+                        const T &imgValueB = dataScratch[offsetFS + 2];
                         
                         if (imgValueR<minImgValueR) minImgValueR=imgValueR;
                         if (imgValueG<minImgValueG) minImgValueG=imgValueG;
@@ -676,17 +736,44 @@ namespace flitr {
                 const size_t lineOffsetFS=y * width + halfStructElem;
                 const size_t lineOffsetUS=y * width;
                 
+                T maxImgValue;
+                int maxTTL=0;
+                
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
-                    size_t offsetUS=lineOffsetUS + x;
-                    T maxImgValue=dataReadUS[offsetUS];
-                    ++offsetUS;
-                    
-                    for (size_t i=1; i<structElemWidth; ++i)
+                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    if (maxTTL<=0)
                     {
-                        const T imgValue = dataReadUS[offsetUS];
-                        if (imgValue>maxImgValue) maxImgValue=imgValue;
+                        size_t offsetUS=lineOffsetUS + x;
+                        maxImgValue=dataReadUS[offsetUS];
+                        maxTTL=0;
                         ++offsetUS;
+                        
+                        for (size_t i=1; i<structElemWidth; ++i)
+                        {
+                            const T &imgValue = dataReadUS[offsetUS];
+                            
+                            if (imgValue>maxImgValue)
+                            {
+                                maxImgValue=imgValue;
+                                maxTTL=i;
+                            }
+                            
+                            ++offsetUS;
+                        }
+                    } else
+                    {
+                        const size_t offsetUS=lineOffsetUS + x + (structElemWidth-1);
+                        const T &imgValue = dataReadUS[offsetUS];
+                        
+                        if (imgValue>=maxImgValue)
+                        {
+                            maxImgValue=imgValue;
+                            maxTTL=structElemWidth-1;
+                        } else
+                        {
+                            --maxTTL;
+                        }
                     }
                     
                     dataScratch[lineOffsetFS + x]=maxImgValue;
@@ -694,6 +781,13 @@ namespace flitr {
             }
             
             //Second pass in y.
+            T *maxImgValueArr=new T[width];
+            int *maxTTLArr=new int[width];
+            for (size_t x=0; x<width; ++x)
+            {
+                maxTTLArr[x]=0;
+            }
+            
             for (size_t y=0; y<heightMinusStructElem; ++y)
             {
                 const size_t lineOffsetDS=(y+halfStructElem) * width;
@@ -701,18 +795,42 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
-                    size_t offsetFS=lineOffsetFS + x;
-                    T maxImgValue=dataScratch[offsetFS];
-                    offsetFS+=width;
-                    
-                    for (size_t j=1; j<structElemWidth; ++j)
+                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    if (maxTTLArr[x]<=0)
                     {
-                        const T imgValue = dataScratch[offsetFS];
-                        if (imgValue>maxImgValue) maxImgValue=imgValue;
+                        size_t offsetFS=lineOffsetFS + x;
+                        maxImgValueArr[x]=dataScratch[offsetFS];
+                        maxTTLArr[x]=0;
                         offsetFS+=width;
+                        
+                        for (size_t j=1; j<structElemWidth; ++j)
+                        {
+                            const T &imgValue = dataScratch[offsetFS];
+                            
+                            if (imgValue>maxImgValueArr[x])
+                            {
+                                maxImgValueArr[x]=imgValue;
+                                maxTTLArr[x]=j;
+                            }
+                            
+                            offsetFS+=width;
+                        }
+                    } else
+                    {
+                        const size_t offsetFS=lineOffsetFS + x + (structElemWidth-1)*width;
+                        const T &imgValue = dataScratch[offsetFS];
+                        
+                        if (imgValue>=maxImgValueArr[x])
+                        {
+                            maxImgValueArr[x]=imgValue;
+                            maxTTLArr[x]=structElemWidth-1;
+                        } else
+                        {
+                            --maxTTLArr[x];
+                        }
                     }
                     
-                    dataWriteDS[lineOffsetDS + x]=maxImgValue;
+                    dataWriteDS[lineOffsetDS + x]=maxImgValueArr[x];
                 }
             }
             
@@ -741,6 +859,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetUS=(lineOffsetUS + x)*3;
                     T maxImgValueR=dataReadUS[offsetUS+0];
                     T maxImgValueG=dataReadUS[offsetUS+1];
@@ -749,9 +868,9 @@ namespace flitr {
                     
                     for (size_t i=1; i<structElemWidth; ++i)
                     {
-                        const T imgValueR = dataReadUS[offsetUS + 0];
-                        const T imgValueG = dataReadUS[offsetUS + 1];
-                        const T imgValueB = dataReadUS[offsetUS + 2];
+                        const T &imgValueR = dataReadUS[offsetUS + 0];
+                        const T &imgValueG = dataReadUS[offsetUS + 1];
+                        const T &imgValueB = dataReadUS[offsetUS + 2];
                         
                         if (imgValueR>maxImgValueR) maxImgValueR=imgValueR;
                         if (imgValueG>maxImgValueG) maxImgValueG=imgValueG;
@@ -774,6 +893,7 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetFS=(lineOffsetFS + x)*3;
                     T maxImgValueR=dataScratch[offsetFS + 0];
                     T maxImgValueG=dataScratch[offsetFS + 1];
@@ -782,9 +902,9 @@ namespace flitr {
                     
                     for (size_t j=1; j<structElemWidth; ++j)
                     {
-                        const T imgValueR = dataScratch[offsetFS + 0];
-                        const T imgValueG = dataScratch[offsetFS + 1];
-                        const T imgValueB = dataScratch[offsetFS + 2];
+                        const T &imgValueR = dataScratch[offsetFS + 0];
+                        const T &imgValueG = dataScratch[offsetFS + 1];
+                        const T &imgValueB = dataScratch[offsetFS + 2];
                         
                         if (imgValueR>maxImgValueR) maxImgValueR=imgValueR;
                         if (imgValueG>maxImgValueG) maxImgValueG=imgValueG;
@@ -861,7 +981,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<width; ++x)
                 {
-                    const T imgValue=dataReadUS[lineOffset+x];
+                    const T &imgValue=dataReadUS[lineOffset+x];
                     
                     dataWriteDS[lineOffset+x] = (imgValue>=t) ? max : T(0);
                 }
@@ -884,9 +1004,9 @@ namespace flitr {
                 
                 for (size_t x=0; x<width; ++x)
                 {
-                    const T imgValueR=dataReadUS[offset + 0];
-                    const T imgValueG=dataReadUS[offset + 1];
-                    const T imgValueB=dataReadUS[offset + 2];
+                    const T &imgValueR=dataReadUS[offset + 0];
+                    const T &imgValueG=dataReadUS[offset + 1];
+                    const T &imgValueB=dataReadUS[offset + 2];
                     
                     dataWriteDS[offset + 0] = (imgValueR>=t) ? max : T(0);
                     dataWriteDS[offset + 1] = (imgValueG>=t) ? max : T(0);
