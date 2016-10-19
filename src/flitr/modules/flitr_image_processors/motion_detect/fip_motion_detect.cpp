@@ -25,7 +25,7 @@ using namespace flitr;
 using std::shared_ptr;
 
 FIPMotionDetect::FIPMotionDetect(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                                 const bool showOverlays, const bool produceOnlyMotionImages,
+                                 const bool showOverlays, const bool produceOnlyMotionImages, const bool forceRGBOutput,
                                  const float motionThreshold, const int detectionThreshold,
                                  uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
@@ -33,6 +33,7 @@ _frameCounter(0),
 _scratchData(nullptr),
 _showOverlays(showOverlays),
 _produceOnlyMotionImages(produceOnlyMotionImages),
+_forceRGBOutput(forceRGBOutput),
 _motionThreshold(motionThreshold),
 _detectionThreshold(detectionThreshold)
 {
@@ -42,6 +43,18 @@ _detectionThreshold(detectionThreshold)
     for (uint32_t i=0; i<images_per_slot; i++)
     {
         ImageFormat downStreamFormat=upStreamProducer.getFormat(i);
+        
+        if (_forceRGBOutput)
+        {
+            switch (downStreamFormat.getPixelFormat()) {
+                case ImageFormat::FLITR_PIX_FMT_Y_8:
+                    downStreamFormat.setPixelFormat(ImageFormat::FLITR_PIX_FMT_RGB_8);
+                    break;
+                default:
+                    logMessage(LOG_CRITICAL) << "Pixel format is already RGB or unsupported!" << __FILE__ << " " << __LINE__ << "\n";
+                    break;
+            }
+        }
         
         ImageFormat_.push_back(downStreamFormat);
     }
@@ -129,6 +142,7 @@ bool FIPMotionDetect::trigger()
             
             if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
             {
+                logMessage(LOG_CRITICAL) << "Pixel format is not supported yet!" << __FILE__ << " " << __LINE__ << "\n";
             } else
                 if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
                 {
@@ -154,7 +168,7 @@ bool FIPMotionDetect::trigger()
                         for (size_t i=0; i<componentsPerImage; ++i)
                         {
                             _avrgImg[i]=dataReadUS[i];
-                            _varImg[i]=30.0f;//Initial variance chosen quite large to suppress motion during early background learning.
+                            _varImg[i]=100.0f;//Initial variance chosen quite large to suppress motion during early background learning.
                         }
                     }
                     
@@ -210,18 +224,46 @@ bool FIPMotionDetect::trigger()
                         
                         if ((frameMotion) && (_showOverlays))
                         {//Add motion blob overlay.
-                            for (int y=0; y<height; ++y)
+                            
+                            if (_forceRGBOutput)
                             {
-                                const int lineOffset=y*width;
-                                const int lineOffsetB=(y&detectImgMask)*width;
-                                
-                                for (int x=0; x<width; ++x)
+                                for (int y=0; y<height; ++y)
                                 {
-                                    const int offset=lineOffset + x;
-                                    const int offsetB=lineOffsetB + (x & detectImgMask);
+                                    const int lineOffsetDS=y*(width*3);
                                     
-                                    const uint8_t c=(_detectionCountImg[offsetB] > _detectionThreshold) ? ((dataReadUS[offset]>>1)+128) : dataReadUS[offset];
-                                    dataWriteDS[offset]=c;
+                                    const int lineOffset=y*width;
+                                    const int lineOffsetB=(y&detectImgMask)*width;
+                                    
+                                    for (int x=0; x<width; ++x)
+                                    {
+                                        const int offsetDS=lineOffsetDS + x*3;
+                                        
+                                        const int offset=lineOffset + x;
+                                        const int offsetB=lineOffsetB + (x & detectImgMask);
+                                        
+                                        const uint8_t c=(_detectionCountImg[offsetB] > _detectionThreshold) ? ((dataReadUS[offset]>>1)+128) : dataReadUS[offset];
+                                        
+                                        dataWriteDS[offsetDS+0]=c;
+                                        dataWriteDS[offsetDS+1]=dataReadUS[offset];
+                                        dataWriteDS[offsetDS+2]=c;
+                                    }
+                                }
+                            } else
+                            {
+                                for (int y=0; y<height; ++y)
+                                {
+                                    const int lineOffset=y*width;
+                                    const int lineOffsetB=(y&detectImgMask)*width;
+                                    
+                                    for (int x=0; x<width; ++x)
+                                    {
+                                        const int offset=lineOffset + x;
+                                        const int offsetB=lineOffsetB + (x & detectImgMask);
+                                        
+                                        const uint8_t c=(_detectionCountImg[offsetB] > _detectionThreshold) ? ((dataReadUS[offset]>>1)+128) : dataReadUS[offset];
+                                        
+                                        dataWriteDS[offset]=c;
+                                    }
                                 }
                             }
                         } else

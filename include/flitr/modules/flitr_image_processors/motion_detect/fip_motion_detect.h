@@ -40,7 +40,7 @@ namespace flitr {
          *@param detectionThreshold A stable plot count above this threshold would result in a detection.
          */
         FIPMotionDetect(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                        const bool showOverlays, const bool produceOnlyMotionImages,
+                        const bool showOverlays, const bool produceOnlyMotionImages, const bool forceRGBOutput,
                         const float motionThreshold, const int detectionThreshold,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
@@ -81,6 +81,7 @@ namespace flitr {
         
         bool _showOverlays;
         bool _produceOnlyMotionImages;
+        bool _forceRGBOutput;
         
         float _motionThreshold;
         int _detectionThreshold;

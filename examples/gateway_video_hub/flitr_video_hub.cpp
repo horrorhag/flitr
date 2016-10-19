@@ -207,6 +207,7 @@ bool flitr::VideoHub::createImageStabProcess(const std::string &name, const std:
     return false;
 }
 
+
 //====
 bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const std::string &producerName,
                                                 const bool showOverlays, const bool produceOnlyMotionImages, const int motionThreshold)
@@ -217,7 +218,8 @@ bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const s
     {
         //==
         std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*(it->second), 1,
-                                                                          showOverlays, produceOnlyMotionImages, motionThreshold,
+                                                                          showOverlays, produceOnlyMotionImages, false,
+                                                                          motionThreshold, 0,
                                                                           2));
         if (!motionDetect->init())
         {

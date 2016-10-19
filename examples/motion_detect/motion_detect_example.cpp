@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     //==
     const size_t photoMetEqWindow=128;
     std::shared_ptr<flitr::FIPLocalPhotometricEqualise> equaliseImage(new flitr::FIPLocalPhotometricEqualise(*cnvrtToYF32, 1,
-                                                                                                             0.70, photoMetEqWindow,
+                                                                                                             0.60, photoMetEqWindow,
                                                                                                              2));
     if (!equaliseImage->init()) {
         std::cerr << "Could not initialise the equaliseImage image processor.\n";
@@ -136,8 +136,8 @@ int main(int argc, char *argv[])
     
     //==
     std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*cnvrtTo8Bit, 1,
-                                                                      true, false,
-                                                                      4.0f, 3, //motionThreshold, detectionThreshold
+                                                                      true, false, true, //showOverlays, produceOnlyMotionImages, forceRGBOutput
+                                                                      3.5f, 2, //motionThreshold, detectionThreshold
                                                                       2));
     if (!motionDetect->init())
     {
