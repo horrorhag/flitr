@@ -30,7 +30,10 @@ FIPMotionDetect::FIPMotionDetect(ImageProducer& upStreamProducer, uint32_t image
                                  uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 _frameCounter(0),
-_scratchData(nullptr),
+_avrgImg(nullptr),
+_varImg(nullptr),
+_detectionImg(nullptr),
+_detectionCountImg(nullptr),
 _showOverlays(showOverlays),
 _produceOnlyMotionImages(produceOnlyMotionImages),
 _forceRGBOutput(forceRGBOutput),
@@ -62,7 +65,10 @@ _detectionThreshold(detectionThreshold)
 
 FIPMotionDetect::~FIPMotionDetect()
 {
-    if (_scratchData) delete [] _scratchData;
+    if (_avrgImg) delete [] _avrgImg;
+    if (_varImg) delete [] _varImg;
+    if (_detectionImg) delete [] _detectionImg;
+    if (_detectionCountImg) delete [] _detectionCountImg;
 }
 
 bool FIPMotionDetect::init()
@@ -98,9 +104,6 @@ bool FIPMotionDetect::init()
     }
     
     //Allocate a buffer big enough for any of the image slots.
-    _scratchData=new uint8_t[maxScratchDataSize];
-    memset(_scratchData, 0, maxScratchDataSize);
-    
     _avrgImg=new float[maxScratchDataValues];
     memset(_avrgImg, 0, maxScratchDataValues * sizeof(float));
     

@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     }
     cnvrtToYF32->startTriggerThread();
     
-
+    
     //==
     const size_t photoMetEqWindow=128;
     std::shared_ptr<flitr::FIPLocalPhotometricEqualise> equaliseImage(new flitr::FIPLocalPhotometricEqualise(*cnvrtToYF32, 1,
@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
     }
     crop->startTriggerThread();
 */
+    
     
     //==
     std::shared_ptr<flitr::FIPLKStabilise> lkstabilise(new flitr::FIPLKStabilise(*equaliseImage, 1,
@@ -262,10 +263,12 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    //transform->stopTriggerThread();
     cnvrtToYF32->stopTriggerThread();
-    //averageImage->stopTriggerThread();
+    equaliseImage->stopTriggerThread();
+    //crop->stopTriggerThread();
+    lkstabilise->stopTriggerThread();
     cnvrtTo8Bit->stopTriggerThread();
+    motionDetect->stopTriggerThread();
     
     return 0;
 }

@@ -71,8 +71,7 @@ namespace flitr {
 
     private:
         uint64_t _frameCounter;
-        uint8_t *_scratchData;
-        
+
         float *_avrgImg;
         float *_varImg;
         
