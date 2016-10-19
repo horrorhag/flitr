@@ -221,6 +221,14 @@ bool FIPMotionDetect::trigger()
                         std::vector<Image**> imvWrite=reserveWriteSlot();
                         Image * const imWriteDS = *(imvWrite[imgNum]);
                         uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+
+                        // Pass the metadata from the read image to the write image.
+                        // By Default the base implementation will copy the pointer if no custom
+                        // pass function was set.
+                        if(PassMetadataFunction_ != nullptr)
+                        {
+                            imWriteDS->setMetadata(PassMetadataFunction_(imReadUS->metadata()));
+                        }
                         
                         if ((frameMotion) && (_showOverlays))
                         {//Add motion blob overlay.
