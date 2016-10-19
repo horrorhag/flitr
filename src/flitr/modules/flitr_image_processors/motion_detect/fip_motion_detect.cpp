@@ -189,9 +189,8 @@ bool FIPMotionDetect::trigger()
                             _detectionCountImg[i]=_detectionCountImg[i] + 1;
                         } else
                         {
-                            _detectionCountImg[i]=_detectionCountImg[i] - 1;
-                            
-                            if (_detectionCountImg[i] < 0) _detectionCountImg[i]=0;
+                            _detectionCountImg[i]=0;//_detectionCountImg[i] - 1;
+                            //if (_detectionCountImg[i] < 0) _detectionCountImg[i]=0;
                         }
                     }
                     
