@@ -112,6 +112,7 @@ class FLITR_EXPORT StatsCollector {
     ~StatsCollector() {}
     void tick() {};
     void tock() {};
+    void setID(const std::string &ID);
 };
 
 #endif // FLITR_PROFILE

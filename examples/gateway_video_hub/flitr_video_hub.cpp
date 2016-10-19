@@ -221,7 +221,7 @@ bool flitr::VideoHub::createMotionDetectProcess(const std::string &name, const s
                                                                           2));
         if (!motionDetect->init())
         {
-            std::cerr << "Could not initialise the lkstabilise processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+            std::cerr << "Could not initialise the motion detection processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
             return false;
         }
         

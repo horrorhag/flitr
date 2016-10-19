@@ -57,6 +57,19 @@ SET(CMAKE_PREFIX_PATH ${FLITR_3RDPARTY_ROOT})
 MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 
 
+# === find OpenCL ===
+FIND_PACKAGE(OpenCL)
+IF(OpenCL_FOUND)
+    INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIRS})
+    LINK_DIRECTORIES(${OpenCL_LIBRARY})
+    ADD_DEFINITIONS(-DFLITR_OPENCL_FOUND)
+#MESSAGE("OpenCL include dir: ${OpenCL_INCLUDE_DIRS}")
+#MESSAGE("OpenCL library dir: ${OpenCL_LIBRARY}")
+#MESSAGE("OpenCL libraries: ${OpenCL_LIBRARIES}")
+ENDIF(OpenCL_FOUND)
+# ==================
+
+
 # === find Boost ===
 #BOOST no longer needed for FLITr.
     #SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
@@ -461,10 +474,8 @@ ADD_LIBRARY(flitr SHARED
 
 
 IF(WIN32) 
-#  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSEIF(APPLE)
-#  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSE()
   TARGET_LINK_LIBRARIES(flitr m rt)
@@ -473,27 +484,25 @@ IF(NOT FLITR_USE_OSG)
   TARGET_LINK_LIBRARIES(flitr z bz2)
 ENDIF()
 
-  TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES})
-  TARGET_LINK_LIBRARIES(flitr lzma)
-
+  TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES} lzma ${OPENSCENEGRAPH_LIBRARIES})
   #MESSAGE(${OPENSCENEGRAPH_LIBRARIES})
-  TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
-  #TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
-  #TARGET_LINK_LIBRARIES(flitr debug OpenThreadsd osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
 ENDIF()
 
 
-TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} ${LIB_LINK_LIBRARIES})
+TARGET_LINK_LIBRARIES(flitr ${OpenCL_LIBRARIES})
+
+
+TARGET_LINK_LIBRARIES(flitr ${LIB_LINK_LIBRARIES})
 
 
 IF(FLITR_WITH_OSGCUDA)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} debug osgCuda)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} optimised osgCuda)
+  TARGET_LINK_LIBRARIES(flitr debug osgCuda)
+  TARGET_LINK_LIBRARIES(flitr optimised osgCuda)
 ENDIF()
 
 
 IF(FLITR_USE_LIBTIFF)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} tiff)
+  TARGET_LINK_LIBRARIES(flitr tiff)
 ENDIF()
 
 
@@ -521,6 +530,7 @@ ENDIF()
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/motion_detect)
 ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
 ADD_SUBDIRECTORY(examples/morphological_filter)
