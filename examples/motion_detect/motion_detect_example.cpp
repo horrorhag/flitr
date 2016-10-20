@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
     
     //==
     std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*cnvrtTo8Bit, 1,
-                                                                      true, false, true, //showOverlays, produceOnlyMotionImages, forceRGBOutput
+                                                                      false, false, true, //showOverlays, produceOnlyMotionImages, forceRGBOutput
                                                                       3.5f, 2, //motionThreshold, detectionThreshold
                                                                       2));
     if (!motionDetect->init())

@@ -138,6 +138,7 @@ bool FIPMotionDetect::trigger()
             const int height=imFormat.getHeight();
             const size_t componentsPerPixel=imFormat.getComponentsPerPixel();
             const size_t componentsPerImage = width * height * componentsPerPixel;
+            const size_t bytesPerImage=imFormat.getBytesPerImage();
             
             
             //Mask that defines the detection bin width and height. Could be made configurable!
@@ -222,6 +223,7 @@ bool FIPMotionDetect::trigger()
                     if ((!_produceOnlyMotionImages) || frameMotion)
                     {
                         std::vector<Image**> imvWrite=reserveWriteSlot();
+                        
                         Image * const imWriteDS = *(imvWrite[imgNum]);
                         uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
 
@@ -237,12 +239,12 @@ bool FIPMotionDetect::trigger()
                         {//Add motion blob overlay.
                             
                             if (_forceRGBOutput)
-                            {
+                            {//Upstream is Y8; Downstream is expected to be RGB8
                                 for (int y=0; y<height; ++y)
                                 {
-                                    const int lineOffsetDS=y*(width*3);
+                                    const int lineOffsetDS=y * (width*3);
                                     
-                                    const int lineOffset=y*width;
+                                    const int lineOffset=y * width;
                                     const int lineOffsetB=(y&detectImgMask)*width;
                                     
                                     for (int x=0; x<width; ++x)
@@ -260,7 +262,7 @@ bool FIPMotionDetect::trigger()
                                     }
                                 }
                             } else
-                            {
+                            {//Upstream is Y8; Downstream is expected to be Y8.
                                 for (int y=0; y<height; ++y)
                                 {
                                     const int lineOffset=y*width;
@@ -279,7 +281,29 @@ bool FIPMotionDetect::trigger()
                             }
                         } else
                         {//Don't add motion overlay. Just copy the data from the input.
-                            memcpy(dataWriteDS, dataReadUS, width*height*3);
+                            if (_forceRGBOutput)
+                            {//Upstream is Y8; Downstream is expected to be RGB8
+                                for (int y=0; y<height; ++y)
+                                {
+                                    const int lineOffsetUS=y * width;
+                                    const int lineOffsetDS=y * (width*3);
+                                    
+                                    for (int x=0; x<width; ++x)
+                                    {
+                                        const int offsetUS=lineOffsetUS + x;
+                                        const int offsetDS=lineOffsetDS + x*3;
+                                        
+                                        const uint8_t c = dataReadUS[offsetUS];
+                                        
+                                        dataWriteDS[offsetDS+0]=c;
+                                        dataWriteDS[offsetDS+1]=c;
+                                        dataWriteDS[offsetDS+2]=c;
+                                    }
+                                }
+                            } else
+                            {//Upstream is Y8; Downstream is expected to be Y8.
+                                memcpy(dataWriteDS, dataReadUS, bytesPerImage);
+                            }
                         }
                         
                         releaseWriteSlot();

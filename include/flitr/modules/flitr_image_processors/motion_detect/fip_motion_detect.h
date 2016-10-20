@@ -69,6 +69,12 @@ namespace flitr {
             _detectionThreshold=detectionThreshold;
         }
 
+        //!Set if the pass should add the detection overlays to the output image.
+        void setShowOverlays(const bool showOverlays)
+        {
+            _showOverlays=showOverlays;
+        }
+    
     private:
         uint64_t _frameCounter;
 
