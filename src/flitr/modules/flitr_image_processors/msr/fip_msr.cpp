@@ -185,7 +185,7 @@ bool FIPMSR::trigger()
             
             const float recipNumScales=1.0f/_numScales;
             
-            const float gain=5.0f;//Boosts image intensity.
+            const float gain=2.0f;//Boosts image intensity.
             const float chromatGain=1.0f;//Boosts colour.
             const float blacknessFloor=2.5f/255.0f;//Limits the enhancement of low signal (black) areas.
             
