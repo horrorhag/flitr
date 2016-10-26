@@ -374,7 +374,7 @@ bool FIPMSR::trigger()
                     
                     for (size_t x=0; x<width; ++x)
                     {
-                        const float r=_MSRScratchData[offset+x] * gain;
+                        const float r=_MSRScratchData[offset+x];
                         const float intInput=F32Image[offset+x];
                         
                         dataWrite[offset+x]=r * (intInput/(intInput+blacknessFloor));//Bias very dark colours more towards black...

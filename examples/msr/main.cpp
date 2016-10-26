@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_RGB_8, 2));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
     if (!ip->init())
     {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FIPConvertToRGBF32> cnvrtToF32(new FIPConvertToRGBF32(*ip, 1, 2));
+    shared_ptr<FIPConvertToYF32> cnvrtToF32(new FIPConvertToYF32(*ip, 1, 2));
     if (!cnvrtToF32->init())
     {
         std::cerr << "Could not initialise the FIPConvertToF32 processor.\n";
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
         std::cerr << "Could not initialise the msr image processor.\n";
         exit(-1);
     }
-    msr1->setGFScale(38); //Sets the divider of the image width to calculate the MSR Gaussian scale.
+    msr1->setGFScale(15); //Sets the divider of the image width to calculate the MSR Gaussian scale.
     msr1->setNumGaussianScales(3); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
     msr1->startTriggerThread();
     
