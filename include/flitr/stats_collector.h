@@ -28,6 +28,7 @@
 #include <flitr/flitr_config.h>
 
 #include <string>
+#include <sstream>
 
 namespace flitr {
 
@@ -48,18 +49,23 @@ class FLITR_EXPORT StatsCollector {
     }
     ~StatsCollector() 
     {
-        logMessage(LOG_INFO) << ID_ << 
+
+        std::stringstream ss;
+
+        ss << ID_ <<
             " - tick() count       : " << tock_count_ << "\n";
         if (tock_count_ != 0) {
-            logMessage(LOG_INFO) << ID_ << 
-                " - tick() count at max: " << tock_count_at_max_ << "\n";
-            logMessage(LOG_INFO) << ID_ << 
-                " - min                : " << min_ << " ns\n";
-            logMessage(LOG_INFO) << ID_ << 
-                " - avg                : " << (uint64_t)(sum_ / tock_count_) << " ns\n";
-            logMessage(LOG_INFO) << ID_ << 
-                " - max                : " << max_ << " ns\n";
+            ss << ID_ <<
+                  " - tick() count at max: " << tock_count_at_max_ << "\n";
+            ss << ID_ <<
+                  " - min                : " << min_ << " ns\n";
+            ss << ID_ <<
+                  " - avg                : " << (uint64_t)(sum_ / tock_count_) << " ns\n";
+            ss << ID_ <<
+                  " - max                : " << max_ << " ns\n";
         }
+
+        logMessage(LOG_INFO) << ss.str();
     }
     inline void tick()
     {

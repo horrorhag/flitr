@@ -44,6 +44,8 @@ _doubleScratchData2(nullptr),
 _histoBins(nullptr),
 _triggerCount(0)
 {
+    ProcessorStats_->setID("ImageProcessor::FIPMSR");
+
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):

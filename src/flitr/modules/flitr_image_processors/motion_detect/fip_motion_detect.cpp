@@ -41,7 +41,8 @@ _motionThreshold(motionThreshold),
 _detectionThreshold(detectionThreshold)
 {
     //!@todo can we get images_per_slot from upstream producer?
-    
+
+    ProcessorStats_->setID("ImageProcessor::FIPMotionDetect");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++)
     {

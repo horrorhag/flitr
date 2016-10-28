@@ -32,7 +32,8 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 gain_(gain),
 gaussianFilter_(filterRadius, int(ceilf(filterRadius*2.0f+0.5)+0.5)*2 - 1)//Filter size includes 2xradius to each side.
 {
-    
+
+    ProcessorStats_->setID("ImageProcessor::FIPUnsharpMask");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat downStreamFormat=upStreamProducer.getFormat();

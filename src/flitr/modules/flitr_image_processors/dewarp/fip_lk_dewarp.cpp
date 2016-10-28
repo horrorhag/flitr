@@ -47,6 +47,7 @@ scratchData_(0),
 inputImgData_(0),
 finalImgData_(0)
 {
+    ProcessorStats_->setID("ImageProcessor::FIPLKDewarp");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
     {

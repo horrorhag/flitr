@@ -27,7 +27,7 @@ FIPConvertToYF32::FIPConvertToYF32(ImageProducer& upStreamProducer, uint32_t ima
                                  uint32_t buffer_size) :
     ImageProcessor(upStreamProducer, images_per_slot, buffer_size)
 {
-    
+    ProcessorStats_->setID("ImageProcessor::FIPConvertToYF32");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):

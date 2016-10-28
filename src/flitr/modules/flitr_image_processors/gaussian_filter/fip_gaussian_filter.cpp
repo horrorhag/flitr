@@ -42,6 +42,7 @@ _title(std::string("Gaussian Filter")),
 _filterRadius(filterRadius),
 _kernelWidth(kernelWidth)
 {
+    ProcessorStats_->setID("ImageProcessor::FIPGaussianFilter");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat downStreamFormat=upStreamProducer.getFormat();
