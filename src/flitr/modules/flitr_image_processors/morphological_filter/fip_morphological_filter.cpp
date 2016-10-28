@@ -107,7 +107,7 @@ bool FIPMorphologicalFilter::trigger()
                 float const * const dataReadUS=(float const * const)imReadUS->data();
                 float * const dataWriteDS=(float * const)imWriteDS->data();
                 
-                doMorphoPasses(dataReadUS, dataWriteDS, width, height);
+                //doMorphoPasses(dataReadUS, dataWriteDS, width, height);
             } else
                 if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
                 {
@@ -121,7 +121,7 @@ bool FIPMorphologicalFilter::trigger()
                         float const * const dataReadUS=(float const * const)imReadUS->data();
                         float * const dataWriteDS=(float * const)imWriteDS->data();
                         
-                        doMorphoPassesRGB(dataReadUS, dataWriteDS, width, height);
+                        //doMorphoPassesRGB(dataReadUS, dataWriteDS, width, height);
                     } else
                         if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
                         {

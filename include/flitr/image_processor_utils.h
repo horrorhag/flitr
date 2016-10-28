@@ -29,7 +29,7 @@
 #include <iostream>
 #include <vector>
 
-#ifdef FLITR_OPENCL_FOUND
+#ifdef FLITR_USE_OPENCL
 #ifdef __APPLE__
 #include <OpenCL/opencl.h>
 #else
@@ -525,188 +525,204 @@ namespace flitr {
     public:
         MorphologicalFilter()
         {
-            /*
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clGetPlatformIDs.html
-             cl_uint platformIdCount = 0;
-             clGetPlatformIDs (0, nullptr, &platformIdCount);
-             
-             if (platformIdCount == 0) {
-             std::cerr << "No OpenCL platform found" << std::endl;
-             } else {
-             std::cout << "Found " << platformIdCount << " platform(s)" << std::endl;
-             }
-             
-             std::vector<cl_platform_id> platformIds (platformIdCount);
-             clGetPlatformIDs (platformIdCount, platformIds.data (), nullptr);
-             
-             for (cl_uint i = 0; i < platformIdCount; ++i) {
-             std::cout << "\t (" << (i+1) << ") : " << GetPlatformName (platformIds [i]) << std::endl;
-             }
-             
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clGetDeviceIDs.html
-             cl_uint deviceIdCount = 0;
-             clGetDeviceIDs (platformIds [0], CL_DEVICE_TYPE_ALL, 0, nullptr,
-             &deviceIdCount);
-             
-             if (deviceIdCount == 0) {
-             std::cerr << "No OpenCL devices found" << std::endl;
-             } else {
-             std::cout << "Found " << deviceIdCount << " device(s)" << std::endl;
-             }
-             
-             std::vector<cl_device_id> deviceIds (deviceIdCount);
-             clGetDeviceIDs (platformIds [0], CL_DEVICE_TYPE_ALL, deviceIdCount,
-             deviceIds.data (), nullptr);
-             
-             for (cl_uint i = 0; i < deviceIdCount; ++i) {
-             std::cout << "\t (" << (i+1) << ") : " << GetDeviceName (deviceIds [i]) << std::endl;
-             }
-             
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clCreateContext.html
-             const cl_context_properties contextProperties [] =
-             {
-             CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties> (platformIds [0]),
-             0, 0
-             };
-             
-             cl_int error = CL_SUCCESS;
-             cl_context context = clCreateContext (contextProperties, deviceIdCount,
-             deviceIds.data (), nullptr, nullptr, &error);
-             CheckError (error);
-             
-             std::cout << "Context created" << std::endl;
-             */
+#ifdef FLITR_USE_OPENCL
+            cl_uint platformIdCount = 0;
+            clGetPlatformIDs(0, nullptr, &platformIdCount);
+            std::cout << "Found " << platformIdCount << " platform(s)" << std::endl;
             
-            /*
-             // Simple Gaussian blur filter
-             float filter [] = {
-             1, 2, 1,
-             2, 4, 2,
-             1, 2, 1
-             };
-             
-             // Normalize the filter
-             for (int i = 0; i < 9; ++i) {
-             filter [i] /= 16.0f;
-             }
-             
-             // Create a program from source
-             cl_program program = CreateProgram (LoadKernel ("kernels/image.cl"),
-             context);
-             
-             CheckError (clBuildProgram (program, deviceIdCount, deviceIds.data (),
-             "-D FILTER_SIZE=1", nullptr, nullptr));
-             
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clCreateKernel.html
-             cl_kernel kernel = clCreateKernel (program, "Filter", &error);
-             CheckError (error);
-             
-             // OpenCL only supports RGBA, so we need to convert here
-             const auto image = RGBtoRGBA (LoadImage ("test.ppm"));
-             
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clCreateImage2D.html
-             static const cl_image_format format = { CL_RGBA, CL_UNORM_INT8 };
-             cl_mem inputImage = clCreateImage2D (context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, &format,
-             image.width, image.height, 0,
-             // This is a bug in the spec
-             const_cast<char*> (image.pixel.data ()),
-             &error);
-             CheckError (error);
-             
-             cl_mem outputImage = clCreateImage2D (context, CL_MEM_WRITE_ONLY, &format,
-             image.width, image.height, 0,
-             nullptr, &error);
-             CheckError (error);
-             
-             // Create a buffer for the filter weights
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clCreateBuffer.html
-             cl_mem filterWeightsBuffer = clCreateBuffer (context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-             sizeof (float) * 9, filter, &error);
-             CheckError (error);
-             
-             // Setup the kernel arguments
-             clSetKernelArg (kernel, 0, sizeof (cl_mem), &inputImage);
-             clSetKernelArg (kernel, 1, sizeof (cl_mem), &filterWeightsBuffer);
-             clSetKernelArg (kernel, 2, sizeof (cl_mem), &outputImage);
-             
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clCreateCommandQueue.html
-             cl_command_queue queue = clCreateCommandQueue (context, deviceIds [0],
-             0, &error);
-             CheckError (error);
-             
-             // Run the processing
-             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
-             std::size_t offset [3] = { 0 };
-             std::size_t size [3] = { image.width, image.height, 1 };
-             CheckError (clEnqueueNDRangeKernel (queue, kernel, 2, offset, size, nullptr,
-             0, nullptr, nullptr));
-             
-             // Prepare the result image, set to black
-             Image result = image;
-             std::fill (result.pixel.begin (), result.pixel.end (), 0);
-             
-             // Get the result back to the host
-             std::size_t origin [3] = { 0 };
-             std::size_t region [3] = { result.width, result.height, 1 };
-             clEnqueueReadImage (queue, outputImage, CL_TRUE,
-             origin, region, 0, 0,
-             result.pixel.data (), 0, nullptr, nullptr);
-             
-             SaveImage (RGBAtoRGB (result), "output.ppm");
-             */
+            std::vector<cl_platform_id> platformIds(platformIdCount);
+            clGetPlatformIDs(platformIdCount, platformIds.data (), nullptr);
+            std::cout << "OpenCL platforms: \n";
+            for (cl_uint i = 0; i < platformIdCount; ++i)
+            {
+                std::cout << "\t (" << (i+1) << ") : " << GetPlatformName(platformIds [i]) << std::endl;
+            }
+            std::cout.flush();
             
-            /*
-             //clReleaseMemObject (outputImage);
-             //clReleaseMemObject (filterWeightsBuffer);
-             //clReleaseMemObject (inputImage);
-             
-             //clReleaseCommandQueue (queue);
-             
-             //clReleaseKernel (kernel);
-             //clReleaseProgram (program);
-             
-             clReleaseContext (context);
-             */
+            cl_uint deviceIdCount = 0;
+            clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceIdCount);
+            
+            std::vector<cl_device_id> deviceIds(deviceIdCount);
+            clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, deviceIdCount, deviceIds.data(), nullptr);
+            std::cout << "OpenCL devices on platform 0: \n";
+            for (cl_uint i = 0; i < deviceIdCount; ++i)
+            {
+                std::cout << "\t (" << (i+1) << ") : " << GetDeviceName(deviceIds[i]) << std::endl;
+            }
+            
+            const int targetDevice=deviceIdCount-1;
+            
+            const cl_context_properties contextProperties[] = {CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platformIds[0]), 0, 0};
+            
+            cl_int error = CL_SUCCESS;
+            //_clContext = clCreateContextFromType(CL_DEVICE_TYPE_GPU);
+            _clContext = clCreateContext(contextProperties, deviceIdCount, deviceIds.data(), nullptr, nullptr, &error);
+            CheckError(error);
+            std::cout << "Context created" << std::endl;
+            
+            _clQueue = clCreateCommandQueue(_clContext, deviceIds[targetDevice], 0, &error);
+            CheckError(error);
+            std::cout << "Command queue created" << std::endl;
+
+            const char *erodeKernelSource = "\n" \
+            "__constant sampler_t sampler =  \n" \
+            "CLK_NORMALIZED_COORDS_FALSE     \n" \
+            "| CLK_ADDRESS_CLAMP_TO_EDGE     \n" \
+            "| CLK_FILTER_NEAREST;           \n" \
+            "                                \n" \
+            "__kernel void erode(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 minValue = read_imagef(input, sampler, pos);  \n" \
+            
+            "    for(int y = -hsew; y < hsew; y++)     \n" \
+            "    {                                     \n" \
+            "        for(int x = -hsew; x < hsew; x++) \n" \
+            "        {                                                \n" \
+            "            float4 value = read_imagef(input, sampler, pos + (int2)(x,y));  \n" \
+            
+            "            if (value.x < minValue.x)                    \n" \
+            "            {                                            \n" \
+            "                minValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
+            "    }                                                    \n" \
+            
+            "    write_imagef(output, pos, minValue);                 \n" \
+            "}                                                 \n" \
+            "\n";
+
+            const char *dilateKernelSource = "\n" \
+            "__constant sampler_t sampler =  \n" \
+            "CLK_NORMALIZED_COORDS_FALSE     \n" \
+            "| CLK_ADDRESS_CLAMP_TO_EDGE     \n" \
+            "| CLK_FILTER_NEAREST;           \n" \
+            "                                \n" \
+            "__kernel void dilate(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 maxValue = read_imagef(input, sampler, pos);  \n" \
+            
+            "    for(int y = -hsew; y < hsew; y++)     \n" \
+            "    {                                     \n" \
+            "        for(int x = -hsew; x < hsew; x++) \n" \
+            "        {                                                \n" \
+            "            float4 value = read_imagef(input, sampler, pos + (int2)(x,y));  \n" \
+            
+            "            if (value.x > maxValue.x)                    \n" \
+            "            {                                            \n" \
+            "                maxValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
+            "    }                                                    \n" \
+            
+            "    write_imagef(output, pos, maxValue);                 \n" \
+            "}                                                 \n" \
+            "\n";
+
+            _programErode = clCreateProgramWithSource (_clContext,
+                                                       1,                             // the number of strings
+                                                       (const char**) &erodeKernelSource,  // an array of strings
+                                                       NULL,                          // array of string lengths
+                                                       &error);
+            CheckError(error);
+            std::cout << "Erode programs created." << std::endl;
+            
+            _programDilate = clCreateProgramWithSource (_clContext,
+                                                       1,                             // the number of strings
+                                                       (const char**) &dilateKernelSource,  // an array of strings
+                                                       NULL,                          // array of string lengths
+                                                       &error);
+            CheckError(error);
+            std::cout << "Dilate program created." << std::endl;
+
+            error=clBuildProgram(_programErode, deviceIdCount, deviceIds.data(), "", nullptr, nullptr);
+            if (error == CL_BUILD_PROGRAM_FAILURE)
+            {
+                size_t log_size;
+                clGetProgramBuildInfo(_programErode, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+                char *log = (char *) malloc(log_size);
+                clGetProgramBuildInfo(_programErode, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+                printf("%s\n", log);
+            }
+            CheckError(error);
+            std::cout << "Erode programs built." << std::endl;
+            
+            error=clBuildProgram(_programDilate, deviceIdCount, deviceIds.data(), "", nullptr, nullptr);
+            if (error == CL_BUILD_PROGRAM_FAILURE)
+            {
+                size_t log_size;
+                clGetProgramBuildInfo(_programDilate, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+                char *log = (char *) malloc(log_size);
+                clGetProgramBuildInfo(_programDilate, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+                printf("%s\n", log);
+            }
+            CheckError(error);
+            std::cout << "Dilate programs built." << std::endl;
+            
+            _kernelErode = clCreateKernel(_programErode, "erode", &error);
+            CheckError(error);
+            std::cout << "Erode kernel created." << std::endl;
+            
+            _kernelDilate = clCreateKernel(_programDilate, "dilate", &error);
+            CheckError(error);
+            std::cout << "Dilate kernel created." << std::endl;
+#endif
         }
         
         //! Destructor
-        ~MorphologicalFilter() {}
+        ~MorphologicalFilter()
+        {
+#ifdef FLITR_USE_OPENCL
+            clReleaseKernel(_kernelErode);
+            clReleaseKernel(_kernelDilate);
+            clReleaseProgram(_programErode);
+            clReleaseProgram(_programDilate);
+
+            clReleaseCommandQueue(_clQueue);
+            clReleaseContext(_clContext);
+#endif
+        }
         
-        /*
-         std::string GetDeviceName (cl_device_id id)
-         {
-         size_t size = 0;
-         clGetDeviceInfo (id, CL_DEVICE_NAME, 0, nullptr, &size);
-         
-         std::string result;
-         result.resize (size);
-         clGetDeviceInfo (id, CL_DEVICE_NAME, size,
-         const_cast<char*> (result.data ()), nullptr);
-         
-         return result;
-         }
-         
-         std::string GetPlatformName (cl_platform_id id)
-         {
-         size_t size = 0;
-         clGetPlatformInfo (id, CL_PLATFORM_NAME, 0, nullptr, &size);
-         
-         std::string result;
-         result.resize (size);
-         clGetPlatformInfo (id, CL_PLATFORM_NAME, size,
-         const_cast<char*> (result.data ()), nullptr);
-         
-         return result;
-         }
-         
-         void CheckError (cl_int error)
-         {
-         if (error != CL_SUCCESS) {
-         std::cerr << "OpenCL call failed with error " << error << std::endl;
-         std::exit (1);
-         }
-         }
-         */
+        
+#ifdef FLITR_USE_OPENCL
+        std::string GetDeviceName(cl_device_id id)
+        {
+            size_t size = 0;
+            clGetDeviceInfo(id, CL_DEVICE_NAME, 0, nullptr, &size);
+            
+            std::string result;
+            result.resize(size);
+            clGetDeviceInfo(id, CL_DEVICE_NAME, size, const_cast<char*> (result.data ()), nullptr);
+            
+            return result;
+        }
+        
+        std::string GetPlatformName(cl_platform_id id)
+        {
+            size_t size = 0;
+            clGetPlatformInfo (id, CL_PLATFORM_NAME, 0, nullptr, &size);
+            
+            std::string result;
+            result.resize (size);
+            clGetPlatformInfo(id, CL_PLATFORM_NAME, size, const_cast<char*> (result.data ()), nullptr);
+            
+            return result;
+        }
+        
+        void CheckError(cl_int error)
+        {
+            if (error != CL_SUCCESS)
+            {
+                std::cerr << "OpenCL call failed with error " << error << std::endl;
+                std::exit (1);
+            }
+        }
+        
         /*
          void SaveImage (const Image& img, const char* path)
          {
@@ -749,6 +765,8 @@ namespace flitr {
          return result;
          }
          */
+#endif
+        
         //!Synchronous process method for T pixel format.
         template<typename T>
         bool erode(T * const dataWriteDS, T const * const dataReadUS,
@@ -763,6 +781,44 @@ namespace flitr {
             const size_t halfStructElem=(structElemWidth>>1);
             const size_t widthMinusHalfStructElem=width-halfStructElem;
             
+            
+#ifdef FLITR_USE_OPENCL
+            const cl_image_format format = { CL_INTENSITY, CL_UNORM_INT8 };
+            cl_int error = CL_SUCCESS;
+            
+            cl_mem inputImage = clCreateImage2D(_clContext, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, &format,
+                                                width, height, 0,
+                                                const_cast<uint8_t*>(dataReadUS),
+                                                &error);
+            
+            cl_mem outputImage = clCreateImage2D(_clContext, CL_MEM_WRITE_ONLY, &format,
+                                                 width, height, 0,
+                                                 nullptr,
+                                                 &error);
+            
+            clSetKernelArg(_kernelErode, 0, sizeof (cl_mem), &inputImage);
+            clSetKernelArg(_kernelErode, 1, sizeof (cl_mem), &outputImage);
+            
+            int32_t hsew = halfStructElem;
+            clSetKernelArg(_kernelErode, 2, sizeof(int32_t), &hsew);
+            
+
+            // Run the processing
+            // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
+            std::size_t offset[3] = {0};
+            std::size_t size[3] = {width, height, 1};
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelErode, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            
+            // Get the result back to the host
+            std::size_t origin[3] = {0};
+            std::size_t region[3] = {width, height, 1};
+            clEnqueueReadImage (_clQueue, outputImage, CL_TRUE, origin, region, 0, 0, dataWriteDS, 0, nullptr, nullptr);
+            
+            //SaveImage (RGBAtoRGB (result), "output.ppm");
+            
+            clReleaseMemObject(inputImage);
+            clReleaseMemObject(outputImage);
+#else
             //First pass in x.
             for (size_t y=0; y<height; ++y)
             {
@@ -774,7 +830,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
-                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    //Use the time to live (TTL) of the min/max and only do a full search if min/max's TTL expires.
                     if (minTTL<=0)
                     {
                         size_t offsetUS=lineOffsetUS + x;
@@ -828,7 +884,7 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
-                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    //Use the time to live (TTL) of the min/max and only do a full search if min/max's TTL expires.
                     if (minTTLArr[x]<=0)
                     {
                         size_t offsetFS=lineOffsetFS + x;
@@ -866,7 +922,7 @@ namespace flitr {
                     dataWriteDS[lineOffsetDS + x]=minImgValueArr[x];
                 }
             }
-            
+#endif
             return true;
         }
         
@@ -969,6 +1025,43 @@ namespace flitr {
             const size_t halfStructElem=(structElemWidth>>1);
             const size_t widthMinusHalfStructElem=width-halfStructElem;
             
+#ifdef FLITR_USE_OPENCL
+            const cl_image_format format = { CL_INTENSITY, CL_UNORM_INT8 };
+            cl_int error = CL_SUCCESS;
+            
+            cl_mem inputImage = clCreateImage2D(_clContext, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, &format,
+                                                width, height, 0,
+                                                const_cast<uint8_t*>(dataReadUS),
+                                                &error);
+            
+            cl_mem outputImage = clCreateImage2D(_clContext, CL_MEM_WRITE_ONLY, &format,
+                                                 width, height, 0,
+                                                 nullptr,
+                                                 &error);
+            
+            clSetKernelArg(_kernelDilate, 0, sizeof (cl_mem), &inputImage);
+            clSetKernelArg(_kernelDilate, 1, sizeof (cl_mem), &outputImage);
+            
+            int32_t hsew = halfStructElem;
+            clSetKernelArg(_kernelDilate, 2, sizeof(int32_t), &hsew);
+            
+            
+            // Run the processing
+            // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
+            std::size_t offset[3] = {0};
+            std::size_t size[3] = {width, height, 1};
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelDilate, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            
+            // Get the result back to the host
+            std::size_t origin[3] = {0};
+            std::size_t region[3] = {width, height, 1};
+            clEnqueueReadImage (_clQueue, outputImage, CL_TRUE, origin, region, 0, 0, dataWriteDS, 0, nullptr, nullptr);
+            
+            //SaveImage (RGBAtoRGB (result), "output.ppm");
+            
+            clReleaseMemObject(inputImage);
+            clReleaseMemObject(outputImage);
+#else
             //First pass in x.
             for (size_t y=0; y<height; ++y)
             {
@@ -1072,7 +1165,7 @@ namespace flitr {
                     dataWriteDS[lineOffsetDS + x]=maxImgValueArr[x];
                 }
             }
-            
+#endif
             return true;
         }
         
@@ -1257,6 +1350,19 @@ namespace flitr {
             
             return true;
         }
+        
+    private:
+        
+#ifdef FLITR_USE_OPENCL
+        cl_context _clContext;
+        cl_command_queue _clQueue;
+        
+        cl_program _programErode;
+        cl_program _programDilate;
+        
+        cl_kernel _kernelErode;
+        cl_kernel _kernelDilate;
+#endif
     };
     
 }

@@ -58,15 +58,19 @@ MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
 
 
 # === find OpenCL ===
-#FIND_PACKAGE(OpenCL OPTIONAL)
-#IF(OpenCL_FOUND)
-#    INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIRS})
-#    LINK_DIRECTORIES(${OpenCL_LIBRARY})
-#    ADD_DEFINITIONS(-DFLITR_OPENCL_FOUND)
-#MESSAGE("OpenCL include dir: ${OpenCL_INCLUDE_DIRS}")
-#MESSAGE("OpenCL library dir: ${OpenCL_LIBRARY}")
-#MESSAGE("OpenCL libraries: ${OpenCL_LIBRARIES}")
-#ENDIF(OpenCL_FOUND)
+OPTION(FLITR_USE_OPENCL "Compile the code with FLITR_USE_OPENCL define and OpenCL includes and libs." OFF)
+
+IF(FLITR_USE_OPENCL)
+    FIND_PACKAGE(OpenCL REQUIRED)
+    IF(OpenCL_FOUND)
+        INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIRS})
+        LINK_DIRECTORIES(${OpenCL_LIBRARY})
+        ADD_DEFINITIONS(-DFLITR_USE_OPENCL)
+        #MESSAGE("OpenCL include dir: ${OpenCL_INCLUDE_DIRS}")
+        #MESSAGE("OpenCL library dir: ${OpenCL_LIBRARY}")
+        #MESSAGE("OpenCL libraries: ${OpenCL_LIBRARIES}")
+    ENDIF(OpenCL_FOUND)
+ENDIF(FLITR_USE_OPENCL)
 # ==================
 
 
