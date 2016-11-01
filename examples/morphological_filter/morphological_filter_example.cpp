@@ -81,8 +81,9 @@ int main(int argc, char *argv[])
      cnvrtToRGBF32->startTriggerThread();
      */
     
+    //=== Morpho begin
     shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*ip, 1,
-                                                                                    30,//square structuring element size.
+                                                                                    5,//square structuring element size.
                                                                                     80, 255,//threshold, binaryMax
                                                                                     1));
     //image_1280.jpg
@@ -113,7 +114,6 @@ int main(int argc, char *argv[])
     //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
     //=== ===//
     
-    
     if (!morphologicalFilt->init())
     {
         std::cerr << "Could not initialise the morphologicalFilt processor.\n";
@@ -121,6 +121,26 @@ int main(int argc, char *argv[])
     }
     
     morphologicalFilt->startTriggerThread();
+    //=== Morpho end
+    
+    
+    
+    //=== Morpho begin
+    shared_ptr<FIPMorphologicalFilter> morphologicalFiltB(new FIPMorphologicalFilter(*morphologicalFilt, 1,
+                                                                                    10,//square structuring element size.
+                                                                                    80, 255,//threshold, binaryMax
+                                                                                    1));
+    morphologicalFiltB->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
+    morphologicalFiltB->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
+
+    if (!morphologicalFiltB->init())
+    {
+        std::cerr << "Could not initialise the morphologicalFilt processor.\n";
+        exit(-1);
+    }
+    
+    morphologicalFiltB->startTriggerThread();
+    //=== Morpho end
     
     
     /*
@@ -134,7 +154,7 @@ int main(int argc, char *argv[])
      */
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFilt, 1, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFiltB, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -248,6 +268,7 @@ int main(int argc, char *argv[])
     
     //cnvrtToRGBF32->stopTriggerThread();
     morphologicalFilt->stopTriggerThread();
+    morphologicalFiltB->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;

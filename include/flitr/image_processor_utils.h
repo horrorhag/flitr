@@ -512,13 +512,6 @@ namespace flitr {
     
     
     
-    //struct Image
-    //{
-    //    std::vector<char> pixel;
-    //    int width, height;
-    //};
-    
-    
     //! General purpose Morphological filter.
     class FLITR_EXPORT MorphologicalFilter
     {
@@ -563,7 +556,7 @@ namespace flitr {
             _clQueue = clCreateCommandQueue(_clContext, deviceIds[targetDevice], 0, &error);
             CheckError(error);
             std::cout << "Command queue created" << std::endl;
-
+            
             const char *erodeKernelSource = "\n" \
             "__constant sampler_t sampler =  \n" \
             "CLK_NORMALIZED_COORDS_FALSE     \n" \
@@ -593,7 +586,7 @@ namespace flitr {
             "    write_imagef(output, pos, minValue);                 \n" \
             "}                                                 \n" \
             "\n";
-
+            
             const char *dilateKernelSource = "\n" \
             "__constant sampler_t sampler =  \n" \
             "CLK_NORMALIZED_COORDS_FALSE     \n" \
@@ -623,7 +616,7 @@ namespace flitr {
             "    write_imagef(output, pos, maxValue);                 \n" \
             "}                                                 \n" \
             "\n";
-
+            
             _programErode = clCreateProgramWithSource (_clContext,
                                                        1,                             // the number of strings
                                                        (const char**) &erodeKernelSource,  // an array of strings
@@ -633,13 +626,13 @@ namespace flitr {
             std::cout << "Erode programs created." << std::endl;
             
             _programDilate = clCreateProgramWithSource (_clContext,
-                                                       1,                             // the number of strings
-                                                       (const char**) &dilateKernelSource,  // an array of strings
-                                                       NULL,                          // array of string lengths
-                                                       &error);
+                                                        1,                             // the number of strings
+                                                        (const char**) &dilateKernelSource,  // an array of strings
+                                                        NULL,                          // array of string lengths
+                                                        &error);
             CheckError(error);
             std::cout << "Dilate program created." << std::endl;
-
+            
             error=clBuildProgram(_programErode, deviceIdCount, deviceIds.data(), "", nullptr, nullptr);
             if (error == CL_BUILD_PROGRAM_FAILURE)
             {
@@ -682,7 +675,7 @@ namespace flitr {
             clReleaseKernel(_kernelDilate);
             clReleaseProgram(_programErode);
             clReleaseProgram(_programDilate);
-
+            
             clReleaseCommandQueue(_clQueue);
             clReleaseContext(_clContext);
 #endif
@@ -690,6 +683,7 @@ namespace flitr {
         
         
 #ifdef FLITR_USE_OPENCL
+        //Should probably move these members to some shared opencl utility header...
         std::string GetDeviceName(cl_device_id id)
         {
             size_t size = 0;
@@ -722,49 +716,6 @@ namespace flitr {
                 std::exit (1);
             }
         }
-        
-        /*
-         void SaveImage (const Image& img, const char* path)
-         {
-         std::ofstream out (path, std::ios::binary);
-         
-         out << "P6\n";
-         out << img.width << " " << img.height << "\n";
-         out << "255\n";
-         out.write (img.pixel.data (), img.pixel.size ());
-         }
-         
-         Image RGBtoRGBA (const Image& input)
-         {
-         Image result;
-         result.width = input.width;
-         result.height = input.height;
-         
-         for (std::size_t i = 0; i < input.pixel.size (); i += 3) {
-         result.pixel.push_back (input.pixel [i + 0]);
-         result.pixel.push_back (input.pixel [i + 1]);
-         result.pixel.push_back (input.pixel [i + 2]);
-         result.pixel.push_back (0);
-         }
-         
-         return result;
-         }
-         
-         Image RGBAtoRGB (const Image& input)
-         {
-         Image result;
-         result.width = input.width;
-         result.height = input.height;
-         
-         for (std::size_t i = 0; i < input.pixel.size (); i += 4) {
-         result.pixel.push_back (input.pixel [i + 0]);
-         result.pixel.push_back (input.pixel [i + 1]);
-         result.pixel.push_back (input.pixel [i + 2]);
-         }
-         
-         return result;
-         }
-         */
 #endif
         
         //!Synchronous process method for T pixel format.
@@ -796,13 +747,14 @@ namespace flitr {
                                                  nullptr,
                                                  &error);
             
+            
             clSetKernelArg(_kernelErode, 0, sizeof (cl_mem), &inputImage);
             clSetKernelArg(_kernelErode, 1, sizeof (cl_mem), &outputImage);
             
             int32_t hsew = halfStructElem;
             clSetKernelArg(_kernelErode, 2, sizeof(int32_t), &hsew);
             
-
+            
             // Run the processing
             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
             std::size_t offset[3] = {0};
@@ -814,7 +766,6 @@ namespace flitr {
             std::size_t region[3] = {width, height, 1};
             clEnqueueReadImage (_clQueue, outputImage, CL_TRUE, origin, region, 0, 0, dataWriteDS, 0, nullptr, nullptr);
             
-            //SaveImage (RGBAtoRGB (result), "output.ppm");
             
             clReleaseMemObject(inputImage);
             clReleaseMemObject(outputImage);
