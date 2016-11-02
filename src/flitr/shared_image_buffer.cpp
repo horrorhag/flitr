@@ -174,6 +174,12 @@ uint32_t SharedImageBuffer::getNumWriteSlotsAvailable() const
    return std::max<int32_t>( ( ((int32_t)NumSlots_) - 1 ) - getFill(), 0);
 }
 
+uint32_t SharedImageBuffer::getNumWriteSlotsReserved()
+{
+    std::lock_guard<std::mutex> scopedLock(BufferMutex_);
+    return NumWriteReserved_;
+}
+
 std::vector<Image**> SharedImageBuffer::reserveWriteSlot()
 {
     std::lock_guard<std::mutex> scopedLock(BufferMutex_);
