@@ -39,7 +39,13 @@ bool FThread::applyAffinity(std::thread& thread, int32_t cpu_affinity)
 {
 #ifdef WIN32
     return false;
-#else
+#endif
+    
+#ifdef __APPLE__
+    return false;
+#endif
+    
+#ifdef __linux
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
 
