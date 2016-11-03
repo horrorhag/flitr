@@ -31,8 +31,19 @@ class FLITR_EXPORT FThread
 public:
     FThread();
     virtual ~FThread();
-    
-    void startThread();
+
+    /*! Start the underlying thread.
+     *
+     * This function will attempt to start the thread with the
+     * supplied @a cpu_affinity. The FThread::applyAffinity() function
+     * is used to set the affinity. This is currently only supported
+     * on Linux.
+     *
+     *@param cpu_affinity Optional thread affinity. If this number is
+     *      negative, the thread will be able to execute on any CPU. If the
+     *      affinity is 0 or positive the thread will only be allowed
+     *      to execute on the specified CPU. */
+    void startThread(int32_t cpu_affinity = -1);
     
     virtual void run() = 0;
     
@@ -45,6 +56,19 @@ public:
     {
         std::this_thread::sleep_for(std::chrono::microseconds(us));
     }
+
+    /*! Apply the given CPU affinity to the thread.
+     *
+     * This function is currently only implemented for Linux,
+     * for other Operating Systems the function will return false.
+     *
+     *@param thread Thread that the affinity must be applied on.
+     *@param cpu_affinity Thread affinity. If this number is
+     *      negative, the thread will be able to execute on any CPU. If the
+     *      affinity is 0 or positive the thread will only be allowed
+     *      to execute on the specified CPU.
+     *@returns True if the affinity was set, otherwise false. */
+    static bool applyAffinity(std::thread& thread, int32_t cpu_affinity);
     
 private:
     std::thread _thread;

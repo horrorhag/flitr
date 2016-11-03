@@ -84,10 +84,13 @@ class FLITR_EXPORT StatsCollector {
             tock_count_at_max_ = tock_count_;
         }
     }
-
     void setID(const std::string &ID)
     {
         ID_=ID;
+    }
+    std::string getID() const
+    {
+        return ID_;
     }
     
     

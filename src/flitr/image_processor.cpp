@@ -98,12 +98,12 @@ bool ImageProcessor::stopTriggerThread()
     return false;
 }
 
-bool ImageProcessor::startTriggerThread()
+bool ImageProcessor::startTriggerThread(int32_t cpu_affinity)
 {
     if (Thread_==0)
     {//If thread not already started.
         Thread_ = new ImageProcessorThread(this);
-        Thread_->startThread();
+        Thread_->startThread(cpu_affinity);
 
         return true;
     }
