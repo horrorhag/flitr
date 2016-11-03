@@ -159,7 +159,7 @@ namespace flitr {
          * @sa setPassMetadataFunction() */
         PassMetadataFunction PassMetadataFunction_;
         
-    protected:
+    private:
         ImageProcessorThread *Thread_;
         
     protected:
