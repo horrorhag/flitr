@@ -62,17 +62,32 @@ namespace flitr {
         {
             _motionThreshold=motionThreshold;
         }
+        //!Get the motion threshold. Motion above this threshold would result in a plot.
+        float getMotionThreshold() const
+        {
+            return _motionThreshold;
+        }
 
         //!Update the detection threshold. A stable plot count above this threshold would result in a detection.
         void setDetectionThreshold(const int detectionThreshold)
         {
             _detectionThreshold=detectionThreshold;
         }
+        //!Get the detection threshold. A stable plot count above this threshold would result in a detection.
+        int getDetectionThreshold() const
+        {
+            return _detectionThreshold;
+        }
 
         //!Set if the pass should add the detection overlays to the output image.
         void setShowOverlays(const bool showOverlays)
         {
             _showOverlays=showOverlays;
+        }
+        //!Get if the pass should add the detection overlays to the output image.
+        bool getShowOverlays() const
+        {
+            return _showOverlays;
         }
     
     private:

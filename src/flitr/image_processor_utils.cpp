@@ -831,6 +831,11 @@ void GaussianFilter::setFilterRadius(const float filterRadius)
     updateKernel1D();
 }
 
+float GaussianFilter::getFilterRadius() const
+{
+    return filterRadius_;
+}
+
 void GaussianFilter::setKernelWidth(const int kernelWidth)
 {
     kernelWidth_=kernelWidth|1;

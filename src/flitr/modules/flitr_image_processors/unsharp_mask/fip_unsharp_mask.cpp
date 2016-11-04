@@ -161,10 +161,20 @@ void FIPUnsharpMask::setGain(const float gain)
     gain_ = gain;
 }
 
+float FIPUnsharpMask::getGain() const
+{
+    return gain_;
+}
+
 void FIPUnsharpMask::setFilterRadius(const float filterRadius)
 {
     std::lock_guard<std::mutex> scopedLock(triggerMutex_);
     
     gaussianFilter_.setFilterRadius(filterRadius);
+}
+
+float FIPUnsharpMask::getFilterRadius() const
+{
+    return gaussianFilter_.getFilterRadius();
 }
 

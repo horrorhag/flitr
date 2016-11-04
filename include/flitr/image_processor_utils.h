@@ -407,6 +407,9 @@ namespace flitr {
         
         //!Sets the radius of the Gaussian.
         void setFilterRadius(const float filterRadius);
+
+        //!Get the radius of the Gaussian.
+        float getFilterRadius() const;
         
         //!Set the width of the convolution kernel.
         void setKernelWidth(const int kernelWidth);

@@ -61,10 +61,15 @@ namespace flitr {
         {
             return _GFScale;
         }
-        
+
         void setNumGaussianScales(const size_t numScales)
         {
             _numScales=numScales;
+        }
+
+        size_t getNumGaussianScales() const
+        {
+            return _numScales;
         }
         
     private:
