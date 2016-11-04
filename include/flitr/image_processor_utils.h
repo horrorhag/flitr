@@ -563,29 +563,47 @@ namespace flitr {
             "| CLK_ADDRESS_CLAMP_TO_EDGE     \n" \
             "| CLK_FILTER_NEAREST;           \n" \
             "                                \n" \
-            "__kernel void erode(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "__kernel void erodeX(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
             "{                               \n" \
             "                                \n" \
             "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
             
-            "    float4 minValue = read_imagef(input, sampler, pos);  \n" \
+            "    float4 minValue = read_imagef(input, sampler, pos - (int2)(hsew,0));  \n" \
             
-            "    for(int y = -hsew; y < hsew; y++)     \n" \
-            "    {                                     \n" \
-            "        for(int x = -hsew; x < hsew; x++) \n" \
+            "        for(int x = -hsew+1; x < hsew; ++x) \n" \
             "        {                                                \n" \
-            "            float4 value = read_imagef(input, sampler, pos + (int2)(x,y));  \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(x,0));  \n" \
             
             "            if (value.x < minValue.x)                    \n" \
             "            {                                            \n" \
             "                minValue.x=value.x;                      \n" \
             "            }                                            \n" \
             "        }                                                \n" \
-            "    }                                                    \n" \
+            
+            "    write_imagef(output, pos, minValue);                 \n" \
+            "}                                                 \n" \
+            
+            "__kernel void erodeY(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 minValue = read_imagef(input, sampler, pos - (int2)(0,hsew));  \n" \
+            
+            "        for(int y = -hsew+1; y < hsew; ++y) \n" \
+            "        {                                                \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(0,y));  \n" \
+            
+            "            if (value.x < minValue.x)                    \n" \
+            "            {                                            \n" \
+            "                minValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
             
             "    write_imagef(output, pos, minValue);                 \n" \
             "}                                                 \n" \
             "\n";
+            
             
             const char *dilateKernelSource = "\n" \
             "__constant sampler_t sampler =  \n" \
@@ -593,25 +611,42 @@ namespace flitr {
             "| CLK_ADDRESS_CLAMP_TO_EDGE     \n" \
             "| CLK_FILTER_NEAREST;           \n" \
             "                                \n" \
-            "__kernel void dilate(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "__kernel void dilateX(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
             "{                               \n" \
             "                                \n" \
             "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
             
-            "    float4 maxValue = read_imagef(input, sampler, pos);  \n" \
+            "    float4 maxValue = read_imagef(input, sampler, pos - (int2)(hsew,0));  \n" \
             
-            "    for(int y = -hsew; y < hsew; y++)     \n" \
-            "    {                                     \n" \
-            "        for(int x = -hsew; x < hsew; x++) \n" \
+            "        for(int x = -hsew+1; x < hsew; ++x) \n" \
             "        {                                                \n" \
-            "            float4 value = read_imagef(input, sampler, pos + (int2)(x,y));  \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(x,0));  \n" \
             
             "            if (value.x > maxValue.x)                    \n" \
             "            {                                            \n" \
             "                maxValue.x=value.x;                      \n" \
             "            }                                            \n" \
             "        }                                                \n" \
-            "    }                                                    \n" \
+            
+            "    write_imagef(output, pos, maxValue);                 \n" \
+            "}                                                 \n" \
+            
+            "__kernel void dilateY(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 maxValue = read_imagef(input, sampler, pos - (int2)(0,hsew));  \n" \
+            
+            "        for(int y = -hsew+1; y < hsew; ++y) \n" \
+            "        {                                                \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(0,y));  \n" \
+            
+            "            if (value.x > maxValue.x)                    \n" \
+            "            {                                            \n" \
+            "                maxValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
             
             "    write_imagef(output, pos, maxValue);                 \n" \
             "}                                                 \n" \
@@ -657,13 +692,17 @@ namespace flitr {
             CheckError(error);
             std::cout << "Dilate programs built." << std::endl;
             
-            _kernelErode = clCreateKernel(_programErode, "erode", &error);
+            _kernelErodeX = clCreateKernel(_programErode, "erodeX", &error);
             CheckError(error);
-            std::cout << "Erode kernel created." << std::endl;
+            _kernelErodeY = clCreateKernel(_programErode, "erodeY", &error);
+            CheckError(error);
+            std::cout << "Erode kernels created." << std::endl;
             
-            _kernelDilate = clCreateKernel(_programDilate, "dilate", &error);
+            _kernelDilateX = clCreateKernel(_programDilate, "dilateX", &error);
             CheckError(error);
-            std::cout << "Dilate kernel created." << std::endl;
+            _kernelDilateY = clCreateKernel(_programDilate, "dilateY", &error);
+            CheckError(error);
+            std::cout << "Dilate kernels created." << std::endl;
 #endif
         }
         
@@ -671,8 +710,12 @@ namespace flitr {
         ~MorphologicalFilter()
         {
 #ifdef FLITR_USE_OPENCL
-            clReleaseKernel(_kernelErode);
-            clReleaseKernel(_kernelDilate);
+            clReleaseKernel(_kernelErodeX);
+            clReleaseKernel(_kernelErodeY);
+            
+            clReleaseKernel(_kernelDilateX);
+            clReleaseKernel(_kernelDilateY);
+            
             clReleaseProgram(_programErode);
             clReleaseProgram(_programDilate);
             
@@ -742,24 +785,34 @@ namespace flitr {
                                                 const_cast<uint8_t*>(dataReadUS),
                                                 &error);
             
+            cl_mem tempImage = clCreateImage2D(_clContext, CL_MEM_READ_WRITE, &format,
+                                               width, height, 0,
+                                               nullptr,
+                                               &error);
+            
             cl_mem outputImage = clCreateImage2D(_clContext, CL_MEM_WRITE_ONLY, &format,
                                                  width, height, 0,
                                                  nullptr,
                                                  &error);
             
             
-            clSetKernelArg(_kernelErode, 0, sizeof (cl_mem), &inputImage);
-            clSetKernelArg(_kernelErode, 1, sizeof (cl_mem), &outputImage);
+            clSetKernelArg(_kernelErodeX, 0, sizeof (cl_mem), &inputImage);
+            clSetKernelArg(_kernelErodeX, 1, sizeof (cl_mem), &tempImage);
+            
+            clSetKernelArg(_kernelErodeY, 0, sizeof (cl_mem), &tempImage);
+            clSetKernelArg(_kernelErodeY, 1, sizeof (cl_mem), &outputImage);
             
             int32_t hsew = halfStructElem;
-            clSetKernelArg(_kernelErode, 2, sizeof(int32_t), &hsew);
+            clSetKernelArg(_kernelErodeX, 2, sizeof(int32_t), &hsew);
+            clSetKernelArg(_kernelErodeY, 2, sizeof(int32_t), &hsew);
             
             
             // Run the processing
             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
             std::size_t offset[3] = {0};
             std::size_t size[3] = {width, height, 1};
-            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelErode, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelErodeX, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelErodeY, 2, offset, size, nullptr, 0, nullptr, nullptr));
             
             // Get the result back to the host
             std::size_t origin[3] = {0};
@@ -768,6 +821,7 @@ namespace flitr {
             
             
             clReleaseMemObject(inputImage);
+            clReleaseMemObject(tempImage);
             clReleaseMemObject(outputImage);
 #else
             //First pass in x.
@@ -985,23 +1039,33 @@ namespace flitr {
                                                 const_cast<uint8_t*>(dataReadUS),
                                                 &error);
             
+            cl_mem tempImage = clCreateImage2D(_clContext, CL_MEM_READ_WRITE, &format,
+                                               width, height, 0,
+                                               nullptr,
+                                               &error);
+            
             cl_mem outputImage = clCreateImage2D(_clContext, CL_MEM_WRITE_ONLY, &format,
                                                  width, height, 0,
                                                  nullptr,
                                                  &error);
             
-            clSetKernelArg(_kernelDilate, 0, sizeof (cl_mem), &inputImage);
-            clSetKernelArg(_kernelDilate, 1, sizeof (cl_mem), &outputImage);
+            clSetKernelArg(_kernelDilateX, 0, sizeof (cl_mem), &inputImage);
+            clSetKernelArg(_kernelDilateX, 1, sizeof (cl_mem), &tempImage);
+            
+            clSetKernelArg(_kernelDilateY, 0, sizeof (cl_mem), &tempImage);
+            clSetKernelArg(_kernelDilateY, 1, sizeof (cl_mem), &outputImage);
             
             int32_t hsew = halfStructElem;
-            clSetKernelArg(_kernelDilate, 2, sizeof(int32_t), &hsew);
+            clSetKernelArg(_kernelDilateX, 2, sizeof(int32_t), &hsew);
+            clSetKernelArg(_kernelDilateY, 2, sizeof(int32_t), &hsew);
             
             
             // Run the processing
             // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
             std::size_t offset[3] = {0};
             std::size_t size[3] = {width, height, 1};
-            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelDilate, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelDilateX, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelDilateY, 2, offset, size, nullptr, 0, nullptr, nullptr));
             
             // Get the result back to the host
             std::size_t origin[3] = {0};
@@ -1011,6 +1075,7 @@ namespace flitr {
             //SaveImage (RGBAtoRGB (result), "output.ppm");
             
             clReleaseMemObject(inputImage);
+            clReleaseMemObject(tempImage);
             clReleaseMemObject(outputImage);
 #else
             //First pass in x.
@@ -1308,11 +1373,16 @@ namespace flitr {
         cl_context _clContext;
         cl_command_queue _clQueue;
         
+        //===
         cl_program _programErode;
         cl_program _programDilate;
         
-        cl_kernel _kernelErode;
-        cl_kernel _kernelDilate;
+        //===
+        cl_kernel _kernelErodeX;
+        cl_kernel _kernelErodeY;
+        
+        cl_kernel _kernelDilateX;
+        cl_kernel _kernelDilateY;
 #endif
     };
     

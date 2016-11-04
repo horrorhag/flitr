@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     
     //=== Morpho begin
     shared_ptr<FIPMorphologicalFilter> morphologicalFiltB(new FIPMorphologicalFilter(*morphologicalFilt, 1,
-                                                                                    10,//square structuring element size.
+                                                                                    15,//square structuring element size.
                                                                                     80, 255,//threshold, binaryMax
                                                                                     1));
     morphologicalFiltB->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
