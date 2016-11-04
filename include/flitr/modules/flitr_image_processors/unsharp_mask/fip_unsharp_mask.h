@@ -53,9 +53,13 @@ namespace flitr {
         
         //!Sets the filter gain. This method is thread safe.
         virtual void setGain(const float gain);
+        //!Gets the filter gain. This method is thread safe.
+        float getGain() const;
         
         //!Sets the filter radius. This method is thread safe.
         virtual void setFilterRadius(const float filterRadius);
+        //!Gets the filter radius. This method is thread safe.
+        float getFilterRadius() const;
         
     private:
         float gain_;

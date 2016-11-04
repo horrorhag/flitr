@@ -74,6 +74,12 @@ public:
         burnFy_=fy;
     }
 
+    virtual void getOutputTransformBurn(float &fx, float &fy)
+    {
+        fx=burnFx_;
+        fy=burnFy_;
+    }
+
     virtual std::string getTitle() {
         return Title_;
     }
