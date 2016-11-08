@@ -71,8 +71,19 @@ namespace flitr {
         {
             return _numScales;
         }
+
+        virtual void enable(bool state=true)
+        {
+            _enabled = state;
+        }
+
+        virtual bool isEnabled()
+        {
+            return _enabled;
+        }
         
     private:
+        bool _enabled;
         const FilterType _filterType;
         
         //!Box filter helper. No significant state.
