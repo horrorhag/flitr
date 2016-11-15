@@ -546,7 +546,7 @@ namespace flitr {
                 std::cout << "\t (" << (i+1) << ") : " << GetDeviceName(deviceIds[i]) << std::endl;
             }
             
-            const int targetDevice=0;//deviceIdCount-1;
+            const int targetDevice = deviceIdCount - 1;
             
             const cl_context_properties contextProperties[] = {CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platformIds[0]), 0, 0};
             

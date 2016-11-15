@@ -83,21 +83,9 @@ int main(int argc, char *argv[])
     
     //=== Morpho begin
     shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*ip, 1,
-                                                                                    5,//square structuring element size.
+                                                                                    20,//square structuring element size.
                                                                                     80, 255,//threshold, binaryMax
                                                                                     1));
-    //image_1280.jpg
-    //SE size = 8 -> 30 fps
-    //SE size = 12 -> 28 fps
-    //SE size = 16 -> 26 fps
-    //SE size = 20 -> 24 fps
-    //SE size = 24 -> 23 fps
-    //SE size = 48 -> 18 fps
-    //SE size = 72 -> 15 fps
-    //SE size = 96 -> 13 fps
-    //SE size = 120 -> 11 fps
-    //SE size = 240 -> 6.5 fps
-    //SE size = 360 -> 5.6 fps
     
     
     //===WHITE TOP HAT===//
@@ -124,7 +112,7 @@ int main(int argc, char *argv[])
     //=== Morpho end
     
     
-    
+    /*
     //=== Morpho begin
     shared_ptr<FIPMorphologicalFilter> morphologicalFiltB(new FIPMorphologicalFilter(*morphologicalFilt, 1,
                                                                                     15,//square structuring element size.
@@ -141,7 +129,7 @@ int main(int argc, char *argv[])
     
     morphologicalFiltB->startTriggerThread();
     //=== Morpho end
-    
+    */
     
     /*
      shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 1));
@@ -154,7 +142,7 @@ int main(int argc, char *argv[])
      */
     
     
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFiltB, 1, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFilt, 1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -268,7 +256,7 @@ int main(int argc, char *argv[])
     
     //cnvrtToRGBF32->stopTriggerThread();
     morphologicalFilt->stopTriggerThread();
-    morphologicalFiltB->stopTriggerThread();
+    //morphologicalFiltB->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;
