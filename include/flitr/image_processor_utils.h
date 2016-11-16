@@ -551,7 +551,8 @@ namespace flitr {
             const cl_context_properties contextProperties[] = {CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platformIds[0]), 0, 0};
             
             cl_int error = CL_SUCCESS;
-            //_clContext = clCreateContextFromType(CL_DEVICE_TYPE_GPU);
+            //!@ToDo - Share the OpenCL context and memory between image processors...
+            //_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, nullptr, nullptr, &error);
             _clContext = clCreateContext(contextProperties, deviceIdCount, deviceIds.data(), nullptr, nullptr, &error);
             CheckError(error);
             std::cout << "Context created" << std::endl;
@@ -773,11 +774,7 @@ namespace flitr {
         {
             structElemWidth=structElemWidth|1;//Make structuring element's width is odd.
             
-            const size_t widthMinusStructElem=width-structElemWidth;
-            const size_t heightMinusStructElem=height-structElemWidth;
             const size_t halfStructElem=(structElemWidth>>1);
-            const size_t widthMinusHalfStructElem=width-halfStructElem;
-            
             
 #ifdef FLITR_USE_OPENCL
             const cl_image_format format = { CL_INTENSITY, CL_UNORM_INT8 };
@@ -799,14 +796,14 @@ namespace flitr {
                                                  &error);
             
             
+            const int32_t hsew = halfStructElem;
+            
             clSetKernelArg(_kernelErodeX, 0, sizeof (cl_mem), &inputImage);
             clSetKernelArg(_kernelErodeX, 1, sizeof (cl_mem), &tempImage);
+            clSetKernelArg(_kernelErodeX, 2, sizeof(int32_t), &hsew);
             
             clSetKernelArg(_kernelErodeY, 0, sizeof (cl_mem), &tempImage);
             clSetKernelArg(_kernelErodeY, 1, sizeof (cl_mem), &outputImage);
-            
-            int32_t hsew = halfStructElem;
-            clSetKernelArg(_kernelErodeX, 2, sizeof(int32_t), &hsew);
             clSetKernelArg(_kernelErodeY, 2, sizeof(int32_t), &hsew);
             
             
@@ -827,6 +824,10 @@ namespace flitr {
             clReleaseMemObject(tempImage);
             clReleaseMemObject(outputImage);
 #else
+            const size_t widthMinusStructElem=width-structElemWidth;
+            const size_t heightMinusStructElem=height-structElemWidth;
+            const size_t widthMinusHalfStructElem=width-halfStructElem;
+
             //First pass in x.
             for (size_t y=0; y<height; ++y)
             {
@@ -1028,10 +1029,7 @@ namespace flitr {
         {
             structElemWidth=structElemWidth|1;//Make structuring element's width is odd.
             
-            const size_t widthMinusStructElem=width-structElemWidth;
-            const size_t heightMinusStructElem=height-structElemWidth;
             const size_t halfStructElem=(structElemWidth>>1);
-            const size_t widthMinusHalfStructElem=width-halfStructElem;
             
 #ifdef FLITR_USE_OPENCL
             const cl_image_format format = { CL_INTENSITY, CL_UNORM_INT8 };
@@ -1081,6 +1079,10 @@ namespace flitr {
             clReleaseMemObject(tempImage);
             clReleaseMemObject(outputImage);
 #else
+            const size_t widthMinusStructElem=width-structElemWidth;
+            const size_t heightMinusStructElem=height-structElemWidth;
+            const size_t widthMinusHalfStructElem=width-halfStructElem;
+
             //First pass in x.
             for (size_t y=0; y<height; ++y)
             {
