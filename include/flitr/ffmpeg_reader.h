@@ -122,9 +122,10 @@ class FLITR_EXPORT FFmpegReader {
      *
      * \param filename Name of the input file to open.
      * \param out_pix_fmt Output pixel format that is required.
+     * \param scale_factor Scale factor to scale the output image if needed.
      * \return true if successful, otherwise false.
      */
-    bool openVideo(const std::string &filename, ImageFormat::PixelFormat out_pix_fmt);
+    bool openVideo(const std::string &filename, ImageFormat::PixelFormat out_pix_fmt, double scale_factor = 1);
 
     /** 
      * Reads the specified frame from the video file.
