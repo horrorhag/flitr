@@ -28,7 +28,7 @@ namespace flitr {
 class Parameters
 {
 public:
-    virtual ~Parameters() = default;
+    virtual ~Parameters() {}
 
     enum EParmType
     {
