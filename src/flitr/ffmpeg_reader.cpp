@@ -75,7 +75,7 @@ FFmpegReader::~FFmpegReader()
 #endif
 }
 
-bool FFmpegReader::openVideo(const std::string& filename, ImageFormat::PixelFormat out_pix_fmt)
+bool FFmpegReader::openVideo(const std::string& filename, ImageFormat::PixelFormat out_pix_fmt, double scale_factor)
 {
     FileName_ = filename;
     /* Register the StatsCollector handlers. */
@@ -206,7 +206,7 @@ bool FFmpegReader::openVideo(const std::string& filename, ImageFormat::PixelForm
         }
     }
 
-    ImageFormat_ = ImageFormat(CodecContext_->width, CodecContext_->height, out_pix_fmt);
+    ImageFormat_ = ImageFormat(CodecContext_->width * scale_factor, CodecContext_->height * scale_factor, out_pix_fmt);
     //=== ===//
 
     // Allocate the image for the single frame sources
@@ -217,7 +217,7 @@ bool FFmpegReader::openVideo(const std::string& filename, ImageFormat::PixelForm
     // create scaler to convert from video format to user required format
 #if defined FLITR_USE_SWSCALE
     ConvertFormatCtx_ = sws_getContext(
-                ImageFormat_.getWidth(), ImageFormat_.getHeight(), CodecContext_->pix_fmt,
+                CodecContext_->width, CodecContext_->height, CodecContext_->pix_fmt,
                 ImageFormat_.getWidth(), ImageFormat_.getHeight(), (AVPixelFormat)out_ffmpeg_pix_fmt,
                 SWS_BILINEAR, NULL, NULL, NULL);
 #endif
