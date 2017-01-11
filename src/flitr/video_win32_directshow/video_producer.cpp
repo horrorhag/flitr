@@ -21,6 +21,7 @@
 #include <flitr/video_producer.h>
 #include <flitr/image.h>
 #include <flitr/ffmpeg_utils.h>
+#include <flitr/flitr_thread.h>
 #include <stdlib.h>
 #include "comutil.h"
 #include "DSVL.h"
@@ -135,7 +136,7 @@ void VideoProducer::VideoProducerThread::run()
             
             if (!ready)
             {
-                Thread::microSleep(1000);
+                FThread::microSleep(1000);
             }
 
         } while (!ready && !shouldExit);
@@ -154,7 +155,7 @@ void VideoProducer::VideoProducerThread::run()
             aImages = producer->reserveWriteSlot();
             if (aImages.size() != 1)
             {
-                Thread::microSleep(1000);
+                FThread::microSleep(1000);
             }
         } while ((aImages.size() != 1) && !shouldExit);
 
@@ -175,7 +176,7 @@ void VideoProducer::VideoProducerThread::run()
 
         producer->releaseWriteSlot();
 
-        Thread::microSleep(1000);
+        FThread::microSleep(1000);
     }
 }
 
