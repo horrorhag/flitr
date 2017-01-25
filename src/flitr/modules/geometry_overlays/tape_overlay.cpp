@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  *
  * This file is part of FLITr.
@@ -22,21 +22,22 @@
 
 using namespace flitr;
 
-TapeOverlay::TapeOverlay(double center_x, double center_y, double length, uint8_t majorTicks, uint8_t minorTicks,  bool indicator) :
+TapeOverlay::TapeOverlay(double center_x, double center_y, double length, uint8_t majorTicks, uint8_t minorTicks,  bool indicator, Orientation layout) :
     GeometryOverlay(),
     _CenterX(center_x),
     _CenterY(center_y),
     _Length(length),
     _MajorTicks(majorTicks),
     _MinorTicks(minorTicks),
-    _Offset(0)
+    _Offset(0),
+    _Orientation(layout)
 {
     _MajorTicks = _MajorTicks >= 3 ? _MajorTicks : 3;
     _MajorTicks = _MajorTicks % 2 ? _MajorTicks : _MajorTicks + 1;
-#if 0
+//#if 0
    _MinorTicks = _MinorTicks > 0 ? (_MinorTicks % 2 ? _MinorTicks + 1 : _MinorTicks) : _MinorTicks;
-#endif
-   _MinorTicks = _MinorTicks > 0 ? _MajorTicks - 1 : 0;
+//#endif
+   //_MinorTicks = _MinorTicks > 0 ? _MajorTicks - 1 : 0;
     _Vertices = new osg::Vec3Array(2*(1+_MajorTicks+_MinorTicks));
 
     _MajorTickHeight = 10;
@@ -62,9 +63,9 @@ void TapeOverlay::makeTape(bool indicator)
     _Geom = new osg::Geometry();
 
     updateTape();
-    
+
     _Geom->setVertexArray(_Vertices.get());
-    
+
     _DrawArray = new osg::DrawArrays(osg::PrimitiveSet::LINES, 0, 2*(1+_MajorTicks+_MinorTicks));
 
     _Geom->addPrimitiveSet(_DrawArray.get());
@@ -81,40 +82,79 @@ void TapeOverlay::makeTape(bool indicator)
 void TapeOverlay::updateTape()
 {
     _Vertices->clear();
-    _Vertices->push_back(osg::Vec3d(_CenterX-(_Length/2), _CenterY, 0));
-    _Vertices->push_back(osg::Vec3d(_CenterX+(_Length/2), _CenterY, 0));
+    if (_Orientation == Orientation::HORIZONTAL) {
+        _Vertices->push_back(osg::Vec3d(_CenterX-(_Length/2), _CenterY, 0));
+        _Vertices->push_back(osg::Vec3d(_CenterX+(_Length/2), _CenterY, 0));
 
-    double tickCenterX = _CenterX - _Offset*_MajorTickSpacing;
+        double tickCenterX = _CenterX - _Offset*_MajorTickSpacing;
 
-    for (uint8_t i=1; i<=(_MajorTicks-1)/2; ++i)
-    {
-        if (tickCenterX - i*_MajorTickSpacing > _CenterX - _Length/2) {
-            _Vertices->push_back(osg::Vec3d(tickCenterX - i*_MajorTickSpacing, _CenterY + _MajorTickHeight, 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX - i*_MajorTickSpacing, _CenterY                   , 0));
-        } else {
-            _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
-        }
-
-        if (tickCenterX + i*_MajorTickSpacing < _CenterX + _Length/2) {
-            _Vertices->push_back(osg::Vec3d(tickCenterX + i*_MajorTickSpacing, _CenterY + _MajorTickHeight, 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX + i*_MajorTickSpacing, _CenterY                   , 0));
-        } else {
-            _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
-        }
-    }
-    _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY + _MajorTickHeight, 0));
-    _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY                   , 0));
-
-    if (_MinorTicks > 0) {
-        double tickSpacing = _Length/_MinorTicks;
-        for (uint8_t i=1; i<=_MinorTicks/2; ++i)
+        for (uint8_t i=1; i<=(_MajorTicks-1)/2; ++i)
         {
-            _Vertices->push_back(osg::Vec3d(tickCenterX - (i-0.5)*tickSpacing, _CenterY - _MinorTickHeight, 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX - (i-0.5)*tickSpacing, _CenterY                   , 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX + (i-0.5)*tickSpacing, _CenterY - _MinorTickHeight, 0));
-            _Vertices->push_back(osg::Vec3d(tickCenterX + (i-0.5)*tickSpacing, _CenterY                   , 0));
+            if (tickCenterX - i*_MajorTickSpacing > _CenterX - _Length/2) {
+                _Vertices->push_back(osg::Vec3d(tickCenterX - i*_MajorTickSpacing, _CenterY + _MajorTickHeight, 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX - i*_MajorTickSpacing, _CenterY                   , 0));
+            } else {
+                _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
+            }
+
+            if (tickCenterX + i*_MajorTickSpacing < _CenterX + _Length/2) {
+                _Vertices->push_back(osg::Vec3d(tickCenterX + i*_MajorTickSpacing, _CenterY + _MajorTickHeight, 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX + i*_MajorTickSpacing, _CenterY                   , 0));
+            } else {
+                _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY , 0));
+            }
+        }
+        _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY + _MajorTickHeight, 0));
+        _Vertices->push_back(osg::Vec3d(tickCenterX, _CenterY                   , 0));
+
+        if (_MinorTicks > 0) {
+            double tickSpacing = _Length/_MinorTicks;
+            for (uint8_t i=1; i<=_MinorTicks/2; ++i)
+            {
+                _Vertices->push_back(osg::Vec3d(tickCenterX - (i-0.5)*tickSpacing, _CenterY - _MinorTickHeight, 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX - (i-0.5)*tickSpacing, _CenterY                   , 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX + (i-0.5)*tickSpacing, _CenterY - _MinorTickHeight, 0));
+                _Vertices->push_back(osg::Vec3d(tickCenterX + (i-0.5)*tickSpacing, _CenterY                   , 0));
+            }
+        }
+    } else {
+        _Vertices->push_back(osg::Vec3d(_CenterX, _CenterY-(_Length/2), 0));
+        _Vertices->push_back(osg::Vec3d(_CenterX, _CenterY+(_Length/2), 0));
+
+        double tickCenterY = _CenterY - _Offset*_MajorTickSpacing;
+
+        for (uint8_t i=1; i<=(_MajorTicks-1)/2; ++i)
+        {
+            if (tickCenterY - i*_MajorTickSpacing > _CenterY - _Length/2) {
+                _Vertices->push_back(osg::Vec3d(_CenterX - _MajorTickHeight, tickCenterY - i*_MajorTickSpacing,  0));
+                _Vertices->push_back(osg::Vec3d(_CenterX                   , tickCenterY - i*_MajorTickSpacing,  0));
+            } else {
+                _Vertices->push_back(osg::Vec3d(_CenterX, tickCenterY, 0));
+                _Vertices->push_back(osg::Vec3d(_CenterX, tickCenterY, 0));
+            }
+
+            if (tickCenterY + i*_MajorTickSpacing < _CenterY + _Length/2) {
+                _Vertices->push_back(osg::Vec3d(_CenterX - _MajorTickHeight, tickCenterY + i*_MajorTickSpacing, 0));
+                _Vertices->push_back(osg::Vec3d(_CenterX                   , tickCenterY + i*_MajorTickSpacing, 0));
+            } else {
+                _Vertices->push_back(osg::Vec3d(_CenterX, tickCenterY, 0));
+                _Vertices->push_back(osg::Vec3d(_CenterX, tickCenterY, 0));
+            }
+        }
+        _Vertices->push_back(osg::Vec3d(_CenterX - _MajorTickHeight, tickCenterY, 0));
+        _Vertices->push_back(osg::Vec3d(_CenterX                   , tickCenterY, 0));
+
+        if (_MinorTicks > 0) {
+            double tickSpacing = _Length/_MinorTicks;
+            for (uint8_t i=1; i<=_MinorTicks/2; ++i)
+            {
+                _Vertices->push_back(osg::Vec3d(_CenterX + _MinorTickHeight, tickCenterY - (i-0.5)*tickSpacing, 0));
+                _Vertices->push_back(osg::Vec3d(_CenterX                   , tickCenterY - (i-0.5)*tickSpacing, 0));
+                _Vertices->push_back(osg::Vec3d(_CenterX + _MinorTickHeight, tickCenterY + (i-0.5)*tickSpacing, 0));
+                _Vertices->push_back(osg::Vec3d(_CenterX                   , tickCenterY + (i-0.5)*tickSpacing, 0));
+            }
         }
     }
     _Vertices->dirty();
