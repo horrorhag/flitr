@@ -520,8 +520,6 @@ ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
 ADD_SUBDIRECTORY(examples/adaptive_threshold)
 
-ADD_SUBDIRECTORY(apps/laser_interlock)
-
 #================
 IF(FLITR_USE_OSG)
 

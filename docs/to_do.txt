@@ -1,4 +1,3 @@
 ToDo:
 
-* Move the ImageProcessor's child class _title member to the base ImageProcessor class for use in configuring the StatsCollector!
 

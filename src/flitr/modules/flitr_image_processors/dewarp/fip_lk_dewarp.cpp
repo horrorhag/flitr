@@ -460,8 +460,26 @@ bool FIPLKDewarp::trigger()
                                                 const float dy=bilinearRead(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
                                                 
                                                 const float imgDiff=img-refImgData[offset];
-                                                hx-=(imgDiff*dx)*dSqRecip;
-                                                hy-=(imgDiff*dy)*dSqRecip;
+
+                                                float dhx = (imgDiff*dx)*dSqRecip;
+                                                float dhy = (imgDiff*dy)*dSqRecip;
+                                                
+                                                const float dh=sqrtf(hx*hx+hy*hy);
+                                                
+                                                const float dhMax=1.0f;
+                                                
+                                                if (dh>dhMax)
+                                                {//If an error occurs then clamp the resulting h vector.
+                                                    const float recipH=dhMax/dh;
+                                                    dhx*=recipH;
+                                                    dhy*=recipH;
+                                                }
+                                                
+                                                hx-=dhx;
+                                                hy-=dhy;
+                                                
+                                                //hx-=(imgDiff*dx)*dSqRecip;
+                                                //hy-=(imgDiff*dy)*dSqRecip;
                                             }
 #endif
                                             
