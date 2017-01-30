@@ -103,7 +103,10 @@ namespace flitr {
         
         const size_t numLevels_;
         
+        //!Scale space stack of input images - Gaussian filter downsampled.
         std::vector<float *> imgVec_;
+        
+        //!Scale space stack of average reference images.
         std::vector<float *> refImgVec_;
         
         std::vector<float *> dxVec_;
@@ -123,8 +126,15 @@ namespace flitr {
         
         float *scratchData_;
         
-        float *inputImgData_;
-        float *finalImgData_; //With lucky regions, etc.
+        //!Unfiltered cropped input data.
+        float *inputImgDataR_;
+        float *inputImgDataG_;
+        float *inputImgDataB_;
+        
+        //!Output image, lucky region/pixel accumulation, etc.
+        float *finalImgDataR_;
+        float *finalImgDataG_;
+        float *finalImgDataB_;
     };
     
 }

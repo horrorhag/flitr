@@ -120,7 +120,7 @@ namespace flitr {
 
     private:
         
-        //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated.
+        //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated!
         template<typename T>
         void process(T * const dataWrite, T const * const dataRead,
                      const size_t componentsPerLine, const size_t height)
