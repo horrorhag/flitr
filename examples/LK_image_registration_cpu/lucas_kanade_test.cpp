@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     */
 
     //==
-    std::shared_ptr<flitr::V4L2Producer> ip(new flitr::V4L2Producer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, "/dev/video0", 2));
+    std::shared_ptr<flitr::V4L2Producer> ip(new flitr::V4L2Producer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, argv[1], 2));
     if (!ip->init())
     {
         std::cerr << "Could not open v4l device." << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
     //    }
     
     
-    
+    /*
     //==
     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToUI8,1));
     if (!mffc->init())
@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
     mffc->openFiles(filenameStringStream.str());
     mffc->startWriting();
     
-    
+    */
     
     osg::Group *root_node = new osg::Group;
     
@@ -350,8 +350,8 @@ int main(int argc, char *argv[])
         FThread::microSleep(3000);
     }
     
-    mffc->stopWriting();
-    mffc->closeFiles();
+    //mffc->stopWriting();
+    //mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
