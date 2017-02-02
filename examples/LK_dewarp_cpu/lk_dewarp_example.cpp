@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
     }
     std::stringstream filenameStringStream;
     filenameStringStream << argv[1] << "_improved";
-    mffc->openFiles(filenameStringStream.str(),25);
+    mffc->openFiles(filenameStringStream.str(),20);
     //mffc->setCodec(flitr::VideoCodec::FLITR_MPEG4_CODEC, 200000);
     mffc->startWriting();
     
