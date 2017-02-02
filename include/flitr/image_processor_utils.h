@@ -26,6 +26,17 @@
 #include <math.h>
 #include <stdint.h>
 
+#include <iostream>
+#include <vector>
+
+#ifdef FLITR_USE_OPENCL
+#ifdef __APPLE__
+#include <OpenCL/opencl.h>
+#else
+#include <CL/cl.h>
+#endif
+#endif
+
 namespace flitr {
     //! General purpose Integral image.
     class FLITR_EXPORT IntegralImage
@@ -396,6 +407,9 @@ namespace flitr {
         
         //!Sets the radius of the Gaussian.
         void setFilterRadius(const float filterRadius);
+
+        //!Get the radius of the Gaussian.
+        float getFilterRadius() const;
         
         //!Set the width of the convolution kernel.
         void setKernelWidth(const int kernelWidth);
@@ -500,15 +514,256 @@ namespace flitr {
     };
     
     
+    
     //! General purpose Morphological filter.
     class FLITR_EXPORT MorphologicalFilter
     {
     public:
         MorphologicalFilter()
-        {}
+        {
+#ifdef FLITR_USE_OPENCL
+            cl_uint platformIdCount = 0;
+            clGetPlatformIDs(0, nullptr, &platformIdCount);
+            std::cout << "Found " << platformIdCount << " platform(s)" << std::endl;
+            
+            std::vector<cl_platform_id> platformIds(platformIdCount);
+            clGetPlatformIDs(platformIdCount, platformIds.data (), nullptr);
+            std::cout << "OpenCL platforms: \n";
+            for (cl_uint i = 0; i < platformIdCount; ++i)
+            {
+                std::cout << "\t (" << (i+1) << ") : " << GetPlatformName(platformIds [i]) << std::endl;
+            }
+            std::cout.flush();
+            
+            cl_uint deviceIdCount = 0;
+            clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceIdCount);
+            
+            std::vector<cl_device_id> deviceIds(deviceIdCount);
+            clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, deviceIdCount, deviceIds.data(), nullptr);
+            std::cout << "OpenCL devices on platform 0: \n";
+            for (cl_uint i = 0; i < deviceIdCount; ++i)
+            {
+                std::cout << "\t (" << (i+1) << ") : " << GetDeviceName(deviceIds[i]) << std::endl;
+            }
+            
+            const int targetDevice = deviceIdCount - 1;
+            
+            const cl_context_properties contextProperties[] = {CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(platformIds[0]), 0, 0};
+            
+            cl_int error = CL_SUCCESS;
+            //!@ToDo - Share the OpenCL context and memory between image processors...
+            //_clContext = clCreateContextFromType(contextProperties, CL_DEVICE_TYPE_GPU, nullptr, nullptr, &error);
+            _clContext = clCreateContext(contextProperties, deviceIdCount, deviceIds.data(), nullptr, nullptr, &error);
+            CheckError(error);
+            std::cout << "Context created" << std::endl;
+            
+            _clQueue = clCreateCommandQueue(_clContext, deviceIds[targetDevice], 0, &error);
+            CheckError(error);
+            std::cout << "Command queue created" << std::endl;
+            
+            const char *erodeKernelSource = "\n" \
+            "__constant sampler_t sampler =  \n" \
+            "CLK_NORMALIZED_COORDS_FALSE     \n" \
+            "| CLK_ADDRESS_CLAMP_TO_EDGE     \n" \
+            "| CLK_FILTER_NEAREST;           \n" \
+            "                                \n" \
+            "__kernel void erodeX(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 minValue = read_imagef(input, sampler, pos - (int2)(hsew,0));  \n" \
+            
+            "        for(int x = -hsew+1; x < hsew; ++x) \n" \
+            "        {                                                \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(x,0));  \n" \
+            
+            "            if (value.x < minValue.x)                    \n" \
+            "            {                                            \n" \
+            "                minValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
+            
+            "    write_imagef(output, pos, minValue);                 \n" \
+            "}                                                 \n" \
+            
+            "__kernel void erodeY(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 minValue = read_imagef(input, sampler, pos - (int2)(0,hsew));  \n" \
+            
+            "        for(int y = -hsew+1; y < hsew; ++y) \n" \
+            "        {                                                \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(0,y));  \n" \
+            
+            "            if (value.x < minValue.x)                    \n" \
+            "            {                                            \n" \
+            "                minValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
+            
+            "    write_imagef(output, pos, minValue);                 \n" \
+            "}                                                 \n" \
+            "\n";
+            
+            
+            const char *dilateKernelSource = "\n" \
+            "__constant sampler_t sampler =  \n" \
+            "CLK_NORMALIZED_COORDS_FALSE     \n" \
+            "| CLK_ADDRESS_CLAMP_TO_EDGE     \n" \
+            "| CLK_FILTER_NEAREST;           \n" \
+            "                                \n" \
+            "__kernel void dilateX(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 maxValue = read_imagef(input, sampler, pos - (int2)(hsew,0));  \n" \
+            
+            "        for(int x = -hsew+1; x < hsew; ++x) \n" \
+            "        {                                                \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(x,0));  \n" \
+            
+            "            if (value.x > maxValue.x)                    \n" \
+            "            {                                            \n" \
+            "                maxValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
+            
+            "    write_imagef(output, pos, maxValue);                 \n" \
+            "}                                                 \n" \
+            
+            "__kernel void dilateY(__read_only image2d_t input, __write_only image2d_t output, int hsew)  \n" \
+            "{                               \n" \
+            "                                \n" \
+            "    const int2 pos = {get_global_id(0), get_global_id(1)};  \n" \
+            
+            "    float4 maxValue = read_imagef(input, sampler, pos - (int2)(0,hsew));  \n" \
+            
+            "        for(int y = -hsew+1; y < hsew; ++y) \n" \
+            "        {                                                \n" \
+            "            const float4 value = read_imagef(input, sampler, pos + (int2)(0,y));  \n" \
+            
+            "            if (value.x > maxValue.x)                    \n" \
+            "            {                                            \n" \
+            "                maxValue.x=value.x;                      \n" \
+            "            }                                            \n" \
+            "        }                                                \n" \
+            
+            "    write_imagef(output, pos, maxValue);                 \n" \
+            "}                                                 \n" \
+            "\n";
+            
+            _programErode = clCreateProgramWithSource (_clContext,
+                                                       1,                             // the number of strings
+                                                       (const char**) &erodeKernelSource,  // an array of strings
+                                                       NULL,                          // array of string lengths
+                                                       &error);
+            CheckError(error);
+            std::cout << "Erode programs created." << std::endl;
+            
+            _programDilate = clCreateProgramWithSource (_clContext,
+                                                        1,                             // the number of strings
+                                                        (const char**) &dilateKernelSource,  // an array of strings
+                                                        NULL,                          // array of string lengths
+                                                        &error);
+            CheckError(error);
+            std::cout << "Dilate program created." << std::endl;
+            
+            error=clBuildProgram(_programErode, deviceIdCount, deviceIds.data(), "", nullptr, nullptr);
+            if (error == CL_BUILD_PROGRAM_FAILURE)
+            {
+                size_t log_size;
+                clGetProgramBuildInfo(_programErode, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+                char *log = (char *) malloc(log_size);
+                clGetProgramBuildInfo(_programErode, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+                printf("%s\n", log);
+            }
+            CheckError(error);
+            std::cout << "Erode programs built." << std::endl;
+            
+            error=clBuildProgram(_programDilate, deviceIdCount, deviceIds.data(), "", nullptr, nullptr);
+            if (error == CL_BUILD_PROGRAM_FAILURE)
+            {
+                size_t log_size;
+                clGetProgramBuildInfo(_programDilate, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+                char *log = (char *) malloc(log_size);
+                clGetProgramBuildInfo(_programDilate, deviceIds[targetDevice], CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+                printf("%s\n", log);
+            }
+            CheckError(error);
+            std::cout << "Dilate programs built." << std::endl;
+            
+            _kernelErodeX = clCreateKernel(_programErode, "erodeX", &error);
+            CheckError(error);
+            _kernelErodeY = clCreateKernel(_programErode, "erodeY", &error);
+            CheckError(error);
+            std::cout << "Erode kernels created." << std::endl;
+            
+            _kernelDilateX = clCreateKernel(_programDilate, "dilateX", &error);
+            CheckError(error);
+            _kernelDilateY = clCreateKernel(_programDilate, "dilateY", &error);
+            CheckError(error);
+            std::cout << "Dilate kernels created." << std::endl;
+#endif
+        }
         
         //! Destructor
-        ~MorphologicalFilter() {}
+        ~MorphologicalFilter()
+        {
+#ifdef FLITR_USE_OPENCL
+            clReleaseKernel(_kernelErodeX);
+            clReleaseKernel(_kernelErodeY);
+            
+            clReleaseKernel(_kernelDilateX);
+            clReleaseKernel(_kernelDilateY);
+            
+            clReleaseProgram(_programErode);
+            clReleaseProgram(_programDilate);
+            
+            clReleaseCommandQueue(_clQueue);
+            clReleaseContext(_clContext);
+#endif
+        }
+        
+        
+#ifdef FLITR_USE_OPENCL
+        //Should probably move these members to some shared opencl utility header...
+        std::string GetDeviceName(cl_device_id id)
+        {
+            size_t size = 0;
+            clGetDeviceInfo(id, CL_DEVICE_NAME, 0, nullptr, &size);
+            
+            std::string result;
+            result.resize(size);
+            clGetDeviceInfo(id, CL_DEVICE_NAME, size, const_cast<char*> (result.data ()), nullptr);
+            
+            return result;
+        }
+        
+        std::string GetPlatformName(cl_platform_id id)
+        {
+            size_t size = 0;
+            clGetPlatformInfo (id, CL_PLATFORM_NAME, 0, nullptr, &size);
+            
+            std::string result;
+            result.resize (size);
+            clGetPlatformInfo(id, CL_PLATFORM_NAME, size, const_cast<char*> (result.data ()), nullptr);
+            
+            return result;
+        }
+        
+        void CheckError(cl_int error)
+        {
+            if (error != CL_SUCCESS)
+            {
+                std::cerr << "OpenCL call failed with error " << error << std::endl;
+                std::exit (1);
+            }
+        }
+#endif
         
         //!Synchronous process method for T pixel format.
         template<typename T>
@@ -519,28 +774,104 @@ namespace flitr {
         {
             structElemWidth=structElemWidth|1;//Make structuring element's width is odd.
             
+            const size_t halfStructElem=(structElemWidth>>1);
+            
+#ifdef FLITR_USE_OPENCL
+            const cl_image_format format = { CL_INTENSITY, CL_UNORM_INT8 };
+            cl_int error = CL_SUCCESS;
+            
+            cl_mem inputImage = clCreateImage2D(_clContext, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, &format,
+                                                width, height, 0,
+                                                const_cast<uint8_t*>(dataReadUS),
+                                                &error);
+            
+            cl_mem tempImage = clCreateImage2D(_clContext, CL_MEM_READ_WRITE, &format,
+                                               width, height, 0,
+                                               nullptr,
+                                               &error);
+            
+            cl_mem outputImage = clCreateImage2D(_clContext, CL_MEM_WRITE_ONLY, &format,
+                                                 width, height, 0,
+                                                 nullptr,
+                                                 &error);
+            
+            
+            const int32_t hsew = halfStructElem;
+            
+            clSetKernelArg(_kernelErodeX, 0, sizeof (cl_mem), &inputImage);
+            clSetKernelArg(_kernelErodeX, 1, sizeof (cl_mem), &tempImage);
+            clSetKernelArg(_kernelErodeX, 2, sizeof(int32_t), &hsew);
+            
+            clSetKernelArg(_kernelErodeY, 0, sizeof (cl_mem), &tempImage);
+            clSetKernelArg(_kernelErodeY, 1, sizeof (cl_mem), &outputImage);
+            clSetKernelArg(_kernelErodeY, 2, sizeof(int32_t), &hsew);
+            
+            
+            // Run the processing
+            // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
+            std::size_t offset[3] = {0};
+            std::size_t size[3] = {width, height, 1};
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelErodeX, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelErodeY, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            
+            // Get the result back to the host
+            std::size_t origin[3] = {0};
+            std::size_t region[3] = {width, height, 1};
+            clEnqueueReadImage (_clQueue, outputImage, CL_TRUE, origin, region, 0, 0, dataWriteDS, 0, nullptr, nullptr);
+            
+            
+            clReleaseMemObject(inputImage);
+            clReleaseMemObject(tempImage);
+            clReleaseMemObject(outputImage);
+#else
             const size_t widthMinusStructElem=width-structElemWidth;
             const size_t heightMinusStructElem=height-structElemWidth;
-            const size_t halfStructElem=(structElemWidth>>1);
             const size_t widthMinusHalfStructElem=width-halfStructElem;
-            
+
             //First pass in x.
             for (size_t y=0; y<height; ++y)
             {
                 const size_t lineOffsetFS=y * width + halfStructElem;
                 const size_t lineOffsetUS=y * width;
                 
+                T minImgValue;
+                int minTTL=0;
+                
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
-                    size_t offsetUS=lineOffsetUS + x;
-                    T minImgValue=dataReadUS[offsetUS];
-                    ++offsetUS;
-                    
-                    for (size_t i=1; i<structElemWidth; ++i)
+                    //Use the time to live (TTL) of the min/max and only do a full search if min/max's TTL expires.
+                    if (minTTL<=0)
                     {
-                        const T imgValue = dataReadUS[offsetUS];
-                        if (imgValue<minImgValue) minImgValue=imgValue;
+                        size_t offsetUS=lineOffsetUS + x;
+                        minImgValue=dataReadUS[offsetUS];
+                        minTTL=0;
                         ++offsetUS;
+                        
+                        for (size_t i=1; i<structElemWidth; ++i)
+                        {
+                            const T &imgValue = dataReadUS[offsetUS];
+                            
+                            if (imgValue<minImgValue)
+                            {
+                                minImgValue=imgValue;
+                                minTTL=i;
+                            }
+                            
+                            ++offsetUS;
+                        }
+                    } else
+                    {
+                        const size_t offsetUS=lineOffsetUS + x + (structElemWidth-1);
+                        const T &imgValue = dataReadUS[offsetUS];
+                        
+                        if (imgValue<=minImgValue)
+                        {
+                            minImgValue=imgValue;
+                            minTTL=structElemWidth-1;
+                        } else
+                        {
+                            --minTTL;
+                        }
                     }
                     
                     dataScratch[lineOffsetFS + x]=minImgValue;
@@ -548,6 +879,13 @@ namespace flitr {
             }
             
             //Second pass in y.
+            T *minImgValueArr=new T[width];
+            int *minTTLArr=new int[width];
+            for (size_t x=0; x<width; ++x)
+            {
+                minTTLArr[x]=0;
+            }
+            
             for (size_t y=0; y<heightMinusStructElem; ++y)
             {
                 const size_t lineOffsetDS=(y+halfStructElem) * width;
@@ -555,21 +893,45 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
-                    size_t offsetFS=lineOffsetFS + x;
-                    T minImgValue=dataScratch[offsetFS];
-                    offsetFS+=width;
-                    
-                    for (size_t j=1; j<structElemWidth; ++j)
+                    //Use the time to live (TTL) of the min/max and only do a full search if min/max's TTL expires.
+                    if (minTTLArr[x]<=0)
                     {
-                        const T imgValue = dataScratch[offsetFS];
-                        if (imgValue<minImgValue) minImgValue=imgValue;
+                        size_t offsetFS=lineOffsetFS + x;
+                        minImgValueArr[x]=dataScratch[offsetFS];
+                        minTTLArr[x]=0;
                         offsetFS+=width;
+                        
+                        for (size_t j=1; j<structElemWidth; ++j)
+                        {
+                            const T &imgValue = dataScratch[offsetFS];
+                            
+                            if (imgValue<minImgValueArr[x])
+                            {
+                                minImgValueArr[x]=imgValue;
+                                minTTLArr[x]=j;
+                            }
+                            
+                            offsetFS+=width;
+                        }
+                    } else
+                    {
+                        const size_t offsetFS=lineOffsetFS + x + (structElemWidth-1)*width;
+                        const T &imgValue = dataScratch[offsetFS];
+                        
+                        if (imgValue<=minImgValueArr[x])
+                        {
+                            minImgValueArr[x]=imgValue;
+                            minTTLArr[x]=structElemWidth-1;
+                        } else
+                        {
+                            --minTTLArr[x];
+                        }
                     }
                     
-                    dataWriteDS[lineOffsetDS + x]=minImgValue;
+                    dataWriteDS[lineOffsetDS + x]=minImgValueArr[x];
                 }
             }
-            
+#endif
             return true;
         }
         
@@ -595,6 +957,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetUS=(lineOffsetUS + x)*3;
                     T minImgValueR=dataReadUS[offsetUS+0];
                     T minImgValueG=dataReadUS[offsetUS+1];
@@ -603,9 +966,9 @@ namespace flitr {
                     
                     for (size_t i=1; i<structElemWidth; ++i)
                     {
-                        const T imgValueR = dataReadUS[offsetUS + 0];
-                        const T imgValueG = dataReadUS[offsetUS + 1];
-                        const T imgValueB = dataReadUS[offsetUS + 2];
+                        const T &imgValueR = dataReadUS[offsetUS + 0];
+                        const T &imgValueG = dataReadUS[offsetUS + 1];
+                        const T &imgValueB = dataReadUS[offsetUS + 2];
                         
                         if (imgValueR<minImgValueR) minImgValueR=imgValueR;
                         if (imgValueG<minImgValueG) minImgValueG=imgValueG;
@@ -628,6 +991,7 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetFS=(lineOffsetFS + x)*3;
                     T minImgValueR=dataScratch[offsetFS + 0];
                     T minImgValueG=dataScratch[offsetFS + 1];
@@ -636,9 +1000,9 @@ namespace flitr {
                     
                     for (size_t j=1; j<structElemWidth; ++j)
                     {
-                        const T imgValueR = dataScratch[offsetFS + 0];
-                        const T imgValueG = dataScratch[offsetFS + 1];
-                        const T imgValueB = dataScratch[offsetFS + 2];
+                        const T &imgValueR = dataScratch[offsetFS + 0];
+                        const T &imgValueG = dataScratch[offsetFS + 1];
+                        const T &imgValueB = dataScratch[offsetFS + 2];
                         
                         if (imgValueR<minImgValueR) minImgValueR=imgValueR;
                         if (imgValueG<minImgValueG) minImgValueG=imgValueG;
@@ -665,28 +1029,104 @@ namespace flitr {
         {
             structElemWidth=structElemWidth|1;//Make structuring element's width is odd.
             
+            const size_t halfStructElem=(structElemWidth>>1);
+            
+#ifdef FLITR_USE_OPENCL
+            const cl_image_format format = { CL_INTENSITY, CL_UNORM_INT8 };
+            cl_int error = CL_SUCCESS;
+            
+            cl_mem inputImage = clCreateImage2D(_clContext, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, &format,
+                                                width, height, 0,
+                                                const_cast<uint8_t*>(dataReadUS),
+                                                &error);
+            
+            cl_mem tempImage = clCreateImage2D(_clContext, CL_MEM_READ_WRITE, &format,
+                                               width, height, 0,
+                                               nullptr,
+                                               &error);
+            
+            cl_mem outputImage = clCreateImage2D(_clContext, CL_MEM_WRITE_ONLY, &format,
+                                                 width, height, 0,
+                                                 nullptr,
+                                                 &error);
+            
+            clSetKernelArg(_kernelDilateX, 0, sizeof (cl_mem), &inputImage);
+            clSetKernelArg(_kernelDilateX, 1, sizeof (cl_mem), &tempImage);
+            
+            clSetKernelArg(_kernelDilateY, 0, sizeof (cl_mem), &tempImage);
+            clSetKernelArg(_kernelDilateY, 1, sizeof (cl_mem), &outputImage);
+            
+            int32_t hsew = halfStructElem;
+            clSetKernelArg(_kernelDilateX, 2, sizeof(int32_t), &hsew);
+            clSetKernelArg(_kernelDilateY, 2, sizeof(int32_t), &hsew);
+            
+            
+            // Run the processing
+            // http://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/clEnqueueNDRangeKernel.html
+            std::size_t offset[3] = {0};
+            std::size_t size[3] = {width, height, 1};
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelDilateX, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            CheckError(clEnqueueNDRangeKernel(_clQueue, _kernelDilateY, 2, offset, size, nullptr, 0, nullptr, nullptr));
+            
+            // Get the result back to the host
+            std::size_t origin[3] = {0};
+            std::size_t region[3] = {width, height, 1};
+            clEnqueueReadImage (_clQueue, outputImage, CL_TRUE, origin, region, 0, 0, dataWriteDS, 0, nullptr, nullptr);
+            
+            //SaveImage (RGBAtoRGB (result), "output.ppm");
+            
+            clReleaseMemObject(inputImage);
+            clReleaseMemObject(tempImage);
+            clReleaseMemObject(outputImage);
+#else
             const size_t widthMinusStructElem=width-structElemWidth;
             const size_t heightMinusStructElem=height-structElemWidth;
-            const size_t halfStructElem=(structElemWidth>>1);
             const size_t widthMinusHalfStructElem=width-halfStructElem;
-            
+
             //First pass in x.
             for (size_t y=0; y<height; ++y)
             {
                 const size_t lineOffsetFS=y * width + halfStructElem;
                 const size_t lineOffsetUS=y * width;
                 
+                T maxImgValue;
+                int maxTTL=0;
+                
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
-                    size_t offsetUS=lineOffsetUS + x;
-                    T maxImgValue=dataReadUS[offsetUS];
-                    ++offsetUS;
-                    
-                    for (size_t i=1; i<structElemWidth; ++i)
+                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    if (maxTTL<=0)
                     {
-                        const T imgValue = dataReadUS[offsetUS];
-                        if (imgValue>maxImgValue) maxImgValue=imgValue;
+                        size_t offsetUS=lineOffsetUS + x;
+                        maxImgValue=dataReadUS[offsetUS];
+                        maxTTL=0;
                         ++offsetUS;
+                        
+                        for (size_t i=1; i<structElemWidth; ++i)
+                        {
+                            const T &imgValue = dataReadUS[offsetUS];
+                            
+                            if (imgValue>maxImgValue)
+                            {
+                                maxImgValue=imgValue;
+                                maxTTL=i;
+                            }
+                            
+                            ++offsetUS;
+                        }
+                    } else
+                    {
+                        const size_t offsetUS=lineOffsetUS + x + (structElemWidth-1);
+                        const T &imgValue = dataReadUS[offsetUS];
+                        
+                        if (imgValue>=maxImgValue)
+                        {
+                            maxImgValue=imgValue;
+                            maxTTL=structElemWidth-1;
+                        } else
+                        {
+                            --maxTTL;
+                        }
                     }
                     
                     dataScratch[lineOffsetFS + x]=maxImgValue;
@@ -694,6 +1134,13 @@ namespace flitr {
             }
             
             //Second pass in y.
+            T *maxImgValueArr=new T[width];
+            int *maxTTLArr=new int[width];
+            for (size_t x=0; x<width; ++x)
+            {
+                maxTTLArr[x]=0;
+            }
+            
             for (size_t y=0; y<heightMinusStructElem; ++y)
             {
                 const size_t lineOffsetDS=(y+halfStructElem) * width;
@@ -701,21 +1148,45 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
-                    size_t offsetFS=lineOffsetFS + x;
-                    T maxImgValue=dataScratch[offsetFS];
-                    offsetFS+=width;
-                    
-                    for (size_t j=1; j<structElemWidth; ++j)
+                    //Use the time to live (TTL) of the min/max and only do a full search of min/max's TTL expires.
+                    if (maxTTLArr[x]<=0)
                     {
-                        const T imgValue = dataScratch[offsetFS];
-                        if (imgValue>maxImgValue) maxImgValue=imgValue;
+                        size_t offsetFS=lineOffsetFS + x;
+                        maxImgValueArr[x]=dataScratch[offsetFS];
+                        maxTTLArr[x]=0;
                         offsetFS+=width;
+                        
+                        for (size_t j=1; j<structElemWidth; ++j)
+                        {
+                            const T &imgValue = dataScratch[offsetFS];
+                            
+                            if (imgValue>maxImgValueArr[x])
+                            {
+                                maxImgValueArr[x]=imgValue;
+                                maxTTLArr[x]=j;
+                            }
+                            
+                            offsetFS+=width;
+                        }
+                    } else
+                    {
+                        const size_t offsetFS=lineOffsetFS + x + (structElemWidth-1)*width;
+                        const T &imgValue = dataScratch[offsetFS];
+                        
+                        if (imgValue>=maxImgValueArr[x])
+                        {
+                            maxImgValueArr[x]=imgValue;
+                            maxTTLArr[x]=structElemWidth-1;
+                        } else
+                        {
+                            --maxTTLArr[x];
+                        }
                     }
                     
-                    dataWriteDS[lineOffsetDS + x]=maxImgValue;
+                    dataWriteDS[lineOffsetDS + x]=maxImgValueArr[x];
                 }
             }
-            
+#endif
             return true;
         }
         
@@ -741,6 +1212,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<widthMinusStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetUS=(lineOffsetUS + x)*3;
                     T maxImgValueR=dataReadUS[offsetUS+0];
                     T maxImgValueG=dataReadUS[offsetUS+1];
@@ -749,9 +1221,9 @@ namespace flitr {
                     
                     for (size_t i=1; i<structElemWidth; ++i)
                     {
-                        const T imgValueR = dataReadUS[offsetUS + 0];
-                        const T imgValueG = dataReadUS[offsetUS + 1];
-                        const T imgValueB = dataReadUS[offsetUS + 2];
+                        const T &imgValueR = dataReadUS[offsetUS + 0];
+                        const T &imgValueG = dataReadUS[offsetUS + 1];
+                        const T &imgValueB = dataReadUS[offsetUS + 2];
                         
                         if (imgValueR>maxImgValueR) maxImgValueR=imgValueR;
                         if (imgValueG>maxImgValueG) maxImgValueG=imgValueG;
@@ -774,6 +1246,7 @@ namespace flitr {
                 
                 for (size_t x=halfStructElem; x<widthMinusHalfStructElem; ++x)
                 {
+                    //!@todo Add TTL optimisation from grayscale version above.
                     size_t offsetFS=(lineOffsetFS + x)*3;
                     T maxImgValueR=dataScratch[offsetFS + 0];
                     T maxImgValueG=dataScratch[offsetFS + 1];
@@ -782,9 +1255,9 @@ namespace flitr {
                     
                     for (size_t j=1; j<structElemWidth; ++j)
                     {
-                        const T imgValueR = dataScratch[offsetFS + 0];
-                        const T imgValueG = dataScratch[offsetFS + 1];
-                        const T imgValueB = dataScratch[offsetFS + 2];
+                        const T &imgValueR = dataScratch[offsetFS + 0];
+                        const T &imgValueG = dataScratch[offsetFS + 1];
+                        const T &imgValueB = dataScratch[offsetFS + 2];
                         
                         if (imgValueR>maxImgValueR) maxImgValueR=imgValueR;
                         if (imgValueG>maxImgValueG) maxImgValueG=imgValueG;
@@ -861,7 +1334,7 @@ namespace flitr {
                 
                 for (size_t x=0; x<width; ++x)
                 {
-                    const T imgValue=dataReadUS[lineOffset+x];
+                    const T &imgValue=dataReadUS[lineOffset+x];
                     
                     dataWriteDS[lineOffset+x] = (imgValue>=t) ? max : T(0);
                 }
@@ -884,9 +1357,9 @@ namespace flitr {
                 
                 for (size_t x=0; x<width; ++x)
                 {
-                    const T imgValueR=dataReadUS[offset + 0];
-                    const T imgValueG=dataReadUS[offset + 1];
-                    const T imgValueB=dataReadUS[offset + 2];
+                    const T &imgValueR=dataReadUS[offset + 0];
+                    const T &imgValueG=dataReadUS[offset + 1];
+                    const T &imgValueB=dataReadUS[offset + 2];
                     
                     dataWriteDS[offset + 0] = (imgValueR>=t) ? max : T(0);
                     dataWriteDS[offset + 1] = (imgValueG>=t) ? max : T(0);
@@ -898,6 +1371,24 @@ namespace flitr {
             
             return true;
         }
+        
+    private:
+        
+#ifdef FLITR_USE_OPENCL
+        cl_context _clContext;
+        cl_command_queue _clQueue;
+        
+        //===
+        cl_program _programErode;
+        cl_program _programDilate;
+        
+        //===
+        cl_kernel _kernelErodeX;
+        cl_kernel _kernelErodeY;
+        
+        cl_kernel _kernelDilateX;
+        cl_kernel _kernelDilateY;
+#endif
     };
     
 }

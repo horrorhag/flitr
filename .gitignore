@@ -1,4 +1,4 @@
 include/flitr/flitr_config.h
 CMakeLists.txt.user
 build/
-
+build_*/

@@ -84,14 +84,20 @@ namespace flitr {
          *@return Boolean result flag. True indicates successful initialisation.*/
         virtual bool init();
         
-        /*!Method to start the asynchronous trigger thread. trigger() has to be called synchronously/manually if thread not started.
-         *@sa ImageProcessor::trigger*/
-        virtual bool startTriggerThread();
+        /*! Method to start the asynchronous trigger thread.
+         *
+         * trigger() has to be called synchronously/manually if thread not started.
+         *@sa ImageProcessor::trigger()
+         *
+         * The optional argument @a cpu_affinity can be used to specify the
+         * CPU affinity for the trigger thread. See the FThread::startThread() and
+         * FThread::applyAffinity() functions for more information. */
+        virtual bool startTriggerThread(int32_t cpu_affinity = -1);
         virtual bool stopTriggerThread();
         virtual bool isTriggerThreadStarted() const {return Thread_!=0;}
         
-        /*!Synchronous trigger method. Called automatically by the trigger thread if started.
-         *@sa ImageProcessor::startTriggerThread*/
+        /*! Synchronous trigger method. Called automatically by the trigger thread if started.
+         *@sa ImageProcessor::startTriggerThread() */
         virtual bool trigger() = 0;
         
         /*! Get the image format being consumed from the upstream producer.*/

@@ -180,14 +180,13 @@ namespace flitr {
         
         uint8_t *_scratchData;
         
-        double *_intImageScratchData;
-        
         GaussianFilter _gaussianFilter; //No significant state associated with this.
 
 
 #define APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
 
 #ifdef APPROX_GAUSS_FILT_USE_INTEGRAL_IMAGES
+        double *_intImageScratchData;
         BoxFilterII _boxFilter;//No significant state associated with this.
 #else
         BoxFilterRS _boxFilter;//No significant state associated with this.

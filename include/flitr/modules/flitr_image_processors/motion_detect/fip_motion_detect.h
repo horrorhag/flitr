@@ -35,9 +35,13 @@ namespace flitr {
         /*! Constructor given the upstream producer.
          *@param upStreamProducer The upstream image producer.
          *@param images_per_slot The number of images per image slot from the upstream producer.
-         *@param buffer_size The size of the shared image buffer of the downstream producer.*/
+         *@param buffer_size The size of the shared image buffer of the downstream producer.
+         *@param motionThreshold Motion above this threshold would result in a plot.
+         *@param detectionThreshold A stable plot count above this threshold would result in a detection.
+         */
         FIPMotionDetect(ImageProducer& upStreamProducer, uint32_t images_per_slot,
-                        const bool showOverlays, const bool produceOnlyMotionImages, const int motionThreshold,
+                        const bool showOverlays, const bool produceOnlyMotionImages, const bool forceRGBOutput,
+                        const float motionThreshold, const int detectionThreshold,
                         uint32_t buffer_size=FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
         
         /*! Virtual destructor */
@@ -53,21 +57,54 @@ namespace flitr {
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
 
+        //!Update the motion threshold. Motion above this threshold would result in a plot.
+        void setMotionThreshold(const float motionThreshold)
+        {
+            _motionThreshold=motionThreshold;
+        }
+        //!Get the motion threshold. Motion above this threshold would result in a plot.
+        float getMotionThreshold() const
+        {
+            return _motionThreshold;
+        }
 
+        //!Update the detection threshold. A stable plot count above this threshold would result in a detection.
+        void setDetectionThreshold(const int detectionThreshold)
+        {
+            _detectionThreshold=detectionThreshold;
+        }
+        //!Get the detection threshold. A stable plot count above this threshold would result in a detection.
+        int getDetectionThreshold() const
+        {
+            return _detectionThreshold;
+        }
 
+        //!Set if the pass should add the detection overlays to the output image.
+        void setShowOverlays(const bool showOverlays)
+        {
+            _showOverlays=showOverlays;
+        }
+        //!Get if the pass should add the detection overlays to the output image.
+        bool getShowOverlays() const
+        {
+            return _showOverlays;
+        }
+    
     private:
-        uint64_t upStreamFrameCount_;
+        uint64_t _frameCounter;
 
-        uint8_t *scratchData_;
-        double *integralImageScratchData_;
-        BoxFilterII boxFilter_; //No significant state associated with this.
+        float *_avrgImg;
+        float *_varImg;
         
-        uint8_t *currentFrame_;
-        uint8_t *previousFrame_;
+        uint8_t *_detectionImg;
+        int *_detectionCountImg;
         
-        bool showOverlays_;
-        bool produceOnlyMotionImages_;
-        int motionThreshold_;
+        bool _showOverlays;
+        bool _produceOnlyMotionImages;
+        bool _forceRGBOutput;
+        
+        float _motionThreshold;
+        int _detectionThreshold;
     };
     
 }

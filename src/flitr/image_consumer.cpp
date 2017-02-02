@@ -34,6 +34,7 @@ ImageConsumer::~ImageConsumer()
     ImageProducer_->removeConsumer(*this);
 }
 
+//!Get the consumer's pixel format.
 ImageFormat ImageConsumer::getFormat(uint32_t index) const
 {
     return ImageProducer_->getFormat(index);

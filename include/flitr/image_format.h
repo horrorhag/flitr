@@ -55,8 +55,8 @@ namespace flitr {
         Width_(w),
         Height_(h),
         PixelFormat_(pix_fmt),
-		flipV_(flipV),
-		flipH_(flipH)
+        flipV_(flipV),
+        flipH_(flipH)
         {
             setPixelFormatDetails();
         }
@@ -197,8 +197,8 @@ namespace flitr {
                     case FLITR_PIX_FMT_Y_F32:
                     {
                         *((float*)outData)=(( ((uint16_t)(*(inData+0)))+
-                                            ((uint16_t)(*(inData+1)))+
-                                            ((uint16_t)(*(inData+2))) )+1.5f)*(0.333333333f*0.00390625f);
+                                             ((uint16_t)(*(inData+1)))+
+                                             ((uint16_t)(*(inData+2))) )+1.5f)*(0.333333333f*0.00390625f);
                     }
                         break;
                     case FLITR_PIX_FMT_RGB_F32:
@@ -425,6 +425,26 @@ namespace flitr {
         {
             Width_=(uint32_t)(Width_ * 2.0f + 0.5f);//+0.5 is simple positive round instead of trunc.
             Height_=(uint32_t)(Height_ * 2.0f + 0.5f);
+        }
+        
+        inline bool operator == (const ImageFormat &rValue) const
+        {
+            if ((Width_ == rValue.Width_) &&
+                (Height_ == rValue.Height_) &&
+                (PixelFormat_ == rValue.PixelFormat_) &&
+                (flipV_ == rValue.flipV_) &&
+                (flipH_ == rValue.flipH_))
+            {
+                return true;
+            } else
+            {
+                return true;
+            }
+        }
+        
+        inline bool operator != (const ImageFormat &rValue) const
+        {
+            return !ImageFormat::operator==(rValue);
         }
         
     private:

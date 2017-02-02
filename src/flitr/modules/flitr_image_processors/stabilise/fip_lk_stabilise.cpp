@@ -48,6 +48,7 @@ sumHy_(0.0f),
 burnFx_(1.0f),
 burnFy_(1.0f)
 {
+    ProcessorStats_->setID("ImageProcessor::FIPLKStabilise");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; ++i)
     {

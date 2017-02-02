@@ -1,37 +1,38 @@
 #include <iostream>
 #include <string>
 
-#ifdef FLITR_USE_OSG
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
 #include <osg/io_utils>
-#endif //FLITR_USE_OSG
 
 #include <flitr/modules/flitr_image_processors/flip/fip_flip.h>
 #include <flitr/modules/flitr_image_processors/rotate/fip_rotate.h>
 #include <flitr/modules/flitr_image_processors/transform2D/fip_transform2D.h>
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
-#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
-#include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
+#include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
+#include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
+#include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
+#include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
+#include <flitr/modules/flitr_image_processors/unsharp_mask/fip_unsharp_mask.h>
+#include <flitr/modules/flitr_image_processors/motion_detect/fip_motion_detect.h>
 #include <flitr/modules/flitr_image_processors/morphological_filter/fip_morphological_filter.h>
+#include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
 
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
-
-#ifdef FLITR_USE_OSG
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
-#endif //FLITR_USE_OSG
 
 using std::shared_ptr;
 using namespace flitr;
+
 
 class BackgroundTriggerThread : public FThread {
 public:
@@ -43,10 +44,7 @@ public:
     {
         while(!ShouldExit_)
         {
-            if (!Producer_->trigger())
-            {
-                FThread::microSleep(1000);
-            }
+            if (!Producer_->trigger()) FThread::microSleep(1000);
         }
     }
     
@@ -59,87 +57,126 @@ private:
 
 #define USE_BACKGROUND_TRIGGER_THREAD 1
 
+
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
-    {
+    if (argc != 2) {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
     
+    
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
-    if (!ip->init())
-    {
+    if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
+    
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();
 #endif
     
-    shared_ptr<FIPConvertToYF32> cnvrtToF32(new FIPConvertToYF32(*ip, 1, 1));
-    if (!cnvrtToF32->init())
-    {
-        std::cerr << "Could not initialise the cnvrtToRGBF32 processor.\n";
+    
+    //==
+    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*ip, 1, 1));
+    if (!cnvrtToYF32->init()) {
+        std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
     }
-    cnvrtToF32->startTriggerThread();
+    cnvrtToYF32->startTriggerThread();
     
-    shared_ptr<FIPGaussianFilter> gaussFilt(new FIPGaussianFilter(*cnvrtToF32, 1,
-                                                                  1.0, 41,
-                                                                  3));
-    if (!gaussFilt->init())
-    {
-        std::cerr << "Could not initialise the gaussFilt processor.\n";
+    
+    //==
+    const size_t photoMetEqWindow=128;
+    std::shared_ptr<flitr::FIPLocalPhotometricEqualise> equaliseImage(new flitr::FIPLocalPhotometricEqualise(*cnvrtToYF32, 1,
+                                                                                                             0.60, photoMetEqWindow,
+                                                                                                             2));
+    if (!equaliseImage->init()) {
+        std::cerr << "Could not initialise the equaliseImage image processor.\n";
         exit(-1);
     }
-    gaussFilt->startTriggerThread();
+    equaliseImage->startTriggerThread();
     
-    
-    shared_ptr<FIPConvertToY8> cnvrtTo8bit(new FIPConvertToY8(*gaussFilt, 1, 0.95f, 1));
-    if (!cnvrtTo8bit->init())
-    {
-        std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
+/*
+    //==
+    std::shared_ptr<flitr::FIPCrop> crop(new flitr::FIPCrop(*equaliseImage, 1,
+                                                            photoMetEqWindow, photoMetEqWindow,
+                                                            equaliseImage->getDownstreamFormat().getWidth()-(photoMetEqWindow<<1), equaliseImage->getDownstreamFormat().getHeight()-(photoMetEqWindow<<1),
+                                                            2));
+    if (!crop->init()) {
+        std::cerr << "Could not initialise the crop image processor.\n";
         exit(-1);
     }
-    cnvrtTo8bit->startTriggerThread();
+    crop->startTriggerThread();
+*/
     
     
-#ifdef FLITR_USE_OSG
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtTo8bit, 1, 1));
-    if (!osgc->init())
+    //==
+    std::shared_ptr<flitr::FIPLKStabilise> lkstabilise(new flitr::FIPLKStabilise(*equaliseImage, 1,
+                                                                                 flitr::FIPLKStabilise::Mode::INTSTAB,
+                                                                                 2));
+    if (!lkstabilise->init())
     {
+        std::cerr << "Could not initialise the lkstabilise processor.\n";
+        exit(-1);
+    }
+    lkstabilise->startTriggerThread();
+    lkstabilise->setupOutputTransformBurn(0.95f, 0.95f);
+    
+    
+    //==
+    shared_ptr<FIPConvertToY8> cnvrtTo8Bit(new FIPConvertToY8(*lkstabilise, 1, 0.99f, 1));
+    if (!cnvrtTo8Bit->init()) {
+        std::cerr << "Could not initialise the cnvrtTo8Bit processor.\n";
+        exit(-1);
+    }
+    cnvrtTo8Bit->startTriggerThread();
+    
+    
+    //==
+    std::shared_ptr<FIPMotionDetect> motionDetect(new FIPMotionDetect(*cnvrtTo8Bit, 1,
+                                                                      false, false, true, //showOverlays, produceOnlyMotionImages, forceRGBOutput
+                                                                      3.5f, 2, //motionThreshold, detectionThreshold
+                                                                      2));
+    if (!motionDetect->init())
+    {
+        std::cerr << "Could not initialise the motion detection processor "<< " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+        return false;
+    }
+    motionDetect->startTriggerThread();
+    
+    
+    //==
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*motionDetect, 1, 1));
+    //shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*morphologicalFilt, 1, 1));
+    if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
     
+    
+    //==
     shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
-    if (!osgcOrig->init())
-    {
+    if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
     }
-#endif //FLITR_USE_OSG
     
     
     /*
-     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*gaussFilt,1));
-     if (!mffc->init())
-     {
+     shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToM8,1));
+     if (!mffc->init()) {
      std::cerr << "Could not init FFmpeg consumer\n";
      exit(-1);
      }
-     
      std::stringstream filenameStringStream;
-     filenameStringStream << argv[1] << "_out";
+     filenameStringStream << argv[1] << "_improved";
      mffc->openFiles(filenameStringStream.str());
-     mffc->startWriting();
      */
     
     
-#ifdef FLITR_USE_OSG
     osg::Group *root_node = new osg::Group;
     
     shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
@@ -152,6 +189,7 @@ int main(int argc, char *argv[])
         quad->setTransform(translate);
     }
     
+    
     shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
     root_node->addChild(quadOrig->getRoot().get());
     {
@@ -163,12 +201,13 @@ int main(int argc, char *argv[])
     }
     
     
+    //=== Setup OSG Viewer ===//
     osgViewer::Viewer viewer;
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
     
-    viewer.setUpViewInWindow(100, 100, 640, 480);
+    viewer.setUpViewInWindow(100, 100, 1280, 480);
     viewer.realize();
     
     const int use_trackball = 0;
@@ -182,11 +221,8 @@ int main(int argc, char *argv[])
         OrthoTextureManipulator* om = new OrthoTextureManipulator(osgc->getOutputTexture()->getTextureWidth(), osgc->getOutputTexture()->getTextureHeight());
         viewer.setCameraManipulator(om);
     }
-#endif //FLITR_USE_OSG
+    //========================//
     
-    
-    
-#ifdef FLITR_USE_OSG
     size_t numFrames=0;
     
     while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/)
@@ -204,31 +240,22 @@ int main(int argc, char *argv[])
             osgcOrig->getNext();
             
             viewer.frame();
+            
+            /*
+             if (numFrames==15)
+             {
+             mffc->startWriting();
+             }
+             */
+            
             numFrames++;
         }
         
         FThread::microSleep(1000);
     }
-#else
     
-    while(true)
-    {
-#ifndef USE_BACKGROUND_TRIGGER_THREAD
-        //Read from the video, but don't get more than n frames ahead.
-        if (ip->getLeastNumReadSlotsAvailable()<5)
-        {
-            ip->trigger();
-        }
-#endif
-        
-        FThread::microSleep(1000);
-    }
-#endif
-    
-    
-    //mffc->stopWriting();
-    //mffc->closeFiles();
-    
+    //     mffc->stopWriting();
+    //     mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -236,9 +263,12 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    //cnvrtToRGBF32->stopTriggerThread();
-    gaussFilt->stopTriggerThread();
-    //cnvrtToRGB8->stopTriggerThread();
+    cnvrtToYF32->stopTriggerThread();
+    equaliseImage->stopTriggerThread();
+    //crop->stopTriggerThread();
+    lkstabilise->stopTriggerThread();
+    cnvrtTo8Bit->stopTriggerThread();
+    motionDetect->stopTriggerThread();
     
     return 0;
 }

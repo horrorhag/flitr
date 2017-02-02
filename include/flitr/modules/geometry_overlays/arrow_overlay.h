@@ -1,18 +1,18 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -55,7 +55,7 @@ class FLITR_EXPORT ArrowOverlay : public GeometryOverlay
      * \param height Height of the arrow, from tip point to end of tail.
      * \param filled If the arrow head should be filled or not.
      */
-    ArrowOverlay(double tip_x, double tip_y, double headWidth, double headHeight, double tailWidth, double tailLength, bool filled=false);
+    ArrowOverlay(double tip_x, double tip_y, double headWidth, double headHeight, double tailWidth, double tailLength, bool filled=false, double rotationDegrees=0);
     virtual ~ArrowOverlay();
 
     /**
@@ -87,6 +87,10 @@ class FLITR_EXPORT ArrowOverlay : public GeometryOverlay
      * Set the length of the arrow tail.
      */
     void setTailLength(double length);
+    /**
+     * Set the rotation of the arrow in degrees.
+     */
+    void setRotation(double rotationDegrees);
 
     /**
      * Get the width or base of the arrow head.
@@ -129,6 +133,8 @@ class FLITR_EXPORT ArrowOverlay : public GeometryOverlay
     double _HeadHeight;
     double _TailWidth;
     double _TailLength;
+
+    double _RotationDegrees;
 };
 
 }

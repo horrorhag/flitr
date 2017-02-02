@@ -1,4 +1,4 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
  *
  * This file is part of FLITr.
@@ -22,7 +22,7 @@
 
 using namespace flitr;
 
-ArrowOverlay::ArrowOverlay(double center_x, double center_y, double headWidth, double headHeight, double tailWidth, double tailLength, bool filled) :
+ArrowOverlay::ArrowOverlay(double center_x, double center_y, double headWidth, double headHeight, double tailWidth, double tailLength, bool filled, double rotationDegrees) :
     GeometryOverlay(),
     _TipX(center_x),
     _TipY(center_y),
@@ -31,6 +31,7 @@ ArrowOverlay::ArrowOverlay(double center_x, double center_y, double headWidth, d
     _TailWidth(tailWidth),
     _TailLength(tailLength)
 {
+    _RotationDegrees = fmod(rotationDegrees, 360.0);
     _Vertices = new osg::Vec3Array(7);
 
     makeArrow(filled);
@@ -51,9 +52,9 @@ void ArrowOverlay::makeArrow(bool filled)
     _Geom = new osg::Geometry();
 
     updateArrow();
-    
+
     _Geom->setVertexArray(_Vertices.get());
-    
+
     if (!filled) {
         _DrawArray = new osg::DrawArrays(osg::PrimitiveSet::LINE_LOOP, 0, 7);
     } else {
@@ -72,13 +73,65 @@ void ArrowOverlay::makeArrow(bool filled)
 
 void ArrowOverlay::updateArrow()
 {
+    double xPrime = 0.0;
+    double yPrime = 0.0;
+    double x = 0.0;
+    double y = 0.0;
+    double theta = (_RotationDegrees/180.0) * M_PI;
+
+    /* Without rotation considered:
     (*_Vertices)[0] = osg::Vec3d(_TipX                   , _TipY, 0);
     (*_Vertices)[1] = osg::Vec3d(_TipX + (_HeadWidth / 2), _TipY - (_HeadHeight), 0);
     (*_Vertices)[2] = osg::Vec3d(_TipX + (_TailWidth / 2), _TipY - (_HeadHeight), 0);
     (*_Vertices)[3] = osg::Vec3d(_TipX + (_TailWidth / 2), _TipY - (_HeadHeight + _TailLength), 0);
     (*_Vertices)[4] = osg::Vec3d(_TipX - (_TailWidth / 2), _TipY - (_HeadHeight + _TailLength), 0);
     (*_Vertices)[5] = osg::Vec3d(_TipX - (_TailWidth / 2), _TipY - (_HeadHeight), 0);
-    (*_Vertices)[6] = osg::Vec3d(_TipX - (_HeadWidth / 2), _TipY - (_HeadHeight), 0);
+    (*_Vertices)[6] = osg::Vec3d(_TipX - (_HeadWidth / 2), _TipY - (_HeadHeight), 0);*/
+
+    /* (_TipX, TipY) is the centre of rotation. Rotation about a point that is not the origin
+     * is achieved by first subtracting the point from all points (x,y) that will be rotated -
+     * in the case below, it is simply not added - then rotating to get (x',y'), and lastly,
+     * adding the rotation point to (x',y'). */
+
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[0] = osg::Vec3d(xPrime, yPrime, 0);
+
+    x = _HeadWidth/2;
+    y = -_HeadHeight;
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[1] = osg::Vec3d(xPrime, yPrime, 0);
+
+    x = _TailWidth/2;
+    y = -_HeadHeight;
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[2] = osg::Vec3d(xPrime, yPrime, 0);
+
+    x = _TailWidth/2;
+    y = - (_HeadHeight + _TailLength);
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[3] = osg::Vec3d(xPrime, yPrime, 0);
+
+    x = -_TailWidth/2;
+    y = - (_HeadHeight + _TailLength);
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[4] = osg::Vec3d(xPrime, yPrime, 0);
+
+    x = -_TailWidth/2;
+    y = -_HeadHeight;
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[5] = osg::Vec3d(xPrime, yPrime, 0);
+
+    x = -_HeadWidth/2;
+    y = -_HeadHeight;
+    xPrime = x*cos(theta) - y*sin(theta) + _TipX;
+    yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    (*_Vertices)[6] = osg::Vec3d(xPrime, yPrime, 0);
 
     _Vertices->dirty();
 
@@ -116,6 +169,11 @@ void ArrowOverlay::setTailWidth(double width)
 void ArrowOverlay::setTailLength(double length)
 {
     _TailLength = length;
+    updateArrow();
+}
+void ArrowOverlay::setRotation(double rotationDegrees)
+{
+    _RotationDegrees = fmod(rotationDegrees, 360.0);
     updateArrow();
 }
 

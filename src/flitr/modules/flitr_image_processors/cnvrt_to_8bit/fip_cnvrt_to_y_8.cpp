@@ -30,7 +30,8 @@ FIPConvertToY8::FIPConvertToY8(ImageProducer& upStreamProducer, uint32_t images_
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 scaleFactor_(scale_factor)
 {
-    
+
+    ProcessorStats_->setID("ImageProcessor::FIPConvertToY8");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         //ImageFormat(uint32_t w=0, uint32_t h=0, PixelFormat pix_fmt=FLITR_PIX_FMT_Y_8, bool flipV = false, bool flipH = false):
@@ -68,6 +69,14 @@ bool FIPConvertToY8::trigger()
         {
             Image const * const imRead = *(imvRead[imgNum]);
             Image * const imWrite = *(imvWrite[imgNum]);
+
+            // Pass the metadata from the read image to the write image.
+            // By Default the base implementation will copy the pointer if no custom
+            // pass function was set.
+            if(PassMetadataFunction_ != nullptr)
+            {
+                imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
+            }
             
             uint8_t * const dataWrite=imWrite->data();
             

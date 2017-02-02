@@ -39,13 +39,14 @@ ELSEIF(APPLE)
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_C_LANGUAGE_STANDARD "c11")
   set(CMAKE_XCODE_ATTRIBUTE_CLANG_C_LIBRARY "libc")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -g -march=native -mtune=native -ffast-math -funsafe-math-optimizations -Wall")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++ -g -march=native -mtune=native -Wall")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O3")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -g -Wall")
 ELSE()
   #native is only supported by recent g++ compilers
   #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -march=native -mtune=native -DNDEBUG")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native -mtune=native -ffast-math -Wall -std=c++11")
-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -ffast-math -funsafe-math-optimizations -Wall -std=c++11")
+  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -g -DNDEBUG -march=native -mtune=native -ffast-math -Wall -std=c++11")
   SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -std=c++11")
 ENDIF()
 
@@ -54,6 +55,25 @@ ENDIF()
 SET(FLITR_3RDPARTY_ROOT "" CACHE PATH "Additional directory where the 3rd party dependencies can be found.")
 SET(CMAKE_PREFIX_PATH ${FLITR_3RDPARTY_ROOT})
 MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
+
+
+# === find OpenCL ===
+OPTION(FLITR_USE_OPENCL "Compile the code with FLITR_USE_OPENCL define and OpenCL includes and libs." OFF)
+
+IF(FLITR_USE_OPENCL)
+    FIND_PACKAGE(OpenCL REQUIRED)
+    SET(OpenCL_LIBPATH "/usr/lib/x86_64-linux-gnu")
+
+    IF(OPENCL_FOUND)
+        INCLUDE_DIRECTORIES(${OpenCL_INCLUDE_DIRS})
+        LINK_DIRECTORIES(${OpenCL_LIBRARY})
+        ADD_DEFINITIONS(-DFLITR_USE_OPENCL)
+        MESSAGE("OpenCL include dir: ${OpenCL_INCLUDE_DIRS}")
+        MESSAGE("OpenCL library dir: ${OpenCL_LIBRARY}")
+        MESSAGE("OpenCL libraries: ${OpenCL_LIBRARIES}")
+    ENDIF(OPENCL_FOUND)
+ENDIF(FLITR_USE_OPENCL)
+# ==================
 
 
 # === find Boost ===
@@ -179,6 +199,7 @@ SET(LIB_SOURCES
   src/flitr/multi_image_buffer_consumer.cpp
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
+  src/flitr/image_diff_and_scale.cpp
   src/flitr/image_multiplexer.cpp
   src/flitr/graph_manager.cpp
 
@@ -252,6 +273,7 @@ SET(LIB_SOURCES
   include/flitr/multi_image_buffer_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
+  include/flitr/image_diff_and_scale.h
   include/flitr/image_multiplexer.h
 
   include/flitr/modules/xml_config/tinyxml.h
@@ -322,6 +344,7 @@ IF(FLITR_USE_OSG)
   src/flitr/modules/geometry_overlays/text_label_overlay.cpp
   src/flitr/modules/geometry_overlays/arrow_overlay.cpp
   src/flitr/modules/geometry_overlays/tape_overlay.cpp
+  src/flitr/modules/geometry_overlays/lines_overlay.cpp
   src/flitr/textured_quad.cpp
   
   src/flitr/glsl_image_processor.cpp
@@ -361,6 +384,7 @@ IF(FLITR_USE_OSG)
   include/flitr/modules/geometry_overlays/text_label_overlay.h
   include/flitr/modules/geometry_overlays/arrow_overlay.h
   include/flitr/modules/geometry_overlays/tape_overlay.h
+  include/flitr/modules/geometry_overlays/lines_overlay.h
   include/flitr/textured_quad.h
 
   include/flitr/glsl_image_processor.h
@@ -456,10 +480,8 @@ ADD_LIBRARY(flitr SHARED
 
 
 IF(WIN32) 
-#  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSEIF(APPLE)
-#  TARGET_LINK_LIBRARIES(flitr ${Boost_LIBRARIES} ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
   TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSE()
   TARGET_LINK_LIBRARIES(flitr m rt)
@@ -468,27 +490,25 @@ IF(NOT FLITR_USE_OSG)
   TARGET_LINK_LIBRARIES(flitr z bz2)
 ENDIF()
 
-  TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES})
-  TARGET_LINK_LIBRARIES(flitr lzma)
-
+  TARGET_LINK_LIBRARIES(flitr ${FFmpeg_LIBRARIES} lzma ${OPENSCENEGRAPH_LIBRARIES})
   #MESSAGE(${OPENSCENEGRAPH_LIBRARIES})
-  TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES})
-  #TARGET_LINK_LIBRARIES(flitr optimised OpenThreads osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
-  #TARGET_LINK_LIBRARIES(flitr debug OpenThreadsd osgViewerd osgUtild osgTerraind osgGAd osgFXd osgDBd osgTextd osgSimd osgParticled)
 ENDIF()
 
 
-TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} ${LIB_LINK_LIBRARIES})
+TARGET_LINK_LIBRARIES(flitr ${OpenCL_LIBRARIES})
+
+
+TARGET_LINK_LIBRARIES(flitr ${LIB_LINK_LIBRARIES})
 
 
 IF(FLITR_WITH_OSGCUDA)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} debug osgCuda)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} optimised osgCuda)
+  TARGET_LINK_LIBRARIES(flitr debug osgCuda)
+  TARGET_LINK_LIBRARIES(flitr optimised osgCuda)
 ENDIF()
 
 
 IF(FLITR_USE_LIBTIFF)
-  TARGET_LINK_LIBRARIES(flitr ${TARGET_LINK_LIBRARIES} tiff)
+  TARGET_LINK_LIBRARIES(flitr tiff)
 ENDIF()
 
 
@@ -499,8 +519,6 @@ ADD_SUBDIRECTORY(tests/shared_image_buffer)
 ADD_SUBDIRECTORY(tests/ffmpeg_producer)
 ADD_SUBDIRECTORY(examples/gaussian_filter)
 ADD_SUBDIRECTORY(examples/adaptive_threshold)
-
-ADD_SUBDIRECTORY(apps/laser_interlock)
 
 #================
 IF(FLITR_USE_OSG)
@@ -516,6 +534,7 @@ ENDIF()
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/motion_detect)
 ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
 ADD_SUBDIRECTORY(examples/morphological_filter)

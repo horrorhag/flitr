@@ -20,15 +20,47 @@
 
 #include <flitr/flitr_thread.h>
 
+#ifndef WIN32
+#include <pthread.h>
+#endif /* WIN32 */
 
 FThread::FThread()
 {
 }
 
-void FThread::startThread()
+void FThread::startThread(int32_t cpu_affinity)
 {
     std::thread t(&FThread::run, this);
     _thread.swap(t);
+    applyAffinity(_thread, cpu_affinity);
+}
+
+bool FThread::applyAffinity(std::thread& thread, int32_t cpu_affinity)
+{
+#ifdef WIN32
+    return false;
+#endif
+    
+#ifdef __APPLE__
+    return false;
+#endif
+    
+#ifdef __linux
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+
+    if(cpu_affinity >= 0)
+    {
+        CPU_SET(cpu_affinity, &cpuset);
+    }
+
+    int status = pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpuset);
+    if(status != 0)
+    {
+        return false;
+    }
+    return true;
+#endif /* __GNUC__ */
 }
 
 FThread::~FThread()

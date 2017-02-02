@@ -120,7 +120,7 @@ namespace flitr {
 
     private:
         
-        //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated.
+        //!Template method that does the equalisation. Pixel format agnostic, but pixel data type templated!
         template<typename T>
         void process(T * const dataWrite, T const * const dataRead,
                      const size_t componentsPerLine, const size_t height)
@@ -152,17 +152,20 @@ namespace flitr {
             
             const size_t componentsPerImage=componentsPerLine*height;
             const float average = imageSum / ((double)componentsPerImage);
-            const float eScale=targetAverage_ / average;
-            
-            
-            //Could be pixel parallel.
-            for (size_t y=0; y<height; ++y)
+
+            if(average > 0.0)
             {
-                const size_t lineOffset=y * componentsPerLine;
-                
-                for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
+                const float eScale=targetAverage_ / average;
+
+                //Could be pixel parallel.
+                for (size_t y=0; y<height; ++y)
                 {
-                    dataWrite[lineOffset + compNum]=dataRead[lineOffset + compNum] * eScale;
+                    const size_t lineOffset=y * componentsPerLine;
+
+                    for (size_t compNum=0; compNum<componentsPerLine; ++compNum)
+                    {
+                        dataWrite[lineOffset + compNum]=dataRead[lineOffset + compNum] * eScale;
+                    }
                 }
             }
         }

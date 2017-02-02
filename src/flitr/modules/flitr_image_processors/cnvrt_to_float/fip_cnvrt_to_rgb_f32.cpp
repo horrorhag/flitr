@@ -107,6 +107,23 @@ bool FIPConvertToRGBF32::trigger()
                             offset+=3;
                         }
                     }
+            } else
+                if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_BGRA)
+                {
+                    for (size_t y=0; y<height; ++y)
+                    {
+                        size_t offset=(y * width) * 4;
+                        size_t offset_rgb = (y * width) * 3;
+
+                        for (size_t x=0; x<width; ++x)
+                        {
+                            dataWrite[offset_rgb + 2]=((float)dataRead[offset+0]) * 0.00390625f; // /256.0
+                            dataWrite[offset_rgb + 1]=((float)dataRead[offset+1]) * 0.00390625f; // /256.0
+                            dataWrite[offset_rgb + 0]=((float)dataRead[offset+2]) * 0.00390625f; // /256.0
+                            offset+=4;
+                            offset_rgb+=3;
+                        }
+                    }
                 }
         }
         

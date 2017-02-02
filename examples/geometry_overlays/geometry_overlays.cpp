@@ -7,6 +7,8 @@
 #include <flitr/modules/geometry_overlays/crosshair_overlay.h>
 #include <flitr/modules/geometry_overlays/triangle_overlay.h>
 #include <flitr/modules/geometry_overlays/circle_overlay.h>
+#include <flitr/modules/geometry_overlays/arrow_overlay.h>
+#include <flitr/modules/geometry_overlays/tape_overlay.h>
 
 #include <osg/Vec3>
 #include <osg/Vec4>
@@ -33,10 +35,10 @@ int32_t startup_viewport_height=0;
 
 // Adapted from osgpick example
 class PickHandler : public osgGA::GUIEventHandler {
-  public: 
+  public:
     PickHandler() { _pick_available = false; }
     ~PickHandler() {}
-    
+
     bool handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa);
     virtual void pick(osgViewer::View* view, const osgGA::GUIEventAdapter& ea);
     bool getPick(osg::Vec3d& location)
@@ -64,7 +66,7 @@ bool PickHandler::handle(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapt
                 if (view) pick(view,ea);
             }
             return false;
-        }    
+        }
         default:
             return false;
     }
@@ -141,7 +143,7 @@ int main(int argc, char *argv[])
     }
 
     osg::Group *root_node = new osg::Group;
-    
+
     shared_ptr<TexturedQuad> quad = make_shared<TexturedQuad>(osgc->getOutputTexture());
     root_node->addChild(quad->getRoot().get());
 
@@ -163,9 +165,9 @@ int main(int argc, char *argv[])
 
 
     // add pick handler
-    PickHandler* ph = new PickHandler; 
+    PickHandler* ph = new PickHandler;
     viewer.addEventHandler(ph);
-    
+
     ImageFormat imf = ffp->getFormat();
     double w = imf.getWidth();
     double h = imf.getHeight();
@@ -221,6 +223,27 @@ int main(int argc, char *argv[])
     root_node->addChild(circleFilled);
     circleFilled->setColour(osg::Vec4d(1,1,0,1));
 
+    /* Arrow */
+    ArrowOverlay* arrowBase = new ArrowOverlay(w*0.5, h*0.95, w*0.02, w*0.02, w*0.01, w*0.02, false, 180);
+    arrowBase->setLineWidth(2);
+    root_node->addChild(arrowBase);
+    arrowBase->setColour(osg::Vec4d(0,1,1,0.5));
+
+    /* Tape */
+    TapeOverlay* tapeBase = new TapeOverlay(w*0.5, h*0.95, w*0.8, 9, 16);
+    tapeBase->setLineWidth(2);
+    root_node->addChild(tapeBase);
+    tapeBase->setColour(osg::Vec4d(0,1,1,1));
+    tapeBase->setMajorTickHeight(20);
+
+    /* Vertical Tape */
+    TapeOverlay* vTapeBase = new TapeOverlay(w*0.97, h*0.5, h*0.8, 9, 8, false, TapeOverlay::Orientation::VERTICAL);
+    vTapeBase->setLineWidth(1);
+    root_node->addChild(vTapeBase);
+    vTapeBase->setColour(osg::Vec4d(0,1,1,1));
+    vTapeBase->setMajorTickHeight(10);
+    vTapeBase->setMinorTickHeight(6);
+
     viewer.setSceneData(root_node);
 
     OrthoTextureManipulator* om = new OrthoTextureManipulator(imf.getWidth(), imf.getHeight());
@@ -235,6 +258,8 @@ int main(int argc, char *argv[])
             if (ph->getPick(pickpoint)) {
                 ch->setCenter(pickpoint.x(), pickpoint.y());
             }
+            tapeBase->setOffset(tapeBase->getOffset()+0.01);
+            vTapeBase->setOffset(vTapeBase->getOffset()-0.01);
         } else {
             OpenThreads::Thread::microSleep(5000);
         }
