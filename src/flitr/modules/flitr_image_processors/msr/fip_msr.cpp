@@ -35,7 +35,7 @@ _GFXY(1.0, 4),
 _GFII(1),
 _GFRS(1),
 _GFScale(20),
-_numScales(1),
+_numScales(3),
 _intensityScratchData(nullptr),
 _GFScratchData(nullptr),
 _MSRScratchData(nullptr),
@@ -197,8 +197,8 @@ bool FIPMSR::trigger()
 
                 const float recipNumScales=1.0f/_numScales;
 
-                const float gain=2.0f;//Boosts image intensity.
-                const float chromatGain=1.0f;//Boosts colour.
+                const float gain=3.0f;//Boosts image intensity.
+                const float chromatGain=2.5f;//Boosts colour.
                 const float blacknessFloor=2.5f/255.0f;//Limits the enhancement of low signal (black) areas.
 
                 for (size_t scaleIndex=0; scaleIndex<_numScales; ++scaleIndex)

@@ -36,7 +36,7 @@ extern "C" {
 
 namespace flitr {
 
-class FLITR_EXPORT Image {
+class Image {
   public:
     /*! Constructor for image from an image format
      *  @param image_format The image format of the image to allocate.

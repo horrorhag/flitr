@@ -230,12 +230,19 @@ int main(int argc, char *argv[])
     arrowBase->setColour(osg::Vec4d(0,1,1,0.5));
 
     /* Tape */
-    TapeOverlay* tapeBase = new TapeOverlay(w*0.5, h*0.95, w*0.8, 9, 2);
+    TapeOverlay* tapeBase = new TapeOverlay(w*0.5, h*0.95, w*0.8, 9, 16);
     tapeBase->setLineWidth(2);
     root_node->addChild(tapeBase);
     tapeBase->setColour(osg::Vec4d(0,1,1,1));
     tapeBase->setMajorTickHeight(20);
-    viewer.setSceneData(root_node);
+
+    /* Vertical Tape */
+    TapeOverlay* vTapeBase = new TapeOverlay(w*0.97, h*0.5, h*0.8, 9, 8, false, TapeOverlay::Orientation::VERTICAL);
+    vTapeBase->setLineWidth(1);
+    root_node->addChild(vTapeBase);
+    vTapeBase->setColour(osg::Vec4d(0,1,1,1));
+    vTapeBase->setMajorTickHeight(10);
+    vTapeBase->setMinorTickHeight(6);
 
     viewer.setSceneData(root_node);
 
@@ -252,6 +259,7 @@ int main(int argc, char *argv[])
                 ch->setCenter(pickpoint.x(), pickpoint.y());
             }
             tapeBase->setOffset(tapeBase->getOffset()+0.01);
+            vTapeBase->setOffset(vTapeBase->getOffset()-0.01);
         } else {
             OpenThreads::Thread::microSleep(5000);
         }

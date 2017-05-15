@@ -32,7 +32,7 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 gain_(gain),
 gaussianFilter_(filterRadius, int(ceilf(filterRadius*2.0f+0.5)+0.5)*2 - 1)//Filter size includes 2xradius to each side.
 {
-
+    
     ProcessorStats_->setID("ImageProcessor::FIPUnsharpMask");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
@@ -85,8 +85,8 @@ bool FIPUnsharpMask::init()
     }
     
     //Allocate a buffer big enough for any of the image slots.
-    xFiltData_=new float[maxXFiltDataSize];
-    filtData_=new float[maxXFiltDataSize];
+    xFiltData_=new float[maxXFiltDataSize*3];
+    filtData_=new float[maxXFiltDataSize*3];
     
     return rValue;
 }
@@ -106,7 +106,7 @@ bool FIPUnsharpMask::trigger()
         {
             Image const * const imReadUS = *(imvRead[imgNum]);
             Image * const imWriteDS = *(imvWrite[imgNum]);
-
+            
             // Pass the metadata from the read image to the write image.
             // By Default the base implementation will copy the pointer if no custom
             // pass function was set.
@@ -139,7 +139,35 @@ bool FIPUnsharpMask::trigger()
                         dataWriteDS[lineOffset+x]=(inputValue-filtValue)*gain_ + inputValue;
                     }
                 }
-            }
+            } else
+                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                {
+                    float const * const dataReadUS=(float const * const)imReadUS->data();
+                    float * const dataWriteDS=(float * const)imWriteDS->data();
+                    
+                    gaussianFilter_.filterRGB(filtData_, dataReadUS, width, height, xFiltData_);
+                    
+                    for (size_t y=0; y<height; ++y)
+                    {
+                        const size_t lineOffset=y*width*3;
+                        
+                        for (size_t x=0; x<width; ++x)
+                        {
+                            const float filtValueR=filtData_[lineOffset+x*3 + 0]; //x*3 only calculated once when compiler optimisations enabled.
+                            const float inputValueR=dataReadUS[lineOffset+x*3 + 0];
+                            
+                            const float filtValueG=filtData_[lineOffset+x*3 + 1];
+                            const float inputValueG=dataReadUS[lineOffset+x*3 + 1];
+                            
+                            const float filtValueB=filtData_[lineOffset+x*3 + 2];
+                            const float inputValueB=dataReadUS[lineOffset+x*3 + 2];
+                            
+                            dataWriteDS[lineOffset + x*3 + 0] = (inputValueR-filtValueR)*gain_ + inputValueR;
+                            dataWriteDS[lineOffset + x*3 + 1] = (inputValueG-filtValueG)*gain_ + inputValueG;
+                            dataWriteDS[lineOffset + x*3 + 2] = (inputValueB-filtValueB)*gain_ + inputValueB;
+                        }
+                    }
+                }
         }
         
         //Stop stats measurement event.

@@ -21,8 +21,9 @@
 #ifndef FLITR_IMAGE_FORMAT_H
 #define FLITR_IMAGE_FORMAT_H 1
 
-#include <flitr/flitr_stdint.h>
 #include <flitr/flitr_export.h>
+#include <flitr/flitr_stdint.h>
+
 
 namespace flitr {
     
@@ -30,7 +31,7 @@ namespace flitr {
      * This class contains information about the format (width, height,
      * pixel type) of an image.
      */
-    class FLITR_EXPORT ImageFormat {
+    class ImageFormat {
     public:
         //! Note: Do not change enum values AND implement the required conversion code in method cnvrtPixelFormat(...) below.
         enum PixelFormat {

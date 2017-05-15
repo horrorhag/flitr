@@ -39,13 +39,17 @@ _enabled(true),
 _title(std::string("LK Dewarp")),
 avrgImageLongevity_(avrgImageLongevity),
 recipGradientThreshold_(1.0f / 0.00025f),
-numLevels_(4),//Num levels searched for scint motion.
-gaussianFilter_(1.0f, 5),
-gaussianDownsample_(1.0f, 4),
+numLevels_(5),//Num levels searched for scint motion.
+gaussianFilter_(0.5f, 3),
+gaussianDownsample_(0.5f, 2),
 gaussianReguFilter_(2.5f, 11),
 scratchData_(0),
-inputImgData_(0),
-finalImgData_(0)
+inputImgDataR_(0),
+inputImgDataG_(0),
+inputImgDataB_(0),
+finalImgDataR_(0),
+finalImgDataG_(0),
+finalImgDataB_(0)
 {
     ProcessorStats_->setID("ImageProcessor::FIPLKDewarp");
     //Setup image format being produced to downstream.
@@ -70,8 +74,14 @@ FIPLKDewarp::~FIPLKDewarp()
     // Thread should be done, cleaning up can start. This might still be a problem
     // if the application calls trigger() and not the triggerThread.
     delete [] scratchData_;
-    delete [] finalImgData_;
-    delete [] inputImgData_;
+    
+    delete [] finalImgDataR_;
+    delete [] finalImgDataG_;
+    delete [] finalImgDataB_;
+    
+    delete [] inputImgDataR_;
+    delete [] inputImgDataG_;
+    delete [] inputImgDataB_;
     
     for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
     {
@@ -123,11 +133,19 @@ bool FIPLKDewarp::init()
         scratchData_=new float[width*height];
         memset(scratchData_, 0, (width*height)*sizeof(float));
         
-        inputImgData_=new float[croppedWidth*croppedHeight];
-        memset(inputImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
+        inputImgDataR_=new float[croppedWidth*croppedHeight];
+        memset(inputImgDataR_, 0, croppedWidth*croppedHeight*sizeof(float));
+        inputImgDataG_=new float[croppedWidth*croppedHeight];
+        memset(inputImgDataG_, 0, croppedWidth*croppedHeight*sizeof(float));
+        inputImgDataB_=new float[croppedWidth*croppedHeight];
+        memset(inputImgDataB_, 0, croppedWidth*croppedHeight*sizeof(float));
         
-        finalImgData_=new float[croppedWidth*croppedHeight];
-        memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
+        finalImgDataR_=new float[croppedWidth*croppedHeight];
+        memset(finalImgDataR_, 0, croppedWidth*croppedHeight*sizeof(float));
+        finalImgDataG_=new float[croppedWidth*croppedHeight];
+        memset(finalImgDataG_, 0, croppedWidth*croppedHeight*sizeof(float));
+        finalImgDataB_=new float[croppedWidth*croppedHeight];
+        memset(finalImgDataB_, 0, croppedWidth*croppedHeight*sizeof(float));
         
         for (size_t levelNum=0; levelNum<numLevels_; ++levelNum)
         {
@@ -194,6 +212,7 @@ bool FIPLKDewarp::trigger()
             }
             
             const ImageFormat imFormat=getUpstreamFormat(imgNum);
+            
             if (!_enabled)
             {//Pass not enabled! Just copy the data from input to output.
                 uint8_t const * const dataReadUS=(uint8_t const * const)imRead->data();
@@ -217,17 +236,17 @@ bool FIPLKDewarp::trigger()
                 
                 const ptrdiff_t endCroppedY=startCroppedY + croppedHeight - 1;
                 
-                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+                if (imFormat.getDataType()==ImageFormat::FLITR_PIX_DT_FLOAT32)
                 {
                     float const * const dataRead=(float const * const)imRead->data();
                     float * const dataWrite=(float * const)imWrite->data();
                     
                     //****************
-                    //Replace the reference image during the first couple of frames.
+                    //Prime the reference image during the first couple of frames.
                     const float avrgImageLongevityConst = (frameNumber_ < 3) ? 0.0f : avrgImageLongevity_;
                     //****************
                     
-                    {//=== Copy cropped input to level 0 of scale space ===
+                    {//=== ===
                         
                         {//=== Update ref/avrg img before new data arrives. ===//
                             float * const imgData=imgVec_[0];
@@ -247,17 +266,37 @@ bool FIPLKDewarp::trigger()
                             }
                         }
                         
-                        //=== Copy input data to level 0 of scale space ===//
-                        for (ptrdiff_t y=startCroppedY; y<=endCroppedY; ++y)
+                        //=== Crop input data ===//
+                        if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
                         {
-                            const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
-                            const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
-                            
-                            memcpy((inputImgData_+croppedLineOffset), (dataRead+uncroppedLineOffset), croppedWidth*sizeof(float));
-                        }
+                            for (ptrdiff_t y=startCroppedY; y<=endCroppedY; ++y)
+                            {
+                                const ptrdiff_t uncroppedLineOffset=y*uncroppedWidth + startCroppedX;
+                                const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
+                                
+                                //Green channel is used if mono image.
+                                memcpy((inputImgDataG_+croppedLineOffset), (dataRead+uncroppedLineOffset), croppedWidth*sizeof(float));
+                            }
+                        } else
+                            if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                            {
+                                for (size_t y=startCroppedY; y<=endCroppedY; ++y)
+                                {
+                                    const ptrdiff_t uncroppedLineOffset=(y*uncroppedWidth + startCroppedX)*3; //x*3 is optimised by compiler to (x<<1)+x.
+                                    const ptrdiff_t croppedLineOffset=(y-startCroppedY)*croppedWidth;
+                                    
+                                    //RGB image is split into R, G and B images.
+                                    for (int x=0; x<croppedWidth; ++x)
+                                    {
+                                        inputImgDataR_[croppedLineOffset+x]=dataRead[uncroppedLineOffset + x*3 + 0];//x*3 is optimised by compiler to (x<<1)+x.
+                                        inputImgDataG_[croppedLineOffset+x]=dataRead[uncroppedLineOffset + x*3 + 1];
+                                        inputImgDataB_[croppedLineOffset+x]=dataRead[uncroppedLineOffset + x*3 + 2];
+                                    }
+                                }
+                            }
                         
-                        //=== Do Gaussian filter of initial input ===//
-                        gaussianFilter_.filter(imgVec_[0], inputImgData_, croppedWidth, croppedHeight, scratchData_);
+                        //=== Do Gaussian filter of initial input and store in first level of pyramid - Green channel is used for optical flow! ===//
+                        gaussianFilter_.filter(imgVec_[0], inputImgDataG_, croppedWidth, croppedHeight, scratchData_);
                         
                     }//=== ===
                     
@@ -270,7 +309,6 @@ bool FIPLKDewarp::trigger()
                             const ptrdiff_t levelHeight=croppedHeight >> levelNum;
                             const ptrdiff_t levelWidth=croppedWidth >> levelNum;
                             const ptrdiff_t levelWidthMinus1 = levelWidth - ((ptrdiff_t)1);
-                            //                        const ptrdiff_t levelWidthMinus3 = levelWidth - ((ptrdiff_t)3);
                             
                             //=== Calculate the scale space images ===
                             if (levelNum>0)//First level (incoming data) is not a downsampled image.
@@ -320,6 +358,8 @@ bool FIPLKDewarp::trigger()
                                         //#define DESCINT_SCATTER
                                         
 #ifdef DESCINT_SCATTER
+                                        DESCINT_SCATTER CODE NOT REALLY USED
+                                        
                                         const float v1=refImgData[offset-levelWidth-1];
                                         const float v2=refImgData[offset-levelWidth];
                                         const float v3=refImgData[offset-levelWidth+1];
@@ -342,12 +382,12 @@ bool FIPLKDewarp::trigger()
 #endif
                                         
                                         //Use Scharr operator for image gradient. It has good rotation independence!
-                                        const float dx=(v3-v1)*(3.0f/32.0f) + (v6-v4)*(10.0f/32.0f) + (v9-v7)*(3.0f/32.0f);
-                                        const float dy=(v7-v1)*(3.0f/32.0f) + (v8-v2)*(10.0f/32.0f) + (v9-v3)*(3.0f/32.0f);
+                                        const float dx=(v3-v1)*(3.0f/32.0f) + (v6-v4)*(10.0f/32.0f) + (v9-v7)*(3.0f/32.0f); //32 = (3+10+3)*2
+                                        const float dy=(v7-v1)*(3.0f/32.0f) + (v8-v2)*(10.0f/32.0f) + (v9-v3)*(3.0f/32.0f); //32 = (3+10+3)*2
                                         
                                         dxData[offset]=dx;
                                         dyData[offset]=dy;
-                                        dSqRecipData[offset]=1.0f/(dx*dx+dy*dy+0.0000001f);
+                                        dSqRecipData[offset]=1.0f/(dx*dx+dy*dy);
                                     }
                                 }
                             }//=== ===
@@ -379,7 +419,7 @@ bool FIPLKDewarp::trigger()
                         const ptrdiff_t levelWidthLR=(levelWidth>>1);
                         const ptrdiff_t levelWidthMinus1=levelWidth - ((ptrdiff_t)1);
                         
-                        //=== Start with h-vectors from lower resolution level ===//
+                        //=== Start with h-vectors from lower resolution scale space ===//
                         for (ptrdiff_t y=1; y<(levelHeight - ((ptrdiff_t)1)); ++y)
                         {
                             const ptrdiff_t lineOffset=y*levelWidth;
@@ -401,7 +441,7 @@ bool FIPLKDewarp::trigger()
                         //=== ===//
                         
                         {
-                            for (size_t newtonRaphsonI=0; newtonRaphsonI<5; ++newtonRaphsonI)
+                            for (size_t newtonRaphsonI=0; newtonRaphsonI<7; ++newtonRaphsonI)
                                 //5 or more iterations seem to work well.
                             {
                                 for (ptrdiff_t y=((ptrdiff_t)1); y<(levelHeight - ((ptrdiff_t)1)); ++y)
@@ -430,6 +470,8 @@ bool FIPLKDewarp::trigger()
                                             
                                             
 #ifdef DESCINT_SCATTER
+                                            DESCINT_SCATTER CODE NOT REALLY USED
+                                            
                                             if (((x+int_hx)>((ptrdiff_t)1))&&
                                                 ((y+int_hy)>((ptrdiff_t)1))&&
                                                 ((x+int_hx+((ptrdiff_t)2))<levelWidth)&&
@@ -460,8 +502,26 @@ bool FIPLKDewarp::trigger()
                                                 const float dy=bilinearRead(dyData, offsetLT, levelWidth, frac_hx, frac_hy);
                                                 
                                                 const float imgDiff=img-refImgData[offset];
-                                                hx-=(imgDiff*dx)*dSqRecip;
-                                                hy-=(imgDiff*dy)*dSqRecip;
+                                                
+                                                
+                                                {//Calc h vector update, but clamp to certain deltaMax length.
+                                                    float delta_hx = (imgDiff*dx)*dSqRecip; //Adapted h displacement using Scharr gradient.
+                                                    float delta_hy = (imgDiff*dy)*dSqRecip; //Adapted h displacement using Scharr gradient.
+                                                    
+                                                    const float delta=sqrtf(delta_hx*delta_hx+delta_hy*delta_hy);
+                                                    const float deltaMax=0.75f;
+                                                    
+                                                    if (delta>deltaMax)
+                                                    {//If an error occurs then clamp the resulting h vector.
+                                                        const float recipH=deltaMax/delta;
+                                                        
+                                                        delta_hx*=recipH;
+                                                        delta_hy*=recipH;
+                                                    }
+                                                    
+                                                    hx-=delta_hx;
+                                                    hy-=delta_hy;
+                                                }
                                             }
 #endif
                                             
@@ -471,13 +531,11 @@ bool FIPLKDewarp::trigger()
                                     }
                                 }
                                 
-                                
-                                if (levelNum>=1)
+                                //if (levelNum>=1)
                                 {//=== Smooth/regularise the vector field of this iteration using Gaussian filters in x and y ===//
                                     gaussianReguFilter_.filter(hxData, hxData, levelWidth, levelHeight, scratchData_);
                                     gaussianReguFilter_.filter(hyData, hyData, levelWidth, levelHeight, scratchData_);
                                 }//=== ===
-                                
                             }
                         }
                     }
@@ -488,13 +546,12 @@ bool FIPLKDewarp::trigger()
                     
                     //=== Final results ===
                     {
-                        memset(finalImgData_, 0, croppedWidth*croppedHeight*sizeof(float));
-                        
-                        float * const imgDataGF=inputImgData_;
+                        //memset(finalImgDataR_, 0, croppedWidth*croppedHeight*sizeof(float));
+                        //memset(finalImgDataG_, 0, croppedWidth*croppedHeight*sizeof(float));
+                        //memset(finalImgDataB_, 0, croppedWidth*croppedHeight*sizeof(float));
                         
                         float * const hxDataGF=hxVec_[0];
                         float * const hyDataGF=hyVec_[0];
-                        
                         
                         for (ptrdiff_t y=0; y<croppedHeight; ++y)
                         {
@@ -504,14 +561,16 @@ bool FIPLKDewarp::trigger()
                             {
                                 const ptrdiff_t offset=lineOffset + x;
                                 
-                                if (true)
-                                {
+                                if (1)
+                                {//Dewarp the cropped input image data
                                     //=== Image Dewarping ===//
                                     {
                                         //Note: Use a local contrast measure to control blending...
                                         //      It is assumed the the best lucky frame/region has the best local contrast.
                                         //      Could look at RMS contrast (the standard deviation) over an image patch centred at the desired location!
 #ifdef DESCINT_SCATTER
+                                        DESCINT_SCATTER CODE NOT REALLY USED
+                                        
                                         const float hx=-hxDataGF[offset];
                                         const float hy=-hyDataGF[offset];
                                         
@@ -531,20 +590,19 @@ bool FIPLKDewarp::trigger()
                                             const float frac_hy=hy - floor_hy;
                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
                                             
-                                            const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                            finalImgData_[offset]=img;
+                                            finalImgDataG_[offset]=bilinearRead(inputImgDataG_, offsetLT, croppedWidth, frac_hx, frac_hy);
                                             
+                                            if (imFormat.getPixelFormat() == flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                                            {
+                                                finalImgDataR_[offset]=bilinearRead(inputImgDataR_, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                                finalImgDataB_[offset]=bilinearRead(inputImgDataB_, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                            }
                                             //bilinearAdd(imgDataGF[offset], finalImgData_, offsetLT, croppedWidth, frac_hx, frac_hy);
                                             //finalImgData_[offsetLT]=imgDataGF[offset];
                                         }
 #else//DESCINT_GATHER
                                         const float hx=hxDataGF[offset];
                                         const float hy=hyDataGF[offset];
-                                        
-                                        //const float f=0.05;
-                                        //avrgHxData_[offset]=avrgHxData_[offset]*(1.0f-f) + hx*f;
-                                        //avrgHyData_[offset]=avrgHyData_[offset]*(1.0f-f) + hy*f;
-                                        //const float avrgHSq = avrgHxData_[offset]*avrgHxData_[offset] + avrgHyData_[offset]*avrgHyData_[offset];
                                         
                                         const float floor_hx=floorf(hx);
                                         const float floor_hy=floorf(hy);
@@ -556,45 +614,71 @@ bool FIPLKDewarp::trigger()
                                             ((x+int_hx)<(croppedWidth-1)) &&
                                             ((y+int_hy)<(croppedHeight-1)) )
                                         {
-                                            
                                             const float frac_hx=hx - floor_hx;
                                             const float frac_hy=hy - floor_hy;
                                             const ptrdiff_t offsetLT=offset + int_hx + int_hy * croppedWidth;
                                             
-                                            const float img=bilinearRead(imgDataGF, offsetLT, croppedWidth, frac_hx, frac_hy);
-                                            finalImgData_[offset]=img;
+                                            finalImgDataG_[offset]=bilinearRead(inputImgDataG_, offsetLT, croppedWidth, frac_hx, frac_hy);
                                             
-                                            //finalImgData_[offset]=avrgHSq * 0.1;
+                                            if (imFormat.getPixelFormat() == flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                                            {
+                                                finalImgDataR_[offset]=bilinearRead(inputImgDataR_, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                                finalImgDataB_[offset]=bilinearRead(inputImgDataB_, offsetLT, croppedWidth, frac_hx, frac_hy);
+                                            }
                                         }
 #endif
                                     }
                                     //=== ===
                                 }
                                 else //OR
-                                {
+                                {//Debug mode...
                                     const size_t levelIndex=0;//(numLevels_-1) - 5;
                                     const size_t offsetB=(x>>levelIndex) + (y>>levelIndex)*(croppedWidth>>levelIndex);
-                                    //const float i=imgVec_[levelIndex][offsetB];
+                                    
                                     const float hxB=hxVec_[levelIndex][offsetB];
                                     const float hyB=hyVec_[levelIndex][offsetB];
-                                    finalImgData_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1f;
+                                    
+                                    //finalImgDataR_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1f;
+                                    //finalImgDataG_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1f;
+                                    //finalImgDataB_[offset]=sqrtf(hxB*hxB+hyB*hyB)*0.1f;
+                                    
+                                    //finalImgDataR_[offset]=imgVec_[levelIndex][offsetB];
+                                    //finalImgDataR_[offset]=refImgVec_[levelIndex][offsetB];
+                                    
+                                    finalImgDataR_[offset]=(imgVec_[levelIndex][offsetB] - refImgVec_[levelIndex][offsetB])*100.0f+0.5f;
                                 }
                             }
                         }
                         
-                        //Copy finalImgData_ result to uncropped output image slot.
-                        //  The data is copied because of the lucky region accumulation that needs to happen in the result buffer.
-                        for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
+                        //=== Copy finalImgData results to uncropped output image slot ===//
+                        //  The data is copied because of the lucky region accumulation that happens in the result buffer.
+                        if (imFormat.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_F32)
                         {
-                            const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
-                            const ptrdiff_t croppedY=uncroppedY-startCroppedY;
-                            const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
-                            
-                            
-                            memcpy((dataWrite+uncroppedLineOffset), (finalImgData_+croppedLineOffset), croppedWidth*sizeof(float));
-                            //OR
-                            //memcpy((dataWrite+uncroppedLineOffset), (refImgVec_[0]+croppedLineOffset), croppedWidth*sizeof(float));
+                            for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
+                            {
+                                const ptrdiff_t uncroppedLineOffset=uncroppedY*uncroppedWidth + startCroppedX;
+                                const ptrdiff_t croppedY=uncroppedY-startCroppedY;
+                                const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
+                                
+                                memcpy((dataWrite+uncroppedLineOffset), (finalImgDataG_+croppedLineOffset), croppedWidth*sizeof(float));
+                            }
+                        } else
+                        {//flitr::ImageFormat::FLITR_PIX_FMT_RGB_F32
+                            for (ptrdiff_t uncroppedY=startCroppedY; uncroppedY<=endCroppedY; ++uncroppedY)
+                            {
+                                const ptrdiff_t uncroppedLineOffset=(uncroppedY*uncroppedWidth + startCroppedX) * 3;
+                                const ptrdiff_t croppedY=uncroppedY-startCroppedY;
+                                const ptrdiff_t croppedLineOffset=croppedY * croppedWidth;
+                                
+                                for (int x=0; x<croppedWidth; ++x)
+                                {
+                                    dataWrite[uncroppedLineOffset + x*3 + 0] = finalImgDataR_[croppedLineOffset + x]; //x*3 is optimised by compiler to (x<<1)+x.
+                                    dataWrite[uncroppedLineOffset + x*3 + 1] = finalImgDataG_[croppedLineOffset + x];
+                                    dataWrite[uncroppedLineOffset + x*3 + 2] = finalImgDataB_[croppedLineOffset + x];
+                                }
+                            }
                         }
+                        //=== ===//
                     }
                 }
             }
