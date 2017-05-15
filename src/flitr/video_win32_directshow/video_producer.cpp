@@ -21,6 +21,7 @@
 #include <flitr/video_producer.h>
 #include <flitr/image.h>
 #include <flitr/ffmpeg_utils.h>
+#include <flitr/flitr_thread.h>
 #include <stdlib.h>
 #include "comutil.h"
 #include "DSVL.h"

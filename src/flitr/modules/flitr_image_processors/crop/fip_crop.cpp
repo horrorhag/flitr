@@ -36,7 +36,8 @@ startY_(startY),
 width_(width),
 height_(height)
 {
-    
+
+    ProcessorStats_->setID("ImageProcessor::FIPCrop");
     maxWidth_ = upStreamProducer.getFormat().getWidth();
     maxHeight_ = upStreamProducer.getFormat().getHeight();
 

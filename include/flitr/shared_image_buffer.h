@@ -106,6 +106,15 @@ class FLITR_EXPORT SharedImageBuffer {
      */
     virtual uint32_t getNumWriteSlotsAvailable() const;
 
+    /**
+     * Obtain the number of slots that a producer has reserved for
+     * writing but has not yet released.
+     *
+     *
+     * \return The number of slots reserved for writing.
+     */
+    virtual uint32_t getNumWriteSlotsReserved();
+
     /** 
      * Reserve (obtain) a slot for writing new image data. Multiple
      * slots can be reserved before any are released.

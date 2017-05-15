@@ -1,18 +1,18 @@
-/* Framework for Live Image Transformation (FLITr) 
+/* Framework for Live Image Transformation (FLITr)
  * Copyright (c) 2010 CSIR
- * 
+ *
  * This file is part of FLITr.
  *
  * FLITr is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * FLITr is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
@@ -46,6 +46,14 @@ namespace flitr {
 class FLITR_EXPORT TapeOverlay : public GeometryOverlay
 {
   public:
+
+
+    enum Orientation
+    {
+        HORIZONTAL = 0,
+        VERTICAL
+    };
+
     /**
      * Create a new tape overlay.
      *
@@ -56,7 +64,7 @@ class FLITR_EXPORT TapeOverlay : public GeometryOverlay
      * \param minorTicks Number of minor ticks on the tape.
      * \param indicator If the boresight indicator arrow should be displayed or not.
      */
-    TapeOverlay(double center_x, double center_y, double length, uint8_t majorTicks = 3, uint8_t minorTicks = 0,  bool indicator=false);
+    TapeOverlay(double center_x, double center_y, double length, uint8_t majorTicks = 3, uint8_t minorTicks = 0,  bool indicator=false, Orientation layout=Orientation::HORIZONTAL);
     virtual ~TapeOverlay();
 
     /**
@@ -147,6 +155,7 @@ class FLITR_EXPORT TapeOverlay : public GeometryOverlay
     double _MajorTickSpacing;
     double _MinorTickHeight;
     double _Offset;
+    Orientation _Orientation;
 };
 
 }

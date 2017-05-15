@@ -10,8 +10,10 @@
 
 #include <flitr/modules/flitr_image_processors/crop/fip_crop.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 #include <flitr/modules/flitr_image_processors/tonemap/fip_tonemap.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
+#include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_rgb_8.h>
 #include <flitr/modules/flitr_image_processors/average_image/fip_average_image.h>
 #include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
 #include <flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h>
@@ -22,6 +24,7 @@
 #include <flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
+#include <flitr/v4l2_producer.h>
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
@@ -39,8 +42,8 @@ class BackgroundTriggerThread : public FThread
 {
 public:
     BackgroundTriggerThread(ImageProducer* p) :
-    Producer_(p),
-    ShouldExit_(false) {}
+        Producer_(p),
+        ShouldExit_(false) {}
     
     void run()
     {
@@ -59,19 +62,29 @@ private:
 
 
 
-#define USE_BACKGROUND_TRIGGER_THREAD 1
+//#define USE_BACKGROUND_TRIGGER_THREAD 1
 
 
 
 int main(int argc, char *argv[])
 {
+    /*
     if (argc != 2)
     {
         std::cout << "Usage: " << argv[0] << " video_file\n";
         return 1;
     }
-    
-    
+    */
+
+    //==
+    std::shared_ptr<flitr::V4L2Producer> ip(new flitr::V4L2Producer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, argv[1], 2));
+    if (!ip->init())
+    {
+        std::cerr << "Could not open v4l device." << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+        return false;
+    }
+
+    /*
     //==
     shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
     if (!ip->init())
@@ -79,7 +92,8 @@ int main(int argc, char *argv[])
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
     }
-    
+*/
+
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
     shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();
@@ -87,13 +101,13 @@ int main(int argc, char *argv[])
     
     
     //==
-    shared_ptr<FIPConvertToYF32> cnvrtToYF32(new FIPConvertToYF32(*ip, 1, 2));
-    if (!cnvrtToYF32->init())
+    shared_ptr<FIPConvertToRGBF32> cnvrtToF32(new FIPConvertToRGBF32(*ip, 1, 2));
+    if (!cnvrtToF32->init())
     {
         std::cerr << "Could not initialise the cnvrtToF32 processor.\n";
         exit(-1);
     }
-    cnvrtToYF32->startTriggerThread();
+    cnvrtToF32->startTriggerThread();
     
     
     /*
@@ -137,25 +151,26 @@ int main(int argc, char *argv[])
      gaussianFilter0->startTriggerThread();
      */
     
-    /*
-     //==
-     shared_ptr<FIPCrop> crop(new FIPCrop(*cameraShake, 1,
-     ip->getFormat().getWidth()/4,
-     160,
-     ip->getFormat().getWidth()/2,
-     640,
-     2));
-     if (!crop->init())
-     {
-     std::cerr << "Could not initialise the crop processor.\n";
-     exit(-1);
-     }
-     crop->startTriggerThread();
-     */
+
+    //==
+    const int borderFrac=8;
+    shared_ptr<FIPCrop> crop(new FIPCrop(*cnvrtToF32, 1,
+                                         ip->getFormat().getWidth()/borderFrac,
+                                         ip->getFormat().getHeight()/borderFrac,
+                                         ip->getFormat().getWidth()*(borderFrac-2)/borderFrac,
+                                         ip->getFormat().getHeight()*(borderFrac-2)/borderFrac,
+                                         2));
+    if (!crop->init())
+    {
+        std::cerr << "Could not initialise the crop processor.\n";
+        exit(-1);
+    }
+    crop->startTriggerThread();
+
     
     //==
-    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*cnvrtToYF32, 1,
-                                                              FIPLKStabilise::Mode::SUBPIXELSTAB,
+    shared_ptr<FIPLKStabilise> lkstabilise(new FIPLKStabilise(*crop, 1,
+                                                              FIPLKStabilise::Mode::INTSTAB,
                                                               2));
     if (!lkstabilise->init())
     {
@@ -167,17 +182,17 @@ int main(int argc, char *argv[])
     
     
     //==
-    shared_ptr<FIPConvertToY8> cnvrtToY8(new FIPConvertToY8(*lkstabilise, 1, 0.95f, 2));
-    if (!cnvrtToY8->init())
+    shared_ptr<FIPConvertToRGB8> cnvrtToUI8(new FIPConvertToRGB8(*lkstabilise, 1, 0.95f, 2));
+    if (!cnvrtToUI8->init())
     {
         std::cerr << "Could not initialise the cnvrtToY8 processor.\n";
         exit(-1);
     }
-    cnvrtToY8->startTriggerThread();
+    cnvrtToUI8->startTriggerThread();
     
     
     //==
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToY8, 1, 2));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*cnvrtToUI8, 1, 2));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -194,9 +209,9 @@ int main(int argc, char *argv[])
     //    }
     
     
-    
+    /*
     //==
-    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToY8,1));
+    shared_ptr<MultiFFmpegConsumer> mffc(new MultiFFmpegConsumer(*cnvrtToUI8,1));
     if (!mffc->init())
     {
         std::cerr << "Could not init FFmpeg consumer\n";
@@ -204,10 +219,11 @@ int main(int argc, char *argv[])
     }
     std::stringstream filenameStringStream;
     filenameStringStream << argv[1] << "_istab";
+
     mffc->openFiles(filenameStringStream.str());
     mffc->startWriting();
     
-    
+    */
     
     osg::Group *root_node = new osg::Group;
     
@@ -271,7 +287,7 @@ int main(int argc, char *argv[])
     }
     
     
-    while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*/&&(numFrames<1000))
+    while((!viewer.done())/*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f))*//*&&(numFrames<1000)*/)
     {
         
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
@@ -334,8 +350,8 @@ int main(int argc, char *argv[])
         FThread::microSleep(3000);
     }
     
-    mffc->stopWriting();
-    mffc->closeFiles();
+    //mffc->stopWriting();
+    //mffc->closeFiles();
     
     
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -343,13 +359,13 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
     
-    cnvrtToYF32->stopTriggerThread();
+    cnvrtToF32->stopTriggerThread();
     //crop->stopTriggerThread();
     //cameraShake->stopTriggerThread();
     //gaussianDownsample->stopTriggerThread();
     //gaussianFilter0->stopTriggerThread();
     lkstabilise->stopTriggerThread();
-    cnvrtToY8->stopTriggerThread();
+    cnvrtToUI8->stopTriggerThread();
     
     return 0;
 }

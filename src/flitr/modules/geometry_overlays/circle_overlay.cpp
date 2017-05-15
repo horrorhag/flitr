@@ -123,7 +123,7 @@ void CircleOverlay::updateQuad()
      * Without this there is a gap in the circle.
      *
      * # - MinGW 3.81 */
-    if(isnan(temp) == true) {
+    if(std::isnan(temp) == true) {
         (*_Vertices)[index] = osg::Vec3d(_CenterX, y, 0);
         (*_Vertices)[_NumberPoints - index] = osg::Vec3d(_CenterX, y, 0);
     }

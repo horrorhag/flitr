@@ -81,17 +81,18 @@ int main(int argc, char *argv[])
      cnvrtToRGBF32->startTriggerThread();
      */
     
+    //=== Morpho begin
     shared_ptr<FIPMorphologicalFilter> morphologicalFilt(new FIPMorphologicalFilter(*ip, 1,
-                                                                                    15,//square structuring element size.
-                                                                                    15, 255,//threshold, binaryMax
+                                                                                    20,//square structuring element size.
+                                                                                    80, 255,//threshold, binaryMax
                                                                                     1));
     
     
     //===WHITE TOP HAT===//
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
     morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
-    morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::SOURCE_MINUS);
+    //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
     //=== ===//
     
     //===BLACK TOP HAT===//
@@ -101,7 +102,6 @@ int main(int argc, char *argv[])
     //morphologicalFilt->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::THRESHOLD);
     //=== ===//
     
-    
     if (!morphologicalFilt->init())
     {
         std::cerr << "Could not initialise the morphologicalFilt processor.\n";
@@ -109,7 +109,27 @@ int main(int argc, char *argv[])
     }
     
     morphologicalFilt->startTriggerThread();
+    //=== Morpho end
     
+    
+    /*
+    //=== Morpho begin
+    shared_ptr<FIPMorphologicalFilter> morphologicalFiltB(new FIPMorphologicalFilter(*morphologicalFilt, 1,
+                                                                                    15,//square structuring element size.
+                                                                                    80, 255,//threshold, binaryMax
+                                                                                    1));
+    morphologicalFiltB->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::ERODE);
+    morphologicalFiltB->addMorphoPass(flitr::FIPMorphologicalFilter::MorphoPass::DILATE);
+
+    if (!morphologicalFiltB->init())
+    {
+        std::cerr << "Could not initialise the morphologicalFilt processor.\n";
+        exit(-1);
+    }
+    
+    morphologicalFiltB->startTriggerThread();
+    //=== Morpho end
+    */
     
     /*
      shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*gaussFilt, 1, 0.95f, 1));
@@ -236,6 +256,7 @@ int main(int argc, char *argv[])
     
     //cnvrtToRGBF32->stopTriggerThread();
     morphologicalFilt->stopTriggerThread();
+    //morphologicalFiltB->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;

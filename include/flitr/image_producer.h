@@ -72,6 +72,17 @@ class FLITR_EXPORT ImageProducer {
         return SharedImageBuffer_->getNumWriteSlotsAvailable();
     }
 
+    /**
+     * Obtain the number of write slots that this producer has reserved for
+     * writing but has not yet released.
+     *
+     * \return The number of slots reserved for writing.
+     */
+    virtual uint32_t getNumWriteSlotsReserved()
+    {
+        return SharedImageBuffer_->getNumWriteSlotsReserved();
+    }
+
     /** 
      * Typically implemented to tell an asynchronous producer to create an image.
      * 

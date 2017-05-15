@@ -31,7 +31,8 @@ ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 targetAverage_(targetAverage),
 Title_(std::string("Photometric Equalise"))
 {
-    
+
+    ProcessorStats_->setID("ImageProcessor::FIPPhotometricEqualise");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.
@@ -158,7 +159,7 @@ windowSize_(windowSize|1), //Make sure that the window size is odd.
 Title_(std::string("Local Photometric Equalise"))
 
 {
-    
+    ProcessorStats_->setID("ImageProcessor::FIPLocalPhotometricEqualise");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.

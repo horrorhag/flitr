@@ -33,6 +33,7 @@ recipWindowLength_(1.0f/((float)windowLength_)),
 Title_(std::string("Average Image")),
 oldestHistorySlot_(0)
 {
+    ProcessorStats_->setID("ImageProcessor::FIPAverageImage");
     //Setup image format being produced to downstream.
     for (uint32_t i=0; i<images_per_slot; i++) {
         ImageFormat_.push_back(upStreamProducer.getFormat(i));//Output format is same as input format.

@@ -13,6 +13,7 @@
 #include <flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h>
 #include <flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h>
 
+#include <flitr/image_diff_and_scale.h>
 #include <flitr/modules/flitr_image_processors/msr/fip_msr.h>
 
 #include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
@@ -119,7 +120,7 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8, 2));
+    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_RGB_8, 2));
     if (!ip->init())
     {
         std::cerr << "Could not load " << argv[1] << "\n";
@@ -134,10 +135,10 @@ int main(int argc, char *argv[])
     
     
     //===
-    shared_ptr<FIPConvertToYF32> cnvrtToF32(new FIPConvertToYF32(*ip, 1, 2));
+    shared_ptr<FIPConvertToRGBF32> cnvrtToF32(new FIPConvertToRGBF32(*ip, 1, 2));
     if (!cnvrtToF32->init())
     {
-        std::cerr << "Could not initialise the FIPConvertToYF32 processor.\n";
+        std::cerr << "Could not initialise the FIPConvertToF32 processor.\n";
         exit(-1);
     }
     cnvrtToF32->startTriggerThread();
@@ -173,22 +174,51 @@ int main(int argc, char *argv[])
      photometricEqualise->startTriggerThread();
      */
     
-    
-    //=== The multi-scale retinex algorithm ===
-    shared_ptr<FIPMSR> msr(new FIPMSR(*cnvrtToF32, 1, 2));
-    if (!msr->init())
+    /*
+    //=== The multi-scale retinex algorithm  ===
+    shared_ptr<FIPMSR> msr0(new FIPMSR(*cnvrtToF32, 1,
+                                      FIPMSR::FilterType::GausXY,
+                                      2));
+    if (!msr0->init())
     {
         std::cerr << "Could not initialise the msr image processor.\n";
         exit(-1);
     }
-    msr->setGFScale(20); //Sets the divider of the image width to calculate the MSR Gaussian scale.
-    msr->setNumGaussianScales(3); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
-    msr->startTriggerThread();
+    msr0->setGFScale(30); //Sets the divider of the image width to calculate the MSR Gaussian scale.
+    msr0->setNumGaussianScales(3); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
+    msr0->startTriggerThread();
+    */
+    
+    //=== The multi-scale retinex algorithm  ===
+    shared_ptr<FIPMSR> msr1(new FIPMSR(*cnvrtToF32, 1,
+                                       FIPMSR::FilterType::BoxII,
+                                       2));
+    if (!msr1->init())
+    {
+        std::cerr << "Could not initialise the msr image processor.\n";
+        exit(-1);
+    }
+    msr1->setGFScale(15); //Sets the divider of the image width to calculate the MSR Gaussian scale.
+    msr1->setNumGaussianScales(3); //Sets the number of Gaussian scales to use. MSR typically uses 3, but 1 is faster.
+    msr1->startTriggerThread();
     
     
+    /*
+    //=== Image difference and scale ===
+    shared_ptr<ImageDiffAndScale> ids(new ImageDiffAndScale(*msr0, *msr1,
+                                                            10.0,
+                                                            1,
+                                                            2));
+    if (!ids->init())
+    {
+        std::cerr << "Could not initialise the ids processor.\n";
+        exit(-1);
+    }
+    ids->startTriggerThread();
+    */
     
     //=== Convert back to 8 bit. ===
-    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr, 1, 0.95f, 2));
+    shared_ptr<FIPConvertToRGB8> cnvrtToRGB8(new FIPConvertToRGB8(*msr1, 1, 0.95f, 2));
     if (!cnvrtToRGB8->init())
     {
         std::cerr << "Could not initialise the cnvrtToRGB8 processor.\n";
@@ -199,7 +229,7 @@ int main(int argc, char *argv[])
     
     
     //=== OSG display
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*msr, 1));
+    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*msr1, 1));
     if (!osgc->init())
     {
         std::cerr << "Could not init OSG consumer\n";
@@ -259,7 +289,7 @@ int main(int argc, char *argv[])
     viewer.setThreadingModel(osgViewer::Viewer::SingleThreaded);
     viewer.addEventHandler(new osgViewer::StatsHandler);
     
-    KeyPressedHandler *kbHandler=new KeyPressedHandler(msr->getGFScale());
+    KeyPressedHandler *kbHandler=new KeyPressedHandler(msr1->getGFScale());
     viewer.addEventHandler(kbHandler);
     
     viewer.setSceneData(root_node);
@@ -292,7 +322,8 @@ int main(int argc, char *argv[])
         }
 #endif
         
-        msr->setGFScale(kbHandler->_GFScale);
+        //msr0->setGFScale(kbHandler->_GFScale);
+        msr1->setGFScale(kbHandler->_GFScale);
         
         if (osgc->getNext())
         {
@@ -323,7 +354,8 @@ int main(int argc, char *argv[])
 #endif
     
     cnvrtToF32->stopTriggerThread();
-    msr->stopTriggerThread();
+    //msr0->stopTriggerThread();
+    msr1->stopTriggerThread();
     //cnvrtToRGB8->stopTriggerThread();
     
     return 0;
