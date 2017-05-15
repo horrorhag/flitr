@@ -1,4 +1,4 @@
-add_subdirectory(dsvl)
+# add_subdirectory(dsvl)
 
 set(LIB_SOURCES
 	${LIB_SOURCES}
@@ -7,7 +7,7 @@ set(LIB_SOURCES
 
 set(LIB_INCL_DIRS
 	${LIB_INCL_DIRS}
-	src/flitr/video_win32_directshow/dsvl
+	# src/flitr/video_win32_directshow/dsvl
     ${CMAKE_CURRENT_SOURCE_DIR}/../tinyxml
 	PARENT_SCOPE
 )
