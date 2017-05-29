@@ -549,6 +549,7 @@ ADD_SUBDIRECTORY(examples/DPT)
 
 ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
+ADD_SUBDIRECTORY(examples/viewer_image_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 
