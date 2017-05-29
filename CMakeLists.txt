@@ -181,6 +181,7 @@ SET(LIB_SOURCES
   src/flitr/raw_video_file_reader.cpp
   src/flitr/raw_video_file_producer.cpp
   src/flitr/ffmpeg_producer.cpp
+  src/flitr/osg_image_producer.cpp
   src/flitr/test_pattern_producer.cpp
   src/flitr/smulti_ffmpeg_producer.cpp
   src/flitr/smulti_raw_video_file_producer.cpp
@@ -247,6 +248,7 @@ SET(LIB_SOURCES
   include/flitr/raw_video_file_reader.h
   include/flitr/raw_video_file_producer.h
   include/flitr/ffmpeg_producer.h
+  include/flitr/osg_image_producer.h
   include/flitr/test_pattern_producer.h
   include/flitr/smulti_ffmpeg_producer.h
   include/flitr/smulti_raw_video_file_producer.h
