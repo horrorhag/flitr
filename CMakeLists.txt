@@ -181,7 +181,6 @@ SET(LIB_SOURCES
   src/flitr/raw_video_file_reader.cpp
   src/flitr/raw_video_file_producer.cpp
   src/flitr/ffmpeg_producer.cpp
-  src/flitr/osg_image_producer.cpp
   src/flitr/test_pattern_producer.cpp
   src/flitr/smulti_ffmpeg_producer.cpp
   src/flitr/smulti_raw_video_file_producer.cpp
@@ -248,7 +247,6 @@ SET(LIB_SOURCES
   include/flitr/raw_video_file_reader.h
   include/flitr/raw_video_file_producer.h
   include/flitr/ffmpeg_producer.h
-  include/flitr/osg_image_producer.h
   include/flitr/test_pattern_producer.h
   include/flitr/smulti_ffmpeg_producer.h
   include/flitr/smulti_raw_video_file_producer.h
@@ -332,6 +330,9 @@ IF(FLITR_USE_OSG)
 
     src/flitr/multi_ffmpeg_producer.cpp
     include/flitr/multi_ffmpeg_producer.h
+    
+    src/flitr/osg_image_producer.cpp
+    include/flitr/osg_image_producer.h
 
   src/flitr/hud.cpp
   src/flitr/manipulator_utils.cpp
@@ -549,7 +550,6 @@ ADD_SUBDIRECTORY(examples/DPT)
 
 ADD_SUBDIRECTORY(examples/LK_image_registration)
 ADD_SUBDIRECTORY(examples/viewer_video_quad)
-ADD_SUBDIRECTORY(examples/viewer_image_quad)
 ADD_SUBDIRECTORY(examples/viewer_video_history_quad)
 ADD_SUBDIRECTORY(examples/viewer_multi_video_quad)
 
@@ -571,6 +571,7 @@ ADD_SUBDIRECTORY(examples/hud_overlay)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/histogram_processing)
+ADD_SUBDIRECTORY(examples/viewer_image_quad)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
