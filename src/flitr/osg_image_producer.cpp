@@ -71,7 +71,7 @@ bool OsgImageProducer::trigger()
         Image& out_image = *(*(aImages[0]));
         uint8_t* buffer = out_image.data();
         uint8_t*  data = (uint8_t*)osg_image_->data();
-        memcpy(buffer, data, osg_image_->getTotalSizeInBytes());
+        memcpy(buffer, data, this->getFormat().getBytesPerImage());
     }
     releaseWriteSlot();
 
@@ -82,13 +82,12 @@ flitr::ImageFormat::PixelFormat convertGLtoFlitr(GLenum format)
 {
     switch (format)
     {
-
-
     case(GL_LUMINANCE):
         return flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_Y_8;
     case(GL_RGB):
-    case(GL_RGBA):
         return flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_RGB_8;
+    case(GL_RGBA):
+        return flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_RGBA;
     default:
         logMessage(LOG_INFO) << "GL to FLITr pixel conversion: No suitable format conversion for" <<format <<" .\n";
         return flitr::ImageFormat::PixelFormat::FLITR_PIX_FMT_RGB_8;

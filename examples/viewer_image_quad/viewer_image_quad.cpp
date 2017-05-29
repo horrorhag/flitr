@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 
-#include <osgDB/WriteFile>
-#include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/TrackballManipulator>
@@ -25,9 +23,6 @@ int main(int argc, char *argv[])
         std::cout << "Usage: " << argv[0] << " image_file\n";
         return 1;
     }
-
-
-    osg::Image* im = osgDB::readImageFile(argv[1]);
 
     shared_ptr<OsgImageProducer> ffp(new OsgImageProducer(argv[1]));
     if (!ffp->init()) {
