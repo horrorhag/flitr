@@ -1,20 +1,18 @@
-#include <iostream>
-#include <string>
-
-#include <osgViewer/Viewer>
-#include <osgViewer/ViewerEventHandlers>
-#include <osgGA/TrackballManipulator>
-#include <osg/io_utils>
-
 #include <flitr/osg_image_producer.h>
 #include <flitr/multi_osg_consumer.h>
 #include <flitr/textured_quad.h>
-#include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
+
+#include <osg/io_utils>
+#include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/Viewer>
+
+#include <iostream>
+#include <string>
+
 
 using std::shared_ptr;
 using namespace flitr;
-
 
 int main(int argc, char *argv[])
 {

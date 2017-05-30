@@ -18,14 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <flitr/log_message.h>
 #include <flitr/osg_image_producer.h>
+
 #include <osgDB/ReadFile>
 
-#include <flitr/log_message.h>
-
-
-using namespace flitr;
 using std::shared_ptr;
+using namespace flitr;
 
 flitr::ImageFormat::PixelFormat convertGLtoFlitr(GLenum format);
 

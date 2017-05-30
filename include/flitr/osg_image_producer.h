@@ -18,11 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MULTILIBTIFF_PRODUCER_H
-#define MULTILIBTIFF_PRODUCER_H 1
+#ifndef OSG_IMAGE_PRODUCER_H
+#define OSG_IMAGE_PRODUCER_H 1
 
 
-#include <flitr/metadata_reader.h>
+//#include <flitr/metadata_reader.h>
 #include <flitr/image_producer.h>
 
 
@@ -35,7 +35,7 @@ namespace flitr
 {
     
     /**
-     * Simple producer to read a osg image.
+     * Simple producer to read an osg image.
      */
     class FLITR_EXPORT OsgImageProducer : public ImageProducer
     {
@@ -43,7 +43,7 @@ namespace flitr
         /**
          * Constructs the producer.
          *
-         * \param filename Video or image file name.
+         * \param file_name Image file name.
          *
          */
         OsgImageProducer(const std::string& file_name, uint32_t buffer_size = FLITR_DEFAULT_SHARED_BUFFER_NUM_SLOTS);
@@ -74,4 +74,4 @@ namespace flitr
     
 }
 
-#endif //LIBTIFF_PRODUCER_H
+#endif //OSG_IMAGE_PRODUCER_H
