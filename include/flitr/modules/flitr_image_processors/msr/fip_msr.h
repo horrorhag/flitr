@@ -82,9 +82,18 @@ namespace flitr {
             return _enabled;
         }
         
+        /*!
+        * Following functions overwrite the flitr::Parameters virtual functions
+        */
+        virtual std::string getTitle()
+        {
+            return _Title;
+        }
+        
     private:
         bool _enabled;
         const FilterType _filterType;
+	std::string _Title;
         
         //!Box filter helper. No significant state.
         GaussianFilter _GFXY;

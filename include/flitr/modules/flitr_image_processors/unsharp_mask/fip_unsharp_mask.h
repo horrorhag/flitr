@@ -60,7 +60,71 @@ namespace flitr {
         virtual void setFilterRadius(const float filterRadius);
         //!Gets the filter radius. This method is thread safe.
         float getFilterRadius() const;
-        
+
+        /*!
+        * Following functions overwrite the flitr::Parameters virtual functions
+        */
+        virtual std::string getTitle(){return _title;   }
+        virtual void setTitle(const std::string &title){_title=title;}
+
+        virtual int getNumberOfParms()
+        {
+            return 2;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+            return flitr::Parameters::PARM_FLOAT;
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+            case 0 :return std::string("Filter Radius");
+            case 1 :return std::string("Gain");
+            }
+            return std::string("???");
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            case 0 : return getFilterRadius();
+            case 1 : return getGain();
+            }
+
+            return 0.0f;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+            if (id==0)
+            {
+                low=1.0; high=100.0;
+                return true;
+            }
+            if (id==1)
+            {
+                low=0.0; high=32.0;
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+                case 0 : setFilterRadius(v); return true;
+                case 1 : setGain(v); return true;
+            }
+
+            return false;
+        }
+
     private:
         float gain_;
         
@@ -68,6 +132,8 @@ namespace flitr {
         float *filtData_;
 
         GaussianFilter gaussianFilter_;
+
+        std::string _title = "Unsharp Mask";
     };
     
 }

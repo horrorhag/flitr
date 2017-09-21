@@ -90,7 +90,17 @@ namespace flitr {
             return _showOverlays;
         }
     
+        /*!
+        * Following functions overwrite the flitr::Parameters virtual functions
+        */
+        virtual std::string getTitle()
+        {
+            return _title;
+        }
+    
     private:
+		std::string _title;
+
         uint64_t _frameCounter;
 
         float *_avrgImg;

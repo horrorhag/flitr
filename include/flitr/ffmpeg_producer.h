@@ -90,6 +90,63 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
      */
     uint32_t getFrameRate() const {return Reader_->getFrameRate();}
 
+    /*!
+     * Following functions overwrite the flitr::Parameters virtual functions
+    */
+    virtual std::string getTitle() 
+	{
+        return Title_;
+    }
+
+    virtual int getNumberOfParms()
+    {
+        return 1;
+    }
+
+    virtual flitr::Parameters::EParmType getParmType(int id)
+    {
+        return flitr::Parameters::PARM_INT;
+    }
+
+    virtual std::string getParmName(int id)
+    {
+        switch (id)
+        {
+        case 0 :return std::string("Frame Number");
+        }
+        return std::string("???");
+    }
+
+    virtual int getInt(int id)
+    {
+        switch (id)
+        {
+        case 0 : return getCurrentImage();
+        }
+
+        return 0;
+    }
+
+    virtual bool getIntRange(int id, int &low, int &high)
+    {
+    switch (id)
+        {
+        case 0 : low=0; high=getNumImages(); return true;
+        }
+
+        return false;
+    }
+
+    virtual bool setInt(int id, int v)
+	{
+	    switch (id)
+	    {
+	    case 0 : seek((uint32_t)v); return true;
+	    }
+
+	    return false;
+	}
+
   protected:
     std::string filename_;
 
@@ -105,6 +162,9 @@ class FLITR_EXPORT FFmpegProducer : public ImageProducer {
     int32_t CurrentImage_;
 
     uint32_t buffer_size_;
+
+  private:
+    std::string Title_ = "FFMPEG";
 };
 
 }

@@ -43,7 +43,8 @@ _floatScratchData(nullptr),
 _doubleScratchData1(nullptr),
 _doubleScratchData2(nullptr),
 _histoBins(nullptr),
-_triggerCount(0)
+_triggerCount(0),
+_Title(std::string("MSR"))
 {
     ProcessorStats_->setID("ImageProcessor::FIPMSR");
 

@@ -26,7 +26,7 @@ namespace flitr {
   class ImageProducer;
 }
 
-
+#include <flitr/modules/parameters/parameters.h>
 #include <flitr/image.h>
 #include <flitr/shared_image_buffer.h>
 
@@ -40,7 +40,7 @@ namespace flitr {
  * places images it creates into this buffer.
  *
  */
-class FLITR_EXPORT ImageProducer {
+class FLITR_EXPORT ImageProducer : virtual public Parameters {
     friend class SharedImageBuffer;
     friend class ImageConsumer;
   public:

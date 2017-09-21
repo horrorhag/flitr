@@ -119,7 +119,29 @@ bool FIPConvertToRGB8::trigger()
                         writeOffset+=3;
                     }
                 }
-            }
+            } else
+            if (imFormatUS.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
+            {
+                uint8_t const * const dataRead=imRead->data();
+                
+                for (size_t y=0; y<height; ++y)
+                {
+                    const size_t readOffset=(y * width);
+                    size_t writeOffset=readOffset * 3;
+                    
+                    for (size_t x=0; x<width; ++x)
+                    {
+                        const float I=dataRead[readOffset+x];
+                        const float clampedI=(I>=255)?((uint8_t)255):((I<=0)?((uint8_t)0):(I+1));
+                        
+                        dataWrite[writeOffset + 0]=clampedI;
+                        dataWrite[writeOffset + 1]=clampedI;
+                        dataWrite[writeOffset + 2]=clampedI;
+                        
+                        writeOffset+=3;
+                    }
+                }
+			}
         }
         
         //Stop stats measurement event.
