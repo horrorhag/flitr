@@ -39,6 +39,9 @@ class FLITR_EXPORT XMLConfig
     */
     bool init(std::string filename);
 
+    /** Initialise an XMLConfig instance from a tiny TiXmlElement*/
+    bool init(flitr::TiXmlElement *xmlElement);
+
     /**
        \brief Save the configuration structure in memory to the specified file.
        \param filename The configuration XML filename to save to.

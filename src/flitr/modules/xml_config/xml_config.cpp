@@ -26,6 +26,22 @@ bool XMLConfig::init(std::string filename)
     return true;
 }
 
+/** Initialise an XMLConfig instance from a tiny TiXmlElement*/
+bool XMLConfig::init(flitr::TiXmlElement * xmlElement)
+{
+    TiXmlBase::SetCondenseWhiteSpace(false);
+
+    Doc_.LoadFile();
+
+    RootElement_ = xmlElement;
+    if (!RootElement_) {
+        logMessage(LOG_CRITICAL) << "Cannot find root node in " << XMLFile_ << std::endl;
+        logMessage(flitr::LOG_CRITICAL).flush();
+        return false;
+    }
+    return true;
+}
+
 bool XMLConfig::save(std::string filename)
 {
     if (!Doc_.SaveFile(filename)) {
