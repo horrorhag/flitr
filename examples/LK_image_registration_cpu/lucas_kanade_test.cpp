@@ -24,7 +24,7 @@
 #include <flitr/modules/flitr_image_processors/simulate/fip_camera_shake.h>
 #include <flitr/modules/flitr_image_processors/stabilise/fip_lk_stabilise.h>
 
-#include <flitr/v4l2_producer.h>
+#include <flitr/video_producer.h>
 #include <flitr/ffmpeg_producer.h>
 #include <flitr/test_pattern_producer.h>
 #include <flitr/multi_ffmpeg_consumer.h>
@@ -77,10 +77,10 @@ int main(int argc, char *argv[])
     */
 
     //==
-    std::shared_ptr<flitr::V4L2Producer> ip(new flitr::V4L2Producer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8, argv[1], 2));
+    std::shared_ptr<flitr::VideoProducer> ip(new flitr::VideoProducer(flitr::ImageFormat::FLITR_PIX_FMT_RGB_8));
     if (!ip->init())
     {
-        std::cerr << "Could not open v4l device." << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
+        std::cerr << "Could not open video device." << " SOURCE: " __FILE__ << " " << __LINE__ << "\n";
         return false;
     }
 

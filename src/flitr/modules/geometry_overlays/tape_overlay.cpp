@@ -17,7 +17,7 @@
  * License along with FLITr. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+#include <stdint.h>
 #include <flitr/modules/geometry_overlays/tape_overlay.h>
 
 using namespace flitr;

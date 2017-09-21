@@ -330,6 +330,9 @@ IF(FLITR_USE_OSG)
 
     src/flitr/multi_ffmpeg_producer.cpp
     include/flitr/multi_ffmpeg_producer.h
+    
+    src/flitr/osg_image_producer.cpp
+    include/flitr/osg_image_producer.h
 
   src/flitr/hud.cpp
   src/flitr/manipulator_utils.cpp
@@ -568,6 +571,7 @@ ADD_SUBDIRECTORY(examples/hud_overlay)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/histogram_processing)
+ADD_SUBDIRECTORY(examples/viewer_image_quad)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)
