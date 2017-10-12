@@ -28,7 +28,8 @@ FIPConvertToRGB8::FIPConvertToRGB8(ImageProducer& upStreamProducer, uint32_t ima
                                    float scale_factor,
                                    uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-scaleFactor_(scale_factor)
+scaleFactor_(scale_factor),
+Title_("Convert To RGB8")
 {
     
     //Setup image format being produced to downstream.
