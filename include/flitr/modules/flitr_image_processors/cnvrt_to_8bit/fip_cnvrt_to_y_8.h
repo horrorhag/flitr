@@ -51,6 +51,7 @@ namespace flitr {
         
     private:
         const float scaleFactor_;
+	std::string Title_;
     };
     
 }
