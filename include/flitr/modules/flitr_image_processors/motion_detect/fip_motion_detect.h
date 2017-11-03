@@ -97,6 +97,117 @@ namespace flitr {
         {
             return _title;
         }
+
+        /*!
+        * Following functions overwrite the flitr::Parameters virtual functions
+        */
+        virtual int getNumberOfParms()
+        {
+            return 3;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+			switch (id)
+			{
+				case 0: return flitr::Parameters::PARM_FLOAT;
+				case 1: return flitr::Parameters::PARM_INT;
+				case 2: return flitr::Parameters::PARM_BOOL;
+			}
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+            	case 0 :return std::string("Motion Threshold");
+				case 1 :return std::string("Detection Threshold");
+				case 2 :return std::string("ShowOverlays");
+            }
+            return std::string("???");
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            case 0 : return getMotionThreshold();
+            }
+
+            return 0.0f;
+        }
+
+		virtual int getInt(int id)
+        {
+            switch (id)
+            {
+            case 1 : return getDetectionThreshold();
+            }
+
+            return 0;
+        }
+		
+		virtual bool getBool(int id)
+        {
+            switch (id)
+            {
+            case 2 : return getShowOverlays();
+            }
+
+            return false;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+            if (id==0)
+            {
+                low=1.0; high=10.0;
+                return true;
+            }
+
+            return false;
+        }
+
+		virtual bool getIntRange(int id, int &low, int &high)
+        {
+            if (id==1)
+            {
+                low=1; high=10;
+                return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+                case 0 : setMotionThreshold(v); return true;
+            }
+
+            return false;
+        }
+	
+		virtual bool setInt(int id, int v)
+        {
+            switch (id)
+            {
+                case 1 : setDetectionThreshold(v); return true;
+            }
+
+            return false;
+        }
+		
+		virtual bool setBool(int id, bool v)
+        {
+            switch (id)
+            {
+                case 2 : setShowOverlays(v); return true;
+            }
+
+            return false;
+        }
     
     private:
 		std::string _title;
