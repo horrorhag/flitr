@@ -173,6 +173,39 @@ bool GraphManager::loadGraphElementsInformation(const std::shared_ptr<flitr::XML
     }
     return loadGraphPathsInformation(cfg);
 }
+
+bool GraphManager::replaceGraphElementsInformation(const std::shared_ptr<flitr::XMLConfig> &cfg, const std::string &replaceElementName)
+{
+    flitr::logMessage(flitr::LOG_INFO) << "Starting to replace graph elements or vertices." << std::endl;
+
+    const AttributeVectorVector graphElementsAttributesVector = cfg->getAttributeVector("graph_element");
+
+    for(const AttributeVector& elementAttributes: graphElementsAttributesVector) {
+        std::string elementName;
+        std::string elementCategory;
+
+        for(const Attribute &attribute: elementAttributes) {
+            if(attribute.first == "name") {
+                elementName = attribute.second;
+            } else if(attribute.first == "category") {
+                elementCategory = attribute.second;
+            }
+        }
+
+        /* Replace the element information. */
+        if (replaceElementName == elementName)
+        {
+            GraphElementPropertiesMap::iterator elementMapPropertiesIter = d->graphElements.find(elementName);
+            if (elementMapPropertiesIter != d->graphElements.end())  
+            {
+                elementMapPropertiesIter->second = GraphElementProperties{elementName, elementCategory, elementAttributes};
+            }  
+
+        }
+
+    }
+    return loadGraphPathsInformation(cfg);
+}
 //--------------------------------------------------
 
 bool GraphManager::addGraphPathInformation(const std::string& name, const std::string& producerName, const std::string& consumerName)
