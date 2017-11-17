@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <memory>
+#include <algorithm>
 
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
@@ -16,8 +18,9 @@
 
 //# My Included Files
 #include <include/flitr/v4l2_producer.h>
-#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
+//#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_y_f32.h>
 #include <flitr/modules/flitr_image_processors/cnvrt_to_8bit/fip_cnvrt_to_y_8.h>
+//#include <flitr/modules/flitr_image_processors/cnvrt_to_float/fip_cnvrt_to_rgb_f32.h>
 
 #include <flitr/modules/flitr_image_processors/opencv_processor/fip_opencv_processor.h>
 #include <flitr/modules/opencv_helpers/opencv_processors.h>
@@ -32,8 +35,15 @@
 #include <flitr/manipulator_utils.h>
 #include <flitr/ortho_texture_manipulator.h>
 
-using std::shared_ptr;
+
+
 using std::cout; using std::endl;
+
+#include <iosfwd>
+#include <memory>
+#include <utility>
+#include <vector>
+#include <stdio.h>
 using namespace flitr;
 
 
@@ -58,7 +68,8 @@ private:
     bool ShouldExit_;
 };
 
-//#define USE_BACKGROUND_TRIGGER_THREAD 0  //#Was 1, Natalie
+//Do not USE_BACKGROUND_TRIGGER_THREAD for opencv
+//#define USE_BACKGROUND_TRIGGER_THREAD 0 //#Was 1, Natalie
 
 
 int main(int argc, char *argv[])
@@ -69,7 +80,7 @@ int main(int argc, char *argv[])
     }
 
     //Video Producer
-    shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8,2));
+    std::shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -77,43 +88,43 @@ int main(int argc, char *argv[])
 
 
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
-    shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
+    std::shared_ptr<BackgroundTriggerThread> btt(new BackgroundTriggerThread(ip.get()));
     btt->startThread();
 #endif
 
     /// ============ OpenCV processors =============
+
+
     ///Background Subtraction
-    OpenCVProcessors::ProcessorType procType = OpenCVProcessors::backgroundSubtraction;
+/*
+    OpenCVProcessors::ProcessorType procType = OpenCVProcessors::clahe;
     std::map<std::string, std::string> cvProcessorParams;
     cvProcessorParams["backgroundUpdateInterval"] = "50";
-    shared_ptr<flitr::FIP_OpenCVProcessors> openCVProcessor(new flitr::FIP_OpenCVProcessors(*ip, 1, 4, procType, cvProcessorParams));
+    std::shared_ptr<flitr::FIP_OpenCVProcessors> openCVProcessor(new flitr::FIP_OpenCVProcessors(*ip, 1, 4, procType, cvProcessorParams));
     if (!openCVProcessor->init()) {
         std::cerr << "Could not initialise the ConvertToOpenCV image processor.\n";
         exit(-1);
     }
+*/
 
-    /*
+
     ///Default processor, laplace or histogramEqualization
-    OpenCVProcessors::ProcessorType procType = OpenCVProcessors::histEqualisation; // or OpenCVProcessors::histEqualisation;
-    shared_ptr<flitr::FIP_OpenCVProcessors> openCVProcessor(new flitr::FIP_OpenCVProcessors(*ip, 1, 4, procType));
+    OpenCVProcessors::ProcessorType procType = OpenCVProcessors::backgroundSubtraction;
+    std::shared_ptr<flitr::FIP_OpenCVProcessors> openCVProcessor(new flitr::FIP_OpenCVProcessors(*ip, 1, 4, procType));
     if (!openCVProcessor->init()) {
         std::cerr << "Could not initialise the ConvertToOpenCV image processor.\n";
         exit(-1);
     }
-    */
 
     openCVProcessor->startTriggerThread();
     ///==================================================
-
-
-    shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*openCVProcessor, 1, 1));
+    std::shared_ptr<MultiOSGConsumer> osgc(new MultiOSGConsumer(*openCVProcessor, 1, 1));
     if (!osgc->init()) {
         std::cerr << "Could not init OSG consumer\n";
         exit(-1);
     }
 
-
-    shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
+    std::shared_ptr<MultiOSGConsumer> osgcOrig(new MultiOSGConsumer(*ip, 1, 1));
     if (!osgcOrig->init()) {
         std::cerr << "Could not init osgcOrig consumer\n";
         exit(-1);
@@ -122,7 +133,7 @@ int main(int argc, char *argv[])
 
     osg::Group *root_node = new osg::Group;
 
-    shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
+    std::shared_ptr<TexturedQuad> quad(new TexturedQuad(osgc->getOutputTexture()));
     root_node->addChild(quad->getRoot().get());
     {
         osg::Matrix translate;
@@ -133,7 +144,7 @@ int main(int argc, char *argv[])
     }
 
 
-    shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
+    std::shared_ptr<TexturedQuad> quadOrig(new TexturedQuad(osgcOrig->getOutputTexture()));
     root_node->addChild(quadOrig->getRoot().get());
     {
         osg::Matrix translate;
@@ -150,7 +161,7 @@ int main(int argc, char *argv[])
     viewer.addEventHandler(new osgViewer::StatsHandler);
     viewer.setSceneData(root_node);
 
-    viewer.setUpViewInWindow(100, 100, 1280, 480);
+    viewer.setUpViewInWindow(100, 100, 640, 480);
     viewer.realize();  //Put this line back 11 May 17
 
     const int use_trackball = 0;
@@ -168,7 +179,8 @@ int main(int argc, char *argv[])
 
     size_t numFrames=0;
 
-    while((!viewer.done()) && (numFrames<2000) ) /*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f)) )*/
+
+    while((!viewer.done()) && (numFrames<5000)) /*&&(ffp->getCurrentImage()<(ffp->getNumImages()*0.9f)) )*/
     {
 #ifndef USE_BACKGROUND_TRIGGER_THREAD
         //Read from the video, but don't get more than n frames ahead.
@@ -184,20 +196,11 @@ int main(int argc, char *argv[])
             osgcOrig->getNext();
 
             viewer.frame();
-            /*
-             if (numFrames==15)
-             {
-             mffc->startWriting();
-             }
-             */
 
             numFrames++;
         }
         FThread::microSleep(5000);
     }
-
-    //     mffc->stopWriting();
-    //     mffc->closeFiles();
 
 
 #ifdef USE_BACKGROUND_TRIGGER_THREAD
@@ -205,10 +208,7 @@ int main(int argc, char *argv[])
     btt->join();
 #endif
 
-    //transform->stopTriggerThread();
-    //cnvrtToYF32->stopTriggerThread();
     openCVProcessor->stopTriggerThread();
-    //cnvrtToY8->stopTriggerThread();
 
     return 0;
 }

@@ -24,20 +24,19 @@ OpenCV helper functions for Flitr:
 
 namespace flitr {
 
-    class OpenCVHelperFunctions{
-    public:
+    namespace OpenCVHelperFunctions{
 
         /** Get openCV format from FLitr ImageFormat */
         int getOpenCVFormat(flitr::ImageFormat::PixelFormat pixelFormat);
 
         /** Copy Flitr image to OpenCV image */
-        Mat copyToOpenCVimage(std::vector<Image**> sourceFlitr, ImageFormat imFormat);
+        cv::Mat copyToOpenCVimage(Image** sourceFlitr, ImageFormat imFormat);
         /** Copy OpenCV image to flitr */
-        void copyToFlitrImage(Mat &sourceOpenCV, std::vector<Image**> destFlitr, ImageFormat imFormat);
+        void copyToFlitrImage(Mat &sourceOpenCV, Image** destFlitr, ImageFormat imFormat);
 
         /** Assign flitr image to an OpenCV.data()*/
-        Mat assignToOpenCVimage(std::vector<Image**> sourceFlitr, ImageFormat imFormat);
-    };
+        cv::Mat assignToOpenCVimage(Image** sourceFlitr, ImageFormat imFormat);
+    }
 }
 
 

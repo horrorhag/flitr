@@ -1,5 +1,4 @@
 
-
 #include <flitr/modules/opencv_helpers/opencv_helpers.h>
 
 
@@ -41,33 +40,45 @@ int flitr::OpenCVHelperFunctions::getOpenCVFormat(flitr::ImageFormat::PixelForma
 }
 
 /** Copy Flitr image to OpenCV image */
-Mat flitr::OpenCVHelperFunctions::copyToOpenCVimage(std::vector<Image**> sourceFlitr, ImageFormat imFormat){
+Mat flitr::OpenCVHelperFunctions::copyToOpenCVimage(Image** sourceFlitr, ImageFormat imFormat){
     const size_t width=imFormat.getWidth();
     const size_t height=imFormat.getHeight();
     int opencvFormat =  getOpenCVFormat(imFormat.getPixelFormat());
 
+
     /// Copy flitr image to OpenCV
     Mat cvImage = Mat( (int)height,(int)width, opencvFormat) ;  //#Use CV_8UC1
-    memcpy(cvImage.data, (**sourceFlitr[0]).data() , imFormat.getBytesPerImage() ) ;
+    memcpy(cvImage.data, (**sourceFlitr).data() , imFormat.getBytesPerImage() ) ;
+
+    if(imFormat.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_RGB_8 ||
+       imFormat.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_RGB_F32){
+        cvtColor(cvImage,cvImage,CV_RGB2BGR);
+    }
+
 
     return cvImage;
 }
 
 /** Copy OpenCV image to flitr */
-void flitr::OpenCVHelperFunctions::copyToFlitrImage(Mat &sourceOpenCV, std::vector<Image**> destFlitr, ImageFormat imFormat){
-    memcpy((**destFlitr[0]).data(), sourceOpenCV.data, imFormat.getBytesPerImage() );
+void flitr::OpenCVHelperFunctions::copyToFlitrImage(Mat &sourceOpenCV, Image** destFlitr, ImageFormat imFormat){
+    if(imFormat.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_RGB_8 ||
+         imFormat.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_RGB_F32){
+        cvtColor(sourceOpenCV,sourceOpenCV,CV_BGR2RGB);
+    }
+
+    memcpy((**destFlitr).data(), sourceOpenCV.data, imFormat.getBytesPerImage() );
 }
 
 
 /** Assign flitr image to an OpenCV.data()*/
-Mat flitr::OpenCVHelperFunctions::assignToOpenCVimage(std::vector<Image**> sourceFlitr, ImageFormat imFormat){
+Mat flitr::OpenCVHelperFunctions::assignToOpenCVimage(Image** sourceFlitr, ImageFormat imFormat){
     const size_t width=imFormat.getWidth();
     const size_t height=imFormat.getHeight();
     int opencvFormat =  getOpenCVFormat(imFormat.getPixelFormat());
 
     /// Copy flitr image to OpenCV
     Mat cvImage = Mat( (int)height,(int)width, opencvFormat) ;  //#Use CV_8UC1
-    cvImage.data = (**sourceFlitr[0]).data();
+    cvImage.data = (**sourceFlitr).data();
 
     return cvImage;
 }

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include <flitr/modules/flitr_image_processors/openCV_processor/fip_opencv_processor.h>
+#include <flitr/modules/flitr_image_processors/opencv_processor/fip_opencv_processor.h>
 
 
 /////////////////////////////////////////
@@ -36,7 +36,6 @@
     #include <opencv/cxcore.h>
 #endif
 
-//using namespace std;
 
 using std::cout;
 using std::endl;
@@ -107,6 +106,7 @@ private:
     bool ShouldExit_;
 };
 
+Mat cvImage;
 
 bool FIP_OpenCVProcessors::trigger()
 {
@@ -118,62 +118,56 @@ bool FIP_OpenCVProcessors::trigger()
         //Start stats measurement event.
         ProcessorStats_->tick();
 
+
         for (size_t imgNum=0; imgNum<1; ++imgNum)//For now, only process one image in each slot.
         {
             imageNum++;   //# CV image count
             const ImageFormat imFormat=getDownstreamFormat(imgNum);
 
-            //#if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8){
-                Image const * const imRead = *(imvRead[imgNum]);
-                Image * const imWrite = *(imvWrite[imgNum]);
 
-                uint8_t const * const dataRead=imRead->data();
-                //uint8_t * const dataWrite=imWrite->data();
+            Image const * const imRead = *(imvRead[imgNum]);
+            Image * const imWrite = *(imvWrite[imgNum]);
 
-                uint8_t * const dataWrite = (uint8_t *const) imWrite->data();
-                //float * const dataWrite = (float * const)imWrite->data();
+            uint8_t const * const dataRead=imRead->data();
+            //uint8_t * const dataWrite=imWrite->data();
 
-                const size_t width=imFormat.getWidth();
-                const size_t height=imFormat.getHeight();
+            uint8_t * const dataWrite = (uint8_t *const) imWrite->data();
+            //float * const dataWrite = (float * const)imWrite->data();
 
-
-                //============================================
-                /// Copy flitr image to OpenCV
-                flitr::OpenCVHelperFunctions cvHelpers = flitr::OpenCVHelperFunctions();
-                Mat cvImage = cvHelpers.copyToOpenCVimage(imvRead, imFormat);
-
-                /// Apply OpenCV processors
-                bool runDefaultParams = false;
-                {
-                    //Use custom processor parameters:
-                    if(!_cvProcessorParams.empty()){
-
-                        ///Backgound Subtraction
-                        if(_cvProcessorType == OpenCVProcessors::backgroundSubtraction){
-                            int backgroundUpdateInterval = atoi(_cvProcessorParams["backgroundUpdateInterval"].c_str());
-                            if(backgroundUpdateInterval > 0)
-                                _cvProcessors.applyBackgroundSubtraction(cvImage, backgroundUpdateInterval );
-                            else
-                                runDefaultParams = true;
-                        }
+            const size_t width=imFormat.getWidth();
+            const size_t height=imFormat.getHeight();
 
 
-                    }else{
+            ///============================================
+            /// Copy flitr image to OpenCV
+            Mat cvImage = flitr::OpenCVHelperFunctions::copyToOpenCVimage(imvRead[imgNum], imFormat);
+
+
+            /// Apply OpenCV processors
+            bool runDefaultParams = false;
+
+            //Use custom processor parameters:
+            if(!_cvProcessorParams.empty()){
+                ///Backgound Subtraction
+                if(_cvProcessorType == OpenCVProcessors::backgroundSubtraction){
+                    int backgroundUpdateInterval = atoi(_cvProcessorParams["backgroundUpdateInterval"].c_str());
+                    if(backgroundUpdateInterval > 0)
+                        _cvProcessors.applyBackgroundSubtraction(cvImage, backgroundUpdateInterval );
+                    else
                         runDefaultParams = true;
-                    }
-
-                    //Use default processor parameters:
-                    if(runDefaultParams)
-                        _cvProcessors.applyDefaultProcessor(cvImage, _cvProcessorType );
-
                 }
+            }else{
+                runDefaultParams = true;
+            }
+
+            //Use default processor parameters:
+            if(runDefaultParams)
+                _cvProcessors.applyDefaultProcessor(cvImage, _cvProcessorType );
 
 
-                /// Copy read image back to OSG viewer
-                cvHelpers.copyToFlitrImage(cvImage, imvWrite,imFormat);
-
-
-           //# if}
+            /// Copy the OpenCV image back to flitr image
+            flitr::OpenCVHelperFunctions::copyToFlitrImage(cvImage, imvWrite[0],imFormat);
+            //memcpy((**imvWrite[imgNum]).data(), (uchar*) cvImage.data , (imFormat.getBytesPerPixel()) * (int) (width*height) ) ;
 
         }
 
