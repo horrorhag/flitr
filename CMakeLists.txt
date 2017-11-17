@@ -76,6 +76,33 @@ ENDIF(FLITR_USE_OPENCL)
 # ==================
 
 
+
+# === find OpenCV ===
+OPTION(FLITR_USE_OPENCV "Compile the code with FLITR_USE_OPENCV  to use OpenCV includes and libs." OFF)
+IF(FLITR_USE_OPENCV)
+    SET(OpenCV_ROOT_DIR "/usr/local")
+    find_package(OpenCV 3.0.0 REQUIRED COMPONENTS core highgui imgproc)  #
+
+    LINK_DIRECTORIES(/usr/local/lib)
+
+    #FFMPEG
+    INCLUDE_DIRECTORIES(/opt/include)
+    LINK_DIRECTORIES(/opt/lib)
+
+    IF(OpenCV_FOUND)
+        INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+        LINK_DIRECTORIES(${OpenCV_LIBRARY})
+
+
+        ADD_DEFINITIONS(-DFLITR_USE_OPENCV)
+        ADD_DEFINITIONS(-DCOMPILE_WITH_OPENCV)
+        MESSAGE("OpenCV include dir: ${OpenCV_INCLUDE_DIRS}")
+        MESSAGE("OpenCV libraries: ${OpenCV_LIBRARIES}")
+    ENDIF(OpenCV_FOUND)
+
+ENDIF(FLITR_USE_OPENCV)
+
+
 # === find Boost ===
 #BOOST no longer needed for FLITr.
     #SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
@@ -423,6 +450,25 @@ IF(FLITR_USE_OSG)
     #include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 )
 
+
+
+#OpenCV example and helper functions
+IF(FLITR_USE_OPENCV)
+ADD_SUBDIRECTORY(examples/opencv_processor)
+SET(LIB_SOURCES
+  ${LIB_SOURCES}
+  src/flitr/modules/flitr_image_processors/opencv_processor/fip_opencv_processor.cpp
+  src/flitr/modules/opencv_helpers/opencv_processors.cpp
+  src/flitr/modules/opencv_helpers/opencv_helpers.cpp
+
+  include/flitr/modules/flitr_image_processors/opencv_processor/fip_opencv_processor.h
+  include/flitr/modules/opencv_helpers/opencv_processors.h
+  include/flitr/modules/opencv_helpers/opencv_helpers.h
+ )
+
+ENDIF(FLITR_USE_OPENCV)
+
+
   #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
   IF(NOT APPLE)
     SET(LIB_SOURCES ${LIB_SOURCES}
@@ -500,6 +546,9 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(flitr ${OpenCL_LIBRARIES})
 
+IF(FLITR_USE_OPENCV)
+    TARGET_LINK_LIBRARIES(flitr ${OpenCV_LIBS})
+ENDIF(FLITR_USE_OPENCV)
 
 TARGET_LINK_LIBRARIES(flitr ${LIB_LINK_LIBRARIES})
 
