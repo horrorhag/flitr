@@ -138,12 +138,17 @@ bool FIP_OpenCVProcessors::trigger()
             const size_t height=imFormat.getHeight();
 
 
+            /// Assign imvRead image to imvWrite(the output image)
+            //flitr::OpenCVHelperFunctions::copyToFlitrImage(cvImage, imvWrite[0],imFormat);
+            memcpy((**imvWrite[imgNum]).data(), (**imvRead[imgNum]).data() , (imFormat.getBytesPerPixel()) * (int) (width*height) ) ;
+
+
             ///============================================
             /// Copy flitr image to OpenCV
-            Mat cvImage = flitr::OpenCVHelperFunctions::copyToOpenCVimage(imvRead[imgNum], imFormat);
+            Mat cvImage = flitr::OpenCVHelperFunctions::assignToOpenCVimage(imvWrite[imgNum], imFormat);
 
 
-            /// Apply OpenCV processors
+            /// Modify the image with an OpenCV processors
             bool runDefaultParams = false;
 
             //Use custom processor parameters:
@@ -163,11 +168,6 @@ bool FIP_OpenCVProcessors::trigger()
             //Use default processor parameters:
             if(runDefaultParams)
                 _cvProcessors.applyDefaultProcessor(cvImage, _cvProcessorType );
-
-
-            /// Copy the OpenCV image back to flitr image
-            flitr::OpenCVHelperFunctions::copyToFlitrImage(cvImage, imvWrite[0],imFormat);
-            //memcpy((**imvWrite[imgNum]).data(), (uchar*) cvImage.data , (imFormat.getBytesPerPixel()) * (int) (width*height) ) ;
 
         }
 

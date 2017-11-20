@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
     }
 
     //Video Producer
-    std::shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_Y_8));
+    std::shared_ptr<FFmpegProducer> ip(new FFmpegProducer(argv[1], ImageFormat::FLITR_PIX_FMT_RGB_8));
     if (!ip->init()) {
         std::cerr << "Could not load " << argv[1] << "\n";
         exit(-1);
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
 
     ///Default processor, laplace or histogramEqualization
-    OpenCVProcessors::ProcessorType procType = OpenCVProcessors::backgroundSubtraction;
+    OpenCVProcessors::ProcessorType procType = OpenCVProcessors::laplace;
     std::shared_ptr<flitr::FIP_OpenCVProcessors> openCVProcessor(new flitr::FIP_OpenCVProcessors(*ip, 1, 4, procType));
     if (!openCVProcessor->init()) {
         std::cerr << "Could not initialise the ConvertToOpenCV image processor.\n";

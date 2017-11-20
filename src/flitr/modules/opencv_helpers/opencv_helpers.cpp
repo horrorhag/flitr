@@ -76,9 +76,15 @@ Mat flitr::OpenCVHelperFunctions::assignToOpenCVimage(Image** sourceFlitr, Image
     const size_t height=imFormat.getHeight();
     int opencvFormat =  getOpenCVFormat(imFormat.getPixelFormat());
 
+
+
     /// Copy flitr image to OpenCV
-    Mat cvImage = Mat( (int)height,(int)width, opencvFormat) ;  //#Use CV_8UC1
-    cvImage.data = (**sourceFlitr).data();
+    Mat cvImage = Mat( (int)height,(int)width, opencvFormat, (**sourceFlitr).data() ) ;  //#Use CV_8UC1
+
+    if(imFormat.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_RGB_8 ||
+         imFormat.getPixelFormat() == ImageFormat::FLITR_PIX_FMT_RGB_F32){
+        cvtColor(cvImage,cvImage,CV_BGR2RGB);
+    }
 
     return cvImage;
 }
