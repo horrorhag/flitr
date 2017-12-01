@@ -68,14 +68,6 @@ void TexturedQuad::setTexture(osg::TextureRectangle* in_tex)
                                                osg::StateAttribute::ON);
     
     GeomStateSet_->setTextureAttribute(0, new osg::TexEnv(osg::TexEnv::DECAL));
-    // For this state set, turn blending on (so alpha texture looks right)
-    GeomStateSet_->setMode(GL_BLEND, osg::StateAttribute::ON);
-
-    // Disable depth testing so geometry is draw regardless of depth values
-    // of geometry already draw.
-    GeomStateSet_->setMode(GL_DEPTH_TEST, osg::StateAttribute::OFF);
-    GeomStateSet_->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-    GeomStateSet_->setRenderBinDetails(11, "RenderBin");
 }
 
 TexturedQuad::TexturedQuad(osg::Texture2D* in_tex)
@@ -130,8 +122,6 @@ void TexturedQuad::init()
     RootGroup_ = new osg::Group;
     RootGroup_->setName("flitr_textured_quad");
     MatrixTransform_ = new osg::MatrixTransform; // identity
-    MatrixTransform_->setMatrix(osg::Matrix::identity());
-    MatrixTransform_->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
     Geode_ = new osg::Geode();
     Geode_->setName("flitr_textured_quad");
     Geode_->setCullingActive(false);
@@ -175,10 +165,6 @@ void TexturedQuad::replaceGeom(bool use_normalised_coordinates)
     Geom_->setName("flitr_textured_quad");
     Geom_->setVertexArray(vcoords.get());
     Geom_->setTexCoordArray(0, tcoords_.get());
-    osg::Vec3Array* normals = new osg::Vec3Array;
-    normals->push_back(osg::Vec3(0.0f, 0.0f, 1.0f));
-    Geom_->setNormalArray(normals);
-    Geom_->setNormalBinding(osg::Geometry::BIND_OVERALL);
     osg::ref_ptr<osg::DrawArrays> da = new osg::DrawArrays(osg::PrimitiveSet::QUADS,0,4);
     da->setName("flitr_textured_quad");
     Geom_->addPrimitiveSet(da.get());
