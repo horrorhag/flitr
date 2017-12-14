@@ -43,4 +43,3 @@ ADD_EXECUTABLE(object_detection_CNN ${SOURCES})
 TARGET_LINK_LIBRARIES(object_detection_CNN flitr boost_system glog cuda ${Caffe_LIBRARIES} ${OpenCV_LIBRARY})
 ## -lstdc++
 #TARGET_LINK_LIBRARIES(flitr_classification avformat flitr  boost_system glog cuda caffe opencv_core opencv_imgproc opencv_highgui )
-#WORKED  (object_detection_CNN flitr boost_system glog cuda caffe opencv_core opencv_imgproc opencv_highgui opencv_dnn)
