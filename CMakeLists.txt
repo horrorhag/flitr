@@ -3,9 +3,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3)
 
 
 IF(UNIX AND NOT WIN32 AND NOT APPLE)
-        IF(EXISTS "${CMAKE_INSTALL_PREFIX}/lib64/" AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
-                set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
-        ENDIF()
+	IF(EXISTS "${CMAKE_INSTALL_PREFIX}/lib64/" AND CMAKE_SIZEOF_VOID_P EQUAL 8 )
+		set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+	ENDIF()
 ENDIF(UNIX AND NOT WIN32 AND NOT APPLE)
 
 
@@ -31,7 +31,7 @@ SET(CMAKE_DEBUG_POSTFIX "d")
 IF(MSVC)
   add_definitions(-DWIN32)
   add_definitions(-D__STDC_LIMIT_MACROS)
-  # VS automatically defines NDEBUG in Release builds
+  # VS automatically defines NDEBUG in Release builds 
   # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D _CRT_SECURE_NO_DEPRECATE /D _WIN32_WINNT=0x0501")
 ELSEIF(APPLE)
   SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures" FORCE)
@@ -85,10 +85,6 @@ IF(FLITR_USE_OPENCV)
 
     LINK_DIRECTORIES(/usr/local/lib)
 
-    #FFMPEG
-    INCLUDE_DIRECTORIES(/opt/include)
-    LINK_DIRECTORIES(/opt/lib)
-
     IF(OpenCV_FOUND)
         INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
         LINK_DIRECTORIES(${OpenCV_LIBRARY})
@@ -140,7 +136,7 @@ ENDIF(FLITR_USE_CAFFE)
     #SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
     #SET(Boost_NO_SYSTEM_PATHS OFF CACHE BOOL "Search only BOOST_ROOT.")
     #SET(BOOST_ROOT "" CACHE PATH "Path to search for custom boost library. Empty to use default paths.")
-
+    
     #MARK_AS_ADVANCED(FORCE ${CMAKE_PREFIX_PATH})
     #SET(Boost_USE_STATIC_LIBS OFF)
     #SET(Boost_USE_MULTITHREADED ON)
@@ -157,10 +153,10 @@ ENDIF(FLITR_USE_CAFFE)
 # ==================
 
 
-#=== Find LIBTIFF ===#
+#=== Find LIBTIFF ===# 
 OPTION(FLITR_USE_LIBTIFF "Include LibTiff and LibTiffProducer." OFF)
 IF(FLITR_USE_LIBTIFF)
-        #Note: Assuming for the moment that libTiff, if present, is installed amongst the default system includes and libs.
+	#Note: Assuming for the moment that libTiff, if present, is installed amongst the default system includes and libs.
 ENDIF(FLITR_USE_LIBTIFF)
 #====================#
 
@@ -287,6 +283,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.cpp
   src/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.cpp
+  src/flitr/modules/flitr_image_processors/deinterlace/fip_deinterlace.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
@@ -366,6 +363,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.h
   include/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.h
+  include/flitr/modules/flitr_image_processors/deinterlace/fip_deinterlace.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
@@ -389,7 +387,7 @@ IF(FLITR_USE_OSG)
 
     src/flitr/multi_ffmpeg_producer.cpp
     include/flitr/multi_ffmpeg_producer.h
-
+    
     src/flitr/osg_image_producer.cpp
     include/flitr/osg_image_producer.h
 
@@ -408,7 +406,7 @@ IF(FLITR_USE_OSG)
   src/flitr/modules/geometry_overlays/tape_overlay.cpp
   src/flitr/modules/geometry_overlays/lines_overlay.cpp
   src/flitr/textured_quad.cpp
-
+  
   src/flitr/glsl_image_processor.cpp
   src/flitr/modules/glsl_shader_passes/glsl_masked_gain_pass.cpp
   src/flitr/modules/glsl_shader_passes/glsl_shader_pass.cpp
@@ -485,7 +483,7 @@ IF(FLITR_USE_OSG)
 
 #=== Caffe CNN Classification
 IF(Flitr_Compile_CNN)
-MESSAGE("\nFIP Convolutional Neural Networks will be compiled.")
+MESSAGE("Convolutional Neural Networks examples will be compiled.\n")
   ADD_SUBDIRECTORY(examples/classification)
   SET(LIB_SOURCES
     ${LIB_SOURCES}
@@ -554,7 +552,7 @@ ENDIF(FLITR_USE_OPENCV)
       include/flitr/screen_capture_producer.h
       include/flitr/texture_capture_producer.h
     )
-  ENDIF()
+  ENDIF() 
 ENDIF()
 
 
@@ -579,7 +577,7 @@ ADD_SUBDIRECTORY(src/flitr/tinyxml)
 
 # Video
 if(WIN32)
-        ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)
+	ADD_SUBDIRECTORY(src/flitr/video_win32_directshow)
     add_definitions(-DTIXML_USE_STL)
 endif(WIN32)
 if(UNIX)
@@ -593,17 +591,17 @@ if(UNIX)
 endif(UNIX)
 
 INCLUDE_DIRECTORIES(
-        ${LIB_INCL_DIRS}
+	${LIB_INCL_DIRS}
 )
 
 source_group("src" FILES ${LIB_SOURCES})
-
+	
 ADD_LIBRARY(flitr SHARED
   ${LIB_SOURCES}
 )
 
 
-IF(WIN32)
+IF(WIN32) 
   TARGET_LINK_LIBRARIES(flitr opengl32 OpenThreads ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
 ELSEIF(APPLE)
   TARGET_LINK_LIBRARIES(flitr ${OPENSCENEGRAPH_LIBRARIES} ${FFmpeg_LIBRARIES})
@@ -661,6 +659,7 @@ ENDIF()
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/deinterlace)
 ADD_SUBDIRECTORY(examples/motion_detect)
 ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
@@ -745,8 +744,8 @@ OPTION(FLITR_WITH_DOXYGEN "Generate the doxygen documentation." OFF)
 IF(FLITR_WITH_DOXYGEN)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
-        configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-        add_custom_target(Doxygen ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Generate Doxygen documentation." VERBATIM)
+	configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+	add_custom_target(Doxygen ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} COMMENT "Generate Doxygen documentation." VERBATIM)
   else(DOXYGEN_FOUND)
         MESSAGE(WARNING "Doxygen not found!")
   endif(DOXYGEN_FOUND)
