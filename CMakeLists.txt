@@ -511,16 +511,6 @@ MESSAGE("Convolutional Neural Networks examples will be compiled.\n")
     include/flitr/modules/flitr_image_processors/object_detection_CNN/caffe_ssd_functions.h
    )
 
-    ADD_SUBDIRECTORY(examples/opencv_ssd_detector)
-    SET(LIB_SOURCES
-      ${LIB_SOURCES}
-      src/flitr/modules/flitr_image_processors/opencv_ssd_detector/fip_opencv_ssd_detector.cpp
-      include/flitr/modules/flitr_image_processors/opencv_ssd_detector/fip_opencv_ssd_detector.h
-      src/flitr/modules/flitr_image_processors/opencv_ssd_detector/opencv_ssd_functions.cpp
-      include/flitr/modules/flitr_image_processors/opencv_ssd_detector/opencv_ssd_functions.h
-     )
-
-
 ENDIF(Flitr_Compile_CNN)
 
 
