@@ -78,16 +78,12 @@ ENDIF(FLITR_USE_OPENCL)
 
 
 # === find OpenCV ===
-OPTION(FLITR_USE_OPENCV "Compile the code with FLITR_USE_OPENCV  to use OpenCV includes and libs." OFF)
+OPTION(FLITR_USE_OPENCV "Compile code that uses the OpenCV library." OFF)
 IF(FLITR_USE_OPENCV)
     SET(OpenCV_ROOT_DIR "/usr/local")
     find_package(OpenCV 3.0.0 REQUIRED COMPONENTS core highgui imgproc)  #
 
     LINK_DIRECTORIES(/usr/local/lib)
-
-    #FFMPEG
-    INCLUDE_DIRECTORIES(/opt/include)
-    LINK_DIRECTORIES(/opt/lib)
 
     IF(OpenCV_FOUND)
         INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
@@ -101,6 +97,38 @@ IF(FLITR_USE_OPENCV)
     ENDIF(OpenCV_FOUND)
 
 ENDIF(FLITR_USE_OPENCV)
+
+# === find Caffe ===
+OPTION(FLITR_USE_CAFFE "Compile code that uses the Caffe library" OFF)
+IF(FLITR_USE_CAFFE)
+
+    #Assign <Caffe_DIR> to a directory containing one of the above files, [CaffeConfig.cmake] or [caffe-config.cmake].
+    #SET(Caffe_DIR "/home/dumisani/dev/caffe/build/install/share/Caffe")  #CNN Classifier and RCNN
+    SET(Caffe_DIR "/home/dumisani/dev/caffe_ssd/build/install/share/Caffe")  #SSD CNNs
+
+    find_package(Caffe)
+    LINK_DIRECTORIES(${Caffe_LIBRARIES})
+    include_directories(${Caffe_INCLUDE_DIRS})
+    add_definitions(${Caffe_DEFINITIONS})    # ex. -DCPU_ONLY
+    MESSAGE("${CAFFE_FOUND}")
+    MESSAGE("Caffe_LIBRARIES: ${Caffe_LIBRARIES}")
+    MESSAGE("Caffe_INCLUDE_DIRS : ${Caffe_INCLUDE_DIRS}")
+
+
+
+    IF(Caffe_FOUND)
+        message("Caffe found!!")
+        SET(Flitr_Compile_CNN 1)
+    ELSE()
+        message("Caffe not found!!")
+    ENDIF(Caffe_FOUND)
+    #=========================
+
+    #Remember to link libaries on both the main CMakeFile, and also the app's CMakeFile
+    LINK_LIBRARIES(avformat cuda ${Caffe_LIBRARIES} ${opencv} opencv_core opencv_imgproc opencv_highgui opencv_dnn)
+    ADD_DEFINITIONS(-DFLITR_USE_CAFFE)
+ENDIF(FLITR_USE_CAFFE)
+# ==================
 
 
 # === find Boost ===
@@ -255,6 +283,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.cpp
   src/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.cpp
+  src/flitr/modules/flitr_image_processors/deinterlace/fip_deinterlace.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
@@ -334,6 +363,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.h
   include/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.h
+  include/flitr/modules/flitr_image_processors/deinterlace/fip_deinterlace.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
@@ -449,6 +479,39 @@ IF(FLITR_USE_OSG)
     #include/flitr/modules/lucas_kanade/ImageBiPyramid.h
     #include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 )
+
+
+#=== Caffe CNN Classification
+IF(Flitr_Compile_CNN)
+MESSAGE("Convolutional Neural Networks examples will be compiled.\n")
+  ADD_SUBDIRECTORY(examples/classification)
+  SET(LIB_SOURCES
+    ${LIB_SOURCES}
+    src/flitr/modules/flitr_image_processors/classification/fip_classification.cpp
+    include/flitr/modules/flitr_image_processors/classification/fip_classification.h
+    include/flitr/modules/flitr_image_processors/classification/caffe_cnn_functions.h
+   )
+
+
+#  ADD_SUBDIRECTORY(examples/classification_RCNN)
+#  SET(LIB_SOURCES
+#    ${LIB_SOURCES}
+#    src/flitr/modules/flitr_image_processors/classification_RCNN/fip_classification_RCNN.cpp
+#    include/flitr/modules/flitr_image_processors/classification_RCNN/fip_classification_RCNN.h
+#    include/flitr/modules/flitr_image_processors/classification_RCNN/caffe_rcnn_functions.h
+#   )
+
+
+  ADD_SUBDIRECTORY(examples/object_detection_CNN)
+  SET(LIB_SOURCES
+    ${LIB_SOURCES}
+    src/flitr/modules/flitr_image_processors/object_detection_CNN/fip_object_detection_CNN.cpp
+    include/flitr/modules/flitr_image_processors/object_detection_CNN/fip_object_detection_CNN.h
+    src/flitr/modules/flitr_image_processors/object_detection_CNN/caffe_ssd_functions.cpp
+    include/flitr/modules/flitr_image_processors/object_detection_CNN/caffe_ssd_functions.h
+   )
+
+ENDIF(Flitr_Compile_CNN)
 
 
 
@@ -586,6 +649,7 @@ ENDIF()
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/deinterlace)
 ADD_SUBDIRECTORY(examples/motion_detect)
 ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
