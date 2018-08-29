@@ -18,7 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 #include <flitr/modules/geometry_overlays/arrow_overlay.h>
+
+
+
+
 
 using namespace flitr;
 

@@ -37,7 +37,7 @@ public:
         PARM_FLOAT,
         PARM_DOUBLE,
         PARM_BOOL,
-	PARM_ENUM
+	    PARM_ENUM
     };
 
     enum EPassType
@@ -46,12 +46,21 @@ public:
         GLSL_PASS,
     };
 
+    enum EDecorType
+    {
+		NONE,
+        DOUBLE_SLIDER,
+        LOG_SLIDER,
+    };
+
     virtual int getNumberOfParms() { return 0; }
 
     virtual EParmType getParmType(int id) { (void)id; return PARM_UNDF;}
     virtual std::string getParmName(int id) { (void)id; return std::string("PARM_UNDF");}
 
     virtual EPassType getPassType() { return CPU_PASS; }
+
+    virtual EDecorType getDecorType(int id) { return NONE; }
 
     virtual std::string getTitle() { return "Title"; }
 

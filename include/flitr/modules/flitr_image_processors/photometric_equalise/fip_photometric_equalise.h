@@ -52,6 +52,16 @@ namespace flitr {
         /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
+
+        virtual void enable(bool state=true)
+        {
+            enable_ = state;
+        }
+
+        virtual bool isEnabled()
+        {
+            return enable_;
+        }
         
 
         virtual void setTargetAverage(const float f)
@@ -175,6 +185,8 @@ namespace flitr {
 
         /*! The sum per line in an image. */
         double * lineSumArray_;
+
+        bool    enable_;
     };
     
     
@@ -203,6 +215,16 @@ namespace flitr {
         /*!Synchronous trigger method. Called automatically by the trigger thread in ImageProcessor base class if started.
          *@sa ImageProcessor::startTriggerThread*/
         virtual bool trigger();
+
+        virtual void enable(bool state=true)
+        {
+            enable_ = state;
+        }
+
+        virtual bool isEnabled()
+        {
+            return enable_;
+        }
 
 
         virtual void setTargetAverage(const float f)
@@ -366,6 +388,8 @@ namespace flitr {
 
         IntegralImage integralImage_;
         double *integralImageData_;
+
+        bool enable_;
     };
     
 }

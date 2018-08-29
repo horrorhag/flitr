@@ -74,8 +74,6 @@ bool FIPConvertToYF32::trigger()
                 imWrite->setMetadata(PassMetadataFunction_(imRead->metadata()));
             }
             
-            uint8_t const * const dataRead=imRead->data();
-            
             float * const dataWrite=(float *)imWrite->data();
             
             const ImageFormat imFormatUS=getUpstreamFormat(imgNum);
@@ -85,6 +83,7 @@ bool FIPConvertToYF32::trigger()
 
             if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_8)
             {
+				uint8_t const * const dataRead=imRead->data();
                 for (size_t y=0; y<height; ++y)
                 {
                     const size_t lineOffset=y * width;
@@ -97,6 +96,7 @@ bool FIPConvertToYF32::trigger()
             } else
                 if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_RGB_8)
                 {
+					uint8_t const * const dataRead=imRead->data();
                     for (size_t y=0; y<height; ++y)
                     {
                         const size_t lineOffset=y * width;
@@ -112,7 +112,20 @@ bool FIPConvertToYF32::trigger()
                             readOffset+=3;
                         }
                     }
-                }
+                } else
+		            if (imFormatUS.getPixelFormat()==flitr::ImageFormat::FLITR_PIX_FMT_Y_16)
+		            {
+						uint16_t const * const dataRead=(uint16_t *)imRead->data();
+		                for (size_t y=0; y<height; ++y)
+						{
+						    const size_t lineOffset=y * width;
+
+						    for (size_t x=0; x<width; ++x)
+						    {
+						        dataWrite[lineOffset + x]=((float)dataRead[lineOffset + x]) * 0.000015259f; // /655636.0
+						    }
+						}
+		            }
         }
         
         //Stop stats measurement event.
@@ -125,4 +138,3 @@ bool FIPConvertToYF32::trigger()
     }
     return false;
 }
-

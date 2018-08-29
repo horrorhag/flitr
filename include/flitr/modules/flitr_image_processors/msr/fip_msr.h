@@ -82,9 +82,71 @@ namespace flitr {
             return _enabled;
         }
         
+        /*!
+        * Following functions overwrite the flitr::Parameters virtual functions
+        */
+        virtual std::string getTitle()
+        {
+            return _Title;
+        }
+        
+        virtual int getNumberOfParms()
+        {
+            return 2;
+        }
+
+        virtual flitr::Parameters::EParmType getParmType(int id)
+        {
+            return flitr::Parameters::PARM_FLOAT;
+        }
+
+        virtual std::string getParmName(int id)
+        {
+            switch (id)
+            {
+		        case 0 :return std::string("GF Scale");
+				case 1 :return std::string("Number of Scales");
+            }
+            return std::string("???");
+        }
+
+        virtual float getFloat(int id)
+        {
+            switch (id)
+            {
+            	case 0 : return (float)getGFScale();
+				case 1 : return (float)getNumGaussianScales();
+            }
+
+            return 0.0f;
+        }
+
+        virtual bool getFloatRange(int id, float &low, float &high)
+        {
+			switch (id)
+            {
+            	case 0 : low=1.0; high=100.0; return true;
+				case 1 : low=1.0; high=5.0; return true;
+            }
+
+            return false;
+        }
+
+        virtual bool setFloat(int id, float v)
+        {
+            switch (id)
+            {
+                case 0 : setGFScale((size_t) v); return true;
+				case 1 : setNumGaussianScales((size_t) v); return true;
+            }
+
+            return false;
+        }
+        
     private:
         bool _enabled;
         const FilterType _filterType;
+	    std::string _Title;
         
         //!Box filter helper. No significant state.
         GaussianFilter _GFXY;

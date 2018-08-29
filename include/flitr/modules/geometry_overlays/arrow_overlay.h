@@ -36,6 +36,9 @@
 #include <osg/Material>
 #include <osg/LineWidth>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 namespace flitr {
 
 /**

@@ -28,7 +28,8 @@ FIPConvertToY8::FIPConvertToY8(ImageProducer& upStreamProducer, uint32_t images_
                                float scale_factor,
                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
-scaleFactor_(scale_factor)
+scaleFactor_(scale_factor),
+Title_("Convert To Y8")
 {
 
     ProcessorStats_->setID("ImageProcessor::FIPConvertToY8");

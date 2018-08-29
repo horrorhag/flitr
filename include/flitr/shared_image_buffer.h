@@ -21,6 +21,7 @@
 #ifndef SHARED_IMAGE_BUFFER_H
 #define SHARED_IMAGE_BUFFER_H 1
 
+#include <flitr/flitr_export.h>
 #include <flitr/image.h>
 
 #include <map>

@@ -21,8 +21,9 @@
 #ifndef FLITR_IMAGE_FORMAT_H
 #define FLITR_IMAGE_FORMAT_H 1
 
-#include <flitr/flitr_stdint.h>
 #include <flitr/flitr_export.h>
+#include <flitr/flitr_stdint.h>
+
 
 namespace flitr {
     
@@ -30,7 +31,7 @@ namespace flitr {
      * This class contains information about the format (width, height,
      * pixel type) of an image.
      */
-    class FLITR_EXPORT ImageFormat {
+    class ImageFormat {
     public:
         //! Note: Do not change enum values AND implement the required conversion code in method cnvrtPixelFormat(...) below.
         enum PixelFormat {
@@ -42,7 +43,8 @@ namespace flitr {
             FLITR_PIX_FMT_BGR = 5,//should really be FLITR_PIX_FMT_BGR_8
             FLITR_PIX_FMT_BGRA = 6,//should really be FLITR_PIX_FMT_BGRA_8
             FLITR_PIX_FMT_Y_F32 = 7,
-            FLITR_PIX_FMT_RGB_F32 = 8
+            FLITR_PIX_FMT_RGB_F32 = 8,
+            FLITR_PIX_FMT_RGBA = 9
         };
         
         enum DataType {
@@ -126,6 +128,7 @@ namespace flitr {
                     }
                         break;
                     case FLITR_PIX_FMT_BGRA:
+                    case FLITR_PIX_FMT_RGBA:
                     {
                         *(outData+0)=*inData;
                         *(outData+1)=*inData;
@@ -187,6 +190,7 @@ namespace flitr {
                     }
                         break;
                     case FLITR_PIX_FMT_BGRA:
+                    case FLITR_PIX_FMT_RGBA:
                     {
                         *(outData+0)=*(inData+2);
                         *(outData+1)=*(inData+1);
@@ -241,6 +245,7 @@ namespace flitr {
                     }
                         break;
                     case FLITR_PIX_FMT_BGRA:
+                    case FLITR_PIX_FMT_RGBA:
                     {
                         *(outData+0)=*(inData+1);
                         *(outData+1)=*(inData+1);
@@ -301,6 +306,7 @@ namespace flitr {
                     }
                         break;
                     case FLITR_PIX_FMT_BGRA:
+                    case FLITR_PIX_FMT_RGBA:
                     {
                         const float Y=(*((float *)inData)) * 256.0f;
                         const uint8_t uint8_data=(Y<256.0f) ? ((Y>=0.0f ? ((uint8_t)Y) : ((uint8_t)0) )) : ((uint8_t)255);
@@ -386,6 +392,18 @@ namespace flitr {
                         *(outData+3)=(uint8_t)255;
                     }
                         break;
+                    case FLITR_PIX_FMT_RGBA:
+                    {
+                        const float R = (*(((float *)inData) + 0)) * 256.0f;
+                        const float G = (*(((float *)inData) + 1)) * 256.0f;
+                        const float B = (*(((float *)inData) + 2)) * 256.0f;
+
+                        *(outData + 0) = (R<256.0f) ? ((R >= 0.0f ? ((uint8_t)R) : ((uint8_t)0))) : ((uint8_t)255);;
+                        *(outData + 1) = (G<256.0f) ? ((G >= 0.0f ? ((uint8_t)G) : ((uint8_t)0))) : ((uint8_t)255);;
+                        *(outData + 2) = (B<256.0f) ? ((B >= 0.0f ? ((uint8_t)B) : ((uint8_t)0))) : ((uint8_t)255);;
+                        *(outData + 3) = (uint8_t)255;
+                    }
+                    break;
                     case FLITR_PIX_FMT_Y_F32:
                     {
                         const float R=(*(((float *)inData) + 0));
@@ -468,6 +486,7 @@ namespace flitr {
                     DataType_=FLITR_PIX_DT_UINT8;
                     break;
                 case FLITR_PIX_FMT_BGRA:
+                case FLITR_PIX_FMT_RGBA:
                     BytesPerPixel_ = 4;
                     ComponentsPerPixel_ = 4;
                     DataType_=FLITR_PIX_DT_UINT8;

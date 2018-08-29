@@ -190,6 +190,7 @@ public:
      * \return True if the information of the paths was successfully added,
      * otherwise false. */
     bool loadGraphPathsInformation(const std::shared_ptr<flitr::XMLConfig>& cfg);
+    bool replaceGraphElementsInformation(const std::shared_ptr<flitr::XMLConfig> &cfg, const std::string &replaceElementName);
 
     /**
      * Load the information of the graphs from the configuration file.

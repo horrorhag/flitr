@@ -145,15 +145,13 @@ namespace flitr {
 
         virtual bool getFloatRange(int id, float &low, float &high)
         {
-            if (id==0 || id == 2)
+	    switch (id)
             {
-                low=0.0; high=maxWidth_;
-                return true;
-            }
-            if (id==1 || id == 3)
-            {
-                low=0.0; high=maxHeight_;
-                return true;
+            case 0 : low=0.0; high=maxWidth_ - width_; return true;
+            case 1 : low=0.0; high=maxHeight_ - height_; return true;
+            case 2 : low=0.0; high=maxWidth_; return true;
+            case 3 : low=0.0; high=maxHeight_; return true;
+
             }
 
             return false;

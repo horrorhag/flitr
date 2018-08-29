@@ -130,11 +130,17 @@ bool TMultiOSGConsumer<T>::init()
                                            1,
                                            GL_BGRA, GL_UNSIGNED_BYTE);
             break;
+        case ImageFormat::FLITR_PIX_FMT_RGBA:
+            DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
+                ImageFormat_[i].getHeight(),
+                1,
+                GL_RGBA, GL_UNSIGNED_BYTE);
+            break;
         case ImageFormat::FLITR_PIX_FMT_Y_16:
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1,
-                                           GL_LUMINANCE, GL_UNSIGNED_SHORT);
+                                           GL_RGB, GL_UNSIGNED_SHORT);
             break;
         case ImageFormat::FLITR_PIX_FMT_Y_F32:
             DummyImages_[i]->allocateImage(ImageFormat_[i].getWidth(),
@@ -194,11 +200,19 @@ bool TMultiOSGConsumer<T>::init()
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
+            case ImageFormat::FLITR_PIX_FMT_RGBA:
+                OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
+                    ImageFormat_[i].getHeight(),
+                    1,
+                    GL_RGB8, GL_RGBA, GL_UNSIGNED_BYTE,
+                    DummyImages_[i]->data(),
+                    osg::Image::NO_DELETE);
+                break;
             case ImageFormat::FLITR_PIX_FMT_Y_16:
                 OSGImages_[h][i]->setImage(ImageFormat_[i].getWidth(),
                                            ImageFormat_[i].getHeight(),
                                            1,
-                                           GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT,
+                                           GL_RGB, GL_LUMINANCE, GL_UNSIGNED_SHORT,
                                            DummyImages_[i]->data(),
                                            osg::Image::NO_DELETE);
                 break;
@@ -335,11 +349,19 @@ bool TMultiOSGConsumer<T>::getNext()
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;
+            case ImageFormat::FLITR_PIX_FMT_RGBA:
+                OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
+                    ImageFormat_[i].getHeight(),
+                    1,
+                    GL_RGB8, GL_RGBA, GL_UNSIGNED_BYTE,
+                    im->data(),
+                    osg::Image::NO_DELETE);
+                break;
             case ImageFormat::FLITR_PIX_FMT_Y_16:
                 OSGImages_[HistoryWritePos_][i]->setImage(ImageFormat_[i].getWidth(),
                                                           ImageFormat_[i].getHeight(),
                                                           1,
-                                                          GL_LUMINANCE16, GL_LUMINANCE, GL_UNSIGNED_SHORT,
+                                                          GL_RGB, GL_LUMINANCE, GL_UNSIGNED_SHORT,
                                                           im->data(),
                                                           osg::Image::NO_DELETE);
                 break;

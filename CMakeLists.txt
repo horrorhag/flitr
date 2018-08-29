@@ -76,6 +76,61 @@ ENDIF(FLITR_USE_OPENCL)
 # ==================
 
 
+
+# === find OpenCV ===
+OPTION(FLITR_USE_OPENCV "Compile code that uses the OpenCV library." OFF)
+IF(FLITR_USE_OPENCV)
+    SET(OpenCV_ROOT_DIR "/usr/local")
+    find_package(OpenCV 3.0.0 REQUIRED COMPONENTS core highgui imgproc)  #
+
+    LINK_DIRECTORIES(/usr/local/lib)
+
+    IF(OpenCV_FOUND)
+        INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
+        LINK_DIRECTORIES(${OpenCV_LIBRARY})
+
+
+        ADD_DEFINITIONS(-DFLITR_USE_OPENCV)
+        ADD_DEFINITIONS(-DCOMPILE_WITH_OPENCV)
+        MESSAGE("OpenCV include dir: ${OpenCV_INCLUDE_DIRS}")
+        MESSAGE("OpenCV libraries: ${OpenCV_LIBRARIES}")
+    ENDIF(OpenCV_FOUND)
+
+ENDIF(FLITR_USE_OPENCV)
+
+# === find Caffe ===
+OPTION(FLITR_USE_CAFFE "Compile code that uses the Caffe library" OFF)
+IF(FLITR_USE_CAFFE)
+
+    #Assign <Caffe_DIR> to a directory containing one of the above files, [CaffeConfig.cmake] or [caffe-config.cmake].
+    #SET(Caffe_DIR "/home/dumisani/dev/caffe/build/install/share/Caffe")  #CNN Classifier and RCNN
+    SET(Caffe_DIR "/home/dumisani/dev/caffe_ssd/build/install/share/Caffe")  #SSD CNNs
+
+    find_package(Caffe)
+    LINK_DIRECTORIES(${Caffe_LIBRARIES})
+    include_directories(${Caffe_INCLUDE_DIRS})
+    add_definitions(${Caffe_DEFINITIONS})    # ex. -DCPU_ONLY
+    MESSAGE("${CAFFE_FOUND}")
+    MESSAGE("Caffe_LIBRARIES: ${Caffe_LIBRARIES}")
+    MESSAGE("Caffe_INCLUDE_DIRS : ${Caffe_INCLUDE_DIRS}")
+
+
+
+    IF(Caffe_FOUND)
+        message("Caffe found!!")
+        SET(Flitr_Compile_CNN 1)
+    ELSE()
+        message("Caffe not found!!")
+    ENDIF(Caffe_FOUND)
+    #=========================
+
+    #Remember to link libaries on both the main CMakeFile, and also the app's CMakeFile
+    LINK_LIBRARIES(avformat cuda ${Caffe_LIBRARIES} ${opencv} opencv_core opencv_imgproc opencv_highgui opencv_dnn)
+    ADD_DEFINITIONS(-DFLITR_USE_CAFFE)
+ENDIF(FLITR_USE_CAFFE)
+# ==================
+
+
 # === find Boost ===
 #BOOST no longer needed for FLITr.
     #SET(Boost_USE_STATIC_LIBS OFF CACHE BOOL "Link boost in statically")
@@ -228,6 +283,7 @@ SET(LIB_SOURCES
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image.cpp
   src/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.cpp
   src/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.cpp
+  src/flitr/modules/flitr_image_processors/deinterlace/fip_deinterlace.cpp
   src/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.cpp
   src/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.cpp
   src/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.cpp
@@ -307,6 +363,7 @@ SET(LIB_SOURCES
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image.h
   include/flitr/modules/flitr_image_processors/average_image/fip_average_image_iir.h
   include/flitr/modules/flitr_image_processors/beat_image/fip_beat_image.h
+  include/flitr/modules/flitr_image_processors/deinterlace/fip_deinterlace.h
   include/flitr/modules/flitr_image_processors/photometric_equalise/fip_photometric_equalise.h
   include/flitr/modules/flitr_image_processors/gaussian_downsample/fip_gaussian_downsample.h
   include/flitr/modules/flitr_image_processors/gaussian_filter/fip_gaussian_filter.h
@@ -330,6 +387,9 @@ IF(FLITR_USE_OSG)
 
     src/flitr/multi_ffmpeg_producer.cpp
     include/flitr/multi_ffmpeg_producer.h
+    
+    src/flitr/osg_image_producer.cpp
+    include/flitr/osg_image_producer.h
 
   src/flitr/hud.cpp
   src/flitr/manipulator_utils.cpp
@@ -420,6 +480,58 @@ IF(FLITR_USE_OSG)
     #include/flitr/modules/lucas_kanade/ImageStabiliserBiLK.h
 )
 
+
+#=== Caffe CNN Classification
+IF(Flitr_Compile_CNN)
+MESSAGE("Convolutional Neural Networks examples will be compiled.\n")
+  ADD_SUBDIRECTORY(examples/classification)
+  SET(LIB_SOURCES
+    ${LIB_SOURCES}
+    src/flitr/modules/flitr_image_processors/classification/fip_classification.cpp
+    include/flitr/modules/flitr_image_processors/classification/fip_classification.h
+    include/flitr/modules/flitr_image_processors/classification/caffe_cnn_functions.h
+   )
+
+
+#  ADD_SUBDIRECTORY(examples/classification_RCNN)
+#  SET(LIB_SOURCES
+#    ${LIB_SOURCES}
+#    src/flitr/modules/flitr_image_processors/classification_RCNN/fip_classification_RCNN.cpp
+#    include/flitr/modules/flitr_image_processors/classification_RCNN/fip_classification_RCNN.h
+#    include/flitr/modules/flitr_image_processors/classification_RCNN/caffe_rcnn_functions.h
+#   )
+
+
+  ADD_SUBDIRECTORY(examples/object_detection_CNN)
+  SET(LIB_SOURCES
+    ${LIB_SOURCES}
+    src/flitr/modules/flitr_image_processors/object_detection_CNN/fip_object_detection_CNN.cpp
+    include/flitr/modules/flitr_image_processors/object_detection_CNN/fip_object_detection_CNN.h
+    src/flitr/modules/flitr_image_processors/object_detection_CNN/caffe_ssd_functions.cpp
+    include/flitr/modules/flitr_image_processors/object_detection_CNN/caffe_ssd_functions.h
+   )
+
+ENDIF(Flitr_Compile_CNN)
+
+
+
+#OpenCV example and helper functions
+IF(FLITR_USE_OPENCV)
+ADD_SUBDIRECTORY(examples/opencv_processor)
+SET(LIB_SOURCES
+  ${LIB_SOURCES}
+  src/flitr/modules/flitr_image_processors/opencv_processor/fip_opencv_processor.cpp
+  src/flitr/modules/opencv_helpers/opencv_processors.cpp
+  src/flitr/modules/opencv_helpers/opencv_helpers.cpp
+
+  include/flitr/modules/flitr_image_processors/opencv_processor/fip_opencv_processor.h
+  include/flitr/modules/opencv_helpers/opencv_processors.h
+  include/flitr/modules/opencv_helpers/opencv_helpers.h
+ )
+
+ENDIF(FLITR_USE_OPENCV)
+
+
   #Need to replace the _gl.. calls with the relevant osg calls before the below files will compile under OSX.
   IF(NOT APPLE)
     SET(LIB_SOURCES ${LIB_SOURCES}
@@ -497,6 +609,9 @@ ENDIF()
 
 TARGET_LINK_LIBRARIES(flitr ${OpenCL_LIBRARIES})
 
+IF(FLITR_USE_OPENCV)
+    TARGET_LINK_LIBRARIES(flitr ${OpenCV_LIBS})
+ENDIF(FLITR_USE_OPENCV)
 
 TARGET_LINK_LIBRARIES(flitr ${LIB_LINK_LIBRARIES})
 
@@ -534,6 +649,7 @@ ENDIF()
 
 ADD_SUBDIRECTORY(examples/msr)
 ADD_SUBDIRECTORY(examples/average_image)
+ADD_SUBDIRECTORY(examples/deinterlace)
 ADD_SUBDIRECTORY(examples/motion_detect)
 ADD_SUBDIRECTORY(examples/photometric_equalise)
 ADD_SUBDIRECTORY(examples/beat_image)
@@ -568,6 +684,7 @@ ADD_SUBDIRECTORY(examples/hud_overlay)
 ADD_SUBDIRECTORY(examples/glsl_shader_pass)
 ADD_SUBDIRECTORY(examples/cpu_shader_pass)
 ADD_SUBDIRECTORY(examples/histogram_processing)
+ADD_SUBDIRECTORY(examples/viewer_image_quad)
 
 #Need to replace the _gl.. calls with the relevant osg calls before the below examples will compile under OSX.
 IF(NOT APPLE)

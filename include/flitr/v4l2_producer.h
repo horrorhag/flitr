@@ -54,12 +54,25 @@ class V4L2Producer : public flitr::ImageProducer {
     
     ~V4L2Producer();
     bool init();
+
+    /*!
+     * Following functions overwrite the flitr::Parameters virtual functions
+    */
+    virtual std::string getTitle() {
+            return Title_;
+        }
+
+    virtual int getNumberOfParms()
+        {
+            return 0;
+        }
     
   private:
     void read_thread();
 
     std::thread readThread_;
 
+    std::string Title_ = "V4L2";
     int xioctl(int fd, int request, void * arg);
     bool open_device();
     bool init_device();

@@ -29,7 +29,8 @@ FIPPhotometricEqualise::FIPPhotometricEqualise(ImageProducer& upStreamProducer, 
                                                uint32_t buffer_size) :
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 targetAverage_(targetAverage),
-Title_(std::string("Photometric Equalise"))
+Title_(std::string("Photometric Equalise")),
+enable_(true)
 {
 
     ProcessorStats_->setID("ImageProcessor::FIPPhotometricEqualise");
@@ -115,21 +116,31 @@ bool FIPPhotometricEqualise::trigger()
             const size_t height=imFormat.getHeight();
             const size_t componentsPerLine=imFormat.getComponentsPerPixel() * width;
             
-            if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_UINT8)
+            if(!enable_)
             {
-                process((uint8_t * const )imWrite->data(), (uint8_t const * const)imRead->data(),
-                        componentsPerLine, height);
-            } else
-                if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_UINT16)
+                uint8_t const * const dataRead=(uint8_t const * const)imRead->data();
+                uint8_t * const dataWrite=(uint8_t * const)imWrite->data();
+                const size_t bytesPerImage=imFormat.getBytesPerImage();
+                memcpy(dataWrite, dataRead, bytesPerImage);
+
+            }else
+            {
+                if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_UINT8)
                 {
-                    process((uint16_t * const )imWrite->data(), (uint16_t const * const)imRead->data(),
+                    process((uint8_t * const )imWrite->data(), (uint8_t const * const)imRead->data(),
                             componentsPerLine, height);
                 } else
-                    if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_FLOAT32)
+                    if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_UINT16)
                     {
-                        process((float * const )imWrite->data(), (float const * const)imRead->data(),
+                        process((uint16_t * const )imWrite->data(), (uint16_t const * const)imRead->data(),
                                 componentsPerLine, height);
-                    }
+                    } else
+                        if (pixelDataType==ImageFormat::DataType::FLITR_PIX_DT_FLOAT32)
+                        {
+                            process((float * const )imWrite->data(), (float const * const)imRead->data(),
+                                    componentsPerLine, height);
+                        }
+            }
         }
         
         
@@ -156,7 +167,8 @@ FIPLocalPhotometricEqualise::FIPLocalPhotometricEqualise(ImageProducer& upStream
 ImageProcessor(upStreamProducer, images_per_slot, buffer_size),
 targetAverage_(targetAverage),
 windowSize_(windowSize|1), //Make sure that the window size is odd.
-Title_(std::string("Local Photometric Equalise"))
+Title_(std::string("Local Photometric Equalise")),
+enable_(true)
 
 {
     ProcessorStats_->setID("ImageProcessor::FIPLocalPhotometricEqualise");
@@ -215,39 +227,48 @@ bool FIPLocalPhotometricEqualise::trigger()
             const size_t width=imFormat.getWidth();
             const size_t height=imFormat.getHeight();
 
-            
-            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
+            if(!enable_)
             {
-                float const * const dataReadUS=(float const * const)imReadUS->data();
-                float * const dataWriteDS=(float * const)imWriteDS->data();
-                
-                integralImage_.process(integralImageData_, dataReadUS, width, height);
-                this->process(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
-            } else
-                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
+                uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+                const size_t bytesPerImage=imFormat.getBytesPerImage();
+                memcpy(dataWriteDS, dataReadUS, bytesPerImage);
+
+            }else
+            {
+                if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_F32)
                 {
-                    uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
-                    uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
-                    
+                    float const * const dataReadUS=(float const * const)imReadUS->data();
+                    float * const dataWriteDS=(float * const)imWriteDS->data();
+
                     integralImage_.process(integralImageData_, dataReadUS, width, height);
                     this->process(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
                 } else
-                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
+                    if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_Y_8)
                     {
-                        float const * const dataReadUS=(float const * const)imReadUS->data();
-                        float * const dataWriteDS=(float * const)imWriteDS->data();
-                        
-                        integralImage_.processRGB(integralImageData_, dataReadUS, width, height);
-                        this->processRGB(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
+                        uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                        uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+
+                        integralImage_.process(integralImageData_, dataReadUS, width, height);
+                        this->process(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
                     } else
-                        if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                        if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_F32)
                         {
-                            uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
-                            uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
-                            
+                            float const * const dataReadUS=(float const * const)imReadUS->data();
+                            float * const dataWriteDS=(float * const)imWriteDS->data();
+
                             integralImage_.processRGB(integralImageData_, dataReadUS, width, height);
                             this->processRGB(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
-                        }
+                        } else
+                            if (imFormat.getPixelFormat()==ImageFormat::FLITR_PIX_FMT_RGB_8)
+                            {
+                                uint8_t const * const dataReadUS=(uint8_t const * const)imReadUS->data();
+                                uint8_t * const dataWriteDS=(uint8_t * const)imWriteDS->data();
+
+                                integralImage_.processRGB(integralImageData_, dataReadUS, width, height);
+                                this->processRGB(dataWriteDS, dataReadUS, width, height);//Also accesses integralImageData_ member.
+                            }
+            }
         }
         
         ++frameNumber_;

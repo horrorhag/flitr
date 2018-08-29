@@ -38,7 +38,8 @@ _showOverlays(showOverlays),
 _produceOnlyMotionImages(produceOnlyMotionImages),
 _forceRGBOutput(forceRGBOutput),
 _motionThreshold(motionThreshold),
-_detectionThreshold(detectionThreshold)
+_detectionThreshold(detectionThreshold),
+_title("Motion Detect")
 {
     //!@todo can we get images_per_slot from upstream producer?
 

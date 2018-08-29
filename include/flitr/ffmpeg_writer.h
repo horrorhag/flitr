@@ -102,7 +102,8 @@ enum VideoCodec {//NB: Still need to test all the codecs and only include the on
     FLITR_MPEG4_CODEC = AV_CODEC_ID_MPEG4,
     FLITR_HUFFYUV_CODEC = AV_CODEC_ID_HUFFYUV,
     FLITR_THEORA_CODEC = AV_CODEC_ID_THEORA,
-    FLITR_DIRAC_CODEC = AV_CODEC_ID_DIRAC
+    FLITR_DIRAC_CODEC = AV_CODEC_ID_DIRAC,
+    FLITR_FFVHUFF_CODEC = AV_CODEC_ID_FFVHUFF
 };
 
 /** \brief The FFmpegWriter class.

@@ -43,20 +43,20 @@ const LogMessageCategory LOG_DEBUG = 1 << 2;
 const LogMessageCategory LOG_ALL = 0xffffffff;
 
 /// Set the combination of flags for messages to log.
-void setLogMessageCategory(LogMessageCategory flags);
+FLITR_EXPORT void setLogMessageCategory(LogMessageCategory flags);
 
 /// Add flags.
-void addLogMessageCategory(LogMessageCategory flags);
+FLITR_EXPORT void addLogMessageCategory(LogMessageCategory flags);
 
 /// Remove category/ies.
-void delLogMessageCategory(LogMessageCategory flags);
+FLITR_EXPORT void delLogMessageCategory(LogMessageCategory flags);
 
 /// Get the current flags.
-uint32_t getLogMessageCategory();
+FLITR_EXPORT uint32_t getLogMessageCategory();
 
 /// Init the flags.
 //extern bool initLogMessage();
-bool initLogMessage();
+FLITR_EXPORT bool initLogMessage();
 
 /// Actually log.
 FLITR_EXPORT extern std::ostream& logMessage(const LogMessageCategory category);
