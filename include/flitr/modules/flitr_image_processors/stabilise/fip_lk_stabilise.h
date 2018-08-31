@@ -84,6 +84,64 @@ public:
         return Title_;
     }
 
+    virtual int getNumberOfParms() override
+    {
+        return 3;
+    }
+
+    virtual flitr::Parameters::EParmType getParmType(int id) override
+    {
+        switch (id)
+        {
+        case 0 :return flitr::Parameters::PARM_INT;
+        case 1 :return flitr::Parameters::PARM_FLOAT;
+        case 2 :return flitr::Parameters::PARM_FLOAT;
+        }
+        return flitr::Parameters::PARM_UNDF;
+    }
+
+    virtual std::string getParmName(int id) override
+    {
+        switch (id)
+        {
+        case 0 :return std::string("Output Mode");
+        case 1 :return std::string("Output Transform Burn X");
+        case 2 :return std::string("Output Transform Burn Y");
+        }
+        return std::string("???");
+    }
+
+    virtual float getFloat(int id) override
+    {
+        switch (id)
+        {
+        case 1 : return burnFx_;
+        case 2 : return burnFy_;
+        }
+
+        return 0.0f;
+    }
+
+    virtual int getInt(int id) override
+    {
+        switch (id)
+        {
+        case 0 : return static_cast<int>(outputMode_);
+        }
+        return 0;
+    }
+
+    virtual bool setFloat(int id, float v) override
+    {
+        switch (id)
+        {
+            case 1 : burnFx_=v; return true;
+            case 2 : burnFy_=v; return true;
+        }
+
+        return false;
+    }
+
 private:
     inline float bilinear(float const * const data, const ptrdiff_t offsetLT, const ptrdiff_t width, const float fx, const float fy) const
     {
