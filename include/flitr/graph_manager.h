@@ -28,6 +28,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <map>
 
 namespace flitr {
 
@@ -342,6 +343,19 @@ public:
      * This is a convenience function.
      */
     std::string consumerName(const std::shared_ptr<flitr::ImageConsumer>& consumer) const;
+
+    /**
+     * Get a map of loaded producers
+     *
+     * This is a convenience function.
+     */
+    std::map<std::string, std::weak_ptr<flitr::ImageProducer>> producers() const;
+    /**
+     * Get a map of loaded consumers
+     *
+     * This is a convenience function.
+     */
+    std::map<std::string, std::weak_ptr<flitr::ImageConsumer>> consumers() const;
 private:
     /**
      * %Private function used by the manager to create en element.

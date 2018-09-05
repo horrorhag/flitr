@@ -490,6 +490,18 @@ std::string GraphManager::consumerName(const std::shared_ptr<ImageConsumer>& con
 }
 //--------------------------------------------------
 
+std::map<std::string, std::weak_ptr<flitr::ImageProducer>> GraphManager::producers() const
+{
+    return d->producers;
+}
+//--------------------------------------------------
+
+std::map<std::string, std::weak_ptr<flitr::ImageConsumer>> GraphManager::consumers() const
+{
+    return d->consumers;
+}
+//--------------------------------------------------
+
 bool GraphManager::createElement(const std::string &elementName, std::shared_ptr<flitr::ImageProducer> &producer, std::shared_ptr<flitr::ImageConsumer> &consumer)
 {
     GraphElementPropertiesMap::iterator elementInfo = d->graphElements.find(elementName);
