@@ -36,7 +36,9 @@ ArrowOverlay::ArrowOverlay(double center_x, double center_y, double headWidth, d
     _HeadWidth(headWidth),
     _HeadHeight(headHeight),
     _TailWidth(tailWidth),
-    _TailLength(tailLength)
+    _TailLength(tailLength),
+    _originX(0.0),
+    _originY(0.0)
 {
     _RotationDegrees = fmod(rotationDegrees, 360.0);
     _Vertices = new osg::Vec3Array(7);
@@ -95,49 +97,91 @@ void ArrowOverlay::updateArrow()
     (*_Vertices)[5] = osg::Vec3d(_TipX - (_TailWidth / 2), _TipY - (_HeadHeight), 0);
     (*_Vertices)[6] = osg::Vec3d(_TipX - (_HeadWidth / 2), _TipY - (_HeadHeight), 0);*/
 
-    /* (_TipX, TipY) is the centre of rotation. Rotation about a point that is not the origin
+
+    /** (_TipX, TipY) is the centre of rotation. Rotation about a point that is not the origin
      * is achieved by first subtracting the point from all points (x,y) that will be rotated -
      * in the case below, it is simply not added - then rotating to get (x',y'), and lastly,
      * adding the rotation point to (x',y'). */
 
+
+    //Get a point within the arrow. Then set it as the new origin for rotation
+    //Set "originX" and "orginY" to zero, to make the arrow-tip the orgin.
+    //_originX = _TailWidth/2 -1 ,  _originY = - (_HeadHeight + _TailLength) + 1;
+
+    std::printf("originX= %0.2f  originY= %0.2f\n", _originX, _originY);
+
+
+
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[0] = osg::Vec3d(xPrime, yPrime, 0);
 
     x = _HeadWidth/2;
     y = -_HeadHeight;
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[1] = osg::Vec3d(xPrime, yPrime, 0);
 
     x = _TailWidth/2;
     y = -_HeadHeight;
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[2] = osg::Vec3d(xPrime, yPrime, 0);
 
     x = _TailWidth/2;
     y = - (_HeadHeight + _TailLength);
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[3] = osg::Vec3d(xPrime, yPrime, 0);
 
+    /*
+    xPrime = x + _TipX; //
+    yPrime = y + _TipY; //
+    */
     x = -_TailWidth/2;
     y = - (_HeadHeight + _TailLength);
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[4] = osg::Vec3d(xPrime, yPrime, 0);
 
     x = -_TailWidth/2;
     y = -_HeadHeight;
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[5] = osg::Vec3d(xPrime, yPrime, 0);
 
     x = -_HeadWidth/2;
     y = -_HeadHeight;
+    x -= _originX;
+    y -= _originY ;
     xPrime = x*cos(theta) - y*sin(theta) + _TipX;
     yPrime = x*sin(theta) + y*cos(theta) + _TipY;
+    xPrime += _originX;
+    xPrime += _originY;
     (*_Vertices)[6] = osg::Vec3d(xPrime, yPrime, 0);
 
     _Vertices->dirty();

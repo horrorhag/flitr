@@ -112,6 +112,22 @@ class FLITR_EXPORT ArrowOverlay : public GeometryOverlay
      */
     double getTailLength() const;
 
+
+    /**
+     * @brief setOrigin
+     * Set a point relative to the Tip of the arrow, as the new origin
+     *
+     * //i.e To set the tail as the new origin:
+     * setOrigin( _TailWidth/2,  - (_HeadHeight + _TailLength)):
+     *
+     * The default origin, is the pointy Tip of the arrow.
+     */
+    void setOrigin(double relativeX, double relativeY){
+        _originX = relativeX;
+        _originY = relativeY;
+    }
+
+
     /**
      * Set the name of the overlay along with the nodes that make up
      * the overlay.
@@ -136,6 +152,8 @@ class FLITR_EXPORT ArrowOverlay : public GeometryOverlay
     double _HeadHeight;
     double _TailWidth;
     double _TailLength;
+
+    double _originX = 0.0, _originY = 0.0;
 
     double _RotationDegrees;
 };
