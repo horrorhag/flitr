@@ -103,14 +103,7 @@ void ArrowOverlay::updateArrow()
      * in the case below, it is simply not added - then rotating to get (x',y'), and lastly,
      * adding the rotation point to (x',y'). */
 
-
-    //Get a point within the arrow. Then set it as the new origin for rotation
     //Set "originX" and "orginY" to zero, to make the arrow-tip the orgin.
-    //_originX = _TailWidth/2 -1 ,  _originY = - (_HeadHeight + _TailLength) + 1;
-
-    std::printf("originX= %0.2f  originY= %0.2f\n", _originX, _originY);
-
-
 
     x -= _originX;
     y -= _originY ;
