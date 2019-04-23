@@ -64,7 +64,11 @@ FFmpegReader::FFmpegReader(std::string filename, ImageFormat::PixelFormat out_pi
 FFmpegReader::~FFmpegReader()
 {
     if (DecodedFrame_) {
+#if LIBAVCODEC_VERSION_INT >= ((55<<16) + (45<<8) + 0)
+        av_frame_free(&DecodedFrame_);
+#else
         av_free(DecodedFrame_);
+#endif
     }
     avcodec_close(CodecContext_);
 
@@ -222,7 +226,13 @@ bool FFmpegReader::openVideo(const std::string& filename, ImageFormat::PixelForm
                 SWS_BILINEAR, NULL, NULL, NULL);
 #endif
 
+
+#if LIBAVCODEC_VERSION_INT >= ((55<<16) + (45<<8) + 0)
+    DecodedFrame_ = av_frame_alloc();
+#else
     DecodedFrame_ = avcodec_alloc_frame();
+#endif
+
     if (!DecodedFrame_) {
         logMessage(LOG_CRITICAL) << "Cannot allocate memory for decoded frame.\n";
         return false;
@@ -292,7 +302,12 @@ bool FFmpegReader::getImage(Image &out_image, int im_number)
     pkt.data=NULL;
     pkt.size=0;
     int gotframe;
+
+#if LIBAVCODEC_VERSION_INT >= ((55<<16) + (45<<8) + 0)
+    av_frame_unref(DecodedFrame_);
+#else
     avcodec_get_frame_defaults(DecodedFrame_);
+#endif
 
     int loopcount=0;
     while(1) {
