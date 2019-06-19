@@ -236,7 +236,7 @@ SET(LIB_SOURCES
   src/flitr/raw_video_file_reader.cpp
   src/flitr/raw_video_file_producer.cpp
   src/flitr/ffmpeg_producer.cpp
-  src/flitr/ffserver_producer.cpp
+  #src/flitr/ffserver_producer.cpp
   src/flitr/test_pattern_producer.cpp
   src/flitr/smulti_ffmpeg_producer.cpp
   src/flitr/smulti_raw_video_file_producer.cpp
@@ -255,7 +255,7 @@ SET(LIB_SOURCES
   src/flitr/multi_image_buffer_consumer.cpp
   src/flitr/multi_cpuhistogram_consumer.cpp
   src/flitr/multi_ffmpeg_consumer.cpp
-  src/flitr/multi_ffserver_consumer.cpp
+  #src/flitr/multi_ffserver_consumer.cpp
   src/flitr/image_diff_and_scale.cpp
   src/flitr/image_multiplexer.cpp
   src/flitr/graph_manager.cpp
@@ -305,7 +305,7 @@ SET(LIB_SOURCES
   include/flitr/raw_video_file_reader.h
   include/flitr/raw_video_file_producer.h
   include/flitr/ffmpeg_producer.h
-  include/flitr/ffserver_producer.h
+  #include/flitr/ffserver_producer.h
   include/flitr/test_pattern_producer.h
   include/flitr/smulti_ffmpeg_producer.h
   include/flitr/smulti_raw_video_file_producer.h
@@ -332,7 +332,7 @@ SET(LIB_SOURCES
   include/flitr/multi_image_buffer_consumer.h
   include/flitr/multi_cpuhistogram_consumer.h
   include/flitr/multi_ffmpeg_consumer.h
-  include/flitr/multi_ffserver_consumer.h
+  #include/flitr/multi_ffserver_consumer.h
   include/flitr/image_diff_and_scale.h
   include/flitr/image_multiplexer.h
 
@@ -676,8 +676,8 @@ ADD_SUBDIRECTORY(examples/keep_history_pass)
 ADD_SUBDIRECTORY(examples/producer_multiplexer)
 ADD_SUBDIRECTORY(examples/geometry_overlays)
 ADD_SUBDIRECTORY(examples/graph_manager)
-ADD_SUBDIRECTORY(examples/streaming_rtsp_writer)
-ADD_SUBDIRECTORY(examples/streaming_rtsp_reader)
+#ADD_SUBDIRECTORY(examples/streaming_rtsp_writer)
+#ADD_SUBDIRECTORY(examples/streaming_rtsp_reader)
 IF(WIN32)
 ADD_SUBDIRECTORY(examples/video_producer)
 ENDIF()
